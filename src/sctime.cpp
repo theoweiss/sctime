@@ -95,23 +95,21 @@ static LOCK_FD openlock(const QString &name )
    QFileInfo info( name );
 
    lockFileExistiert=info.exists();
-    std::cerr<<"Trying to open "+name<<std::endl;
     // open the lockfile
     LOCK_FD fd = open( QFile::encodeName( name ),
                    O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
-    std::cerr<<name+" opened"<<std::endl;
     if (fd<0) {
       std::cerr<<"Kann Lockfile "+name+" nicht öffnen"<<std::endl;
       exit(1); /* can not open */
     }
 
     if (lockf(fd,F_TLOCK,0)<0)
-    {
+    {      
       switch (errno) {
 #ifdef HPUX
         case EACCES:
            break;
-#endif           
+#endif
         case EAGAIN:
           {
             std::cerr<<"Das Lockfile "+name+" wird bereits benutzt.\nFalls Sie sicher sind, dass keine weitere Instanz von sctime läuft, bitte löschen."<<std::endl;
@@ -203,8 +201,17 @@ int main( int argc, char **argv )
     return false;
   }
 #endif
-  directory.mkdir(CONFIGSUBDIR);
-  directory.cd(CONFIGSUBDIR);
+  // Pruefen, ob das Configdir ueber das environment gesetzt wurde
+  QString configdirstring;
+  char *envpointer;
+  envpointer = getenv("SCTIME_CONFIG_DIR");
+  if (envpointer)
+      configdirstring = envpointer;
+  else
+      configdirstring = CONFIGSUBDIR; // default Configdir
+  // neues directory anlegen, hineinwechseln, und merken.
+  directory.mkdir(configdirstring);
+  directory.cd(configdirstring);
   configDir=directory.path();
 
 #ifdef WIN32
@@ -219,8 +226,6 @@ int main( int argc, char **argv )
 #endif
 
   LOCK_FD lfp=openlock(configDir+"/LOCK");
-
-
 
   sctimeApp= new SCTimeApp( argc, argv );
   #ifndef WIN32
