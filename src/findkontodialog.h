@@ -36,7 +36,7 @@
 
 
 /**
- * Der Dialog zum Suchen eines Kontos.
+ * Der Dialog Aendern der Einstellungen
  */
 class FindKontoDialog: public QDialog
 {

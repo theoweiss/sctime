@@ -732,11 +732,13 @@ void TimeMainWindow::callAboutBox()
   versioninfo.setTextFormat(Qt::RichText);
   layout->addWidget(&versioninfo,0,1);
   layout->addRowSpacing(1,10);
-  layout->addWidget(new QLabel(" Developers:",aboutBox),2,0);
+  layout->addWidget(new QLabel("Core Developer:",aboutBox),2,0);
   layout->addWidget(new QLabel("Florian Schmitt <f.schmitt@science-computing.de>",aboutBox),2,1);
-  layout->addRowSpacing(3,18);
-  layout->addMultiCellWidget(new QLabel("<center>This Program is licensed under the Gnu Public License.</center>",aboutBox),4,4,0,1);
-  layout->addRowSpacing(5,18);
+  layout->addWidget(new QLabel("Patches:",aboutBox),3,0);
+  layout->addWidget(new QLabel("Marcus Camen <m.camen@science-computing.de>",aboutBox),3,1);
+  layout->addRowSpacing(4,18);
+  layout->addMultiCellWidget(new QLabel("<center>This Program is licensed under the Gnu Public License.</center>",aboutBox),5,5,0,1);
+  layout->addRowSpacing(6,18);
 
   QHBoxLayout* buttonlayout=new QHBoxLayout();
   QPushButton * okbutton=new QPushButton( "OK", aboutBox);
@@ -744,9 +746,9 @@ void TimeMainWindow::callAboutBox()
   buttonlayout->addStretch(1);
   buttonlayout->addWidget(okbutton);
   buttonlayout->addStretch(1);
-  layout->addMultiCellLayout(buttonlayout,6,6,0,1);
+  layout->addMultiCellLayout(buttonlayout,7,7,0,1);
   connect (okbutton, SIGNAL(clicked()), aboutBox, SLOT(close()));
-  layout->addRowSpacing(7,10);
+  layout->addRowSpacing(8,10);
 
   aboutBox->exec();
 

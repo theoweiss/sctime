@@ -30,7 +30,7 @@
 class KontoDatenInfo
 {
   public:
-    virtual void readInto(AbteilungsListe* abtlist)=0; 
+    virtual bool readInto(AbteilungsListe* abtlist)=0; 
 
 };
 

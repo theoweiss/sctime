@@ -28,6 +28,8 @@
 #include "qdatetime.h"
 #include <iostream>
 
+#define IS_DISABLED 8
+#define IS_IN_DATABASE 4
 #define IS_CLOSED 2
 #define FLAG_MODE_OVERWRITE 0
 #define FLAG_MODE_OR 1
@@ -135,12 +137,18 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     
     void reload();
 
+    bool kontoDatenInfoConnected();
+
+    void getUnterKontoZeiten(const QString& abteilung, const QString& konto,
+                                         const QString& unterkonto, int& sek, int& sekabzur);
+
   private:
 
     QString aktivAbteilung, aktivKonto, aktivUnterkonto;
     KontoDatenInfo* kontoDatenInfo;
     int aktivEintrag;
     int zeitDifferenz;
+    bool kontoDatenInfoSuccess;
     QDate datum;
 
 };

@@ -33,6 +33,7 @@
 #include "unterkontodialog.h"
 #include <iostream>
 #include "globals.h"
+#include "sctimeapp.h"
 
 /**
  * Baut den Dialog zum Aendern der Eigenschaften eines Unterkontos auf.
@@ -102,6 +103,15 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
     connect (zeitBox, SIGNAL(hourDown()), zeitAbzurBox, SLOT(decrHour()));
   }
 
+  // Dialog auf die richtige Größe und Position bringen
+  QPoint pos;
+  QSize size;
+  TimeMainWindow *timeMainWindow = static_cast<TimeMainWindow *>(qApp->mainWidget());
+  timeMainWindow->settings->getUnterKontoWindowGeometry(pos, size);
+  if (! size.isNull()) {
+    resize(size);
+    move(pos);
+  }
 };
 
 
@@ -134,6 +144,11 @@ void UnterKontoDialog::accept()
       }
   }
   emit entryChanged(abteilungsName,kontoName,unterKontoName,eintragIndex);
+
+  // Größe des Dialogs festhalten
+  TimeMainWindow *timeMainWindow = static_cast<TimeMainWindow *>(qApp->mainWidget());
+  timeMainWindow->settings->setUnterKontoWindowGeometry(pos(), size());
+
   QDialog::accept();
 };
 

@@ -30,7 +30,7 @@
 #include "qregexp.h"
 
 
-void KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
+bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
 {
   abtList->clear();
   char rest[800], konto[200], unterkonto[200];
@@ -57,11 +57,17 @@ void KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
 
         abtList->insertEintrag(abt,konto,unterkonto);
         abtList->setBeschreibung(abt,konto,unterkonto,beschreibung);
-      }  
+        abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);        
+      }
     }
     pclose(file);
+    return true;
   }
-  else std::cerr<<"Kann \"zeitkonten\" nicht ausfuehren."<<std::endl;
+  else
+  {
+    std::cerr<<"Kann \"zeitkonten\" nicht ausfuehren."<<std::endl;
+    return false;
+  }
 }
 
 

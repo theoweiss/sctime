@@ -45,6 +45,8 @@ class TimeMainWindow: public QMainWindow
     TimeMainWindow(AbteilungsListe *abtlist);
     QListView* getKontoTree() { return kontoTree; };
     virtual ~TimeMainWindow();
+    SCTimeXMLSettings* settings;
+
   public slots:
 
     void callUnterKontoDialog(QListViewItem * item);
@@ -118,7 +120,6 @@ class TimeMainWindow: public QMainWindow
     QAction* eintragRemoveAction;
     AbteilungsListe* abtList;
     StatusBar* statusBar;
-    SCTimeXMLSettings* settings;
     QMimeSourceFactory* mimeSourceFactory;
     ToolBar* toolBar;
     bool paused;

@@ -32,15 +32,16 @@
 /**
  * Liest aus einer ODBC-Datenbank nach abtList
  */
-void KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
+bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
 {
+  bool ret = true;
   // PluginDir setzen
   QApplication::addLibraryPath(execDir+"/lib");
   abtList->clear();
   QSqlDatabase *defaultDB = QSqlDatabase::addDatabase( "QODBC3" );
   if ( defaultDB ) {
     defaultDB->setDatabaseName( "zeit" );
- 
+
     if ( defaultDB->open() ) {
       QSqlQuery query( "select gb.name,konto.name,unterkonto.name,unterkonto.beschreibung from konto,unterkonto,gb WHERE konto.konto_id = unterkonto.konto_id AND gb.gb_id = konto.gb_id AND unterkonto.eintragbar=\'y\';", defaultDB);
       if ( query.isActive() ) {
@@ -50,21 +51,27 @@ void KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
           QString uko = query.value(2).toString().simplifyWhiteSpace();
           QString beschreibung = query.value(3).toString();
           abtList->insertEintrag(abt,ko,uko);
-          if (beschreibung.isEmpty()) 
+          if (beschreibung.isEmpty())
               beschreibung="";
           abtList->setBeschreibung(abt,ko,uko,beschreibung);
+          abtList->setUnterKontoFlags(abt,ko,uko,IS_IN_DATABASE,FLAG_MODE_OR);
         }
       }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;
-    } else 
-#ifdef WIN32 
-		QMessageBox::critical(NULL,"Error","Kann Datenbank nicht öffnen\n"+execDir+"/lib", QMessageBox::Ok, QMessageBox::NoButton,
-                             QMessageBox::NoButton);  	
+    } else
+        ret = false;
+#ifdef WIN32
+		QMessageBox::critical(NULL,"Error","Kann Datenbank nicht öffnen\n",
+                              QMessageBox::Ok, QMessageBox::NoButton,
+                              QMessageBox::NoButton);
 #else
 		std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
 #endif
-  } else std::cout<<"Kann Datenbanktreiber nicht initialisieren"<<std::endl;
+  } else {
+     ret = false;
+     std::cout<<"Kann Datenbanktreiber nicht initialisieren"<<std::endl;
+  }
 
   defaultDB->close();
-    
+  return ret;
 }
 

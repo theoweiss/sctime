@@ -21,8 +21,8 @@
 
 */
 
-#ifndef UKATTRLIST_H
-#define UKATTRLIST_H
+#ifndef EINTRAGSLISTE_H
+#define EINTRAGSLISTE_H
 
 #include <map>
 #include "unterkontoeintrag.h"
@@ -72,7 +72,7 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
     
     void clear()
     {
-      flags=0;
+      //flags=0;
       Map_Int_UnterKontoEintrag::clear();
     }
 

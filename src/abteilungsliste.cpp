@@ -44,6 +44,7 @@
  */
 AbteilungsListe::AbteilungsListe(const QDate _datum, KontoDatenInfo* ki): std::map<QString,KontoListe>()
 {
+  kontoDatenInfoSuccess = false;
   aktivAbteilung="";
   aktivKonto="";
   aktivUnterkonto="";
@@ -564,7 +565,7 @@ int AbteilungsListe::getEintragFlags(const QString& abteilung, const QString& ko
 }
 
 /**
- * Setzt die Flags fuer das angebene Unterkonto.
+ * Liefert die Flags fuer das angebene Unterkonto.
  */
 int AbteilungsListe::getUnterKontoFlags(const QString& abteilung, const QString& konto, const QString& unterkonto)
 {
@@ -580,6 +581,31 @@ int AbteilungsListe::getUnterKontoFlags(const QString& abteilung, const QString&
 }
 
 /**
+ * Gibt die Zeiten fuer das angebene Unterkonto zurueck.
+ */
+void AbteilungsListe::getUnterKontoZeiten(const QString& abteilung, const QString& konto,
+                                         const QString& unterkonto, int& sek, int& sekabzur)
+{
+
+    UnterKontoListe::iterator uki;
+    UnterKontoListe* ukl;
+
+    if (findUnterKonto(uki,ukl, abteilung, konto, unterkonto)) {
+       sek = 0;
+       sekabzur = 0;
+       EintragsListe* eintragsliste=&(uki->second);
+       for (EintragsListe::iterator etPos=eintragsliste->begin(); etPos!=eintragsliste->end(); ++etPos) {
+          sek += etPos->second.sekunden;
+          sekabzur += etPos->second.sekundenAbzur;
+       }
+    }
+    else {
+      sek = 0;
+      sekabzur = 0;
+    }
+}
+
+/**
  * Setzt die Flags fuer das angebene Konto.
  */
 int AbteilungsListe::getKontoFlags(const QString& abteilung, const QString& konto)
@@ -592,7 +618,9 @@ int AbteilungsListe::getKontoFlags(const QString& abteilung, const QString& kont
       return koi->second.getFlags();
 
       return true;
-    } else return 0;
+    }
+    else
+      return 0;
 }
 
 /**
@@ -710,13 +738,13 @@ void AbteilungsListe::clearKonten()
   for (abtPos=begin(); abtPos!=end(); ++abtPos) {
 
     KontoListe* kontoliste=&(abtPos->second);
-    kontoliste->setFlags(0);
+    //kontoliste->setFlags(0);
     for (KontoListe::iterator kontPos=kontoliste->begin(); kontPos!=kontoliste->end(); ++kontPos) {
       UnterKontoListe* unterkontoliste=&(kontPos->second);
-      unterkontoliste->setFlags(0);
+      //unterkontoliste->setFlags(0);
       for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {
         EintragsListe* eintragsliste=&(ukontPos->second);
-        eintragsliste->setFlags(0);
+        //eintragsliste->setFlags(0);
         eintragsliste->clear();
         eintragsliste->insert(EintragsListe::value_type(0,UnterKontoEintrag()));
       }
@@ -730,6 +758,10 @@ void AbteilungsListe::clearKonten()
 
   void AbteilungsListe::reload()
   {
-    kontoDatenInfo->readInto(this);
+    kontoDatenInfoSuccess = kontoDatenInfo->readInto(this);
   }
 
+  bool AbteilungsListe::kontoDatenInfoConnected()
+  {
+    return kontoDatenInfoSuccess;
+  }

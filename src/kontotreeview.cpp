@@ -221,6 +221,9 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
         KontoTreeItem* kontoitem= new KontoTreeItem( abteilungsitem, kontPos->first);
         UnterKontoListe* unterkontoliste=&(kontPos->second);
         for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {
+          if ((ukontPos->second.getFlags()&IS_DISABLED)!=0) {
+              continue; // Deaktivierte Unterkonten nicht anzeigen
+          }
           EintragsListe* eintragsliste=&(ukontPos->second);
           for (EintragsListe::iterator etPos=eintragsliste->begin(); etPos!=eintragsliste->end(); ++etPos) {
 
@@ -230,7 +233,7 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
                                                       tcAbzur.toString() , etPos->second.kommentar);
              // newItem->setBold((etPos->second.kommentar!="")||(etPos->second.sekunden!=0)||(etPos->second.sekundenAbzur!=0));
             }
-            //Unschoen, langsam! Sorgt dafuer, dass das Konto in Persoenliche Konten kommt
+            // Sorgt dafuer, dass das Konto in Persoenliche Konten kommt
             if ((etPos->second.flags&UK_PERSOENLICH)||(etPos!=eintragsliste->begin()))
               refreshItem(abtPos->first,kontPos->first,ukontPos->first,etPos->first);
           }
@@ -297,7 +300,10 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
     ukoi=new KontoTreeItem(koi,uko);
     itemFound=true;
   }
-  
+
+  if ((etl->getFlags()&IS_DISABLED)!=0)
+    return; // Deaktivierte Unterkonten nicht anfassen
+
   if (itemFound) {
     bool etiFound=(eti!=NULL);
     ukHasSubTree=(etl->size()>1);

@@ -41,6 +41,8 @@ class SCTimeXMLSettings
       mainwindowPosition = QPoint(0,0);
       mainwindowSize = QSize(700,400);
       alwaysSaveEintrag = false;
+      unterKontoWindowPosition = QPoint(0,0);
+      unterKontoWindowSize = QSize(0,0);
     }
 
     void writeSettings();
@@ -58,13 +60,23 @@ class SCTimeXMLSettings
         mainwindowPosition=pos;
         mainwindowSize=size;
     };
-    
     void getMainWindowGeometry(QPoint& pos, QSize& size)
     {
         pos  = mainwindowPosition;
         size = mainwindowSize;
     };
     
+    void setUnterKontoWindowGeometry(const QPoint& pos, const QSize& size)
+    {
+        unterKontoWindowPosition = pos;
+        unterKontoWindowSize = size;
+    };
+    void getUnterKontoWindowGeometry(QPoint& pos, QSize& size)
+    {
+        pos = unterKontoWindowPosition;
+        size = unterKontoWindowSize;
+    };
+
     int timeIncrement() { return timeInc; };
 
     int fastTimeIncrement() { return fastTimeInc; };
@@ -92,11 +104,12 @@ class SCTimeXMLSettings
     int timeInc,fastTimeInc;
     
     QPoint mainwindowPosition;
-    
     QSize mainwindowSize;
 
     bool alwaysSaveEintrag;
     
+    QPoint unterKontoWindowPosition;
+    QSize unterKontoWindowSize;
 };
 
 

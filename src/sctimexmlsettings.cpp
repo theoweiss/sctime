@@ -1,5 +1,7 @@
 /* $Id: */
 
+#include <iostream>
+
 #include "sctimexmlsettings.h"
 #include "abteilungsliste.h"
 #include "qfile.h"
@@ -56,7 +58,7 @@ void SCTimeXMLSettings::writeShellSkript()
              if (firstInBereich) {
                stream<<"\n# Bereich: "<<abt<<"\n";
                firstInBereich=false;
-             }  
+             }
              QString kommentar=etPos->second.kommentar.replace(apostrophExp,""); // Apostrophe nicht in Skript speichern!
              stream<<zeitKommando<<"  "<<
                      abtList->getDatum().toString("dd.MM.yyyy")<<"  "<<
@@ -95,7 +97,7 @@ void SCTimeXMLSettings::readSettings(bool global)
     filename=configDir+"/settings.xml";
   else
     filename=configDir+"/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
-  
+
   QFile f( filename );
   if ( !f.open( IO_ReadOnly ) ) {
       #ifdef READ_OBSOLETE_SETTINGS
@@ -139,7 +141,7 @@ void SCTimeXMLSettings::readSettings(bool global)
               if (elem2.attribute("persoenlich")=="yes")
                 abtList->setKontoFlags(abteilungstr,kontostr,UK_PERSOENLICH,FLAG_MODE_OR);
               else
-                if (elem2.attribute("persoenlich")=="no")
+                //if (elem2.attribute("persoenlich")=="no")
                   abtList->setKontoFlags(abteilungstr,kontostr,UK_PERSOENLICH,FLAG_MODE_NAND);
 
               bool kontoPers=((abtList->getKontoFlags(abteilungstr,kontostr))&UK_PERSOENLICH);
@@ -150,21 +152,28 @@ void SCTimeXMLSettings::readSettings(bool global)
                   if (elem3.tagName()=="unterkonto") {
                     QString unterkontostr=elem3.attribute("name");
                     if (unterkontostr.isNull()) continue;
-                    abtList->insertUnterKonto(abteilungstr,kontostr,unterkontostr);
+                    abtList->insertUnterKonto(abteilungstr,kontostr,unterkontostr);                    
                     if (elem3.attribute("open")=="yes")
-                      abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,IS_CLOSED,FLAG_MODE_NAND);
+                      abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,
+                                                  IS_CLOSED,FLAG_MODE_NAND);
                     if (elem3.attribute("open")=="no")
-                      abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,IS_CLOSED,FLAG_MODE_OR);                    
+                      abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,
+                                                  IS_CLOSED,FLAG_MODE_OR);
                     if (elem3.attribute("persoenlich")=="yes")
-                      abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,UK_PERSOENLICH,FLAG_MODE_OR);
+                      abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,
+                                                  UK_PERSOENLICH,FLAG_MODE_OR);
                     else
                       if (elem3.attribute("persoenlich")=="no")
-                        abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,UK_PERSOENLICH,FLAG_MODE_NAND);
+                        abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,
+                                                    UK_PERSOENLICH,FLAG_MODE_NAND);
                       else
-                        if (kontoPers) abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,UK_PERSOENLICH,FLAG_MODE_OR);
+                        if (kontoPers) abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,
+                                                                   UK_PERSOENLICH,FLAG_MODE_OR);
+                        else abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,
+                                                                   UK_PERSOENLICH,FLAG_MODE_NAND);
 
-                    bool ukontPers=((abtList->getUnterKontoFlags(abteilungstr,kontostr,unterkontostr))&UK_PERSOENLICH);
-
+                    bool ukontPers=((abtList->getUnterKontoFlags(abteilungstr,kontostr,unterkontostr))
+                                    &UK_PERSOENLICH);
                     bool dummydeleted=false;
 
                     for( QDomNode node4 = elem3.firstChild(); !node4.isNull(); node4 = node4.nextSibling() ) {
@@ -187,20 +196,28 @@ void SCTimeXMLSettings::readSettings(bool global)
                             abtList->insertEintrag(abteilungstr,kontostr,unterkontostr,idx);
                           }
                           if (elem4.attribute("persoenlich")=="yes")
-                            abtList->setEintragFlags(abteilungstr,kontostr,unterkontostr,idx,UK_PERSOENLICH,FLAG_MODE_OR);
+                            abtList->setEintragFlags(abteilungstr,kontostr,unterkontostr,idx,
+                                                     UK_PERSOENLICH,FLAG_MODE_OR);
                           else
                             if (elem4.attribute("persoenlich")=="no")
-                              abtList->setEintragFlags(abteilungstr,kontostr,unterkontostr,idx,UK_PERSOENLICH,FLAG_MODE_NAND);
+                              abtList->setEintragFlags(abteilungstr,kontostr,unterkontostr,idx,
+                                                       UK_PERSOENLICH,FLAG_MODE_NAND);
                             else
-                              if (ukontPers) abtList->setEintragFlags(abteilungstr,kontostr,unterkontostr,idx,UK_PERSOENLICH,FLAG_MODE_OR);
+                              if (ukontPers) abtList->setEintragFlags(abteilungstr,kontostr,unterkontostr,
+                                                                      idx,UK_PERSOENLICH,FLAG_MODE_OR);
+                              else abtList->setEintragFlags(abteilungstr,kontostr,unterkontostr,
+                                                                      idx,UK_PERSOENLICH,FLAG_MODE_NAND);
                           if (!elem4.attribute("sekunden").isNull()) {
-                            abtList->setSekunden(abteilungstr,kontostr,unterkontostr,idx,elem4.attribute("sekunden").toInt(),true);
+                            abtList->setSekunden(abteilungstr,kontostr,unterkontostr,idx,
+                                                 elem4.attribute("sekunden").toInt(),true);
                           }
                           if (!elem4.attribute("abzurechnende_sekunden").isNull()) {
-                            abtList->setSekundenAbzur(abteilungstr,kontostr,unterkontostr,idx,elem4.attribute("abzurechnende_sekunden").toInt());
+                            abtList->setSekundenAbzur(abteilungstr,kontostr,unterkontostr,idx,
+                                                      elem4.attribute("abzurechnende_sekunden").toInt());
                           }
                           if (!elem4.attribute("kommentar").isNull()) {
-                            abtList->setKommentar(abteilungstr,kontostr,unterkontostr,idx,elem4.attribute("kommentar"));
+                            abtList->setKommentar(abteilungstr,kontostr,unterkontostr,idx,
+                                                  elem4.attribute("kommentar"));
                           }
                         }
                       }
@@ -213,11 +230,37 @@ void SCTimeXMLSettings::readSettings(bool global)
                           abtList->insertEintrag(abteilungstr,kontostr,unterkontostr,0);
                         }
                       }
-                      abtList->setEintragFlags(abteilungstr,kontostr,unterkontostr,etl->begin()->first,UK_PERSOENLICH,FLAG_MODE_OR);
+                      abtList->setEintragFlags(abteilungstr,kontostr,unterkontostr,
+                                               etl->begin()->first,UK_PERSOENLICH,FLAG_MODE_OR);
+                    }
+                    if (((abtList->getUnterKontoFlags(abteilungstr,kontostr,unterkontostr)&IS_IN_DATABASE)==0)
+                        &&(abtList->kontoDatenInfoConnected()))
+                    {
+                       int sek,sekabzur;
+                       abtList->getUnterKontoZeiten(abteilungstr,kontostr,unterkontostr,sek,sekabzur);
+                       if ((sek==0)&&(sekabzur==0)) {
+                          abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,IS_DISABLED,FLAG_MODE_OR);
+                       }
+                       else
+                         abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,IS_DISABLED,FLAG_MODE_NAND);
                     }
                   }
                 }
               }
+            }
+            if (elem2.tagName()=="kontodlgwindowposition") {
+              QString xstr=elem2.attribute("x");
+              if (xstr.isNull()) continue;
+              QString ystr=elem2.attribute("y");
+              if (ystr.isNull()) continue;
+              unterKontoWindowPosition=QPoint(xstr.toInt(),ystr.toInt());
+            }
+            if (elem2.tagName()=="kontodlgwindowsize") {
+              QString xstr=elem2.attribute("width");
+              if (xstr.isNull()) continue;
+              QString ystr=elem2.attribute("height");
+              if (ystr.isNull()) continue;
+              unterKontoWindowSize=QSize(xstr.toInt(),ystr.toInt());
             }
           }
         }
@@ -328,7 +371,17 @@ void SCTimeXMLSettings::writeSettings(bool global)
     if (alwaysSaveEintrag) always="yes";
     saveeintragtag.setAttribute("always",always);
     generaltag.appendChild(saveeintragtag);
-  }  
+
+    QDomElement kontodlgwindowpositiontag = doc.createElement( "kontodlgwindowposition" );
+    kontodlgwindowpositiontag.setAttribute("x",unterKontoWindowPosition.x());
+    kontodlgwindowpositiontag.setAttribute("y",unterKontoWindowPosition.y());
+    generaltag.appendChild(kontodlgwindowpositiontag);
+
+    QDomElement kontodlgwindowsizetag = doc.createElement("kontodlgwindowsize");
+    kontodlgwindowsizetag.setAttribute("width",unterKontoWindowSize.width());
+    kontodlgwindowsizetag.setAttribute("height",unterKontoWindowSize.height());
+    generaltag.appendChild(kontodlgwindowsizetag);
+  }
 
   QDomElement aktivtag = doc.createElement("aktives_konto");
   QString abt,ko,uko;
@@ -464,7 +517,8 @@ QString BackToSlash(const QString& str)
  * Liest die obsoleten Einstellungen zu dem Eintrag id;
  */
 
-void SCTimeXMLSettings::readObsSetting(QSettings& settings, const QString& id, const QString& datumsID, bool global)
+void SCTimeXMLSettings::readObsSetting(QSettings& settings, const QString& id,
+                                       const QString& datumsID, bool global)
 {
   QString t,abt,ko,uko;
   int idx=0;
@@ -520,7 +574,9 @@ void SCTimeXMLSettings::readObsSettings(bool global)
   settings.insertSearchPath(QSettings::Unix, configDir);
   if (global) {
     QString ap=settings.readEntry("/sctime/AktivesProjekt", "");
-    abtList->setAsAktiv(BackToSlash(ap.section(" ",2).section("/",0,0)),BackToSlash(ap.section(" ",0,0)),BackToSlash(ap.section(" ",1,1)),ap.section("/",1,1).toInt());
+    abtList->setAsAktiv(BackToSlash(ap.section(" ",2).section("/",0,0)),
+                        BackToSlash(ap.section(" ",0,0)),
+                        BackToSlash(ap.section(" ",1,1)),ap.section("/",1,1).toInt());
   }
 
   QString datumsID="/zeit-"+abtList->getDatum().toString("yyyy-MM-dd");
