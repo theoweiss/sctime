@@ -220,8 +220,8 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
 
   abzurMin5PlusAction = new QAction( "Abrechenbare Zeit incrementieren", QPixmap((const char **)hi22_action_1uparrow_half ),
                                       "Abrechenbare Zeit incrementieren", 0, this, "+5Min" );
-  abzurMin5MinusAction = new QAction( "Zeit decrementieren", QPixmap((const char **)hi22_action_1downarrow_half ),
-                                      "Zeit decrementieren", 0, this, "-5Min" );
+  abzurMin5MinusAction = new QAction( "Abrechenbare Zeit decrementieren", QPixmap((const char **)hi22_action_1downarrow_half ),
+                                      "Abrechenbare Zeit decrementieren", 0, this, "-5Min" );
 
   fastAbzurPlusAction = new QAction( "Abrechenbare Zeit schnell incrementieren", QPixmap((const char **)hi22_action_2uparrow_half ),
                                              "Abrechenbare Zeit schnell incrementieren", 0, this, "+30Min" );
