@@ -340,7 +340,7 @@ void TimeMainWindow::configClickMode(bool singleClickActivation)
     disconnect(kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)),
                this, SLOT(callUnterKontoDialog(QListViewItem *)));
 
-    if (singleClickActivation) {
+    if (!singleClickActivation) {
         connect(kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)),
                 this, SLOT(callUnterKontoDialog(QListViewItem *)) );
         connect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)),
