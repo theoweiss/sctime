@@ -21,6 +21,8 @@
 
 */
 
+#define MAX_WORKTIME 10*60*60 // Warn if more time is spent
+
 #include "timemainwindow.h"
 #include "qpopupmenu.h"
 #include "qmenubar.h"
@@ -306,7 +308,7 @@ void TimeMainWindow::customEvent( QCustomEvent * e)
    QMainWindow::customEvent(e);
 }
 
-/** Wird durch einen Timer einmal pro Minute aufgerufen, und sorgt fuer die 
+/** Wird durch einen Timer einmal pro Minute aufgerufen, und sorgt fuer die
   * korrekte Aktualisierung der Objekte.
 */
 void TimeMainWindow::minutenUhr()
@@ -429,6 +431,7 @@ void TimeMainWindow::addDeltaToZeit(int delta, bool abzurOnly)
  */
 void TimeMainWindow::zeitChanged()
 {
+  static int last=0;
   int zeitAbzur, zeit;
   abtList->getGesamtZeit(zeit, zeitAbzur);
   TimeCounter tc(zeit);
@@ -436,6 +439,12 @@ void TimeMainWindow::zeitChanged()
   statusBar->setDiff(abtList->getZeitDifferenz());
   emit gesamtZeitChanged(zeit);
   emit gesamtZeitAbzurChanged(zeitAbzur);
+  // Beim ersten ueberschreiten von MAX_WORKTIME
+  if ((zeit>MAX_WORKTIME)&&(last<=MAX_WORKTIME)) {
+    QMessageBox::warning(this,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
+                       QMessageBox::Ok | QMessageBox::Default,0);
+  }
+  last=zeit;
 }
 
 
@@ -536,8 +545,8 @@ void TimeMainWindow::eintragEntfernen()
       return;
   }
 
-  abtList->setSekunden(abt,ko,uko,idx,0); // Explizit vorher auf Null setzen, um die Gesamtzeit nicht zu verwirren.
-
+  abtList->setSekunden(abt,ko,uko,idx,0); // Explizit vorher auf Null setzen, um die Gesamtzeit
+                                          // nicht zu verwirren.
   abtList->deleteEintrag(abt,ko,uko,idx);
 
   kontoTree->sucheItem(PERSOENLICHE_KONTEN_STRING,abt,ko,uko,idx,topi,abti,koi,ukoi,eti);
