@@ -228,9 +228,9 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
   connect(this,SIGNAL(eintragSelected(bool)), min5MinusAction, SLOT(setEnabled(bool)));
   connect(this,SIGNAL(eintragSelected(bool)), fastPlusAction, SLOT(setEnabled(bool)));
   connect(this,SIGNAL(eintragSelected(bool)), fastMinusAction, SLOT(setEnabled(bool)));
-  connect(this,SIGNAL(eintragSelected(bool)), eintragActivateAction, SLOT(setEnabled(bool)));
   connect(this,SIGNAL(eintragSelected(bool)), eintragAddAction, SLOT(setEnabled(bool)));
 
+  connect(this,SIGNAL(aktivierbarerEintragSelected(bool)), eintragActivateAction, SLOT(setEnabled(bool)));
 
   editUnterKontoAction->addTo(toolBar);
   saveAction->addTo(toolBar);
@@ -579,7 +579,7 @@ void TimeMainWindow::eintragEntfernen()
  */
 void TimeMainWindow::changeDate(const QDate& datum)
 {
-  bool currentDateSelected = (datum==QDate::currentDate());
+  bool currentDateSel = (datum==QDate::currentDate());
 
   kontoTree->flagClosedPersoenlicheItems();
   settings->writeSettings(abtList);
@@ -587,10 +587,10 @@ void TimeMainWindow::changeDate(const QDate& datum)
   if (abtListToday!=abtList) {
     settings->writeSettings(abtListToday);
     settings->writeShellSkript(abtListToday);
-    if (currentDateSelected)
+    if (currentDateSel)
       delete abtList;
   }
-  if (currentDateSelected) {
+  if (currentDateSel) {
     abtList=abtListToday;
     if (abtListToday->getDatum()!=datum)
       abtListToday->setDatum(datum);
@@ -606,7 +606,8 @@ void TimeMainWindow::changeDate(const QDate& datum)
   kontoTree->closeFlaggedPersoenlicheItems();
   kontoTree->showAktivesProjekt();
   zeitChanged();
-  statusBar->dateWarning(!currentDateSelected, datum);
+  emit (currentDateSelected(currentDateSel));
+  statusBar->dateWarning(!currentDateSel, datum);
 }
 
 void TimeMainWindow::refreshKontoListe()
@@ -696,12 +697,15 @@ void TimeMainWindow::changeShortCutSettings(QListViewItem * item)
     flagsChanged(abt,ko,uko,idx);
     inPersKontAction->setEnabled(true);
     emit eintragSelected(true);
+    if (abtListToday==abtList)
+      emit aktivierbarerEintragSelected(true);
   }
   else {
     // Auch bei Konten und Unterkonten in Pers. Konten PersKontAction auf On stellen.
     inPersKontAction->setOn((item&&(top==PERSOENLICHE_KONTEN_STRING)&&(item->depth()>=2)&&(item->depth()<=3)));
     inPersKontAction->setEnabled((item&&(item->depth()>=2)&&(item->depth()<=3)));
     emit eintragSelected(false);
+    emit aktivierbarerEintragSelected(false);
     eintragRemoveAction->setEnabled(false);
   }
   inPersoenlicheKontenAllowed=true; // Wieder enablen.
@@ -826,16 +830,13 @@ void TimeMainWindow::setAktivesProjekt(QListViewItem * item)
  */
 void TimeMainWindow::callDateDialog()
 {
-  #ifndef HAS_NO_DATETIMEEDIT
-  DateDialog * dateDialog=new DateDialog(QDate::currentDate (), this);
+  DateDialog * dateDialog=new DateDialog(abtList->getDatum(), this);
   connect(dateDialog, SIGNAL(dateChanged(const QDate&)), this, SLOT(changeDate(const QDate&)));
   dateDialog->show();
-  #endif
-
 }
 
 #ifndef NO_TEXTEDIT
-/** 
+/**
  *  Baut den Hilfe-Dialog auf.
  */
 

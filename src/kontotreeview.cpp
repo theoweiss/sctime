@@ -358,7 +358,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
 
     eti->setBold((etiter->second.flags)&UK_PERSOENLICH);
 
-    if (abtList->isAktiv(abt,ko,uko,idx))
+    if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
       {
         eti->setPixmap(1,*aktivPixmap);
         setSelected(eti,true);
@@ -400,7 +400,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       }
       topi->setOpen(true); abti->setOpen(true); koi->setOpen(true); ukoi->setOpen(true);
      // eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
-      if (abtList->isAktiv(abt,ko,uko,idx))
+      if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
         eti->setPixmap(1,*aktivPixmap);
       else
         eti->setPixmap(1,emptyPixmap);
@@ -424,7 +424,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
         }
       }
 
-      if (abtList->isAktiv(abt,ko,uko,idx))
+      if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
         eti->setPixmap(1,*aktivPixmap);
       else
         eti->setPixmap(1,emptyPixmap);

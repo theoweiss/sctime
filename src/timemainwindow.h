@@ -128,6 +128,17 @@ class TimeMainWindow: public QMainWindow
      */
     void eintragSelected(bool isEintrag);
 
+    /** Wird mit true ausgeloest, falls auf das aktuelle Datum gewechselt wird, bei allen anderen
+        Datumswechseln mit false. */
+    void currentDateSelected(bool);
+
+    /**
+     * Wird mit true ausgeloest, wenn ein Eintrag im Kontobaum
+     * selektiert wurde, der aktivierbar ist, bei anderen Selektionen (Konto,Abteilung oder
+     * Unterkonto mit mehreren Eintraegen) mit false
+     */
+    void aktivierbarerEintragSelected(bool isActivable);
+
   private:
     KontoTreeView* kontoTree;
     UnterKontoDialog* unterKontoDialog;
