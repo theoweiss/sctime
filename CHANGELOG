@@ -5,3 +5,9 @@
   persoenlichen Konten.
 * Kommentarfenstergröße wird gespeichert (Danke an Marcus Camen).
 * Diverse Bugfixes.
+
+--------- Version 0.42 -----------
+* Preferences Dialog
+* Poweruser Ansicht
+* Kommentare fuer naechsten Tag uebernehmen
+* gideon import (Marcus Camen)
