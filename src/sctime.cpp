@@ -53,6 +53,10 @@
 #include <errno.h>
 #endif
 
+#if defined(__GNUC__) && (__GNUC__ >=4)
+#include <errno.h>
+#endif
+
 #include "globals.h"
 #include "qdir.h"
 #include "qfileinfo.h"
