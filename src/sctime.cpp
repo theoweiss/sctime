@@ -160,6 +160,9 @@ static void closelock(LOCK_FD fd , const QString &name)
 SCTimeApp* sctimeApp;
 
 #ifndef WIN32
+#ifndef sighandler_t
+typedef void (*sighandler_t)(int);
+#endif
 sighandler_t OldSigIntHandler;
 sighandler_t OldSigTermHandler;
 
