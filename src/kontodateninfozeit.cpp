@@ -39,13 +39,16 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
 
   if ((file = popen("zeitkonten --beschreibung", "r")) != NULL)
   {
+    int unterkontoCounter=0;
+
     QRegExp kostenstelle("\\s.\\d\\d\\d\\d\\d\\b");
     while (!feof(file)) {
-      // Konto, unterkonto sind eindeutig durch leerzeichen getrennt, 
+      // Konto, unterkonto sind eindeutig durch leerzeichen getrennt,
       // der Rest muss gesondert behandelt werden.
       if (fscanf(file,"%s%s%[^\n]",konto,unterkonto,rest)==3) {
         // Falls alle drei Strings korrekt eingelesen wurden...
-                
+
+        unterkontoCounter++;
         QString qstringrest(rest), abt,beschreibung;
 
         // Kostenstelle trennt Abteilung von Beschreibung, also
@@ -61,7 +64,7 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
       }
     }
     pclose(file);
-    return true;
+    return (unterkontoCounter>0);
   }
   else
   {

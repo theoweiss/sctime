@@ -253,13 +253,16 @@ void SCTimeXMLSettings::readSettings(bool global)
                       abtList->setEintragFlags(abteilungstr,kontostr,unterkontostr,
                                                etl->begin()->first,UK_PERSOENLICH,FLAG_MODE_OR);
                     }
+                    // Eintraege deaktivieren, falls eine Verbindung zur Datenbank aufgebaut werden konnte,
+                    // sie dort aber nicht erscheinen.
                     if (((abtList->getUnterKontoFlags(abteilungstr,kontostr,unterkontostr)&IS_IN_DATABASE)==0)
                         &&(abtList->kontoDatenInfoConnected()))
                     {
                        int sek,sekabzur;
                        abtList->getUnterKontoZeiten(abteilungstr,kontostr,unterkontostr,sek,sekabzur);
+                       // Nur deaktivieren, falls nicht bereits auf dieses Konto gebucht wurde
                        if ((sek==0)&&(sekabzur==0)) {
-                          abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,IS_DISABLED,FLAG_MODE_OR);
+                         abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,IS_DISABLED,FLAG_MODE_OR);
                        }
                        else
                          abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,IS_DISABLED,FLAG_MODE_NAND);
