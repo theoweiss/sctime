@@ -1,0 +1,149 @@
+/*
+
+    $Id$
+
+    Copyright (C) 2003 Florian Schmitt, Science and Computing AG
+                       f.schmitt@science-computing.de
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+*/
+
+#ifndef ABTEILUNGSLISTE_H
+#define  ABTEILUNGSLISTE_H
+
+#include "kontoliste.h"
+#include "qdatetime.h"
+#include <iostream>
+
+#define IS_CLOSED 2
+#define FLAG_MODE_OVERWRITE 0
+#define FLAG_MODE_OR 1
+#define FLAG_MODE_NAND 2
+#define FLAG_MODE_XOR 3
+
+class KontoDatenInfo;
+
+/** AbteilungsListe ist eine map, die einem Abteilungsnamen eine KontoListe zuordnet.
+ * Desweiteren finden sich hier Methoden zum Zugriff auf die zu darin gespeicherten
+ * Abteilungen, Konten, Unterkonten und Eintraege.
+ * Die urspruengliche Idee, war, den Aufbau der darunterliegenden Maps vor den Anwendenden
+ * Klassen zu verbergen, und nur ueber die Strings auf die Konten zuzugreifen, denn
+ * Strings lassen sich sehr einfach aus dem Listview extrahieren.
+ * Leider hat das im Laufe der Zeit zu einigen Methoden in Abteilungsliste gefuehrt
+ * die sich stark aehneln. Hier sollte vielleicht mal umgebaut und verallgemeinert werden, was aber
+ * Aenderungen in allen Bereichen des Programms nach sich zieht.
+ */
+
+class AbteilungsListe: public std::map<QString,KontoListe>
+{
+  public:
+
+    AbteilungsListe(const QDate _datum, KontoDatenInfo* ki);
+
+    bool findKonto(KontoListe::iterator& itKo, KontoListe* &kontoliste, const QString& abteilung, const QString& konto);
+
+    bool findUnterKonto(UnterKontoListe::iterator& itUk, UnterKontoListe* &unterkontoliste, const QString& abteilung, const QString& konto, const QString& unterkonto);
+
+    bool findEintrag(EintragsListe::iterator& itEt, EintragsListe* &eintragsliste, const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
+
+    QString findAbteilungOfKonto(const QString& konto);
+
+    KontoListe* insertAbteilung(const QString& abteilung);
+
+    UnterKontoListe* insertKonto(const QString& abteilung,const QString& konto);
+
+    EintragsListe* insertUnterKonto(const QString& abteilung,const QString& konto,const QString& unterkonto);
+
+    int insertEintrag(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx=-1, UnterKontoEintrag eintrag=UnterKontoEintrag());
+
+    void deleteEintrag(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
+
+    bool getEintrag(UnterKontoEintrag& uk, const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
+
+    bool setEintrag(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, const UnterKontoEintrag& uk, bool regular=false);
+
+    void setBeschreibung(const QString& abteilung, const QString& konto, const QString& unterkonto, const QString& beschreibung);
+
+    QString getBeschreibung(const QString& abteilung, const QString& konto, const QString& unterkonto);
+
+    bool setKommentar(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, const QString& kommentar);
+
+    bool setSekunden(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, int sekunden, bool regular=false);
+
+    bool setSekundenAbzur(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, int sekundenabzur);
+
+    void minuteVergangen(bool abzur);
+
+    void changeZeit(const QString& Abteilung,const QString& Konto,const QString& Unterkonto,int Eintrag, int delta, bool regular=false);
+
+    bool setEintragFlags(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, int flags, int mode=FLAG_MODE_OVERWRITE);
+
+    bool setUnterKontoFlags(const QString& abteilung, const QString& konto, const QString& unterkonto, int flags, int mode=FLAG_MODE_OVERWRITE);
+
+    bool setKontoFlags(const QString& abteilung, const QString& konto, int flags, int mode=FLAG_MODE_OVERWRITE);
+    
+    bool setAbteilungFlags(const QString& abteilung, int flags, int mode=FLAG_MODE_OVERWRITE);
+
+    void setAllEintragFlagsInKonto(const QString& abteilung, const QString& konto, int flags);
+
+    void setAllEintragFlagsInUnterKonto(const QString& abteilung, const QString& konto, const QString& unterkonto, int flags);
+
+    void moveEintragPersoenlich(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, bool persoenlich);
+
+    void moveUnterKontoPersoenlich(const QString& abteilung, const QString& konto, const QString& unterkonto, bool persoenlich);
+
+    void moveKontoPersoenlich(const QString& abteilung, const QString& konto, bool persoenlich);
+
+    int getEintragFlags(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
+    
+    int getAbteilungFlags(const QString& abteilung);
+    
+    int getKontoFlags(const QString& abteilung, const QString& konto);
+    
+    int getUnterKontoFlags(const QString& abteilung, const QString& konto, const QString& unterkonto);
+      
+    void getAktiv(QString& abteilung, QString& konto, QString& unterkonto, int& idx);
+
+    void setAsAktiv(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
+
+    bool isAktiv(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
+
+    bool isPersoenlich(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
+
+    void getGesamtZeit(int& sek, int& sekabzur);
+    
+    int getZeitDifferenz();
+    
+    const QDate& getDatum();
+
+    void setDatum(const QDate& datum);
+    
+    void clearKonten();
+    
+    void reload();
+
+  private:
+
+    QString aktivAbteilung, aktivKonto, aktivUnterkonto;
+    KontoDatenInfo* kontoDatenInfo;
+    int aktivEintrag;
+    int zeitDifferenz;
+    QDate datum;
+
+};
+
+
+#endif
