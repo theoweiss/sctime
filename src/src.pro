@@ -4,7 +4,7 @@
 # Target is an application:  ../bin/sctime
 
 TEMPLATE = app
-VERSIONSTR = \"0.42alpha\"
+VERSIONSTR = \"0.42\"
 CONFIG += release warn_on qt
 OBJECTS_DIR = ../obj
 TARGET = ../bin/sctime
