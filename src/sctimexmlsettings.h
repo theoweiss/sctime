@@ -30,6 +30,7 @@
 #include "qpoint.h"
 #include "qsize.h"
 #include <iostream>
+#include <vector>
 
 class SCTimeXMLSettings
 {
@@ -46,6 +47,7 @@ class SCTimeXMLSettings
       _powerUserView = false;
       _singleClickActivation = false;
       _maxWorkingTime=MAX_WORKTIME_DEFAULT;
+      defaultcommentfiles.clear();
       unterKontoWindowPosition = QPoint(0,0);
       unterKontoWindowSize = QSize(0,0);
     }
@@ -61,7 +63,7 @@ class SCTimeXMLSettings
     void setFastTimeIncrement(int sekunden) { fastTimeInc=sekunden; };
 
     bool moveToCheckedIn(AbteilungsListe* abtList);
-    
+
     void setMainWindowGeometry(const QPoint& pos, const QSize& size)
     {
         mainwindowPosition=pos;
@@ -72,7 +74,7 @@ class SCTimeXMLSettings
         pos  = mainwindowPosition;
         size = mainwindowSize;
     };
-    
+
     void setUnterKontoWindowGeometry(const QPoint& pos, const QSize& size)
     {
         unterKontoWindowPosition = pos;
@@ -107,20 +109,25 @@ class SCTimeXMLSettings
     {
       return _powerUserView;
     }
-    
+
     void setSingleClickActivation(bool activate)
     {
         _singleClickActivation=activate;
     }
-    
+
     bool singleClickActivation()
     {
         return _singleClickActivation;
     }
-    
+
     int maxWorkingTime()
     {
        return _maxWorkingTime;
+    }
+
+    void getDefaultCommentFiles(std::vector<QString>& list)
+    {
+       list = defaultcommentfiles;
     }
 
 
@@ -133,15 +140,17 @@ class SCTimeXMLSettings
     QString zeitKommando;
 
     int timeInc,fastTimeInc;
-    
+
     QPoint mainwindowPosition;
     QSize mainwindowSize;
+
+    std::vector<QString> defaultcommentfiles;
 
     bool alwaysSaveEintrag;
     bool _powerUserView;
     bool _singleClickActivation;
     int _maxWorkingTime;
-    
+
     QPoint unterKontoWindowPosition;
     QSize unterKontoWindowSize;
 };

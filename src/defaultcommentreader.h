@@ -23,6 +23,7 @@
 #define DEFAULTCOMMENTREADER_H
 
 #include "abteilungsliste.h"
+#include <vector>
 
 class DefaultCommentReader
 {
@@ -32,7 +33,7 @@ class DefaultCommentReader
     {
     }
 
-    void read(AbteilungsListe* abtList);
+    void read(AbteilungsListe* abtList, const std::vector<QString>& xmlfilelist);
 };
 
 #endif

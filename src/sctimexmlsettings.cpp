@@ -45,7 +45,7 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
   QFile shellFile(configDir+filename);
 
   if (!shellFile.open(IO_WriteOnly)) {
-	  std::cout<<"Kann Ausgabedatei nicht schreiben: "<<configDir+filename<<std::endl;
+          std::cout<<"Kann Ausgabedatei nicht schreiben: "<<configDir+filename<<std::endl;
       return;
   }
 
@@ -200,7 +200,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
                   if (elem3.tagName()=="unterkonto") {
                     QString unterkontostr=elem3.attribute("name");
                     if (unterkontostr.isNull()) continue;
-                    abtList->insertUnterKonto(abteilungstr,kontostr,unterkontostr);                    
+                    abtList->insertUnterKonto(abteilungstr,kontostr,unterkontostr);
                     if (elem3.attribute("open")=="yes")
                       abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,
                                                   IS_CLOSED,FLAG_MODE_NAND);
@@ -325,7 +325,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
               QString secondsstr=elem2.attribute("seconds");
               if (secondsstr.isNull()) continue;
               _maxWorkingTime=secondsstr.toInt();
-            }           
+            }
             if (elem2.tagName()=="aktives_konto") {
               aktiveskontotag=elem2; // Aktives Konto merken und zum Schluss setzen, damit es vorher erzeugt wurde
             }
@@ -366,11 +366,18 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
               if (ystr.isNull()) continue;
               unterKontoWindowSize=QSize(xstr.toInt(),ystr.toInt());
             }
+            if (elem2.tagName()=="defaultcommentsfile") {
+                defaultcommentfiles.push_back(elem2.attribute("name","defaultcomments.xml"));
+            }
           }
         }
       }
     }
   }
+
+  // fixme: Hack fuer reibungsfreie Migration auf neue sctime Version...
+  if (defaultcommentfiles.empty())
+      defaultcommentfiles.push_back("defaultcomments.xml");
 
   if (!aktiveskontotag.isNull()) {
     QString abtstr=aktiveskontotag.attribute("abteilung");
@@ -409,12 +416,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   root.setAttribute("version",VERSIONSTR);
   doc.appendChild( root );
   QDomElement generaltag = doc.createElement( "general" );
-  
+
   if (global) {
     QDomElement timeinctag = doc.createElement( "timeincrement" );
     timeinctag.setAttribute("seconds",timeInc);
     generaltag.appendChild(timeinctag);
-  
+
     QDomElement fasttimeinctag = doc.createElement( "fasttimeincrement" );
     fasttimeinctag.setAttribute("seconds",fastTimeInc);
     generaltag.appendChild(fasttimeinctag);
@@ -427,18 +434,18 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
         QDomElement maxworktag = doc.createElement( "max_working_time" );
         maxworktag.setAttribute("seconds",_maxWorkingTime);
         generaltag.appendChild(maxworktag);
-    }    
-    
+    }
+
     QDomElement mainwindowpositiontag = doc.createElement( "windowposition" );
     mainwindowpositiontag.setAttribute("x",mainwindowPosition.x());
     mainwindowpositiontag.setAttribute("y",mainwindowPosition.y());
     generaltag.appendChild(mainwindowpositiontag);
-  
+
     QDomElement mainwindowsizetag = doc.createElement("windowsize");
     mainwindowsizetag.setAttribute("width",mainwindowSize.width());
     mainwindowsizetag.setAttribute("height",mainwindowSize.height());
-    generaltag.appendChild(mainwindowsizetag);  
-  
+    generaltag.appendChild(mainwindowsizetag);
+
     QDomElement saveeintragtag = doc.createElement("saveeintrag");
     QString always="no";
     if (alwaysSaveEintrag) always="yes";
@@ -450,7 +457,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     if (powerUserView()) on="yes";
     powerusertag.setAttribute("on",on);
     generaltag.appendChild(powerusertag);
-    
+
     QDomElement singleclicktag = doc.createElement("singleclickactivation");
     on="no";
     if (singleClickActivation()) on="yes";
@@ -466,6 +473,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     kontodlgwindowsizetag.setAttribute("width",unterKontoWindowSize.width());
     kontodlgwindowsizetag.setAttribute("height",unterKontoWindowSize.height());
     generaltag.appendChild(kontodlgwindowsizetag);
+
+    for (int i=0; i<defaultcommentfiles.size(); i++) {
+        QDomElement defaultcommentfiletag = doc.createElement("defaultcommentsfile");
+        defaultcommentfiletag.setAttribute("name",defaultcommentfiles[i]);
+        generaltag.appendChild(defaultcommentfiletag);
+    }
   }
 
   QDomElement aktivtag = doc.createElement("aktives_konto");
@@ -476,7 +489,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   aktivtag.setAttribute("konto",ko);
   aktivtag.setAttribute("unterkonto",uko);
   aktivtag.setAttribute("index",idx);
-  generaltag.appendChild(aktivtag);  
+  generaltag.appendChild(aktivtag);
 
   root.appendChild(generaltag);
 
@@ -493,7 +506,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
       konttag.setAttribute("name",kontostr);
 
       bool kontIsEmpty=true;
-      bool kontpers=((abtList->getKontoFlags(abteilungstr,kontostr))&UK_PERSOENLICH);      
+      bool kontpers=((abtList->getKontoFlags(abteilungstr,kontostr))&UK_PERSOENLICH);
       if (kontpers) {
         kontIsEmpty=false;
         konttag.setAttribute("persoenlich","yes");
@@ -537,12 +550,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
               }
               if (etPos->second.kommentar!="")
                 ettag.setAttribute("kommentar",etPos->second.kommentar);
-              if (!global) {  
+              if (!global) {
                 if (etPos->second.sekunden!=0)
                   ettag.setAttribute("sekunden",etPos->second.sekunden);
                 if (etPos->second.sekundenAbzur!=0)
                   ettag.setAttribute("abzurechnende_sekunden",etPos->second.sekundenAbzur);
-              }    
+              }
               ukonttag.appendChild (ettag);
             }
           }
@@ -570,7 +583,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   }
 
   QString filename;
-  
+
   if (global)
     filename=configDir+"/settings.xml";
   else
@@ -580,7 +593,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   if ( !f.open( IO_WriteOnly) ) {
       std::cerr<<"Kann Settings nicht speichern"<<std::endl;
       return;
-  }    
+  }
   QTextStream stream( & f);
 
   stream<<"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"<<endl;

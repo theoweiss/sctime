@@ -74,6 +74,7 @@
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
 TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
 {
+  std::vector<QString> xmlfilelist;
   QDate heute;
   abtListToday=new AbteilungsListe(heute.currentDate(),zk);
   abtList=abtListToday;
@@ -84,11 +85,12 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
   settings=new SCTimeXMLSettings();
   settings->readSettings(abtList);
   defaultCommentReader = new DefaultCommentReader();
-  defaultCommentReader->read(abtList);
+  settings->getDefaultCommentFiles(xmlfilelist);
+  defaultCommentReader->read(abtList,xmlfilelist);
 
   DefaultTagReader defaulttagreader;
   defaulttagreader.read(&defaultTags);
-  
+
   // restore size+position
   QSize size;
   QPoint pos;
@@ -108,7 +110,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
 
   statusBar = new StatusBar(this);
   toolBar   = new ToolBar(this);
-    
+
   configClickMode(settings->singleClickActivation());
 
   QPopupMenu * kontomenu = new QPopupMenu( this );
@@ -142,7 +144,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
   QAction* saveAction = new QAction( "Save", QPixmap((const char **)hi22_action_filesave ),
                                       "&Save", CTRL+Key_S, this, "save" );
   connect(saveAction, SIGNAL(activated()), this, SLOT(save()));
-  
+
   QAction* copyAction = new QAction( "Name ins Clipboard kopieren",
                                       "&Copy", CTRL+Key_C, this, "copy" );
   connect(copyAction, SIGNAL(activated()), this, SLOT(copyNameToClipboard()));
@@ -173,7 +175,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
   QAction* findKontoAction = new QAction( "Konto suchen",
                                       "&Suchen", CTRL+Key_F, this, "suchen" );
   connect(findKontoAction, SIGNAL(activated()), this, SLOT(callFindKontoDialog()));
-  
+
   QAction* refreshAction = new QAction( "Kontoliste neu laden",
                                        "&Kontoliste neu laden", CTRL+Key_R, this, "refresh" );
   connect(refreshAction, SIGNAL(activated()), this, SLOT(refreshKontoListe()));
@@ -325,27 +327,27 @@ void TimeMainWindow::showAdditionalButtons(bool show)
 
 void TimeMainWindow::configClickMode(bool singleClickActivation)
 {
-    disconnect(kontoTree, SIGNAL(mouseButtonClicked ( int, QListViewItem * , const QPoint & , int )), 
+    disconnect(kontoTree, SIGNAL(mouseButtonClicked ( int, QListViewItem * , const QPoint & , int )),
                this, SLOT(mouseButtonInKontoTreeClicked(int, QListViewItem * , const QPoint &, int )));
-    disconnect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)), 
+    disconnect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)),
                this, SLOT(callUnterKontoDialog(QListViewItem *)) );
-    disconnect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)), 
+    disconnect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)),
                this, SLOT(setAktivesProjekt(QListViewItem *)));
     disconnect(kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)),
                this, SLOT(callUnterKontoDialog(QListViewItem *)));
-               
-    if (singleClickActivation) {        
-        connect(kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)), 
+
+    if (singleClickActivation) {
+        connect(kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)),
                 this, SLOT(callUnterKontoDialog(QListViewItem *)) );
-        connect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)), 
+        connect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)),
                 this, SLOT(setAktivesProjekt(QListViewItem *)));
         }
-    else {            
+    else {
         connect(kontoTree, SIGNAL(mouseButtonClicked ( int, QListViewItem * , const QPoint & , int )),
                    this, SLOT(mouseButtonInKontoTreeClicked(int, QListViewItem * , const QPoint &, int )));
         connect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)),
                 this, SLOT(callUnterKontoDialog(QListViewItem *)) );
-    }               
+    }
 }
 
 void TimeMainWindow::customEvent( QCustomEvent * e)
@@ -363,10 +365,10 @@ void TimeMainWindow::copyNameToClipboard()
 }
 
 void TimeMainWindow::mouseButtonInKontoTreeClicked(int button, QListViewItem * item, const QPoint & pos, int c)
-{    
+{
     if ((button==1) && (item)) {
         setAktivesProjekt(item);
-    }    
+    }
 }
 
 /** Wird durch einen Timer einmal pro Minute aufgerufen, und sorgt fuer die
@@ -507,7 +509,7 @@ void TimeMainWindow::zeitChanged()
     // da es andernfalls erst nach dem Schliessen der Box gesetzt wird, was bedeuten wuerde,
     // dass (falls der user nicht sofort reagiert), jede Minute eine neue Box aufpoppt
     // => nix gut am naechsten morgen, wenn man das ausloggen vergisst :-)
-    last=zeit;    
+    last=zeit;
     QMessageBox::warning(this,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
                        QMessageBox::Ok | QMessageBox::Default,0);
   }
@@ -537,11 +539,11 @@ void TimeMainWindow::pauseAbzur(bool on)
 }
 
 
-/** 
+/**
  * Speichert die aktuellen Zeiten und Einstellungen
  */
 void TimeMainWindow::save()
-{ 
+{
   kontoTree->flagClosedPersoenlicheItems();
   settings->setMainWindowGeometry(pos(),size());
   settings->writeSettings(abtListToday);
@@ -684,12 +686,14 @@ void TimeMainWindow::refreshKontoListe()
 
 void TimeMainWindow::reloadDefaultComments()
 {
+  std::vector<QString> xmlfilelist;
+  settings->getDefaultCommentFiles(xmlfilelist);
   if (abtList!=abtListToday) {
     abtListToday->clearDefaultComments();
-    defaultCommentReader->read(abtListToday);
+    defaultCommentReader->read(abtListToday,xmlfilelist);
   }
   abtList->clearDefaultComments();
-  defaultCommentReader->read(abtList);
+  defaultCommentReader->read(abtList,xmlfilelist);
 }
 
 /**
@@ -720,7 +724,7 @@ void TimeMainWindow::inPersoenlicheKonten(bool hinzufuegen)
       abtList->moveUnterKontoPersoenlich(abt,ko,uko,hinzufuegen);
       kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
       return;
-	}
+        }
   }
 
   abtList->moveEintragPersoenlich(abt,ko,uko,idx,hinzufuegen);
@@ -740,12 +744,12 @@ void TimeMainWindow::changeShortCutSettings(QListViewItem * item)
   QString uko,ko,abt;
   QString top=""; // top wird weiter unten ausgelesen, und es ist nicht sicher, ob es initialisiert wurde.
   int idx;
-  
+
   if (item) kontoTree->itemInfo(item,top,abt,ko,uko,idx);
 
   if (iseintragsitem) {
 
-    if (item->depth()<=3) 
+    if (item->depth()<=3)
        eintragRemoveAction->setEnabled(false);
     else
        eintragRemoveAction->setEnabled(true);
@@ -771,7 +775,7 @@ void TimeMainWindow::changeShortCutSettings(QListViewItem * item)
 }
 
 void TimeMainWindow::updateCaption()
-{  
+{
    QString abt, ko, uko;
    int idx;
    abtList->getAktiv(abt,ko,uko,idx);
@@ -963,7 +967,7 @@ void TimeMainWindow::callHelpDialog()
 
 #endif
 
-/** 
+/**
  * Zeigt eine About-Box an.
  */
 
