@@ -48,6 +48,7 @@ class SCTimeXMLSettings
       _singleClickActivation = false;
       _maxWorkingTime=MAX_WORKTIME_DEFAULT;
       defaultcommentfiles.clear();
+      columnwidth.clear();
       unterKontoWindowPosition = QPoint(0,0);
       unterKontoWindowSize = QSize(0,0);
     }
@@ -130,6 +131,16 @@ class SCTimeXMLSettings
        list = defaultcommentfiles;
     }
 
+    void getColumnWidthList(std::vector<int>& list)
+    {
+        list = columnwidth;
+    }
+
+    void setColumnWidthList(const std::vector<int>& list)
+    {
+        columnwidth = list;
+    }
+
 
   private:
 
@@ -145,6 +156,7 @@ class SCTimeXMLSettings
     QSize mainwindowSize;
 
     std::vector<QString> defaultcommentfiles;
+    std::vector<int> columnwidth;
 
     bool alwaysSaveEintrag;
     bool _powerUserView;

@@ -18,7 +18,7 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-    
+
 */
 
 #ifndef KONTOTREEVIEW_H
@@ -30,7 +30,7 @@
 #include "qpixmap.h"
 #include "qtooltip.h"
 #include "kontotreeitem.h"
-#include <iostream>
+#include <vector>
 
 #define PERSOENLICHE_KONTEN_STRING "Persönliche Konten"
 #define ALLE_KONTEN_STRING "Alle Konten"
@@ -46,7 +46,7 @@ class KontoTreeView: public QListView
   Q_OBJECT
 
   public:
-    KontoTreeView(QWidget *parent, AbteilungsListe* abtlist);
+      KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const std::vector<int>& columnwidth);
 
     bool sucheItem(const QString& tops, const QString& abts, const QString& kos, const QString& ukos, int idx,
          KontoTreeItem* &topi, KontoTreeItem* &abti, KontoTreeItem* &koi, KontoTreeItem* &ukoi, KontoTreeItem* &eti);
@@ -54,16 +54,18 @@ class KontoTreeView: public QListView
     KontoTreeItem* sucheKontoItem(const QString& tops, const QString& abts, const QString& kos);
 
     void load(AbteilungsListe* abtlist);
-    
+
     void itemInfo(QListViewItem* item,QString& tops, QString& abts, QString& kos, QString& ukos, int& idx);
-    
+
     bool isEintragsItem(QListViewItem* item);
-    
+
     void flagClosedPersoenlicheItems();
-    
+
     void closeFlaggedPersoenlicheItems();
 
     void showAktivesProjekt();
+
+    void getColumnWidthList(std::vector<int>& columnwidth);
 
   public slots:
 
@@ -74,7 +76,7 @@ class KontoTreeView: public QListView
   private:
     QPixmap* aktivPixmap;
     QPixmap emptyPixmap;
-    AbteilungsListe* abtList;   
+    AbteilungsListe* abtList;
 
 };
 

@@ -369,6 +369,9 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             if (elem2.tagName()=="defaultcommentsfile") {
                 defaultcommentfiles.push_back(elem2.attribute("name","defaultcomments.xml"));
             }
+            if (elem2.tagName()=="column") {
+                columnwidth.push_back(elem2.attribute("width","50").toInt());
+            }
           }
         }
       }
@@ -445,6 +448,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     mainwindowsizetag.setAttribute("width",mainwindowSize.width());
     mainwindowsizetag.setAttribute("height",mainwindowSize.height());
     generaltag.appendChild(mainwindowsizetag);
+
+    for (int i=0; i<columnwidth.size(); i++) {
+        QDomElement columnwidthtag = doc.createElement("column");
+        columnwidthtag.setAttribute("width",columnwidth[i]);
+        generaltag.appendChild(columnwidthtag);
+    }
 
     QDomElement saveeintragtag = doc.createElement("saveeintrag");
     QString always="no";

@@ -31,12 +31,13 @@
 #include "globals.h"
 #include "../pics/hi16_action_apply.xpm"
 #include "kontotreetooltip.h"
+#include <vector>
 
 
 /**
  * Erzeugt ein neues Objekt zur Anzeige des Kontobaums. Seine Daten bezieht es aus abtlist.
  */
-KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist=0): QListView(parent, "Konten", 0)
+KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const std::vector<int>& columnwidth): QListView(parent, "Konten", 0)
 {
 
   addColumn ("Konten");
@@ -50,13 +51,23 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist=0): QList
   aktivPixmap=new QPixmap((const char **)hi16_action_apply);
 
   setRootIsDecorated(TRUE);
-  
+
   setSelectionMode(NoSelection);
 
   load(abtlist);
   new KontoTreeToolTip(this,abtlist);
+  for (int i=0; i<columnwidth.size(); i++) {
+      setColumnWidth(i,columnwidth[i]);
+  }
 }
 
+void KontoTreeView::getColumnWidthList(std::vector<int>& columnwidth)
+{
+    columnwidth.clear();
+    for (int i=0; i<columns(); i++) {
+        columnwidth.push_back(columnWidth(i));
+    }
+}
 
 /**
  * Sucht nach dem Blatt tops->abts->kos->ukos->idx im Kontobaum, und liefert die Knotenitems, die dahin
@@ -144,11 +155,11 @@ void KontoTreeView::flagClosedPersoenlicheItems()
   for (abti=topi->firstChild(); (abti!=NULL); abti=abti->nextSibling()) {
     if (abti->isOpen()) fm=FLAG_MODE_NAND; else fm=FLAG_MODE_OR;
     abtList->setAbteilungFlags(abti->text(0),IS_CLOSED,fm);
-    
+
     for (koi=abti->firstChild(); (koi!=NULL); koi=koi->nextSibling()) {
       if (koi->isOpen()) fm=FLAG_MODE_NAND; else fm=FLAG_MODE_OR;
       abtList->setKontoFlags(abti->text(0),koi->text(0),IS_CLOSED,fm);
-      
+
       for (ukoi=koi->firstChild(); (ukoi!=NULL); ukoi=ukoi->nextSibling()) {
         if (ukoi->isOpen()) fm=FLAG_MODE_NAND; else fm=FLAG_MODE_OR;
           abtList->setUnterKontoFlags(abti->text(0),koi->text(0),ukoi->text(0),IS_CLOSED,fm);
@@ -411,7 +422,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       int firstEintrag=firstEintragWithFlags(etl,UK_PERSOENLICH);
       if (!ukHasSubTree)
         eti=ukoi;
-      else {        
+      else {
         bool etiFound=(eti!=NULL);
         if (newUkSubTreeOpened)
         { /*QString qs;

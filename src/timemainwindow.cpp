@@ -98,8 +98,12 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
   resize(size);
   move(pos);
 
+  std::vector<int> columnwidthlist;
+
+  settings->getColumnWidthList(columnwidthlist);
+
  // setCaption("sctime "+abtList->getDatum().toString("dd.MM.yyyy"));
-  kontoTree=new KontoTreeView( this, abtList );
+  kontoTree=new KontoTreeView( this, abtList, columnwidthlist );
   kontoTree->closeFlaggedPersoenlicheItems();
 
   mimeSourceFactory=new QMimeSourceFactory();
@@ -545,6 +549,10 @@ void TimeMainWindow::pauseAbzur(bool on)
 void TimeMainWindow::save()
 {
   kontoTree->flagClosedPersoenlicheItems();
+  std::vector<int> columnwidthlist;
+  kontoTree->getColumnWidthList(columnwidthlist);
+  settings->setColumnWidthList(columnwidthlist);
+
   settings->setMainWindowGeometry(pos(),size());
   settings->writeSettings(abtListToday);
   settings->writeShellSkript(abtListToday);
