@@ -57,7 +57,7 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
 
   TimeCounter tc(sek), tcAbzur(abzurSek);
 
-  stream<<"# Zeit Aufrufe von sctime generiert \n"
+  stream<<"# Zeit Aufrufe von sctime "<<VERSIONSTR<<" generiert \n"
     <<"# Gesamtzeit: "<<tc.toString()<<"/"<<tcAbzur.toString()<<"\n";
 
 
@@ -401,6 +401,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   QDomDocument doc("settings");
 
   QDomElement root = doc.createElement( "sctime" );
+  root.setAttribute("version",VERSIONSTR);
   doc.appendChild( root );
   QDomElement generaltag = doc.createElement( "general" );
   
