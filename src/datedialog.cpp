@@ -22,14 +22,14 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <qdatetimeedit.h>
+#include <qdatepicker.h>
 #include "datedialog.h"
 
 
 DateDialog::DateDialog(QDate datum, QWidget *parent)
 : DateDialogBase(parent)
 {
-  dateEdit->setDate(datum);
+  datePicker->setDate(datum);
 }
 
 DateDialog::~DateDialog()
@@ -39,6 +39,6 @@ DateDialog::~DateDialog()
 /*$SPECIALIZATION$*/
 void DateDialog::accept()
 {
-  emit dateChanged(dateEdit->date());
+  emit dateChanged(datePicker->date());
   QDialog::accept();
 }

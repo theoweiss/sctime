@@ -25,7 +25,11 @@ SOURCES += abteilungsliste.cpp \
            sctimexmlsettings.cpp \
            sctime.cpp \
            preferencedialog.cpp \
-           defaultcommentreader.cpp
+           defaultcommentreader.cpp \
+           qcalendarsystem.cpp \
+           qcalendarsystemgregorian.cpp \
+           qdatetbl.cpp \
+           qdatepicker.cpp
 HEADERS += abteilungsliste.h \
            kontoliste.h \
            statusbar.h \
@@ -51,7 +55,11 @@ HEADERS += abteilungsliste.h \
            sctimexmlsettings.h \
            unterkontoliste.h \
            preferencedialog.h \
-           defaultcommentreader.h
+           defaultcommentreader.h \
+           qcalendarsystem.h \
+           qcalendarsystemgregorian.h \
+           qdatetbl.h \
+           qdatepicker.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \
