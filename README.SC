@@ -41,7 +41,7 @@ The source is documented in Docbook style. You might also want to check
 the menu entry "Hilfe".
 
 MAILING LISTS:
-si-action@science-computing.de
+sctime-user@lists.sourceforge.net
 
 CUSTOMER:
 s+c and the public.
