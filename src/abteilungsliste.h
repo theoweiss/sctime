@@ -73,7 +73,7 @@ class AbteilungsListe: public std::map<QString,KontoListe>
 
     void deleteEintrag(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
 
-    bool getEintrag(UnterKontoEintrag& uk, const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
+    bool getEintrag(UnterKontoEintrag& eintrag, const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
 
     bool setEintrag(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, const UnterKontoEintrag& uk, bool regular=false);
 
@@ -136,6 +136,8 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     void setDatum(const QDate& datum);
     
     void clearKonten();
+
+    void clearDefaultComments();
     
     void reload();
 

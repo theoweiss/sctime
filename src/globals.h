@@ -37,9 +37,6 @@
 
 #include "qstring.h"
 
-/** Enthaelt das Icon-Verzeichnis */
-extern QString iconDir;
-
 /** Enthaelt das Verzeichnis in dem das sctime-Executable liegt*/
 extern QString execDir;
 

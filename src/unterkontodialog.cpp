@@ -25,6 +25,8 @@
 #include "qlayout.h"
 #include "qlabel.h"
 #include "qlineedit.h"
+#include "qstringlist.h"
+#include "qcombobox.h"
 #include "qgroupbox.h"
 #include "qcheckbox.h"
 #include "abteilungsliste.h"
@@ -49,21 +51,43 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   eintragIndex=idx;
 
   UnterKontoEintrag et;
+  EintragsListe::iterator etiter;
+  EintragsListe* unterkonto;
 
-  if (!abtList->getEintrag(et,abt,ko,uko,idx)) std::cout<<"Warning: Unterkonto nicht gefunden!"<<std::endl;
+  if (!abtList->findEintrag(etiter,unterkonto, abt, ko, uko,idx)) {
+    std::cerr<<"Unterkonto nicht gefunden!"<<std::endl;
+    return;
+  }
+  et = etiter->second;
 
   setCaption(uko);
 
   QVBoxLayout* layout=new QVBoxLayout(this,3);
 
-
   QPushButton * okbutton=new QPushButton( "OK", this );
   QPushButton * cancelbutton=new QPushButton( "Abbruch", this );
-  commentedit = new QLineEdit(et.kommentar,this);
+
+  QStringList* defaultcomments = unterkonto->getDefaultCommentList();
+
+  // seufz, leider treffen sich QCombobox und QLineedit erst auf QWidget-Ebene
+  if (defaultcomments->empty()) {
+    commentedit = new QLineEdit(et.kommentar,this);
+    commentcombo = NULL;
+  } else {
+    commentedit = NULL;
+    commentcombo = commentcombo = new QComboBox(true,this);
+    commentcombo->insertStringList(*defaultcomments);
+    commentcombo->insertItem(et.kommentar,0);
+  }
 
   layout->addWidget(new QLabel("Kommentar",this));
-  layout->addWidget(commentedit);
-  commentedit->setFocus();
+  if (commentedit) {
+    layout->addWidget(commentedit);
+    commentedit->setFocus();
+  } else {
+    layout->addWidget(commentcombo);
+    commentcombo->setFocus();
+  }
   layout->addSpacing(5);
   layout->addStretch(2);
 
@@ -123,12 +147,18 @@ void UnterKontoDialog::accept()
 {
   int flags=0;
 
-  //if (persoenlichesKonto->isChecked()) flags|=UK_PERSOENLICH;
+  QString comment;
+
+  if (commentedit)
+    comment = commentedit->text();
+  else
+    comment = commentcombo->currentText();
 
   abtList->setEintrag(abteilungsName,kontoName,unterKontoName,eintragIndex,
-    UnterKontoEintrag(commentedit->text(),zeitBox->getSekunden(),
+    UnterKontoEintrag(comment,zeitBox->getSekunden(),
     zeitAbzurBox->getSekunden(), flags));
-    abtList->moveEintragPersoenlich(abteilungsName,kontoName,unterKontoName,eintragIndex,(persoenlichesKonto->isChecked()));
+  abtList->moveEintragPersoenlich(abteilungsName,kontoName,unterKontoName,eintragIndex,
+    (persoenlichesKonto->isChecked()));
   
   if (aktivesProjekt->isChecked()) {
     int oldidx;

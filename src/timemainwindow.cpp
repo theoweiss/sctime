@@ -76,6 +76,8 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   powerToolBar = NULL;
   settings=new SCTimeXMLSettings(abtList);
   settings->readSettings();
+  defaultCommentReader = new DefaultCommentReader(abtList);
+  defaultCommentReader->read();
   
   // restore size+position
   QSize size;
@@ -160,6 +162,11 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   QAction* preferenceAction = new QAction( "sctime konfigurieren",
                                       "sctime &konfigurieren", 0, this, "configsctime" );
   connect(preferenceAction, SIGNAL(activated()), this, SLOT(callPreferenceDialog()));
+
+  QAction* defaultCommentAction = new QAction( "Default Kommentare neu einlesen",
+                                      "&Default Kommentare neu einlesen", 0, this, "reloaddefcomment" );
+  connect(defaultCommentAction, SIGNAL(activated()), this, SLOT(reloadDefaultComments()));
+
 #ifndef NO_TEXTEDIT
   QAction* helpAction = new QAction( "Anleitung",
                                       "&Anleitung", Key_F1, this, "anleitung" );
@@ -236,6 +243,7 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   resetAction->addTo(zeitmenu);
   kontomenu->insertSeparator();
   quitAction->addTo(kontomenu);
+  defaultCommentAction->addTo(settingsmenu);
   preferenceAction->addTo(settingsmenu);
   #ifndef NO_TEXTEDIT
   helpAction->addTo(hilfemenu);
@@ -554,6 +562,11 @@ void TimeMainWindow::refreshKontoListe()
   kontoTree->closeFlaggedPersoenlicheItems();
 }
 
+void TimeMainWindow::reloadDefaultComments()
+{
+  abtList->clearDefaultComments();
+  defaultCommentReader->read();
+}
 
 /**
  * Fuegt das aktuell selektierte Unterkonto den Persoenlichen Konten hinzu.

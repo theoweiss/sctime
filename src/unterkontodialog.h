@@ -26,6 +26,7 @@
 
 #include "qdialog.h"
 #include "qpushbutton.h"
+#include "qcombobox.h"
 #include "qlayout.h"
 #include "qlabel.h"
 #include "qlineedit.h"
@@ -59,6 +60,7 @@ class UnterKontoDialog: public QDialog
 
   private:
     QLineEdit* commentedit;
+    QComboBox* commentcombo;
     QString unterKontoName;
     QString kontoName;
     QString abteilungsName;

@@ -262,13 +262,13 @@ void AbteilungsListe::deleteEintrag(const QString& abteilung, const QString& kon
 /** Liefert den in abteilung,konto,unterkonto ,idx angegebenen Eintrag in uk zurueck.
  *  Der return-Wert ist genau dann true, falls das Konto gefunden wurde.
  */
-bool AbteilungsListe::getEintrag(UnterKontoEintrag& uk, const QString& abteilung, const QString& konto, const QString& unterkonto, int idx)
+bool AbteilungsListe::getEintrag(UnterKontoEintrag& eintrag, const QString& abteilung, const QString& konto, const QString& unterkonto, int idx)
 {
   EintragsListe::iterator eti;
   EintragsListe* etl;
 
   if (findEintrag(eti,etl, abteilung, konto, unterkonto,idx)) {
-      uk=eti->second;
+      eintrag=eti->second;
       return true;
   } else return false;
 }
@@ -749,6 +749,27 @@ void AbteilungsListe::clearKonten()
         //eintragsliste->setFlags(0);
         eintragsliste->clear();
         eintragsliste->insert(EintragsListe::value_type(0,UnterKontoEintrag()));
+      }
+    }
+  }
+}
+
+/**
+ * Loescht alle Default Kommentare in der Abteilungsliste.
+ */
+void AbteilungsListe::clearDefaultComments()
+{
+  zeitDifferenz=0;
+  AbteilungsListe::iterator abtPos;
+
+  for (abtPos=begin(); abtPos!=end(); ++abtPos) {
+
+    KontoListe* kontoliste=&(abtPos->second);   
+    for (KontoListe::iterator kontPos=kontoliste->begin(); kontPos!=kontoliste->end(); ++kontPos) {
+      UnterKontoListe* unterkontoliste=&(kontPos->second);
+      for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {
+        EintragsListe* eintragsliste=&(ukontPos->second);
+        eintragsliste->clearDefaultCommentList();
       }
     }
   }

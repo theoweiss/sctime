@@ -61,8 +61,6 @@
 #define CONFIGSUBDIR ".sctime"
 #endif
 
-
-QString iconDir;
 QString execDir;
 QString configDir;
 
@@ -192,8 +190,7 @@ int main( int argc, char **argv )
   if (executable.isSymLink()) //Wir wollen den echten Pfad, um unsere Icons zu finden.
     executable.setFile(executable.readLink());
 
-  execDir=executable.dirPath(true);
-  iconDir=execDir;
+  execDir=executable.dirPath(true);  
 #ifndef WIN32
   directory.cd(directory.homeDirPath());
 #else

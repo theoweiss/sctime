@@ -24,7 +24,8 @@ SOURCES += abteilungsliste.cpp \
            timemainwindow.cpp \
            sctimexmlsettings.cpp \
            sctime.cpp \
-           preferencedialog.cpp
+           preferencedialog.cpp \
+           defaultcommentreader.cpp
 HEADERS += abteilungsliste.h \
            kontoliste.h \
            statusbar.h \
@@ -49,7 +50,8 @@ HEADERS += abteilungsliste.h \
            kontodateninfozeit.h \
            sctimexmlsettings.h \
            unterkontoliste.h \
-           preferencedialog.h
+           preferencedialog.h \
+           defaultcommentreader.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \

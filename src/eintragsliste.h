@@ -27,6 +27,8 @@
 #include <map>
 #include "unterkontoeintrag.h"
 #include "qstring.h"
+#include "qstringlist.h"
+#include <iostream>
 
 typedef std::map<int,UnterKontoEintrag> Map_Int_UnterKontoEintrag; // Visual-C-Workaround
 
@@ -36,7 +38,6 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
     EintragsListe(): std::map<int,UnterKontoEintrag>()
     {
       beschreibungString="";
-      defaultKommentar = "blub";
       flags=0;
     }
 
@@ -50,14 +51,19 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
       return beschreibungString;
     }
     
-    QString getDefaultKommentar()
+    QStringList* getDefaultCommentList()
     {
-      return defaultKommentar;
+      return &defaultCommentList;
     }
-    
-    void setDefaultKommentar(const QString& defaultkommentar)
+
+    void addDefaultComment(const QString& comment)
     {
-      defaultKommentar = defaultkommentar;
+      defaultCommentList.append(comment);
+    }
+
+    void clearDefaultCommentList()
+    {
+      defaultCommentList.clear();
     }
     
     void setFlags(int _flags)
@@ -78,7 +84,7 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
 
   private:
     QString beschreibungString;
-    QString defaultKommentar;
+    QStringList defaultCommentList;
     int flags;
 };
 

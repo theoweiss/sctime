@@ -32,6 +32,7 @@
 #include "qtoolbar.h"
 #include "qaction.h"
 #include "sctimexmlsettings.h"
+#include "defaultcommentreader.h"
 
 #define SIGINT_EVENT_ID QEvent::User
 
@@ -98,6 +99,7 @@ class TimeMainWindow: public QMainWindow
     void callHelpDialog();
     void callPreferenceDialog();
     void refreshKontoListe();
+    void reloadDefaultComments();
 
   signals:
     /** Wird ausgeloest, falls sich die Gesamtzeit geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden. */
@@ -138,6 +140,7 @@ class TimeMainWindow: public QMainWindow
     AbteilungsListe* abtList;
     StatusBar* statusBar;
     QMimeSourceFactory* mimeSourceFactory;
+    DefaultCommentReader* defaultCommentReader;
     QToolBar* powerToolBar;
     ToolBar* toolBar;
     bool paused;
