@@ -225,6 +225,13 @@ TimeMainWindow::~TimeMainWindow()
    delete settings;
 }
 
+void TimeMainWindow::customEvent( QCustomEvent * e)
+{
+   if (e->type()==SIGINT_EVENT_ID) {
+      close();
+   }
+   QMainWindow::customEvent(e);
+}
 
 /** Wird durch einen Timer einmal pro Minute aufgerufen, und sorgt fuer die 
   * korrekte Aktualisierung der Objekte.
@@ -614,7 +621,7 @@ void TimeMainWindow::callFindKontoDialog()
 void TimeMainWindow::callConfigZeitIncDialog()
 {
   QDialog cziDialog(this);
-  
+
   QVBoxLayout* layout=new QVBoxLayout(&cziDialog,3);
 
 
@@ -630,12 +637,12 @@ void TimeMainWindow::callConfigZeitIncDialog()
   layout->addWidget(new QLabel("Schnelle Zeitinkrement-Buttons:",&cziDialog));
   layout->addWidget(fastZeitIncBox);
   layout->addSpacing(4);
-  
+
   QHBoxLayout* buttonlayout=new QHBoxLayout(layout,3);
 
   buttonlayout->addWidget(okbutton);
   buttonlayout->addWidget(cancelbutton);
-  
+
   connect (okbutton, SIGNAL(clicked()), &cziDialog, SLOT(accept()));
   connect (cancelbutton, SIGNAL(clicked()), &cziDialog, SLOT(reject()));
 

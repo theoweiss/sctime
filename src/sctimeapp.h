@@ -37,6 +37,7 @@
 
 class SCTimeApp: public QApplication
 {
+  TimeMainWindow* mainWindow;
   private:
     AbteilungsListe* abtList;
     #ifdef WIN32
@@ -44,7 +45,7 @@ class SCTimeApp: public QApplication
     #else
     KontoDatenInfoZeit zk;
     #endif
-    TimeMainWindow* mainWindow;
+
 
   public:
 

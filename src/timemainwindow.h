@@ -32,6 +32,8 @@
 #include "qaction.h"
 #include "sctimexmlsettings.h"
 
+#define SIGINT_EVENT_ID QEvent::User
+
 class StatusBar;
 
 /** Diese Klasse implementiert das Hauptfenster des Programms,
@@ -60,6 +62,8 @@ class TimeMainWindow: public QMainWindow
     void minutenUhr();
 
     void pause();
+
+    void customEvent(QCustomEvent * e);
 
     void pauseAbzur(bool on);
 
@@ -101,7 +105,7 @@ class TimeMainWindow: public QMainWindow
       * Wird minuetlich ausgeloest, falls keine Pause aktiv ist.
       */
     void minuteTick();
-    
+
     /**
       * Wird minuetlich ausgeloest, falls keine Pause aktiv ist.
       */
@@ -125,7 +129,7 @@ class TimeMainWindow: public QMainWindow
     bool paused;
     bool pausedAbzur;
 
-    // Workaround, um beim Setzen der Voreinstellung fuer den inPersoenlicheKonten-Button nicht das zugehoerige 
+    // Workaround, um beim Setzen der Voreinstellung fuer den inPersoenlicheKonten-Button nicht das zugehoerige
     // Event auzuloesen. Wenn inPersoenlicheKontenAllowed=false, tut inPersoenlicheKonten(bool) gar nichts.
     bool inPersoenlicheKontenAllowed;
 };

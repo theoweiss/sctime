@@ -103,23 +103,23 @@ static LOCK_FD openlock( const QString &name )
                    O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
 
     if (fd<0) {
-      std::cout<<"Kann Lockfile "+name+" nicht öffnen"<<std::endl;
+      std::cerr<<"Kann Lockfile "+name+" nicht öffnen"<<std::endl;
       exit(1); /* can not open */
     }
 
     if (lockf(fd,F_TLOCK,0)<0)
     {
       switch (errno) {
-        case EAGAIN: 
+        case EAGAIN:
           {
-            std::cout<<"Das Lockfile "+name+" wird bereits benutzt.\nFalls Sie sicher sind, dass keine weitere Instanz von sctime läuft, bitte löschen."<<std::endl;
+            std::cerr<<"Das Lockfile "+name+" wird bereits benutzt.\nFalls Sie sicher sind, dass keine weitere Instanz von sctime läuft, bitte löschen."<<std::endl;
             exit(3);
             break;
           }
         case ENOLCK:   // Weniger komfortables Locking auf Systemen, die es nicht unterstuetzen.
           {
             if (lockFileExistiert) {
-              std::cout<<"Das Lockfile "+name+" existiert bereits.\nFalls Sie sicher sind, dass keine weitere Instanz von sctime läuft, bitte löschen."<<std::endl;
+              std::cerr<<"Das Lockfile "+name+" existiert bereits.\nFalls Sie sicher sind, dass keine weitere Instanz von sctime läuft, bitte löschen."<<std::endl;
               exit(2);
             }
             break;
@@ -145,7 +145,7 @@ static LOCK_FD openlock( const QString &name )
   Closes the lock file specified by fd.  fd is the file descriptor
   returned by the openlock() function.
 */
-static void closelock( LOCK_FD fd , const QString &name)
+static void closelock(LOCK_FD fd , const QString &name)
 {
 #ifndef WIN32
   lockf(fd,F_ULOCK,0);
@@ -158,6 +158,23 @@ static void closelock( LOCK_FD fd , const QString &name)
 }
 
 SCTimeApp* sctimeApp;
+
+#ifndef WIN32
+sighandler_t OldSigIntHandler;
+sighandler_t OldSigTermHandler;
+
+/** Sighandler for SIGINT
+**/
+static void SigIntHandler(int signum)
+{
+   QEvent* event = new QCustomEvent(SIGINT_EVENT_ID);
+   //event->accept();
+   //QEvent(QEvent::Quit);
+   
+   sctimeApp->postEvent(sctimeApp->mainWidget(), event);
+   sctimeApp->wakeUpGuiThread();
+}
+#endif
 
 
 /** main: hier wird ueberprueft, ob die Applikation ueberhaupt starten soll
@@ -202,8 +219,17 @@ int main( int argc, char **argv )
 
 
   sctimeApp= new SCTimeApp( argc, argv );
+  #ifndef WIN32
+  OldSigIntHandler = signal(SIGINT,&SigIntHandler);
+  OldSigTermHandler = signal(SIGTERM,&SigIntHandler);
+  #endif
 
   sctimeApp->exec();
+
+  #ifndef WIN32
+  signal(SIGINT,OldSigIntHandler);
+  signal(SIGTERM,OldSigTermHandler);
+  #endif
 
 
   closelock(lfp, configDir+"/LOCK");
