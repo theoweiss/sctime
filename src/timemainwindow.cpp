@@ -59,6 +59,11 @@
 #include "../pics/hi22_action_2downarrow.xpm"
 #include "../pics/sc_logo.xpm"
 #include "../pics/scLogo_15Farben.xpm"
+#include "../pics/hi22_action_1uparrow_half.xpm"
+#include "../pics/hi22_action_1downarrow_half.xpm"
+#include "../pics/hi22_action_2uparrow_half.xpm"
+#include "../pics/hi22_action_2downarrow_half.xpm"
+#include "../pics/zero.xpm"
 
 
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
@@ -68,6 +73,7 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   pausedAbzur=false;
   inPersoenlicheKontenAllowed=true;
   abtList=abtlist;
+  powerToolBar = NULL;
   settings=new SCTimeXMLSettings(abtList);
   settings->readSettings();
   
@@ -168,7 +174,7 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
                                       "&Editieren", 0, this, "unterkonto editieren" );
   connect(editUnterKontoAction, SIGNAL(activated()), this, SLOT(editUnterKontoPressed()));
 
-  eintragAddAction = new QAction( "Eintrag hinzufuegen", QPixmap((const char **)hi22_action_queue ),
+  QAction* eintragAddAction = new QAction( "Eintrag hinzufuegen", QPixmap((const char **)hi22_action_queue ),
                                       "&Eintrag hinzufügen", 0, this, "eintr hinz" );
   connect(eintragAddAction, SIGNAL(activated()), this, SLOT(eintragHinzufuegen()));
 
@@ -176,15 +182,25 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
                                       "&Eintrag löschen", 0, this, "eintr loeschen" );
   connect(eintragRemoveAction, SIGNAL(activated()), this, SLOT(eintragEntfernen()));
 
-  min5PlusAction = new QAction( "Zeit incrementieren", QPixmap((const char **)hi22_action_1uparrow ),
+  QAction* min5PlusAction = new QAction( "Zeit incrementieren", QPixmap((const char **)hi22_action_1uparrow ),
                                       "Zeit incrementieren", 0, this, "+5Min" );
-  min5MinusAction = new QAction( "Zeit decrementieren", QPixmap((const char **)hi22_action_1downarrow ),
+  QAction* min5MinusAction = new QAction( "Zeit decrementieren", QPixmap((const char **)hi22_action_1downarrow ),
                                       "Zeit decrementieren", 0, this, "-5Min" );
 
-  fastPlusAction = new QAction( "Zeit schnell incrementieren", QPixmap((const char **)hi22_action_2uparrow ),
+  QAction* fastPlusAction = new QAction( "Zeit schnell incrementieren", QPixmap((const char **)hi22_action_2uparrow ),
                                       "Zeit schnell incrementieren", 0, this, "+30Min" );
-  fastMinusAction = new QAction( "Zeit schnell decrementieren", QPixmap((const char **)hi22_action_2downarrow ),
+  QAction* fastMinusAction = new QAction( "Zeit schnell decrementieren", QPixmap((const char **)hi22_action_2downarrow ),
                                       "Zeit schnell decrementieren", 0, this, "-30Min" );
+
+  abzurMin5PlusAction = new QAction( "Abrechenbare Zeit incrementieren", QPixmap((const char **)hi22_action_1uparrow_half ),
+                                      "Abrechenbare Zeit incrementieren", 0, this, "+5Min" );
+  abzurMin5MinusAction = new QAction( "Zeit decrementieren", QPixmap((const char **)hi22_action_1downarrow_half ),
+                                      "Zeit decrementieren", 0, this, "-5Min" );
+
+  fastAbzurPlusAction = new QAction( "Abrechenbare Zeit schnell incrementieren", QPixmap((const char **)hi22_action_2uparrow_half ),
+                                             "Abrechenbare Zeit schnell incrementieren", 0, this, "+30Min" );
+  fastAbzurMinusAction = new QAction( "Abrechenbare Zeit schnell decrementieren", QPixmap((const char **)hi22_action_2downarrow_half ),
+                                      "Abrechenbare Zeit schnell decrementieren", 0, this, "-30Min" );
 
   connect(kontoTree, SIGNAL(currentChanged(QListViewItem * )), this, SLOT(changeShortCutSettings(QListViewItem * ) ));
 
@@ -192,6 +208,12 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   connect(min5MinusAction, SIGNAL(activated()), this, SLOT(subTimeInc()));
   connect(fastPlusAction, SIGNAL(activated()), this, SLOT(addFastTimeInc()));
   connect(fastMinusAction, SIGNAL(activated()), this, SLOT(subFastTimeInc()));
+
+  connect(this,SIGNAL(eintragSelected(bool)), min5PlusAction, SLOT(setEnabled(bool)));
+  connect(this,SIGNAL(eintragSelected(bool)), min5MinusAction, SLOT(setEnabled(bool)));
+  connect(this,SIGNAL(eintragSelected(bool)), fastPlusAction, SLOT(setEnabled(bool)));
+  connect(this,SIGNAL(eintragSelected(bool)), fastMinusAction, SLOT(setEnabled(bool)));
+  connect(this,SIGNAL(eintragSelected(bool)), eintragAddAction, SLOT(setEnabled(bool)));
 
   editUnterKontoAction->addTo(toolBar);
   saveAction->addTo(toolBar);
@@ -226,6 +248,7 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   
   updateCaption();
   kontoTree->showAktivesProjekt();
+  showAdditionalButtons(settings->powerUserView());
 }
 
 /** Destruktor - speichert vor dem Beenden die Einstellungen */
@@ -233,6 +256,31 @@ TimeMainWindow::~TimeMainWindow()
 {
    save();
    delete settings;
+}
+
+void TimeMainWindow::showAdditionalButtons(bool show)
+{
+   if (show) {
+      if (powerToolBar!=NULL) return;
+      powerToolBar   = new QToolBar(this);
+
+      abzurMin5PlusAction->addTo(powerToolBar);
+      abzurMin5MinusAction->addTo(powerToolBar);
+      fastAbzurPlusAction->addTo(powerToolBar);
+      fastAbzurMinusAction->addTo(powerToolBar);
+      connect(abzurMin5PlusAction, SIGNAL(activated()), this, SLOT(addAbzurTimeInc()));
+      connect(abzurMin5MinusAction, SIGNAL(activated()), this, SLOT(subAbzurTimeInc()));
+      connect(fastAbzurPlusAction, SIGNAL(activated()), this, SLOT(addFastAbzurTimeInc()));
+      connect(fastAbzurMinusAction, SIGNAL(activated()), this, SLOT(subFastAbzurTimeInc()));
+      connect(this,SIGNAL(eintragSelected(bool)), abzurMin5PlusAction, SLOT(setEnabled(bool)));
+      connect(this,SIGNAL(eintragSelected(bool)), abzurMin5MinusAction, SLOT(setEnabled(bool)));
+      connect(this,SIGNAL(eintragSelected(bool)), fastAbzurPlusAction, SLOT(setEnabled(bool)));
+      connect(this,SIGNAL(eintragSelected(bool)), fastAbzurMinusAction, SLOT(setEnabled(bool)));
+   } else {
+      if (powerToolBar==NULL) return;
+      delete(powerToolBar);
+      powerToolBar = NULL;
+   }
 }
 
 void TimeMainWindow::customEvent( QCustomEvent * e)
@@ -307,9 +355,43 @@ void TimeMainWindow::subFastTimeInc()
 }
 
 /**
+  * Addiert timeIncrement auf die Zeiten des selktierten Unterkontos.
+  */
+void TimeMainWindow::addAbzurTimeInc()
+{
+  addDeltaToZeit(settings->timeIncrement(), true);
+}
+
+
+/**
+  * Subtrahiert timeIncrement von den Zeiten des selktierten Unterkontos.
+  */
+void TimeMainWindow::subAbzurTimeInc()
+{
+  addDeltaToZeit(-settings->timeIncrement(), true);
+}
+
+
+/**
+  * Addiert fastTimeIncrement auf die Zeiten des selktierten Unterkontos.
+  */
+void TimeMainWindow::addFastAbzurTimeInc()
+{
+  addDeltaToZeit(settings->fastTimeIncrement(), true);
+}
+
+/**
+  * Subtrahiert timeIncrement von den Zeiten des selktierten Unterkontos.
+  */
+void TimeMainWindow::subFastAbzurTimeInc()
+{
+  addDeltaToZeit(-settings->fastTimeIncrement(), true);
+}
+
+/**
   *  Addiert Delta Sekunden auf die Zeiten des selektierten Unterkontos.
   */
-void TimeMainWindow::addDeltaToZeit(int delta)
+void TimeMainWindow::addDeltaToZeit(int delta, bool abzurOnly)
 {
   QListViewItem * item=kontoTree->currentItem();
 
@@ -320,7 +402,7 @@ void TimeMainWindow::addDeltaToZeit(int delta)
 
   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
 
-  abtList->changeZeit(abt, ko, uko, idx, delta);
+  abtList->changeZeit(abt, ko, uko, idx, delta, abzurOnly);
   kontoTree->refreshItem(abt, ko, uko, idx);
   zeitChanged();
 }
@@ -535,21 +617,13 @@ void TimeMainWindow::changeShortCutSettings(QListViewItem * item)
 
     flagsChanged(abt,ko,uko,idx);
     inPersKontAction->setEnabled(true);
-    min5PlusAction->setEnabled(true);
-    min5MinusAction->setEnabled(true);
-    fastPlusAction->setEnabled(true);
-    fastMinusAction->setEnabled(true);
-    eintragAddAction->setEnabled(true);
+    emit eintragSelected(true);
   }
   else {
     // Auch bei Konten und Unterkonten in Pers. Konten PersKontAction auf On stellen.
     inPersKontAction->setOn((item&&(top==PERSOENLICHE_KONTEN_STRING)&&(item->depth()>=2)&&(item->depth()<=3)));
     inPersKontAction->setEnabled((item&&(item->depth()>=2)&&(item->depth()<=3)));
-    min5PlusAction->setEnabled(false);
-    min5MinusAction->setEnabled(false);
-    fastPlusAction->setEnabled(false);
-    fastMinusAction->setEnabled(false);
-    eintragAddAction->setEnabled(false);
+    emit eintragSelected(false);
     eintragRemoveAction->setEnabled(false);
   }
   inPersoenlicheKontenAllowed=true; // Wieder enablen.
@@ -645,6 +719,7 @@ void TimeMainWindow::callPreferenceDialog()
 {
   PreferenceDialog preferenceDialog(settings, this);
   preferenceDialog.exec();
+  showAdditionalButtons(settings->powerUserView());
 }
 
 /**

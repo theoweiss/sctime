@@ -340,20 +340,22 @@ bool AbteilungsListe::setSekundenAbzur(const QString& abteilung, const QString& 
 
 /** Veraendert die Zeiten fuer das angegebene Konto um delta Sekunden
  */
-void AbteilungsListe::changeZeit(const QString& Abteilung,const QString& Konto,const QString& Unterkonto,int Eintrag, int delta, bool regular )
+void AbteilungsListe::changeZeit(const QString& Abteilung,const QString& Konto,const QString& Unterkonto,int Eintrag, int delta, bool abzurOnly, bool regular )
 {
     EintragsListe::iterator eti;
     EintragsListe* etl;
 
     if (findEintrag(eti,etl, Abteilung, Konto, Unterkonto, Eintrag)) {
-      if (!regular) {
-        if (eti->second.sekunden<-delta)
-          zeitDifferenz+=-eti->second.sekunden;
-        else zeitDifferenz+=delta;
+      if (!abzurOnly) {
+        if (!regular) {
+          if (eti->second.sekunden<-delta)
+            zeitDifferenz+=-eti->second.sekunden;
+          else zeitDifferenz+=delta;
+        }
+        eti->second.sekunden+=delta;
+        if (eti->second.sekunden<0) eti->second.sekunden=0;
       }
-      eti->second.sekunden+=delta;
       eti->second.sekundenAbzur+=delta;
-      if (eti->second.sekunden<0) eti->second.sekunden=0;
       if (eti->second.sekundenAbzur<0) eti->second.sekundenAbzur=0;
     }
 }

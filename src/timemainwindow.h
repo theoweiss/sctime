@@ -29,6 +29,7 @@
 #include "unterkontodialog.h"
 #include "kontotreeview.h"
 #include "toolbar.h"
+#include "qtoolbar.h"
 #include "qaction.h"
 #include "sctimexmlsettings.h"
 
@@ -79,14 +80,19 @@ class TimeMainWindow: public QMainWindow
     
     void editUnterKontoPressed();
     void changeDate(const QDate& datum);
-    void setAktivesProjekt(QListViewItem * item);    
+    void setAktivesProjekt(QListViewItem * item);
+    void showAdditionalButtons(bool show);
     void eintragHinzufuegen();
     void eintragEntfernen();
-    void addDeltaToZeit(int delta);
+    void addDeltaToZeit(int delta, bool abzurOnly=false);
     void addTimeInc();
     void subTimeInc();
     void addFastTimeInc();
     void subFastTimeInc();
+    void addAbzurTimeInc();
+    void subAbzurTimeInc();
+    void addFastAbzurTimeInc();
+    void subFastAbzurTimeInc();
     
     void callFindKontoDialog();
     void callHelpDialog();
@@ -110,22 +116,29 @@ class TimeMainWindow: public QMainWindow
     /**
       * Wird minuetlich ausgeloest, falls keine Pause aktiv ist.
       */
-    void minuteAbzurTick();	
+    void minuteAbzurTick();
+
+    /**
+     * Wird mit true ausgeloest, wenn ein Eintrag im Kontobaum
+     * selektiert wurde, bei anderen Selektionen (Konto,Abteilung oder
+     * Unterkonto mit mehreren Eintraegen) mit false
+     */
+    void eintragSelected(bool isEintrag);
 
   private:
     KontoTreeView* kontoTree;
     UnterKontoDialog* unterKontoDialog;
     QAction* editUnterKontoAction;
     QAction* inPersKontAction;
-    QAction* min5PlusAction;
-    QAction* min5MinusAction;
-    QAction* fastPlusAction;
-    QAction* fastMinusAction;
-    QAction* eintragAddAction;
+    QAction* abzurMin5PlusAction;
+    QAction* abzurMin5MinusAction;
+    QAction* fastAbzurPlusAction;
+    QAction* fastAbzurMinusAction;
     QAction* eintragRemoveAction;
     AbteilungsListe* abtList;
     StatusBar* statusBar;
     QMimeSourceFactory* mimeSourceFactory;
+    QToolBar* powerToolBar;
     ToolBar* toolBar;
     bool paused;
     bool pausedAbzur;

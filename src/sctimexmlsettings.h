@@ -41,6 +41,7 @@ class SCTimeXMLSettings
       mainwindowPosition = QPoint(0,0);
       mainwindowSize = QSize(700,400);
       alwaysSaveEintrag = false;
+      _powerUserView = false;
       unterKontoWindowPosition = QPoint(0,0);
       unterKontoWindowSize = QSize(0,0);
     }
@@ -90,6 +91,16 @@ class SCTimeXMLSettings
     {
         return alwaysSaveEintrag;
     }
+
+    void setPowerUserView(bool newVal)
+    {
+       _powerUserView = newVal;
+    }
+
+    bool powerUserView()
+    {
+      return _powerUserView;
+    }
     
 
 
@@ -117,6 +128,7 @@ class SCTimeXMLSettings
     QSize mainwindowSize;
 
     bool alwaysSaveEintrag;
+    bool _powerUserView;
     
     QPoint unterKontoWindowPosition;
     QSize unterKontoWindowSize;

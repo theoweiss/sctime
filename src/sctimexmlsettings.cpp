@@ -1,4 +1,4 @@
-/* $Id: */
+/* $Id$*/
 
 #include <iostream>
 
@@ -302,7 +302,10 @@ void SCTimeXMLSettings::readSettings(bool global)
               mainwindowSize=QSize(xstr.toInt(),ystr.toInt());
             }
             if (elem2.tagName()=="saveeintrag") {
-              alwaysSaveEintrag=(elem2.attribute("always")=="yes");              
+              alwaysSaveEintrag=(elem2.attribute("always")=="yes");
+            }
+            if (elem2.tagName()=="poweruserview") {
+              setPowerUserView((elem2.attribute("on")=="yes"));
             }
           }
         }
@@ -371,6 +374,12 @@ void SCTimeXMLSettings::writeSettings(bool global)
     if (alwaysSaveEintrag) always="yes";
     saveeintragtag.setAttribute("always",always);
     generaltag.appendChild(saveeintragtag);
+
+    QDomElement powerusertag = doc.createElement("poweruserview");
+    QString on="no";
+    if (powerUserView()) on="yes";
+    powerusertag.setAttribute("on",on);
+    generaltag.appendChild(powerusertag);
 
     QDomElement kontodlgwindowpositiontag = doc.createElement( "kontodlgwindowposition" );
     kontodlgwindowpositiontag.setAttribute("x",unterKontoWindowPosition.x());

@@ -125,6 +125,22 @@
                     <string>Kommentare für nächsten Tag übernehmen</string>
                 </property>
             </widget>
+            <widget class="QCheckBox">
+                <property name="name">
+                    <cstring>powerUserCheckbox</cstring>
+                </property>
+                <property name="geometry">
+                    <rect>
+                        <x>40</x>
+                        <y>80</y>
+                        <width>410</width>
+                        <height>20</height>
+                    </rect>
+                </property>
+                <property name="text">
+                    <string>Poweruser Ansicht</string>
+                </property>
+            </widget>
         </widget>
         <widget class="QWidget">
             <property name="name">
