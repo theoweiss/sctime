@@ -507,10 +507,9 @@ void TimeMainWindow::zeitChanged()
     // da es andernfalls erst nach dem Schliessen der Box gesetzt wird, was bedeuten wuerde,
     // dass (falls der user nicht sofort reagiert), jede Minute eine neue Box aufpoppt
     // => nix gut am naechsten morgen, wenn man das ausloggen vergisst :-)
-    last=zeit;
-    // Vorlaeufig deaktiviert
-    /*QMessageBox::warning(this,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
-                       QMessageBox::Ok | QMessageBox::Default,0);*/
+    last=zeit;    
+    QMessageBox::warning(this,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
+                       QMessageBox::Ok | QMessageBox::Default,0);
   }
   else
     last=zeit;
