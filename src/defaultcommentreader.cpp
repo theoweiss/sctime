@@ -35,7 +35,7 @@
  * Liest alle Einstellungen.
  */
 
-void DefaultCommentReader::read()
+void DefaultCommentReader::read(AbteilungsListe* abtList)
 {
   #ifndef NO_XML
   QDomDocument doc("comments");

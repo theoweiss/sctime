@@ -69,18 +69,19 @@
 
 
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
-TimeMainWindow::TimeMainWindow(KontoDatenInfoZeit* zk):QMainWindow(0,"sctime")
+TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
 {
   QDate heute;
-  abtList=new AbteilungsListe(heute.currentDate(),zk);
+  abtListToday=new AbteilungsListe(heute.currentDate(),zk);
+  abtList=abtListToday;
   paused=false;
   pausedAbzur=false;
   inPersoenlicheKontenAllowed=true;
   powerToolBar = NULL;
   settings=new SCTimeXMLSettings();
   settings->readSettings(abtList);
-  defaultCommentReader = new DefaultCommentReader(abtList);
-  defaultCommentReader->read();
+  defaultCommentReader = new DefaultCommentReader();
+  defaultCommentReader->read(abtList);
   
   // restore size+position
   QSize size;
@@ -274,6 +275,8 @@ TimeMainWindow::~TimeMainWindow()
 {
    save();
    delete settings;
+   if (abtList!=abtListToday)
+     delete abtListToday;
    delete abtList;
 }
 
@@ -319,8 +322,8 @@ void TimeMainWindow::minutenUhr()
   int idx;
 
   if (!paused) {
-    abtList->getAktiv(abt,ko,uko,idx);
-    abtList->minuteVergangen(!pausedAbzur);
+    abtListToday->getAktiv(abt,ko,uko,idx);
+    abtListToday->minuteVergangen(!pausedAbzur);
     kontoTree->refreshItem(abt,ko,uko,idx);
     zeitChanged();
     emit minuteTick();
@@ -484,8 +487,12 @@ void TimeMainWindow::save()
 { 
   kontoTree->flagClosedPersoenlicheItems();
   settings->setMainWindowGeometry(pos(),size());
-  settings->writeSettings(abtList);
-  settings->writeShellSkript(abtList);
+  settings->writeSettings(abtListToday);
+  settings->writeShellSkript(abtListToday);
+  if (abtList!=abtListToday) {
+    settings->writeSettings(abtList);
+    settings->writeShellSkript(abtList);
+  }
 }
 
 
@@ -572,10 +579,26 @@ void TimeMainWindow::eintragEntfernen()
  */
 void TimeMainWindow::changeDate(const QDate& datum)
 {
+  bool currentDateSelected = (datum==QDate::currentDate());
+
   kontoTree->flagClosedPersoenlicheItems();
   settings->writeSettings(abtList);
   settings->writeShellSkript(abtList);
-  abtList->setDatum(datum);
+  if (abtListToday!=abtList) {
+    settings->writeSettings(abtListToday);
+    settings->writeShellSkript(abtListToday);
+    if (currentDateSelected)
+      delete abtList;
+  }
+  if (currentDateSelected) {
+    abtList=abtListToday;
+    if (abtListToday->getDatum()!=datum)
+      abtListToday->setDatum(datum);
+  }
+  else {
+    abtList=new AbteilungsListe(datum,abtListToday);
+  }
+
   abtList->clearKonten();
   settings->readSettings(abtList);
 
@@ -583,7 +606,7 @@ void TimeMainWindow::changeDate(const QDate& datum)
   kontoTree->closeFlaggedPersoenlicheItems();
   kontoTree->showAktivesProjekt();
   zeitChanged();
-  statusBar->dateWarning((datum!=QDate::currentDate()), datum);
+  statusBar->dateWarning(!currentDateSelected, datum);
 }
 
 void TimeMainWindow::refreshKontoListe()
@@ -592,14 +615,23 @@ void TimeMainWindow::refreshKontoListe()
   settings->writeSettings(abtList); // die Settings ueberstehen das Reload nicht
   abtList->reload();
   settings->readSettings(abtList);
+  if (abtList!=abtListToday) {
+    settings->writeSettings(abtListToday); // die Settings ueberstehen das Reload nicht
+    abtListToday->reload();
+    settings->readSettings(abtListToday);
+  }
   kontoTree->load(abtList);
   kontoTree->closeFlaggedPersoenlicheItems();
 }
 
 void TimeMainWindow::reloadDefaultComments()
 {
+  if (abtList!=abtListToday) {
+    abtListToday->clearDefaultComments();
+    defaultCommentReader->read(abtListToday);
+  }
   abtList->clearDefaultComments();
-  defaultCommentReader->read();
+  defaultCommentReader->read(abtList);
 }
 
 /**

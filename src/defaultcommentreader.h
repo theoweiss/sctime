@@ -28,16 +28,11 @@ class DefaultCommentReader
 {
   public:
 
-    DefaultCommentReader(AbteilungsListe* abtlist)
+    DefaultCommentReader()
     {
-      abtList = abtlist;
     }
 
-    void read();
-
-  private:
-
-    AbteilungsListe* abtList;
+    void read(AbteilungsListe* abtList);
 };
 
 #endif

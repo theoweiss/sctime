@@ -55,6 +55,8 @@ class AbteilungsListe: public std::map<QString,KontoListe>
 
     AbteilungsListe(const QDate _datum, KontoDatenInfo* ki);
 
+    AbteilungsListe::AbteilungsListe(const QDate _datum, AbteilungsListe* abtlist);
+
     bool findKonto(KontoListe::iterator& itKo, KontoListe* &kontoliste, const QString& abteilung, const QString& konto);
 
     bool findUnterKonto(UnterKontoListe::iterator& itUk, UnterKontoListe* &unterkontoliste, const QString& abteilung, const QString& konto, const QString& unterkonto);

@@ -55,6 +55,49 @@ AbteilungsListe::AbteilungsListe(const QDate _datum, KontoDatenInfo* ki): std::m
   reload();
 }
 
+/** Erzeugt eine Abteilungsliste fuer das angegebene Datum, und uebernimmt den Kontobaum der
+    uebergebenen AbteilungsListe (ohne Eintraege).
+ */
+AbteilungsListe::AbteilungsListe(const QDate _datum, AbteilungsListe* abtlist): std::map<QString,KontoListe>()
+{
+  kontoDatenInfoSuccess = abtlist->kontoDatenInfoSuccess;
+  aktivAbteilung="";
+  aktivKonto="";
+  aktivUnterkonto="";
+  aktivEintrag=0;
+  zeitDifferenz=0;
+  datum=_datum;
+  kontoDatenInfo = abtlist->kontoDatenInfo;
+
+  AbteilungsListe::iterator abtPos;
+
+  for (abtPos=abtlist->begin(); abtPos!=abtlist->end(); ++abtPos) {
+    KontoListe* kontoliste=&(abtPos->second);
+    QString abt=abtPos->first;
+    for (KontoListe::iterator kontPos=kontoliste->begin(); kontPos!=kontoliste->end(); ++kontPos) {
+      UnterKontoListe* unterkontoliste=&(kontPos->second);
+      QString konto=kontPos->first;
+      for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin();
+           ukontPos!=unterkontoliste->end(); ++ukontPos) {
+        // Konten uebernehmen   
+        EintragsListe* eintragsliste=&(ukontPos->second);
+        QString unterkonto=ukontPos->first;
+        insertEintrag(abt,konto,unterkonto);
+        setBeschreibung(abt,konto,unterkonto,eintragsliste->beschreibung());
+        setUnterKontoFlags(abt,konto,unterkonto,eintragsliste->getFlags(),FLAG_MODE_OVERWRITE);
+
+        // Default Kommentare kopieren
+        QStringList* dcl=eintragsliste->getDefaultCommentList();
+        UnterKontoListe *unterkontoliste;
+        UnterKontoListe::iterator itUk;
+        findUnterKonto(itUk,unterkontoliste,abt,konto,unterkonto);
+        QStringList::iterator dclIt;
+        for (dclIt = dcl->begin(); dclIt != dcl->end(); ++dclIt )
+          itUk->second.addDefaultComment(*dclIt);
+      }
+    }
+  }
+}
 
 /** Sucht nach dem in abteilung,konto,unterkonto angegebenen Konto, und liefert
   * einen iterator darauf in posUk zurueck, der fuer die ebenfalls
@@ -524,7 +567,7 @@ void AbteilungsListe::moveUnterKontoPersoenlich(const QString& abteilung, const 
   if (persoenlich) mode=FLAG_MODE_OR; else mode=FLAG_MODE_NAND;
 
   EintragsListe* eintragsliste=&(itUko->second);
-  eintragsliste->setFlags(applyFlagMode(eintragsliste->getFlags(),UK_PERSOENLICH,mode));  
+  eintragsliste->setFlags(applyFlagMode(eintragsliste->getFlags(),UK_PERSOENLICH,mode));
   for (EintragsListe::iterator etPos=eintragsliste->begin(); etPos!=eintragsliste->end(); ++etPos) {
     etPos->second.flags=applyFlagMode(etPos->second.flags,UK_PERSOENLICH,mode);
   }
@@ -764,7 +807,7 @@ void AbteilungsListe::clearDefaultComments()
 
   for (abtPos=begin(); abtPos!=end(); ++abtPos) {
 
-    KontoListe* kontoliste=&(abtPos->second);   
+    KontoListe* kontoliste=&(abtPos->second);
     for (KontoListe::iterator kontPos=kontoliste->begin(); kontPos!=kontoliste->end(); ++kontPos) {
       UnterKontoListe* unterkontoliste=&(kontPos->second);
       for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {

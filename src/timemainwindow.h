@@ -25,7 +25,7 @@
 
 #include <qlistview.h>
 #include <qmainwindow.h>
-#include "kontodateninfozeit.h"
+#include "kontodateninfo.h"
 #include "unterkontodialog.h"
 #include "kontotreeview.h"
 #include "toolbar.h"
@@ -46,7 +46,7 @@ class TimeMainWindow: public QMainWindow
   Q_OBJECT
 
   public:
-    TimeMainWindow(KontoDatenInfoZeit* zk);
+    TimeMainWindow(KontoDatenInfo* zk);
     QListView* getKontoTree() { return kontoTree; };
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;
