@@ -2,10 +2,8 @@
 
     $Id$
 
-    Copyright (C) 2003 Florian Schmitt, Science + Computing ag
+    Copyright (C) 2003 Florian Schmitt, science + computing ag
                        f.schmitt@science-computing.de
-    Copyright (C) 2003 Marcus Camen, science + computing ag
-                       m.camen@science-computing.de
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,39 +18,30 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ */
 
-*/
-
-#ifndef DATEDIALOG_H
-#define DATEDIALOG_H
-
-#include "datedialogbase.h"
+#include "preferencedialog.h"
+#include "qspinbox.h"
+#include "qcheckbox.h"
 
 
- /**
-  * Der Dialog zum Eingeben eines Datums
-  */
-class DateDialog : public DateDialogBase
+PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent)
+: PreferenceDialogBase(parent)
 {
-  Q_OBJECT
+    settings = _settings;
+    zeitIncBox->setValue(settings->timeIncrement()/60);
+    fastZeitIncBox->setValue(settings->fastTimeIncrement()/60);
+    entrySaveCheckbox->setChecked(settings->alwaysSaveEntry());
+}
 
-public:
-  DateDialog(QDate datum, QWidget* parent = 0);
-  ~DateDialog();
-  /*$PUBLIC_FUNCTIONS$*/
+PreferenceDialog::~PreferenceDialog()
+{
+}
 
-public slots:
-  /*$PUBLIC_SLOTS$*/
-
-protected:
-  /*$PROTECTED_FUNCTIONS$*/
-
-protected slots:
-  /*$PROTECTED_SLOTS$*/
-  virtual void          accept();
-
-signals:
-  void dateChanged(const QDate& datum);
-};
-
-#endif
+void PreferenceDialog::accept()
+{
+    QDialog::accept();
+    settings->setTimeIncrement(zeitIncBox->value()*60);
+    settings->setFastTimeIncrement(fastZeitIncBox->value()*60);
+    settings->setAlwaysSaveEntry(entrySaveCheckbox->isChecked());
+}

@@ -128,6 +128,8 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     void getGesamtZeit(int& sek, int& sekabzur);
     
     int getZeitDifferenz();
+
+    void resetZeitDifferenz();
     
     const QDate& getDatum();
 

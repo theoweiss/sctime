@@ -72,6 +72,8 @@ class TimeMainWindow: public QMainWindow
     void updateCaption();
 
     void save();
+
+    void resetDiff();
     
     void inPersoenlicheKonten(bool hinzufuegen);
     void flagsChanged(const QString& abt, const QString& ko, const QString& uko, int idx);
@@ -90,6 +92,7 @@ class TimeMainWindow: public QMainWindow
     
     void callFindKontoDialog();
     void callHelpDialog();
+    void callPreferenceDialog();
     void refreshKontoListe();
 
   signals:

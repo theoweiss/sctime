@@ -80,6 +80,16 @@ class SCTimeXMLSettings
     int timeIncrement() { return timeInc; };
 
     int fastTimeIncrement() { return fastTimeInc; };
+
+    void setAlwaysSaveEntry(bool newVal)
+    {
+        alwaysSaveEintrag = newVal;
+    }
+
+    bool alwaysSaveEntry()
+    {
+        return alwaysSaveEintrag;
+    }
     
 
 

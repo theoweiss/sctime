@@ -1,0 +1,74 @@
+<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
+<class>DateDialogBase</class>
+<widget class="QDialog">
+    <property name="name">
+        <cstring>DateDialogBase</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>188</width>
+            <height>143</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Datum wählen</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>11</number>
+        </property>
+        <property name="spacing">
+            <number>6</number>
+        </property>
+        <widget class="QLabel">
+            <property name="name">
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Zu editierendes Datum:</string>
+            </property>
+        </widget>
+        <widget class="QDateEdit">
+            <property name="name">
+                <cstring>dateEdit</cstring>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>okbutton</cstring>
+            </property>
+            <property name="text">
+                <string>OK</string>
+            </property>
+        </widget>
+        <widget class="QPushButton">
+            <property name="name">
+                <cstring>cancelbutton</cstring>
+            </property>
+            <property name="text">
+                <string>Cancel</string>
+            </property>
+        </widget>
+    </vbox>
+</widget>
+<connections>
+    <connection>
+        <sender>okbutton</sender>
+        <signal>clicked()</signal>
+        <receiver>DateDialogBase</receiver>
+        <slot>accept()</slot>
+    </connection>
+    <connection>
+        <sender>cancelbutton</sender>
+        <signal>clicked()</signal>
+        <receiver>DateDialogBase</receiver>
+        <slot>reject()</slot>
+    </connection>
+</connections>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

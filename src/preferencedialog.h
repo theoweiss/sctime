@@ -4,8 +4,6 @@
 
     Copyright (C) 2003 Florian Schmitt, Science + Computing ag
                        f.schmitt@science-computing.de
-    Copyright (C) 2003 Marcus Camen, science + computing ag
-                       m.camen@science-computing.de
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,23 +21,27 @@
 
 */
 
-#ifndef DATEDIALOG_H
-#define DATEDIALOG_H
+#ifndef PREFERENCEDIALOG_H
+#define PREFERENCEDIALOG_H
 
-#include "datedialogbase.h"
+#include "preferencedialogbase.h"
+#include "sctimexmlsettings.h"
 
 
  /**
   * Der Dialog zum Eingeben eines Datums
   */
-class DateDialog : public DateDialogBase
+class PreferenceDialog : public PreferenceDialogBase
 {
   Q_OBJECT
 
 public:
-  DateDialog(QDate datum, QWidget* parent = 0);
-  ~DateDialog();
+  PreferenceDialog(SCTimeXMLSettings* _settings, QWidget* parent = 0);
+  ~PreferenceDialog();
   /*$PUBLIC_FUNCTIONS$*/
+
+protected:
+  SCTimeXMLSettings* settings;
 
 public slots:
   /*$PUBLIC_SLOTS$*/
@@ -52,7 +54,7 @@ protected slots:
   virtual void          accept();
 
 signals:
-  void dateChanged(const QDate& datum);
+  // signals
 };
 
 #endif

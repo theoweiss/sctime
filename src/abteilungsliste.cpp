@@ -765,3 +765,8 @@ void AbteilungsListe::clearKonten()
   {
     return kontoDatenInfoSuccess;
   }
+
+  void AbteilungsListe::resetZeitDifferenz()
+  {
+     zeitDifferenz = 0;
+  }

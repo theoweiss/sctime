@@ -2,8 +2,10 @@
 
     $Id$
 
-    Copyright (C) 2003 Florian Schmitt, Science and Computing AG
+    Copyright (C) 2003 Florian Schmitt, science + computing ag
                        f.schmitt@science-computing.de
+    Copyright (C) 2003 Marcus Camen, science + computing ag
+                       m.camen@science-computing.de
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,35 +22,23 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <qdatetimeedit.h>
 #include "datedialog.h"
-#include "qlayout.h"
 
-/*
- * Baut einen DateDialog auf.
-*/
-DateDialog::DateDialog(QDate datum, QWidget * parent):QDialog(parent)
+
+DateDialog::DateDialog(QDate datum, QWidget *parent)
+: DateDialogBase(parent)
 {
-  QVBoxLayout* layout=new QVBoxLayout(this,3);
-  dateEdit=new QDateEdit(datum, this);
-  layout->addWidget(new QLabel("Zu editierendes Datum:",this));
-  layout->addWidget(dateEdit);
-
-  QPushButton * okbutton=new QPushButton( "OK", this );
-  QPushButton * cancelbutton=new QPushButton( "Cancel", this );
-
-  layout->addWidget(okbutton);
-  layout->addWidget(cancelbutton);
-
-  connect (okbutton, SIGNAL(clicked()), this, SLOT(accept()));
-  connect (cancelbutton, SIGNAL(clicked()), this, SLOT(reject()));
+  dateEdit->setDate(datum);
 }
 
-/** Uebernimmt die eingegebenen einstellungen, und loest ein dateChanged Signal aus. */
+DateDialog::~DateDialog()
+{
+}
+
+/*$SPECIALIZATION$*/
 void DateDialog::accept()
 {
   emit dateChanged(dateEdit->date());
   QDialog::accept();
 }
-
-
-

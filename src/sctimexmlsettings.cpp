@@ -65,7 +65,7 @@ void SCTimeXMLSettings::writeShellSkript()
                      kontPos->first<<"  "<<ukontPos->first<<"\t\t"<<
                      roundTo(1.0/3600*etPos->second.sekunden,0.01)<<"/"<<
                      roundTo(1.0/3600*etPos->second.sekundenAbzur,0.01)<<
-                     "  \'"<<kommentar<<"\'\n";
+                     "  \'"<<kommentar.simplifyWhiteSpace()<<"\'\n";
           }
         }
       }

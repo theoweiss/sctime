@@ -34,6 +34,7 @@
 #include "qstringlist.h"
 #include "statusbar.h"
 #include "qdatetime.h"
+#include "preferencedialog.h"
 #ifndef HAS_NO_DATETIMEEDIT
 #include "datedialog.h"
 #endif
@@ -99,6 +100,9 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   QPopupMenu * zeitmenu = new QPopupMenu( this );
   menuBar()->insertItem( "&Zeit", zeitmenu );
 
+  QPopupMenu * settingsmenu = new QPopupMenu( this );
+  menuBar()->insertItem( "&Einstellungen", settingsmenu );
+
   QPopupMenu * hilfemenu = new QPopupMenu( this );
   menuBar()->insertItem( "&Hilfe", hilfemenu );
 
@@ -126,6 +130,10 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
                                       "&Datum wählen", CTRL+Key_D, this, "datum wählen" );
   connect(changeDateAction, SIGNAL(activated()), this, SLOT(callDateDialog()));
 
+  QAction* resetAction = new QAction( "Zeitdifferenz auf Null setzen",
+                                      "&Differenz auf Null", CTRL+Key_N, this, "differenz null" );
+  connect(resetAction, SIGNAL(activated()), this, SLOT(resetDiff()));
+
   inPersKontAction = new QAction( "In persönliche Konten", QPixmap((const char **)hi22_action_attach),
                                       "In persönliche &Konten", CTRL+Key_K, this, "persoenliche Konten", true);
 
@@ -146,6 +154,9 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   QAction* configZeitIncAction = new QAction( "Zeitinkrement für die Shortcutbuttons einstellen",
                                       "&Zeitinkrement einstellen", 0, this, "configzeitinc" );
   connect(configZeitIncAction, SIGNAL(activated()), this, SLOT(callConfigZeitIncDialog()));
+  QAction* preferenceAction = new QAction( "sctime konfigurieren",
+                                      "sctime &konfigurieren", 0, this, "configsctime" );
+  connect(preferenceAction, SIGNAL(activated()), this, SLOT(callPreferenceDialog()));
 #ifndef NO_TEXTEDIT
   QAction* helpAction = new QAction( "Anleitung",
                                       "&Anleitung", Key_F1, this, "anleitung" );
@@ -204,8 +215,10 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   refreshAction->addTo(kontomenu);
   changeDateAction->addTo(zeitmenu);
   configZeitIncAction->addTo(zeitmenu);
+  resetAction->addTo(zeitmenu);
   kontomenu->insertSeparator();
   quitAction->addTo(kontomenu);
+  preferenceAction->addTo(settingsmenu);
   #ifndef NO_TEXTEDIT
   helpAction->addTo(hilfemenu);
   #endif
@@ -409,8 +422,15 @@ void TimeMainWindow::eintragEntfernen()
   int idx;
 
   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
-  
+
   KontoTreeItem *topi, *abti, *koi, *ukoi, *eti;
+
+  if (abtList->isAktiv(abt,ko,uko,idx)) {
+      QMessageBox::warning(NULL,"Warnung","Kann aktiven Eintrag nicht löschen\n",
+                              QMessageBox::Ok, QMessageBox::NoButton,
+                              QMessageBox::NoButton);
+      return;
+  }
 
   abtList->setSekunden(abt,ko,uko,idx,0); // Explizit vorher auf Null setzen, um die Gesamtzeit nicht zu verwirren.
 
@@ -545,6 +565,12 @@ void TimeMainWindow::updateCaption()
    setCaption("sctime - "+ abt+"/"+ko+"/"+uko);
 }
 
+void TimeMainWindow::resetDiff()
+{
+   abtList->resetZeitDifferenz();
+   zeitChanged();
+}
+
 /**
  * Sollte aufgerufen werden, sobald sich die Einstellungen fuer ein Konto aendern.
  * Toggelt zB inPersKontAction.
@@ -617,6 +643,11 @@ void TimeMainWindow::callFindKontoDialog()
   }
 }
 
+void TimeMainWindow::callPreferenceDialog()
+{
+  PreferenceDialog preferenceDialog(settings, this);
+  preferenceDialog.exec();
+}
 
 void TimeMainWindow::callConfigZeitIncDialog()
 {
