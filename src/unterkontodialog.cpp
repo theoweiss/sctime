@@ -67,6 +67,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   QVBoxLayout* layout=new QVBoxLayout(this,3);
 
   QPushButton * okbutton=new QPushButton( "OK", this );
+  okbutton->setDefault(true);
   QPushButton * cancelbutton=new QPushButton( "Abbruch", this );
 
   QStringList* defaultcomments = unterkonto->getDefaultCommentList();
@@ -96,7 +97,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
      QGroupBox* taggroup = new QGroupBox(5,Qt::Horizontal,"Tags",this);
      tagcombo = new QComboBox(taggroup);
      tagcombo->insertStringList(*taglist);
-     QPushButton * addtagbutton = new QPushButton( "Hinzufügen", taggroup );;     
+     QPushButton * addtagbutton = new QPushButton( "Hinzufügen", taggroup );;
      layout->addWidget(taggroup);
      connect (addtagbutton, SIGNAL(clicked()), this, SLOT(addTag()));
      layout->addSpacing(5);
@@ -171,7 +172,7 @@ void UnterKontoDialog::accept()
     zeitAbzurBox->getSekunden(), flags));
   abtList->moveEintragPersoenlich(abteilungsName,kontoName,unterKontoName,eintragIndex,
     (persoenlichesKonto->isChecked()));
-  
+
   if (aktivesProjekt->isChecked()) {
     int oldidx;
     QString oldabt, oldko, olduk;
@@ -196,7 +197,7 @@ void UnterKontoDialog::accept()
 
 
 /**
- *  Behinhaltet die Logik, um beim Click auf Aktives Projekt zusaetzlich auch das persoenliche Projekt 
+ *  Behinhaltet die Logik, um beim Click auf Aktives Projekt zusaetzlich auch das persoenliche Projekt
  *  zu aktivieren
  */
 void UnterKontoDialog::aktivesProjektButtonClicked()
