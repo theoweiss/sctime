@@ -321,6 +321,11 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
               if (kommandostr.isNull()) continue;
               zeitKommando=kommandostr;
             }
+            if (elem2.tagName()=="max_working_time") {
+              QString secondsstr=elem2.attribute("seconds");
+              if (secondsstr.isNull()) continue;
+              _maxWorkingTime=secondsstr.toInt();
+            }           
             if (elem2.tagName()=="aktives_konto") {
               aktiveskontotag=elem2; // Aktives Konto merken und zum Schluss setzen, damit es vorher erzeugt wurde
             }
@@ -418,6 +423,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     zeitkommandotag.appendChild(doc.createTextNode(zeitKommando));
     generaltag.appendChild(zeitkommandotag);
 
+    if (MAX_WORKTIME_DEFAULT!=_maxWorkingTime) {
+        QDomElement maxworktag = doc.createElement( "max_working_time" );
+        maxworktag.setAttribute("seconds",_maxWorkingTime);
+        generaltag.appendChild(maxworktag);
+    }    
+    
     QDomElement mainwindowpositiontag = doc.createElement( "windowposition" );
     mainwindowpositiontag.setAttribute("x",mainwindowPosition.x());
     mainwindowpositiontag.setAttribute("y",mainwindowPosition.y());

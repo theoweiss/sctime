@@ -21,7 +21,6 @@
 
 */
 
-#define MAX_WORKTIME 10*60*60 // Warn if more time is spent
 #define NO_CHECKIN_ACTION
 
 #include "timemainwindow.h"
@@ -335,7 +334,7 @@ void TimeMainWindow::configClickMode(bool singleClickActivation)
     disconnect(kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)),
                this, SLOT(callUnterKontoDialog(QListViewItem *)));
                
-    if (!settings->singleClickActivation()) {        
+    if (singleClickActivation) {        
         connect(kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)), 
                 this, SLOT(callUnterKontoDialog(QListViewItem *)) );
         connect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)), 
@@ -495,6 +494,7 @@ void TimeMainWindow::zeitChanged()
 {
   static int last=0;
   int zeitAbzur, zeit;
+  int max_working_time=settings->maxWorkingTime();
   abtList->getGesamtZeit(zeit, zeitAbzur);
   TimeCounter tc(zeit);
   setIconText(tc.toString());
@@ -502,7 +502,7 @@ void TimeMainWindow::zeitChanged()
   emit gesamtZeitChanged(zeit);
   emit gesamtZeitAbzurChanged(zeitAbzur);
   // Beim ersten ueberschreiten von MAX_WORKTIME
-  if ((zeit>MAX_WORKTIME)&&(last<=MAX_WORKTIME)) {
+  if ((zeit>max_working_time)&&(last<=max_working_time)) {
     // last muss _vor_ dem oeffnen der Messagebox gesetzt werden,
     // da es andernfalls erst nach dem Schliessen der Box gesetzt wird, was bedeuten wuerde,
     // dass (falls der user nicht sofort reagiert), jede Minute eine neue Box aufpoppt

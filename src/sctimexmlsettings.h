@@ -23,6 +23,8 @@
 #ifndef SCTIMESETTINGS_H
 #define  SCTIMESETTINGS_H
 
+#define MAX_WORKTIME_DEFAULT 10*60*60 // Warn if more time is spent
+
 #include "abteilungsliste.h"
 #include "qdatetime.h"
 #include "qpoint.h"
@@ -43,6 +45,7 @@ class SCTimeXMLSettings
       alwaysSaveEintrag = false;
       _powerUserView = false;
       _singleClickActivation = false;
+      _maxWorkingTime=MAX_WORKTIME_DEFAULT;
       unterKontoWindowPosition = QPoint(0,0);
       unterKontoWindowSize = QSize(0,0);
     }
@@ -115,6 +118,10 @@ class SCTimeXMLSettings
         return _singleClickActivation;
     }
     
+    int maxWorkingTime()
+    {
+       return _maxWorkingTime;
+    }
 
 
   private:
@@ -133,6 +140,7 @@ class SCTimeXMLSettings
     bool alwaysSaveEintrag;
     bool _powerUserView;
     bool _singleClickActivation;
+    int _maxWorkingTime;
     
     QPoint unterKontoWindowPosition;
     QSize unterKontoWindowSize;
