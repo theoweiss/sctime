@@ -326,23 +326,26 @@ void TimeMainWindow::showAdditionalButtons(bool show)
 
 void TimeMainWindow::configClickMode(bool singleClickActivation)
 {
-    if (!settings->singleClickActivation()) {
-        disconnect(kontoTree, SIGNAL(mouseButtonClicked ( int, QListViewItem * , const QPoint & , int )), 
-                   this, SLOT(mouseButtonInKontoTreeClicked(int, QListViewItem * , const QPoint &, int )));
-        disconnect( kontoTree, SIGNAL(doubleClicked(QListViewItem *)), 
-                 this, SLOT(callUnterKontoDialog(QListViewItem *)) );
-        connect( kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)), 
-                 this, SLOT(callUnterKontoDialog(QListViewItem *)) );
-        connect( kontoTree, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(setAktivesProjekt(QListViewItem *)));
+    disconnect(kontoTree, SIGNAL(mouseButtonClicked ( int, QListViewItem * , const QPoint & , int )), 
+               this, SLOT(mouseButtonInKontoTreeClicked(int, QListViewItem * , const QPoint &, int )));
+    disconnect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)), 
+               this, SLOT(callUnterKontoDialog(QListViewItem *)) );
+    disconnect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)), 
+               this, SLOT(setAktivesProjekt(QListViewItem *)));
+    disconnect(kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)),
+               this, SLOT(callUnterKontoDialog(QListViewItem *)));
+               
+    if (!settings->singleClickActivation()) {        
+        connect(kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)), 
+                this, SLOT(callUnterKontoDialog(QListViewItem *)) );
+        connect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)), 
+                this, SLOT(setAktivesProjekt(QListViewItem *)));
         }
-    else {    
-        disconnect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(setAktivesProjekt(QListViewItem *)));
-        disconnect(kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)),
-                   this, SLOT(callUnterKontoDialog(QListViewItem *)));
+    else {            
         connect(kontoTree, SIGNAL(mouseButtonClicked ( int, QListViewItem * , const QPoint & , int )),
                    this, SLOT(mouseButtonInKontoTreeClicked(int, QListViewItem * , const QPoint &, int )));
-        connect( kontoTree, SIGNAL(doubleClicked(QListViewItem *)),
-                 this, SLOT(callUnterKontoDialog(QListViewItem *)) );
+        connect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)),
+                this, SLOT(callUnterKontoDialog(QListViewItem *)) );
     }               
 }
 
