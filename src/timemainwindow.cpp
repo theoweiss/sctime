@@ -744,7 +744,7 @@ void TimeMainWindow::callAboutBox()
   layout->addWidget(new QLabel("Patches:",aboutBox),3,0);
   layout->addWidget(new QLabel("Marcus Camen <m.camen@science-computing.de>",aboutBox),3,1);
   layout->addRowSpacing(4,18);
-  layout->addMultiCellWidget(new QLabel("<center>This Program is licensed under the Gnu Public License.</center>",aboutBox),5,5,0,1);
+  layout->addMultiCellWidget(new QLabel("<center>This Program is licensed under the GNU Public License.</center>",aboutBox),5,5,0,1);
   layout->addRowSpacing(6,18);
 
   QHBoxLayout* buttonlayout=new QHBoxLayout();
