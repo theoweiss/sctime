@@ -12,3 +12,24 @@
 * Kommentare fuer naechsten Tag uebernehmen
 * gideon import (Marcus Camen)
 * Default Kommentare
+
+--------- Version 0.44 -----------
+* Interne Umstrukturierung
+
+--------- Version 0.45 -----------
+* Default Tags
+* Neuer Dialog zum Waehlen des Datums
+* Beim Wählen eines anderen Tages zum Editieren wird kein Konto in der
+  Vergangenheit aktiviert.
+* Diverse Bugfixes
+
+--------- Version 0.46 -----------
+* Neue Singleclick Option für Leute, die den Doppelclick zum aktivieren
+  unintuitiv finden oder vergessen
+* Kopieren der Kontonamen ueber strg-c in die Zwischenablage moeglich (unter
+  Unix geht das leider nicht über die mittlere Maustaste, aber zB über die
+  KDE-Ablage).
+* Ueber die Environmentvariable SCTIME_CONFIG_DIR kann das
+  Konfigurationsverzeichnis angegeben werden. Wenn die Variable nicht
+  gesetzt ist, wird wie bisher $HOME/.sctime angenommen.
+ 
