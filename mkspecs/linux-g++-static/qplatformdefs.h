@@ -38,6 +38,7 @@
 #include <grp.h>
 #include <pwd.h>
 #include <signal.h>
+#include <dlfcn.h>
 
 #include <sys/types.h>
 #include <sys/ioctl.h>
@@ -58,6 +59,7 @@
 #include <resolv.h>
 
 
+#if !defined(QT_NO_COMPAT)
 #define QT_STATBUF		struct stat
 #define QT_STATBUF4TSTAT	struct stat
 #define QT_STAT			::stat
@@ -83,12 +85,17 @@
 #define QT_OPEN_CREAT		O_CREAT
 #define QT_OPEN_TRUNC		O_TRUNC
 #define QT_OPEN_APPEND		O_APPEND
+#endif
 
 #define QT_SIGNAL_RETTYPE	void
 #define QT_SIGNAL_ARGS		int
 #define QT_SIGNAL_IGNORE	SIG_IGN
 
+#if defined(__GLIBC__) && (__GLIBC__ >= 2)
 #define QT_SOCKLEN_T		socklen_t
+#else
+#define QT_SOCKLEN_T		int
+#endif
 
 #if defined(_XOPEN_SOURCE) && (_XOPEN_SOURCE >= 500)
 #define QT_SNPRINTF		::snprintf

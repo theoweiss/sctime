@@ -91,6 +91,7 @@ win32{
   HEADERS += kontodateninfodatabase.h
 }
 hpux-acc{
+  DEFINES += HPUX
   LIBS += -L/opt/graphics/OpenGL/lib $$QMAKE_LIBS_OPENGL
 }
 solaris-cc{
