@@ -105,6 +105,7 @@ class TimeMainWindow: public QMainWindow
     void reloadDefaultComments();
     void configClickMode(bool singleClickActivation);
     void mouseButtonInKontoTreeClicked(int button, QListViewItem * item, const QPoint & pos, int c );    
+    void copyNameToClipboard();
 
   signals:
     /** Wird ausgeloest, falls sich die Gesamtzeit geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden. */

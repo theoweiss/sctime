@@ -25,6 +25,8 @@
 #define NO_CHECKIN_ACTION
 
 #include "timemainwindow.h"
+#include "qclipboard.h"
+#include "qapplication.h"
 #include "qpopupmenu.h"
 #include "qmenubar.h"
 #include "kontotreeview.h"
@@ -107,9 +109,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
 
   statusBar = new StatusBar(this);
   toolBar   = new ToolBar(this);
-  
-  connect( kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)), 
-                 this, SLOT(callUnterKontoDialog(QListViewItem *)) );
+    
   configClickMode(settings->singleClickActivation());
 
   QPopupMenu * kontomenu = new QPopupMenu( this );
@@ -143,6 +143,10 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
   QAction* saveAction = new QAction( "Save", QPixmap((const char **)hi22_action_filesave ),
                                       "&Save", CTRL+Key_S, this, "save" );
   connect(saveAction, SIGNAL(activated()), this, SLOT(save()));
+  
+  QAction* copyAction = new QAction( "Name ins Clipboard kopieren",
+                                      "&Copy", CTRL+Key_C, this, "copy" );
+  connect(copyAction, SIGNAL(activated()), this, SLOT(copyNameToClipboard()));
 
   QAction* changeDateAction = new QAction( "Datum Wählen",
                                       "&Datum wählen", CTRL+Key_D, this, "datum wählen" );
@@ -329,17 +333,16 @@ void TimeMainWindow::configClickMode(bool singleClickActivation)
                  this, SLOT(callUnterKontoDialog(QListViewItem *)) );
         connect( kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)), 
                  this, SLOT(callUnterKontoDialog(QListViewItem *)) );
-        connect( kontoTree, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(setAktivesProjekt(QListViewItem *)));        
+        connect( kontoTree, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(setAktivesProjekt(QListViewItem *)));
         }
     else {    
         disconnect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(setAktivesProjekt(QListViewItem *)));
-        disconnect(kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)), 
-                   this, SLOT(callUnterKontoDialog(QListViewItem *))); 
-        connect(kontoTree, SIGNAL(mouseButtonClicked ( int, QListViewItem * , const QPoint & , int )), 
+        disconnect(kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)),
+                   this, SLOT(callUnterKontoDialog(QListViewItem *)));
+        connect(kontoTree, SIGNAL(mouseButtonClicked ( int, QListViewItem * , const QPoint & , int )),
                    this, SLOT(mouseButtonInKontoTreeClicked(int, QListViewItem * , const QPoint &, int )));
-        connect( kontoTree, SIGNAL(doubleClicked(QListViewItem *)), 
-                 this, SLOT(callUnterKontoDialog(QListViewItem *)) );         
-                                 
+        connect( kontoTree, SIGNAL(doubleClicked(QListViewItem *)),
+                 this, SLOT(callUnterKontoDialog(QListViewItem *)) );
     }               
 }
 
@@ -349,6 +352,12 @@ void TimeMainWindow::customEvent( QCustomEvent * e)
       close();
    }
    QMainWindow::customEvent(e);
+}
+
+void TimeMainWindow::copyNameToClipboard()
+{
+    QClipboard *cb = QApplication::clipboard();
+    cb->setText( kontoTree->currentItem()->text(0), QClipboard::Clipboard );
 }
 
 void TimeMainWindow::mouseButtonInKontoTreeClicked(int button, QListViewItem * item, const QPoint & pos, int c)
