@@ -1,14 +1,17 @@
 #!/bin/ksh
 
-if [[ -z $1 ]] ; then
+arch=$1
+
+if [[ -z $arch ]] ; then
    echo "Syntax: ./configure <architecture>"
    echo "architecture may be one of the follwing values:"
-   \ls -1 ./mkspecs/$1
+   \ls -1 ./mkspecs/$arch
    exit 1 ;
 fi
-if [[ ! -d ./mkspecs/$1 ]] ; then
-   echo "Unknown architecture \"$1\""
+shift
+if [[ ! -d ./mkspecs/$arch ]] ; then
+   echo "Unknown architecture \"$arch\""
    exit 2 ;
 fi
 echo "Running qmake"
-qmake -makefile -spec `pwd`/mkspecs/$1 sctime.pro || echo "qmake failed!"
+qmake -makefile -spec `pwd`/mkspecs/$arch $* sctime.pro || echo "qmake failed!"

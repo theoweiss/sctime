@@ -87,7 +87,7 @@ static LOCK_FD openlock( const QString &name )
     return fd;
 }
 #else
-static LOCK_FD openlock( const QString &name )
+static LOCK_FD openlock(const QString &name )
 {
 
    bool lockFileExistiert;
