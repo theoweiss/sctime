@@ -8,8 +8,6 @@
         <rect>
             <x>0</x>
             <y>0</y>
-            <width>187</width>
-            <height>137</height>
         </rect>
     </property>
     <property name="caption">
@@ -24,6 +22,9 @@
         </property>
         <property name="spacing">
             <number>6</number>
+        </property>
+        <property name="resizeMode">
+            <enum>Fixed</enum>
         </property>
         <widget class="QLabel">
             <property name="name">
