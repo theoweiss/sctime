@@ -1,0 +1,7 @@
+--------- Version 0.41 -----------
+* Umstellung auf qmake und neue Verzeichnisstruktur.
+* SIGTERM/SIGINT führt zum Speichern der aktuellen Daten vor dem Beenden.
+* In der Datenbank entfernte Konten verschwinden auch aus den
+  persoenlichen Konten.
+* Kommentarfenstergröße wird gespeichert (Danke an Marcus Camen).
+* Diverse Bugfixes.
