@@ -43,7 +43,7 @@
                 <cstring>okbutton</cstring>
             </property>
             <property name="text">
-                <string>&amp;Ok</string>
+                <string>&amp;OK</string>
             </property>
             <property name="accel">
                 <string>Alt+O</string>
