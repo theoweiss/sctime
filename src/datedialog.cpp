@@ -22,18 +22,57 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include <qdatepicker.h>
+#include "qdatepicker.h"
+#include <qpushbutton.h>
+#include <qdir.h>
+#include <qstringlist.h>
 #include "datedialog.h"
+#include "globals.h"
+#include "qdatetbl.h"
+#include <iostream>
 
-
-DateDialog::DateDialog(QDate datum, QWidget *parent)
+DateDialog::DateDialog(const QDate& datum, QWidget *parent)
 : DateDialogBase(parent)
 {
+  // to make sure month gets updated
+  currentMonth=-1;
+  currentYear=-1;
+  connect(datePicker, SIGNAL(dateChanged(QDate)), this, SLOT(dateChangedSlot(QDate)));
+  connect(applyButton, SIGNAL(clicked()), this, SLOT(apply()));
+  connect(datePicker, SIGNAL(tableDoubleClicked()), this, SLOT(apply()));
+
   datePicker->setDate(datum);
+
+  // wird durch setDate nicht ausgeloest, muss aber zur initialisierung
+  // aufgerufen werden.
+  dateChangedSlot(datum);
 }
 
 DateDialog::~DateDialog()
 {
+}
+
+void DateDialog::dateChangedSlot(QDate date)
+{
+  if ((date.month()!=currentMonth)||(date.year()!=currentYear)) {
+    QDir qd(configDir+"/checkedin");
+    QStringList files=qd.entryList("zeit-"+date.toString("yyyy-MM")+"-*.xml");
+    for ( QStringList::Iterator it = files.begin(); it != files.end(); ++it ) {      
+      bool ok;
+      QDate filedate;
+      int day=QString(*it).section('-',3,3).section('.',0,0).toInt(&ok);
+      if ((ok)&&filedate.setYMD(date.year(),date.month(),day)) {
+        datePicker->dateTable()->setCustomDatePainting(filedate, yellow, QDateTable::CircleMode, red);
+      }
+    }
+    currentMonth = date.month();
+    currentYear  = date.year();
+  }
+}
+
+void DateDialog::apply()
+{
+   emit dateChanged(datePicker->date());
 }
 
 /*$SPECIALIZATION$*/

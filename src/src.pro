@@ -4,17 +4,10 @@
 # Target is an application:  ../bin/sctime
 
 TEMPLATE = app
-VERSIONSTR = \"0.43a\"
+VERSIONSTR = \"0.44\"
 CONFIG += release warn_on qt
 OBJECTS_DIR = ../obj
 TARGET = ../bin/sctime
-!win32{
-  BUILDDATESTR = \""`date`"\"
-  SOURCES += kontodateninfozeit.cpp
-}
-isEmpty(BUILDDATESTR){
-  BUILDDATESTR = \""unknown"\"
-}
 DEFINES += BUILDDATESTR=$$BUILDDATESTR VERSIONSTR=$$VERSIONSTR
 SOURCES += abteilungsliste.cpp \
            datedialog.cpp \
@@ -28,8 +21,9 @@ SOURCES += abteilungsliste.cpp \
            defaultcommentreader.cpp \
            qcalendarsystem.cpp \
            qcalendarsystemgregorian.cpp \
+           qdatepicker.cpp \
            qdatetbl.cpp \
-           qdatepicker.cpp
+           utils.cpp 
 HEADERS += abteilungsliste.h \
            kontoliste.h \
            statusbar.h \
@@ -45,21 +39,20 @@ HEADERS += abteilungsliste.h \
            timemainwindow.h \
            globals.h \
            toolbar.h \
-           kontodateninfodatabase.h \
            sctimeapp.h \
            unterkontodialog.h \
            kontodateninfo.h \
            sctimehelp.h \
            unterkontoeintrag.h \
-           kontodateninfozeit.h \
            sctimexmlsettings.h \
            unterkontoliste.h \
            preferencedialog.h \
            defaultcommentreader.h \
+           utils.h \
            qcalendarsystem.h \
            qcalendarsystemgregorian.h \
-           qdatetbl.h \
-           qdatepicker.h
+           qdatepicker.h \
+           qdatetbl.h 
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \
@@ -73,9 +66,18 @@ IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_queue.xpm \
           ../pics/scLogo_15Farben.xpm \
           ../pics/sc_logo.xpm 
-FORMS += datedialogbase.ui preferencedialogbase.ui
+FORMS += datedialogbase.ui \
+         preferencedialogbase.ui 
 target.path = $(prefix)/bin 
 INSTALLS += target 
+!win32{
+  BUILDDATESTR = \""`date`"\"
+  HEADERS += kontodateninfozeit.h
+  SOURCES += kontodateninfozeit.cpp
+}
+isEmpty(BUILDDATESTR){
+  BUILDDATESTR = \""unknown"\"
+}
 linux-g++-static{
   LIBS += -ldl
 }
@@ -86,6 +88,7 @@ win32{
   DEFINES += WIN32
   QMAKE_CXXFLAGS += -GX
   SOURCES += kontodateninfodatabase.cpp
+  HEADERS += kontodateninfodatabase.h
 }
 hpux-acc{
   LIBS += -L/opt/graphics/OpenGL/lib $$QMAKE_LIBS_OPENGL
@@ -95,9 +98,7 @@ solaris-cc{
   QMAKE_CXXFLAGS_RELEASE += -features=conststrings
   LIBS += -ldl $$QMAKE_LIBS_OPENGL
 }
-irix-n32{
+irix-cc{
   DEFINES += IRIX
-  QMAKE_LFLAGS += -LANG:std
   QMAKE_LIBS_QT += -lGL
 }
-

@@ -178,6 +178,7 @@ protected:
 protected slots:
   void dateChangedSlot(QDate);
   void tableClickedSlot();
+  void tableDoubleClickedSlot();
   void monthForwardClicked();
   void monthBackwardClicked();
   void yearForwardClicked();
@@ -230,6 +231,10 @@ signals:
    *  clicking on it in the table.
    */
   void tableClicked();
+  /** This signal is emitted when the day has been selected by
+   *  Doubleclicking on it in the table.
+   */
+  void tableDoubleClicked();
 
 private:
   /// the font size for the widget

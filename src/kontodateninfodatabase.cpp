@@ -76,3 +76,9 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
   return ret;
 }
 
+bool KontoDatenInfoDatabase::checkIn(AbteilungsListe* abtlist)
+{
+   std::cout<<"Kann nicht einchecken, da nicht implementiert"<<std::endl;
+   return false;
+}
+

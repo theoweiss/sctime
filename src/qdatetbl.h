@@ -346,6 +346,7 @@ protected:
      * React on mouse clicks that select a date.
      */
     virtual void contentsMousePressEvent(QMouseEvent *);
+    virtual void contentsMouseDoubleClickEvent(QMouseEvent *e);
     virtual void wheelEvent( QWheelEvent * e );
     virtual void keyPressEvent( QKeyEvent *e );
     virtual void focusInEvent( QFocusEvent *e );
@@ -401,6 +402,8 @@ signals:
      * A date has been selected by clicking on the table.
      */
     void tableClicked();
+
+    void tableDoubleClicked();
 
     /**
      * A popup menu for a given date is about to be shown (as when the user

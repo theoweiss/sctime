@@ -22,6 +22,7 @@
 */
 
 #define MAX_WORKTIME 10*60*60 // Warn if more time is spent
+#define NO_CHECKIN_ACTION
 
 #include "timemainwindow.h"
 #include "qpopupmenu.h"
@@ -146,6 +147,12 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
                                       "&Differenz auf Null", CTRL+Key_N, this, "differenz null" );
   connect(resetAction, SIGNAL(activated()), this, SLOT(resetDiff()));
 
+#ifndef NO_CHECKIN_ACTION
+  checkInAction = new QAction( "Aktuellen Tag einchecken",
+                                      "&Tag einchecken", 0, this, "checkin" );
+  connect(checkInAction, SIGNAL(activated()), this, SLOT(checkIn()));
+#endif
+
   inPersKontAction = new QAction( "In persönliche Konten", QPixmap((const char **)hi22_action_attach),
                                       "In persönliche &Konten", CTRL+Key_K, this, "persoenliche Konten", true);
 
@@ -252,6 +259,9 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
   refreshAction->addTo(kontomenu);
   changeDateAction->addTo(zeitmenu);
   resetAction->addTo(zeitmenu);
+#ifndef NO_CHECKIN_ACTION
+  checkInAction->addTo(zeitmenu);
+#endif
   kontomenu->insertSeparator();
   quitAction->addTo(kontomenu);
   defaultCommentAction->addTo(settingsmenu);
@@ -677,7 +687,6 @@ void TimeMainWindow::inPersoenlicheKonten(bool hinzufuegen)
 void TimeMainWindow::changeShortCutSettings(QListViewItem * item)
 {
   bool iseintragsitem=kontoTree->isEintragsItem(item);
-  editUnterKontoAction->setEnabled(iseintragsitem);
   inPersoenlicheKontenAllowed=false; //Vorsorglich disablen, sonst Seiteneffekte mit flagsChanged.
   inPersKontAction->setEnabled(false);
 
@@ -695,15 +704,18 @@ void TimeMainWindow::changeShortCutSettings(QListViewItem * item)
        eintragRemoveAction->setEnabled(true);
 
     flagsChanged(abt,ko,uko,idx);
-    inPersKontAction->setEnabled(true);
-    emit eintragSelected(true);
+    inPersKontAction->setEnabled(!abtList->checkInState());
+    editUnterKontoAction->setEnabled(!abtList->checkInState());
+    /* Eigentlich sollte das Signal in editierbarerEintragSelected umbenannt werden... */
+    emit eintragSelected(!abtList->checkInState());
     if (abtListToday==abtList)
-      emit aktivierbarerEintragSelected(true);
+      emit aktivierbarerEintragSelected(!abtList->checkInState());
   }
   else {
     // Auch bei Konten und Unterkonten in Pers. Konten PersKontAction auf On stellen.
     inPersKontAction->setOn((item&&(top==PERSOENLICHE_KONTEN_STRING)&&(item->depth()>=2)&&(item->depth()<=3)));
-    inPersKontAction->setEnabled((item&&(item->depth()>=2)&&(item->depth()<=3)));
+    inPersKontAction->setEnabled((!abtList->checkInState())&&(item&&(item->depth()>=2)&&(item->depth()<=3)));
+    editUnterKontoAction->setEnabled(false);
     emit eintragSelected(false);
     emit aktivierbarerEintragSelected(false);
     eintragRemoveAction->setEnabled(false);
@@ -740,19 +752,50 @@ void TimeMainWindow::flagsChanged(const QString& abt, const QString& ko, const Q
   int selectedidx;
 
   kontoTree->itemInfo(item,selectedtop,selectedabt,selectedko,selecteduko,selectedidx);
-  if ((selectedabt==abt)&&(selectedko==ko)&&(selecteduko==uko)&&(selectedidx==idx))
-    inPersKontAction->setOn(abtList->getEintragFlags(abt,ko,uko,idx)&UK_PERSOENLICH);
+  if ((selectedabt==abt)&&(selectedko==ko)&&(selecteduko==uko)&&(selectedidx==idx)) {
+    inPersKontAction->setOn((abtList->getEintragFlags(abt,ko,uko,idx)&UK_PERSOENLICH)&&(!abtList->checkInState()));
+  }
 
   updateCaption();
 }
 
+void TimeMainWindow::checkIn()
+{
+  if (abtList->getDatum()>=QDate::currentDate()) {
+    QMessageBox::critical(this,"Fehler","Heutiges Datum kann nicht über die GUI eingecheckt werden.\nZeiten nicht eingecheckt!",
+                       QMessageBox::Ok | QMessageBox::Default,0);
+    return;
+  }
+  if (abtList->checkInState()) {
+    QMessageBox::critical(this,"Fehler","Ausgewähltes Datum ist bereits eingecheckt.\nZeiten nicht eingecheckt!",
+                       QMessageBox::Ok | QMessageBox::Default,0);
+    return;
+  }
+  settings->writeSettings(abtList);
+  settings->writeShellSkript(abtList);
+
+  // do checkin
+  if (!abtList->checkIn()) {
+    QMessageBox::critical(this,"Fehler","Fehler beim einchecken.\nZeiten nicht eingecheckt!",
+                       QMessageBox::Ok | QMessageBox::Default,0);
+    return;
+  } else {
+    // move zeit* files
+    abtList->setCheckInState(true);
+    settings->moveToCheckedIn(abtList);
+  };
+  kontoTree->load(abtList);
+  kontoTree->closeFlaggedPersoenlicheItems();
+  kontoTree->showAktivesProjekt();
+}
 
 /**
  * Erzeugt einen UnterkontoDialog fuer item.
  */
 void TimeMainWindow::callUnterKontoDialog(QListViewItem * item)
 {
-  if (!kontoTree->isEintragsItem(item)) return;
+  if ((!kontoTree->isEintragsItem(item))||(abtList->checkInState()))
+    return;
 
   QString top,uko,ko,abt;
 
@@ -764,9 +807,9 @@ void TimeMainWindow::callUnterKontoDialog(QListViewItem * item)
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int )), kontoTree,
   SLOT(refreshItem(const QString&, const QString&, const QString&,int )));
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int)), this, SLOT(zeitChanged()));
-  connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int)), 
+  connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int)),
            this, SLOT(flagsChanged(const QString&, const QString&, const QString&,int)));
-  if (abtList->isAktiv(abt,ko,uko,idx)) 
+  if (abtList->isAktiv(abt,ko,uko,idx))
     connect(this, SIGNAL(minuteTick()),unterKontoDialog->getZeitBox(),SLOT(incrMin()));
   unterKontoDialog->show();
 }

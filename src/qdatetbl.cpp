@@ -37,12 +37,12 @@
 
 #include <qapplication.h>
 #include <qdesktopwidget.h>
-#include <qcalendarsystem.h>
+#include "qcalendarsystem.h"
 
 #include "qdatepicker.h"
 #include "qdatetbl.h"
 
-#include "qpopupmenu.h"
+#include <qpopupmenu.h>
 
 #include <qdatetime.h>
 #include <qstring.h>
@@ -221,9 +221,9 @@ QDateTable::paintCell(QPainter *painter, int row, int col)
         } else { // paint a day of the current month
           if ( d->useCustomColors )
           {
-            QDateTablePrivate::DatePaintingMode *mode=d->customPaintingModes[pCellDate.toString()];
+            QDateTablePrivate::DatePaintingMode *mode=d->customPaintingModes[pCellDate.toString(Qt::ISODate)];
             if (mode)
-            {
+            {              
               if (mode->bgMode != NoBgMode)
               {
                 QBrush oldbrush=painter->brush();
@@ -381,7 +381,7 @@ void
 QDateTable::contentsMousePressEvent(QMouseEvent *e)
 {
 
-  if(e->type()!=QEvent::MouseButtonPress)
+  if ((e->type()!=QEvent::MouseButtonPress)&&(e->type()!=QEvent::MouseButtonDblClick))
     { // the KDatePicker only reacts on mouse press events:
       return;
     }
@@ -415,8 +415,10 @@ QDateTable::contentsMousePressEvent(QMouseEvent *e)
   // month, these cells will be painted twice, but that's no problem.
   updateCell( temp/7+1, temp%7 );
   updateCell( row, col );
-
-  emit tableClicked();
+  if (e->type()==QEvent::MouseButtonDblClick)
+    emit tableDoubleClicked();
+  else
+    emit tableClicked();
 
   if (  e->button() == Qt::RightButton && d->popupMenuEnabled )
   {
@@ -425,6 +427,12 @@ QDateTable::contentsMousePressEvent(QMouseEvent *e)
         emit aboutToShowContextMenu( menu, clickedDate );
         menu->popup(e->globalPos());
   }
+}
+
+void
+QDateTable::contentsMouseDoubleClickEvent(QMouseEvent *e)
+{
+  contentsMousePressEvent(e);
 }
 
 bool

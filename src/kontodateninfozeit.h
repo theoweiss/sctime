@@ -25,6 +25,41 @@
 #define  KONTODATENINFOZEIT_H
 
 #include "kontodateninfo.h"
+#include "qobject.h"
+#include "qprocess.h"
+
+
+class Einchecker:QObject
+{
+Q_OBJECT
+
+public:
+    Einchecker(AbteilungsListe*);
+    bool checkin (QDate date, const QString& konto, const QString& uko, int sek, int sekabzur, QString kommentar);
+
+public slots:
+    void onExit();
+    void firstAbteilung();
+    void firstKonto();
+    void firstUnterkonto();
+    void firstEintrag();
+    void nextAbteilung();
+    void nextKonto();
+    void nextUnterkonto();
+    void nextEintrag();
+
+signals:
+    void criticalError();
+    void finishedEintrag();
+
+private:
+    QProcess proc;
+    AbteilungsListe* abtList;
+    AbteilungsListe::iterator abtPos;
+    KontoListe::iterator kontPos;
+    UnterKontoListe::iterator ukontPos;
+    EintragsListe::iterator etPos;
+};
 
 /**
   * Liest die Kontodaten ueber die Zeittools ein.
@@ -32,7 +67,10 @@
 class KontoDatenInfoZeit: public KontoDatenInfo
 {
   public:
-    virtual bool readInto(AbteilungsListe * abtlist); 
+    virtual bool readInto(AbteilungsListe * abtlist);
+    virtual bool checkIn(AbteilungsListe* abtlist);
+  private:
+    Einchecker* ec;
 };
 
 #endif

@@ -36,7 +36,7 @@ class SCTimeXMLSettings
     SCTimeXMLSettings()
     {
       timeInc = 5*60;
-      fastTimeInc = 60*30; 
+      fastTimeInc = 60*30;
       zeitKommando = "zeit";
       mainwindowPosition = QPoint(0,0);
       mainwindowSize = QSize(700,400);
@@ -53,8 +53,10 @@ class SCTimeXMLSettings
     void writeShellSkript(AbteilungsListe* abtList);
 
     void setTimeIncrement(int sekunden) { timeInc=sekunden; };
-    
+
     void setFastTimeIncrement(int sekunden) { fastTimeInc=sekunden; };
+
+    bool moveToCheckedIn(AbteilungsListe* abtList);
     
     void setMainWindowGeometry(const QPoint& pos, const QSize& size)
     {

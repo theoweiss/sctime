@@ -55,7 +55,7 @@ class AbteilungsListe: public std::map<QString,KontoListe>
 
     AbteilungsListe(const QDate _datum, KontoDatenInfo* ki);
 
-    AbteilungsListe::AbteilungsListe(const QDate _datum, AbteilungsListe* abtlist);
+    AbteilungsListe(const QDate _datum, AbteilungsListe* abtlist);
 
     bool findKonto(KontoListe::iterator& itKo, KontoListe* &kontoliste, const QString& abteilung, const QString& konto);
 
@@ -100,6 +100,8 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     bool setKontoFlags(const QString& abteilung, const QString& konto, int flags, int mode=FLAG_MODE_OVERWRITE);
     
     bool setAbteilungFlags(const QString& abteilung, int flags, int mode=FLAG_MODE_OVERWRITE);
+
+    //void setAllEintragFlags(int flags);
 
     void setAllEintragFlagsInKonto(const QString& abteilung, const QString& konto, int flags);
 
@@ -148,6 +150,12 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     void getUnterKontoZeiten(const QString& abteilung, const QString& konto,
                                          const QString& unterkonto, int& sek, int& sekabzur);
 
+    bool checkIn();
+
+    bool checkInState();
+
+    void setCheckInState(bool state);
+
   private:
 
     QString aktivAbteilung, aktivKonto, aktivUnterkonto;
@@ -155,6 +163,7 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     int aktivEintrag;
     int zeitDifferenz;
     bool kontoDatenInfoSuccess;
+    bool checkedIn;
     QDate datum;
 
 };

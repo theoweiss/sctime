@@ -30,8 +30,8 @@
 class KontoDatenInfo
 {
   public:
-    virtual bool readInto(AbteilungsListe* abtlist)=0; 
-
+    virtual bool readInto(AbteilungsListe* abtlist)=0;
+    virtual bool checkIn(AbteilungsListe* abtlist)=0;
 };
 
 #endif

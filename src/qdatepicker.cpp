@@ -37,7 +37,7 @@
 
 #include <qapplication.h>
 #include <qtoolbar.h>
-#include <qcalendarsystem.h>
+#include "qcalendarsystem.h"
 
 #include "qdatetbl.h"
 
@@ -143,6 +143,7 @@ void QDatePicker::init( const QDate &dt )
   setDate(dt); // set button texts
   connect(table, SIGNAL(dateChanged(QDate)), SLOT(dateChangedSlot(QDate)));
   connect(table, SIGNAL(tableClicked()), SLOT(tableClickedSlot()));
+  connect(table, SIGNAL(tableDoubleClicked()), SLOT(tableDoubleClickedSlot()));
   connect(monthForward, SIGNAL(clicked()), SLOT(monthForwardClicked()));
   connect(monthBackward, SIGNAL(clicked()), SLOT(monthBackwardClicked()));
   connect(yearForward, SIGNAL(clicked()), SLOT(yearForwardClicked()));
@@ -215,6 +216,13 @@ QDatePicker::tableClickedSlot()
 {
   emit(dateSelected(table->getDate()));
   emit(tableClicked());
+}
+
+void
+QDatePicker::tableDoubleClickedSlot()
+{
+  emit(dateSelected(table->getDate()));
+  emit(tableDoubleClicked());
 }
 
 /*const QDate&

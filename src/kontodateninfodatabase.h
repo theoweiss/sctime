@@ -32,7 +32,8 @@
 class KontoDatenInfoDatabase: public KontoDatenInfo
 {
   public:
-    virtual bool readInto(AbteilungsListe * abtlist); 
+    virtual bool readInto(AbteilungsListe * abtlist);
+    virtual bool checkIn(AbteilungsListe* abtlist);
 };
 
 #endif

@@ -52,6 +52,7 @@ AbteilungsListe::AbteilungsListe(const QDate _datum, KontoDatenInfo* ki): std::m
   zeitDifferenz=0;
   datum=_datum;
   kontoDatenInfo=ki;
+  checkedIn=false;
   reload();
 }
 
@@ -708,7 +709,7 @@ void AbteilungsListe::setAsAktiv(const QString& abteilung, const QString& konto,
 
     aktivEintrag=0;
 
-    if (findUnterKonto(uki,ukl, abteilung, konto, unterkonto)) {      
+    if (findUnterKonto(uki,ukl, abteilung, konto, unterkonto)) {
       if (uki->second.find(idx)!=uki->second.end())
         aktivEintrag = idx;
       else 
@@ -836,3 +837,19 @@ void AbteilungsListe::clearDefaultComments()
   {
      zeitDifferenz = 0;
   }
+
+bool AbteilungsListe::checkIn()
+{
+  setCheckInState(kontoDatenInfo->checkIn(this));
+  return checkInState();
+}
+
+bool AbteilungsListe::checkInState()
+{
+  return checkedIn;
+}
+
+void AbteilungsListe::setCheckInState(bool state)
+{
+  checkedIn = state;
+}

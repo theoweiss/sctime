@@ -27,6 +27,7 @@
 #define DATEDIALOG_H
 
 #include "datedialogbase.h"
+#include <qdatetime.h>
 
 
  /**
@@ -37,7 +38,7 @@ class DateDialog : public DateDialogBase
   Q_OBJECT
 
 public:
-  DateDialog(QDate datum, QWidget* parent = 0);
+  DateDialog(const QDate& datum, QWidget* parent = 0);
   ~DateDialog();
   /*$PUBLIC_FUNCTIONS$*/
 
@@ -50,9 +51,15 @@ protected:
 protected slots:
   /*$PROTECTED_SLOTS$*/
   virtual void          accept();
+  virtual void          apply();
+  virtual void          dateChangedSlot(QDate date);
 
 signals:
   void dateChanged(const QDate& datum);
+
+private:
+  int currentMonth;
+  int currentYear;
 };
 
 #endif

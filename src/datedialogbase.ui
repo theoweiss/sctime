@@ -6,10 +6,10 @@
     </property>
     <property name="geometry">
         <rect>
-            <x>91</x>
-            <y>136</y>
-            <width>322</width>
-            <height>309</height>
+            <x>0</x>
+            <y>0</y>
+            <width>380</width>
+            <height>281</height>
         </rect>
     </property>
     <property name="sizePolicy">
@@ -33,9 +33,22 @@
         <property name="spacing">
             <number>6</number>
         </property>
-        <widget class="QLayoutWidget" row="3" column="0">
+        <widget class="QLabel" row="0" column="0">
             <property name="name">
-                <cstring>Layout5</cstring>
+                <cstring>textLabel1</cstring>
+            </property>
+            <property name="text">
+                <string>Zu editierendes Datum:</string>
+            </property>
+        </widget>
+        <widget class="QDatePicker" row="1" column="0">
+            <property name="name">
+                <cstring>datePicker</cstring>
+            </property>
+        </widget>
+        <widget class="QLayoutWidget" row="2" column="0">
+            <property name="name">
+                <cstring>Layout2</cstring>
             </property>
             <hbox>
                 <property name="name">
@@ -60,6 +73,14 @@
                 </widget>
                 <widget class="QPushButton">
                     <property name="name">
+                        <cstring>applyButton</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Anwenden</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
                         <cstring>cancelbutton</cstring>
                     </property>
                     <property name="text">
@@ -70,19 +91,6 @@
                     </property>
                 </widget>
             </hbox>
-        </widget>
-        <widget class="QDatePicker" row="1" column="0">
-            <property name="name">
-                <cstring>datePicker</cstring>
-            </property>
-        </widget>
-        <widget class="QLabel" row="0" column="0">
-            <property name="name">
-                <cstring>textLabel1</cstring>
-            </property>
-            <property name="text">
-                <string>Zu editierendes Datum:</string>
-            </property>
         </widget>
     </grid>
 </widget>

@@ -74,6 +74,7 @@ class TimeMainWindow: public QMainWindow
     void save();
 
     void resetDiff();
+    void checkIn();
     
     void inPersoenlicheKonten(bool hinzufuegen);
     void flagsChanged(const QString& abt, const QString& ko, const QString& uko, int idx);
@@ -149,6 +150,7 @@ class TimeMainWindow: public QMainWindow
     QAction* fastAbzurPlusAction;
     QAction* fastAbzurMinusAction;
     QAction* eintragRemoveAction;
+    QAction* checkInAction;
     AbteilungsListe* abtList;
     AbteilungsListe* abtListToday;
     StatusBar* statusBar;

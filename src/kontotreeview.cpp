@@ -192,7 +192,7 @@ bool KontoTreeView::isEintragsItem(QListViewItem* item)
   return ((d==4)||((d==3)&&(item->firstChild()==NULL)));
 }
 
-/** oeffnet den ast zum aktiven Projekt, so dass man dieses sieht*/
+/** oeffnet den Ast zum aktiven Projekt, so dass man dieses sieht*/
 void KontoTreeView::showAktivesProjekt()
 {
   QString uko,ko,abt,top;
@@ -253,6 +253,7 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
             if (etPos==eintragsliste->begin()) {
               KontoTreeItem* newItem=new KontoTreeItem( kontoitem, ukontPos->first, "", tc.toString(),
                                                       tcAbzur.toString() , etPos->second.kommentar);
+              newItem->setGray(abtList->checkInState());
              // newItem->setBold((etPos->second.kommentar!="")||(etPos->second.sekunden!=0)||(etPos->second.sekundenAbzur!=0));
             }
             // Sorgt dafuer, dass das Konto in Persoenliche Konten kommt
@@ -400,6 +401,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       }
       topi->setOpen(true); abti->setOpen(true); koi->setOpen(true); ukoi->setOpen(true);
      // eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
+      eti->setGray(abtList->checkInState());
       if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
         eti->setPixmap(1,*aktivPixmap);
       else
@@ -431,6 +433,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       eti->setText(4,etiter->second.kommentar);
       eti->setText(2,tc.toString());
       eti->setText(3,tcAbzur.toString());
+      eti->setGray(abtList->checkInState());
      // eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
     }
   }

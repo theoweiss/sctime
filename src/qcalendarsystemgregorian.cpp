@@ -92,7 +92,7 @@ QString QCalendarSystemGregorian::monthName(int month, int year, bool shortName)
       case 2:
         return "Feb";
       case 3:
-        return "Mär";
+        return "Mar";
       case 4:
         return "Apr";
       case 5:
@@ -120,7 +120,7 @@ QString QCalendarSystemGregorian::monthName(int month, int year, bool shortName)
       case 2:
         return "Februar";
       case 3:
-        return "März";
+        return "Maerz";
       case 4:
         return "April";
       case 5:

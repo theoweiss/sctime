@@ -27,22 +27,20 @@
 #include "qfile.h"
 #include "qdir.h"
 #include "globals.h"
+#include "utils.h"
 #include "timecounter.h"
 #include "qregexp.h"
 #ifndef NO_XML
 #include "qdom.h"
 #endif
 
-/** Rundet f auf das naechste Vielfache von step*/
-float roundTo(float f, float step)
-{
-  return int(f/step+0.5)*step;
-}
-
-
 /** Schreibt die Eintraege in ein Shellskript */
 void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
 {
+  if (abtList->checkInState()) {
+      std::cout<<"Shell Skript nicht geschrieben, da bereits eingecheckt"<<std::endl;
+      return;
+  }
   QString filename="/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".sh";
   QFile shellFile(configDir+filename);
 
@@ -66,7 +64,7 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
   AbteilungsListe::iterator abtPos;
 
   for (abtPos=abtList->begin(); abtPos!=abtList->end(); ++abtPos) {
-    QString abt=abtPos->first;    
+    QString abt=abtPos->first;
     KontoListe* kontoliste=&(abtPos->second);
     bool firstInBereich=true;
     for (KontoListe::iterator kontPos=kontoliste->begin(); kontPos!=kontoliste->end(); ++kontPos) {
@@ -74,7 +72,7 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
       for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {
         EintragsListe* eintragsliste=&(ukontPos->second);
         for (EintragsListe::iterator etPos=eintragsliste->begin(); etPos!=eintragsliste->end(); ++etPos) {
-          if (etPos->second.sekunden!=0) {
+          if ((etPos->second.sekunden!=0)||(etPos->second.sekundenAbzur!=0)) {
              if (firstInBereich) {
                stream<<"\n# Bereich: "<<abt<<"\n";
                firstInBereich=false;
@@ -95,11 +93,36 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
   shellFile.close();
 }
 
+bool SCTimeXMLSettings::moveToCheckedIn(AbteilungsListe* abtList)
+{
+  QString checkedinstr="/checkedin";
+  QFileInfo qf(configDir+checkedinstr);
+  QDir qd(configDir);
+  if (!qf.exists()) {
+    if (!qd.mkdir(configDir+checkedinstr)) {
+      return false;
+    }
+  }
+  if (!qf.isDir()) {
+    return false;
+  }
+  // erst .sh wegschieben
+  QString filename="zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".sh";
+  if (!qd.rename(configDir+"/"+filename, configDir+checkedinstr+"/"+filename))
+    return false;
+  // dann .xml
+  filename="zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
+  if (!qd.rename(configDir+"/"+filename, configDir+checkedinstr+"/"+filename))
+    return false;
+  return true;
+}
 
 void SCTimeXMLSettings::readSettings(AbteilungsListe* abtList)
 {
   abtList->clearKonten();
+  // Erst globale Einstellungen lesen
   readSettings(true, abtList);
+  // Dann die Tagesspezifischen
   readSettings(false, abtList);
 }
 
@@ -114,15 +137,20 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
   QString filename;
 
   if (global)
-    filename=configDir+"/settings.xml";
-  else
-    filename=configDir+"/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
+    filename="/settings.xml";
+  else {
+    filename="/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
+    QFileInfo qf(configDir+"/checkedin"+filename);
+    if (qf.exists()) {
+      filename="/checkedin"+filename;
+      abtList->setCheckInState(true);
+    }
+    else
+      abtList->setCheckInState(false);
+  }
 
-  QFile f( filename );
+  QFile f( configDir + filename );
   if ( !f.open( IO_ReadOnly ) ) {
-      #ifdef READ_OBSOLETE_SETTINGS
-      readObsSettings(global);
-      #endif
       return;
       }
   if ( !doc.setContent( &f ) ) {
@@ -362,9 +390,13 @@ void SCTimeXMLSettings::writeSettings(AbteilungsListe* abtList)
  */
 void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
 {
+  if ((abtList->checkInState())&&(!global)) {
+      std::cout<<"xml nicht geschrieben, da bereits eingecheckt"<<std::endl;
+      return;
+  }
   #ifndef NO_XML
   QDomDocument doc("settings");
-  
+
   QDomElement root = doc.createElement( "sctime" );
   doc.appendChild( root );
   QDomElement generaltag = doc.createElement( "general" );

@@ -39,13 +39,15 @@ class KontoTreeItem: public QListViewItem
      :QListViewItem(parent,label1,label2,label3,label4,label5,label6,label7,label8)
     {
       isBold=false;
+      isGray=false;
     }
 
-    
+
     KontoTreeItem ( QListViewItem * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null )
      :QListViewItem(parent,label1,label2,label3,label4,label5,label6,label7,label8)
     {
       isBold=false;
+      isGray=false;
     }
 
     
@@ -57,6 +59,8 @@ class KontoTreeItem: public QListViewItem
         if (isBold) newfont.setWeight(QFont::DemiBold);
         p->setFont(newfont);
       }
+      else
+        if (isGray) newcg.setColor(QColorGroup::Text,gray);
      if (text(column).stripWhiteSpace()=="0:00") {
         newcg.setColor(QColorGroup::Text,gray);
       }
@@ -72,8 +76,17 @@ class KontoTreeItem: public QListViewItem
       }
     }
 
+    void setGray(bool gray)
+    {
+      if (gray!=isGray) {
+        isGray=gray;
+        repaint();
+      }
+    }
+
   private:
     bool isBold;
+    bool isGray;
 };
 
 #endif
