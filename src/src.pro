@@ -13,7 +13,7 @@ SOURCES += abteilungsliste.cpp datedialog.cpp \
 HEADERS += abteilungsliste.h kontoliste.h statusbar.h datedialog.h \
            kontotreeitem.h timecounter.h eintragsliste.h \
            kontotreetooltip.h timeedit.h errorapp.h kontotreeview.h \
-           time.h findkontodialog.h timemainwindow.h globals.h \
+           findkontodialog.h timemainwindow.h globals.h \
            toolbar.h kontodateninfodatabase.h sctimeapp.h \
            unterkontodialog.h kontodateninfo.h sctimehelp.h unterkontoeintrag.h \
            kontodateninfozeit.h sctimexmlsettings.h unterkontoliste.h
