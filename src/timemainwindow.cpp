@@ -109,7 +109,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
   toolBar   = new ToolBar(this);
 
   connect( kontoTree, SIGNAL(contextMenuRequested(QListViewItem *, const QPoint& ,int)), this, SLOT(callUnterKontoDialog(QListViewItem *)) );
-  connect( kontoTree, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(setAktivesProjekt(QListViewItem *)) );
+  configClickMode(settings->singleClickActivation());
 
   QPopupMenu * kontomenu = new QPopupMenu( this );
   menuBar()->insertItem( "&Konto", kontomenu );
@@ -319,12 +319,33 @@ void TimeMainWindow::showAdditionalButtons(bool show)
    }
 }
 
+void TimeMainWindow::configClickMode(bool singleClickActivation)
+{
+    if (!settings->singleClickActivation()) {
+        disconnect(kontoTree, SIGNAL(mouseButtonClicked ( int, QListViewItem * , const QPoint & , int )), 
+                   this, SLOT(mouseButtonInKontoTreeClicked(int, QListViewItem * , const QPoint &, int )));
+        connect( kontoTree, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(setAktivesProjekt(QListViewItem *)));
+        }
+    else {    
+        disconnect(kontoTree, SIGNAL(doubleClicked(QListViewItem *)), this, SLOT(setAktivesProjekt(QListViewItem *)));
+        connect(kontoTree, SIGNAL(mouseButtonClicked ( int, QListViewItem * , const QPoint & , int )), 
+                   this, SLOT(mouseButtonInKontoTreeClicked(int, QListViewItem * , const QPoint &, int )));
+    }               
+}
+
 void TimeMainWindow::customEvent( QCustomEvent * e)
 {
    if (e->type()==SIGINT_EVENT_ID) {
       close();
    }
    QMainWindow::customEvent(e);
+}
+
+void TimeMainWindow::mouseButtonInKontoTreeClicked(int button, QListViewItem * item, const QPoint & pos, int c)
+{    
+    if ((button==1) && (item)) {
+        setAktivesProjekt(item);
+    }    
 }
 
 /** Wird durch einen Timer einmal pro Minute aufgerufen, und sorgt fuer die
@@ -445,8 +466,8 @@ void TimeMainWindow::addDeltaToZeit(int delta, bool abzurOnly)
 
 
 /**
- *  Bestimmt die veraenderte Gesamtzeit und loest die Signale gesamtZeitChanged und gesamtZeitAbzurChanged
- *  aus.
+ *  Bestimmt die veraenderte Gesamtzeit und loest die Signale gesamtZeitChanged und
+ *  gesamtZeitAbzurChanged aus.
  */
 void TimeMainWindow::zeitChanged()
 {
@@ -465,8 +486,9 @@ void TimeMainWindow::zeitChanged()
     // dass (falls der user nicht sofort reagiert), jede Minute eine neue Box aufpoppt
     // => nix gut am naechsten morgen, wenn man das ausloggen vergisst :-)
     last=zeit;
-    QMessageBox::warning(this,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
-                       QMessageBox::Ok | QMessageBox::Default,0);
+    // Vorlaeufig deaktiviert
+    /*QMessageBox::warning(this,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
+                       QMessageBox::Ok | QMessageBox::Default,0);*/
   }
   else
     last=zeit;
@@ -849,6 +871,7 @@ void TimeMainWindow::callPreferenceDialog()
   PreferenceDialog preferenceDialog(settings, this);
   preferenceDialog.exec();
   showAdditionalButtons(settings->powerUserView());
+  configClickMode(settings->singleClickActivation());
 }
 
 /**

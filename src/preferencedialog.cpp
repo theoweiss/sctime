@@ -33,6 +33,7 @@ PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent
     fastZeitIncBox->setValue(settings->fastTimeIncrement()/60);
     entrySaveCheckbox->setChecked(settings->alwaysSaveEntry());
     powerUserCheckbox->setChecked(settings->powerUserView());
+    singleClickCheckbox->setChecked(settings->singleClickActivation());
 }
 
 PreferenceDialog::~PreferenceDialog()
@@ -46,4 +47,5 @@ void PreferenceDialog::accept()
     settings->setFastTimeIncrement(fastZeitIncBox->value()*60);
     settings->setAlwaysSaveEntry(entrySaveCheckbox->isChecked());
     settings->setPowerUserView(powerUserCheckbox->isChecked());
+    settings->setSingleClickActivation(singleClickCheckbox->isChecked());
 }

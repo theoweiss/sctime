@@ -59,6 +59,14 @@
                             <string>Poweruser Ansicht</string>
                         </property>
                     </widget>
+                    <widget class="QCheckBox" row="2" column="0">
+                        <property name="name">
+                            <cstring>singleClickCheckbox</cstring>
+                        </property>
+                        <property name="text">
+                            <string>Konto durch Singleclick aktivieren</string>
+                        </property>
+                    </widget>
                     <spacer>
                         <property name="name">
                             <cstring>spacer2</cstring>

@@ -36,6 +36,7 @@
 
 #define SIGINT_EVENT_ID QEvent::User
 
+
 class StatusBar;
 
 /** Diese Klasse implementiert das Hauptfenster des Programms,
@@ -102,6 +103,8 @@ class TimeMainWindow: public QMainWindow
     void callPreferenceDialog();
     void refreshKontoListe();
     void reloadDefaultComments();
+    void configClickMode(bool singleClickActivation);
+    void mouseButtonInKontoTreeClicked(int button, QListViewItem * item, const QPoint & pos, int c );    
 
   signals:
     /** Wird ausgeloest, falls sich die Gesamtzeit geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden. */

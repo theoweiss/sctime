@@ -344,6 +344,9 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             if (elem2.tagName()=="poweruserview") {
               setPowerUserView((elem2.attribute("on")=="yes"));
             }
+            if (elem2.tagName()=="singleclickactivation") {
+              setSingleClickActivation((elem2.attribute("on")=="yes"));
+            }
             if (elem2.tagName()=="kontodlgwindowposition") {
               QString xstr=elem2.attribute("x");
               if (xstr.isNull()) continue;
@@ -435,6 +438,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     if (powerUserView()) on="yes";
     powerusertag.setAttribute("on",on);
     generaltag.appendChild(powerusertag);
+    
+    QDomElement singleclicktag = doc.createElement("singleclickactivation");
+    on="no";
+    if (singleClickActivation()) on="yes";
+    singleclicktag.setAttribute("on",on);
+    generaltag.appendChild(singleclicktag);
 
     QDomElement kontodlgwindowpositiontag = doc.createElement( "kontodlgwindowposition" );
     kontodlgwindowpositiontag.setAttribute("x",unterKontoWindowPosition.x());

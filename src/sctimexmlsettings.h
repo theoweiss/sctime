@@ -42,6 +42,7 @@ class SCTimeXMLSettings
       mainwindowSize = QSize(700,400);
       alwaysSaveEintrag = false;
       _powerUserView = false;
+      _singleClickActivation = false;
       unterKontoWindowPosition = QPoint(0,0);
       unterKontoWindowSize = QSize(0,0);
     }
@@ -104,6 +105,16 @@ class SCTimeXMLSettings
       return _powerUserView;
     }
     
+    void setSingleClickActivation(bool activate)
+    {
+        _singleClickActivation=activate;
+    }
+    
+    bool singleClickActivation()
+    {
+        return _singleClickActivation;
+    }
+    
 
 
   private:
@@ -121,6 +132,7 @@ class SCTimeXMLSettings
 
     bool alwaysSaveEintrag;
     bool _powerUserView;
+    bool _singleClickActivation;
     
     QPoint unterKontoWindowPosition;
     QSize unterKontoWindowSize;
