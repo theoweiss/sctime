@@ -82,7 +82,7 @@ static LOCK_FD openlock( const QString &name )
 
    // open the lockfile
    LOCK_FD fd = new QFile( name );
-     
+
    if (!fd->open(IO_ReadWrite)) {
      ErrorApp EA("Kann Lockfile "+fd->name()+" nicht öffnen",dummy,0);
      exit(1); /* can not open */
@@ -108,7 +108,7 @@ static LOCK_FD openlock(const QString &name )
     }
 
     if (lockf(fd,F_TLOCK,0)<0)
-    {      
+    {
       switch (errno) {
 #ifdef HPUX
         case EACCES:
@@ -135,7 +135,7 @@ static LOCK_FD openlock(const QString &name )
       }
 
     }
-    
+
     char str[50];
 
     sprintf(str,"%d\n",getpid());
@@ -177,7 +177,7 @@ static void SigIntHandler(int signum)
    QEvent* event = new QCustomEvent(SIGINT_EVENT_ID);
    //event->accept();
    //QEvent(QEvent::Quit);
-   
+
    sctimeApp->postEvent(sctimeApp->mainWidget(), event);
    sctimeApp->wakeUpGuiThread();
 }
@@ -196,26 +196,32 @@ int main( int argc, char **argv )
   if (executable.isSymLink()) //Wir wollen den echten Pfad, um unsere Icons zu finden.
     executable.setFile(executable.readLink());
 
-  execDir=executable.dirPath(true);  
-#ifndef WIN32
-  directory.cd(directory.homeDirPath());
-#else
-  if (!directory.cd("H:\\")) {
-    ErrorApp ea("Kann nicht auf H:\\ zugreifen.",argc, argv );
-    return false;
-  }
-#endif
+  execDir=executable.dirPath(true);
   // Pruefen, ob das Configdir ueber das environment gesetzt wurde
   QString configdirstring;
   char *envpointer;
   envpointer = getenv("SCTIME_CONFIG_DIR");
   if (envpointer)
       configdirstring = envpointer;
-  else
+  else {
       configdirstring = CONFIGSUBDIR; // default Configdir
+      #ifndef WIN32
+      directory.cd(directory.homeDirPath());
+#else
+      if (!directory.cd("H:\\")) {
+         ErrorApp ea("Kann nicht auf H:\\ zugreifen.",argc, argv );
+         return false;
+      }
+#endif
+  }
+
   // neues directory anlegen, hineinwechseln, und merken.
   directory.mkdir(configdirstring);
-  directory.cd(configdirstring);
+  if (!directory.cd(configdirstring))
+  {
+      ErrorApp ea("Kann in Verzeichnis "+configdirstring+" nicht wechseln!",argc, argv );
+      return false;
+  }
   configDir=directory.path();
 
 #ifdef WIN32
