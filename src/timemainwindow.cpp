@@ -181,6 +181,10 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
                                       "&Editieren", 0, this, "unterkonto editieren" );
   connect(editUnterKontoAction, SIGNAL(activated()), this, SLOT(editUnterKontoPressed()));
 
+  QAction* eintragActivateAction = new QAction( "Eintrag aktivieren",
+                                                "Eintrag a&ktivieren", CTRL+Key_X, this, "eintr aktiv" );
+  connect(eintragActivateAction, SIGNAL(activated()), this, SLOT(eintragAktivieren()));
+
   QAction* eintragAddAction = new QAction( "Eintrag hinzufuegen", QPixmap((const char **)hi22_action_queue ),
                                       "&Eintrag hinzufügen", 0, this, "eintr hinz" );
   connect(eintragAddAction, SIGNAL(activated()), this, SLOT(eintragHinzufuegen()));
@@ -220,7 +224,9 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   connect(this,SIGNAL(eintragSelected(bool)), min5MinusAction, SLOT(setEnabled(bool)));
   connect(this,SIGNAL(eintragSelected(bool)), fastPlusAction, SLOT(setEnabled(bool)));
   connect(this,SIGNAL(eintragSelected(bool)), fastMinusAction, SLOT(setEnabled(bool)));
+  connect(this,SIGNAL(eintragSelected(bool)), eintragActivateAction, SLOT(setEnabled(bool)));
   connect(this,SIGNAL(eintragSelected(bool)), eintragAddAction, SLOT(setEnabled(bool)));
+
 
   editUnterKontoAction->addTo(toolBar);
   saveAction->addTo(toolBar);
@@ -232,6 +238,7 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   fastPlusAction->addTo(toolBar);
   fastMinusAction->addTo(toolBar);
   editUnterKontoAction->addTo(kontomenu);
+  eintragActivateAction->addTo(kontomenu);
   eintragAddAction->addTo(kontomenu);
   eintragRemoveAction->addTo(kontomenu);
   saveAction->addTo(kontomenu);
@@ -476,6 +483,16 @@ void TimeMainWindow::editUnterKontoPressed()
 
 
 /**
+ * Aktiviert einen Eintrag
+ */
+void TimeMainWindow::eintragAktivieren()
+{
+  QListViewItem * item=kontoTree->currentItem();
+  setAktivesProjekt(item);
+}
+
+
+/**
  * Fuegt einen Eintrag zum selektierten Unterkonto hinzu.
  */
 void TimeMainWindow::eintragHinzufuegen()
@@ -623,10 +640,10 @@ void TimeMainWindow::changeShortCutSettings(QListViewItem * item)
 
   if (iseintragsitem) {
 
-    if (item->depth()<=3)
-      eintragRemoveAction->setEnabled(false);
+    if (item->depth()<=3) 
+       eintragRemoveAction->setEnabled(false);
     else
-      eintragRemoveAction->setEnabled(true);
+       eintragRemoveAction->setEnabled(true);
 
     flagsChanged(abt,ko,uko,idx);
     inPersKontAction->setEnabled(true);

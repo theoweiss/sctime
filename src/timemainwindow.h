@@ -83,6 +83,7 @@ class TimeMainWindow: public QMainWindow
     void changeDate(const QDate& datum);
     void setAktivesProjekt(QListViewItem * item);
     void showAdditionalButtons(bool show);
+    void eintragAktivieren();
     void eintragHinzufuegen();
     void eintragEntfernen();
     void addDeltaToZeit(int delta, bool abzurOnly=false);
