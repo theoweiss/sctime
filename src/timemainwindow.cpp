@@ -150,10 +150,7 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   QAction* refreshAction = new QAction( "Kontoliste neu laden",
                                        "&Kontoliste neu laden", CTRL+Key_R, this, "refresh" );
   connect(refreshAction, SIGNAL(activated()), this, SLOT(refreshKontoListe()));
-  
-  QAction* configZeitIncAction = new QAction( "Zeitinkrement für die Shortcutbuttons einstellen",
-                                      "&Zeitinkrement einstellen", 0, this, "configzeitinc" );
-  connect(configZeitIncAction, SIGNAL(activated()), this, SLOT(callConfigZeitIncDialog()));
+
   QAction* preferenceAction = new QAction( "sctime konfigurieren",
                                       "sctime &konfigurieren", 0, this, "configsctime" );
   connect(preferenceAction, SIGNAL(activated()), this, SLOT(callPreferenceDialog()));
@@ -214,7 +211,6 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   findKontoAction->addTo(kontomenu);
   refreshAction->addTo(kontomenu);
   changeDateAction->addTo(zeitmenu);
-  configZeitIncAction->addTo(zeitmenu);
   resetAction->addTo(zeitmenu);
   kontomenu->insertSeparator();
   quitAction->addTo(kontomenu);
@@ -648,40 +644,6 @@ void TimeMainWindow::callPreferenceDialog()
   PreferenceDialog preferenceDialog(settings, this);
   preferenceDialog.exec();
 }
-
-void TimeMainWindow::callConfigZeitIncDialog()
-{
-  QDialog cziDialog(this);
-
-  QVBoxLayout* layout=new QVBoxLayout(&cziDialog,3);
-
-
-  QPushButton * okbutton=new QPushButton( "OK", &cziDialog );
-  QPushButton * cancelbutton=new QPushButton( "Abbruch",&cziDialog );
-  QSpinBox *zeitIncBox = new QSpinBox(0,240,1,&cziDialog);
-  QSpinBox *fastZeitIncBox=new QSpinBox(0,240,1,&cziDialog);
-  zeitIncBox->setValue(settings->timeIncrement()/60);
-  fastZeitIncBox->setValue(settings->fastTimeIncrement()/60);
-
-  layout->addWidget(new QLabel("Zeitinkrement-Buttons:",&cziDialog));
-  layout->addWidget(zeitIncBox);
-  layout->addWidget(new QLabel("Schnelle Zeitinkrement-Buttons:",&cziDialog));
-  layout->addWidget(fastZeitIncBox);
-  layout->addSpacing(4);
-
-  QHBoxLayout* buttonlayout=new QHBoxLayout(layout,3);
-
-  buttonlayout->addWidget(okbutton);
-  buttonlayout->addWidget(cancelbutton);
-
-  connect (okbutton, SIGNAL(clicked()), &cziDialog, SLOT(accept()));
-  connect (cancelbutton, SIGNAL(clicked()), &cziDialog, SLOT(reject()));
-
-  if (cziDialog.exec()!=QDialog::Accepted) return;
-  settings->setTimeIncrement(zeitIncBox->value()*60);
-  settings->setFastTimeIncrement(fastZeitIncBox->value()*60);
-}
-
 
 /**
  * Setzt das zu Item gehoerende Unterkonto als aktiv.

@@ -54,9 +54,7 @@ class TimeMainWindow: public QMainWindow
     void callUnterKontoDialog(QListViewItem * item);
 
     void callDateDialog();
-    
-    void callConfigZeitIncDialog();
-    
+
     void callAboutBox();
 
     void minutenUhr();
