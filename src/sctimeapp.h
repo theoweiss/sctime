@@ -39,7 +39,6 @@ class SCTimeApp: public QApplication
 {
   TimeMainWindow* mainWindow;
   private:
-    AbteilungsListe* abtList;
     #ifdef WIN32
     KontoDatenInfoDatabase zk;
     #else
@@ -51,10 +50,7 @@ class SCTimeApp: public QApplication
 
     SCTimeApp( int &argc, char **argv ): QApplication (argc,argv)
     {
-      QDate heute;
-      abtList=new AbteilungsListe(heute.currentDate(),&zk);
-
-      mainWindow=new TimeMainWindow(abtList);
+      mainWindow=new TimeMainWindow(&zk);
       setMainWidget( mainWindow );
       mainWindow->show();
     }
@@ -62,7 +58,6 @@ class SCTimeApp: public QApplication
     virtual ~SCTimeApp()
     {
       delete mainWindow;
-      delete abtList;
     }
 };
 

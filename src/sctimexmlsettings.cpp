@@ -41,7 +41,7 @@ float roundTo(float f, float step)
 
 
 /** Schreibt die Eintraege in ein Shellskript */
-void SCTimeXMLSettings::writeShellSkript()
+void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
 {
   QString filename="/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".sh";
   QFile shellFile(configDir+filename);
@@ -96,18 +96,18 @@ void SCTimeXMLSettings::writeShellSkript()
 }
 
 
-void SCTimeXMLSettings::readSettings()
+void SCTimeXMLSettings::readSettings(AbteilungsListe* abtList)
 {
   abtList->clearKonten();
-  readSettings(true);
-  readSettings(false);
+  readSettings(true, abtList);
+  readSettings(false, abtList);
 }
 
 /**
  * Liest alle Einstellungen.
  */
 
-void SCTimeXMLSettings::readSettings(bool global)
+void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
 {
   #ifndef NO_XML
   QDomDocument doc("settings");
@@ -271,20 +271,6 @@ void SCTimeXMLSettings::readSettings(bool global)
                 }
               }
             }
-            if (elem2.tagName()=="kontodlgwindowposition") {
-              QString xstr=elem2.attribute("x");
-              if (xstr.isNull()) continue;
-              QString ystr=elem2.attribute("y");
-              if (ystr.isNull()) continue;
-              unterKontoWindowPosition=QPoint(xstr.toInt(),ystr.toInt());
-            }
-            if (elem2.tagName()=="kontodlgwindowsize") {
-              QString xstr=elem2.attribute("width");
-              if (xstr.isNull()) continue;
-              QString ystr=elem2.attribute("height");
-              if (ystr.isNull()) continue;
-              unterKontoWindowSize=QSize(xstr.toInt(),ystr.toInt());
-            }
           }
         }
       }
@@ -330,6 +316,20 @@ void SCTimeXMLSettings::readSettings(bool global)
             if (elem2.tagName()=="poweruserview") {
               setPowerUserView((elem2.attribute("on")=="yes"));
             }
+            if (elem2.tagName()=="kontodlgwindowposition") {
+              QString xstr=elem2.attribute("x");
+              if (xstr.isNull()) continue;
+              QString ystr=elem2.attribute("y");
+              if (ystr.isNull()) continue;
+              unterKontoWindowPosition=QPoint(xstr.toInt(),ystr.toInt());
+            }
+            if (elem2.tagName()=="kontodlgwindowsize") {
+              QString xstr=elem2.attribute("width");
+              if (xstr.isNull()) continue;
+              QString ystr=elem2.attribute("height");
+              if (ystr.isNull()) continue;
+              unterKontoWindowSize=QSize(xstr.toInt(),ystr.toInt());
+            }
           }
         }
       }
@@ -347,12 +347,12 @@ void SCTimeXMLSettings::readSettings(bool global)
 }
 
 /** Schreibt saemtliche Einstellungen und Eintraege auf Platte */
-void SCTimeXMLSettings::writeSettings()
+void SCTimeXMLSettings::writeSettings(AbteilungsListe* abtList)
 {
   // Globale Einstellungen
-  writeSettings(true);
+  writeSettings(true, abtList);
   // Einstellungen fuer den aktuellen Tag
-  writeSettings(false);
+  writeSettings(false, abtList);
 }
 
 /**
@@ -360,7 +360,7 @@ void SCTimeXMLSettings::writeSettings()
  * werden globale Einstellungen fuer alle Tage gespeichert, sonst nur
  * fuer das aktuelle Datum.
  */
-void SCTimeXMLSettings::writeSettings(bool global)
+void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
 {
   #ifndef NO_XML
   QDomDocument doc("settings");
@@ -447,7 +447,8 @@ void SCTimeXMLSettings::writeSettings(bool global)
       }
 
       UnterKontoListe* unterkontoliste=&(kontPos->second);
-      for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {
+      for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin();
+           ukontPos!=unterkontoliste->end(); ++ukontPos) {
         QString unterkontostr=ukontPos->first;
         QDomElement ukonttag = doc.createElement( "unterkonto" );
         ukonttag.setAttribute("name",unterkontostr);
@@ -466,7 +467,8 @@ void SCTimeXMLSettings::writeSettings(bool global)
         if ((!global)||alwaysSaveEintrag) {
           EintragsListe* eintragsliste=&(ukontPos->second);
 
-          for (EintragsListe::iterator etPos=eintragsliste->begin(); etPos!=eintragsliste->end(); ++etPos) {
+          for (EintragsListe::iterator etPos=eintragsliste->begin();
+               etPos!=eintragsliste->end(); ++etPos) {
             if (!(etPos->second==UnterKontoEintrag())) {
               ukontIsEmpty=false;
 
@@ -534,106 +536,3 @@ void SCTimeXMLSettings::writeSettings(bool global)
   f.close();
   #endif
 }
-
-#ifdef READ_OBSOLETE_SETTINGS
-
-QString BackToSlash(const QString& str)
-{
-  QString s=str;
-  for (unsigned int i=0; i<s.length(); i++)
-    if (s[i]=='\\') s[i]='/';
-  return s;
-}
-
-/**
- * Liest die obsoleten Einstellungen zu dem Eintrag id;
- */
-
-void SCTimeXMLSettings::readObsSetting(QSettings& settings, const QString& id,
-                                       const QString& datumsID, bool global)
-{
-  QString t,abt,ko,uko;
-  int idx=0;
-  t=settings.readEntry("/sctime/Konten/"+id+"/persoenlich","no");
-
-  abt = BackToSlash(id.section(" ",2).section("/",0,0));
-  ko  = BackToSlash(id.section(" ",0,0));
-  uko = BackToSlash(id.section(" ",1,1));
-  idx = id.section("/",1,1).toInt();
-
-  EintragsListe::iterator eti;
-  EintragsListe* etl;
-
-  if (!abtList->findEintrag(eti,etl,abt,ko,uko,idx))
-    {
-      if ((idx!=0)&&(abtList->findEintrag(eti,etl,abt,ko,uko,0))&&((eti->second)==UnterKontoEintrag()))
-        abtList->deleteEintrag(abt,ko,uko,0); // Leere Dummy Eintraege mit Index 0 loswerden.
-      abtList->insertEintrag(abt,ko,uko,idx);
-    }
-
-  if (global) {
-    if (t.lower()=="yes") {
-      abtList->setEintragFlags(abt,ko,uko,idx,UK_PERSOENLICH);
-      abtList->setUnterKontoFlags(abt,ko,uko,UK_PERSOENLICH);
-    }
-  }
-  t=settings.readEntry(datumsID+"/Daten/"+id+"/Kommentar","");
-  if (t!="") {
-    abtList->setKommentar(abt,ko,uko,idx,t);
-  }
-  int sek=settings.readNumEntry(datumsID+"/Daten/"+id+"/Sekunden",0);
-  if (sek!=0) {
-    abtList->setSekunden(abt,ko,uko,idx,sek,true);
-  }
-  int sekAbz=settings.readNumEntry(datumsID+"/Daten/"+id+"/Abzurechnende Sekunden",0);
-  if (sekAbz!=0) {
-    abtList->setSekundenAbzur(abt,ko,uko,idx,sekAbz);
-  }
-}
-
-/**
- * Liest alle obsoleten Einstellungen.
- */
-
-void SCTimeXMLSettings::readObsSettings(bool global)
-{
-  QSettings settings;
-
-  // .qt-pfad entfernen
-  QDir dir(QDir::homeDirPath() + "/.qt/");
-  settings.removeSearchPath( QSettings::Unix, dir.path());
-
-  settings.insertSearchPath(QSettings::Unix, configDir);
-  if (global) {
-    QString ap=settings.readEntry("/sctime/AktivesProjekt", "");
-    abtList->setAsAktiv(BackToSlash(ap.section(" ",2).section("/",0,0)),
-                        BackToSlash(ap.section(" ",0,0)),
-                        BackToSlash(ap.section(" ",1,1)),ap.section("/",1,1).toInt());
-  }
-
-  QString datumsID="/zeit-"+abtList->getDatum().toString("yyyy-MM-dd");
-  QStringList confKonten=settings.subkeyList("/sctime/Konten/");
-  if (global) {
-    for ( QStringList::Iterator it = confKonten.begin(); it != confKonten.end(); ++it ) {
- //   readSetting(settings,*it,datumsID);
-      QStringList confEintr=settings.subkeyList("/sctime/Konten/"+*it);
-      for ( QStringList::Iterator eintrIt = confEintr.begin(); eintrIt != confEintr.end(); ++eintrIt ) {
-        readObsSetting(settings,*it+"/"+*eintrIt, datumsID, global);
-      }
-    }
-  }
-  confKonten=settings.subkeyList(datumsID+"/Daten");
-  for ( QStringList::Iterator itDat = confKonten.begin(); itDat != confKonten.end(); ++itDat ) {
-    QStringList confEintr=settings.subkeyList(datumsID+"/Daten/"+*itDat);
-    for ( QStringList::Iterator eintrIt = confEintr.begin(); eintrIt != confEintr.end(); ++eintrIt ) {
-      readObsSetting(settings,*itDat+"/"+*eintrIt, datumsID, global);
-    }
-  }
-  if (global) {
-    zeitKommando=settings.readEntry("/sctime/Einstellungen/Zeitkommando","zeit");
-    timeInc=settings.readNumEntry("/sctime/Einstellungen/Timeincrement",300);
-    fastTimeInc=settings.readNumEntry("/sctime/Einstellungen/Fasttimeincrement",1800);
-  }
-}
-
-#endif //READ_OBSOLETE_SETTINGS

@@ -69,15 +69,16 @@
 
 
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
-TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
+TimeMainWindow::TimeMainWindow(KontoDatenInfoZeit* zk):QMainWindow(0,"sctime")
 {
+  QDate heute;
+  abtList=new AbteilungsListe(heute.currentDate(),zk);
   paused=false;
   pausedAbzur=false;
   inPersoenlicheKontenAllowed=true;
-  abtList=abtlist;
   powerToolBar = NULL;
-  settings=new SCTimeXMLSettings(abtList);
-  settings->readSettings();
+  settings=new SCTimeXMLSettings();
+  settings->readSettings(abtList);
   defaultCommentReader = new DefaultCommentReader(abtList);
   defaultCommentReader->read();
   
@@ -262,7 +263,7 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   zeitChanged();
 
   changeShortCutSettings(NULL); // Unterkontenmenues deaktivieren...
-  
+
   updateCaption();
   kontoTree->showAktivesProjekt();
   showAdditionalButtons(settings->powerUserView());
@@ -273,6 +274,7 @@ TimeMainWindow::~TimeMainWindow()
 {
    save();
    delete settings;
+   delete abtList;
 }
 
 void TimeMainWindow::showAdditionalButtons(bool show)
@@ -482,8 +484,8 @@ void TimeMainWindow::save()
 { 
   kontoTree->flagClosedPersoenlicheItems();
   settings->setMainWindowGeometry(pos(),size());
-  settings->writeSettings();
-  settings->writeShellSkript();
+  settings->writeSettings(abtList);
+  settings->writeShellSkript(abtList);
 }
 
 
@@ -571,11 +573,11 @@ void TimeMainWindow::eintragEntfernen()
 void TimeMainWindow::changeDate(const QDate& datum)
 {
   kontoTree->flagClosedPersoenlicheItems();
-  settings->writeSettings();
-  settings->writeShellSkript();
+  settings->writeSettings(abtList);
+  settings->writeShellSkript(abtList);
   abtList->setDatum(datum);
   abtList->clearKonten();
-  settings->readSettings();
+  settings->readSettings(abtList);
 
   kontoTree->load(abtList);
   kontoTree->closeFlaggedPersoenlicheItems();
@@ -587,9 +589,9 @@ void TimeMainWindow::changeDate(const QDate& datum)
 void TimeMainWindow::refreshKontoListe()
 {
   kontoTree->flagClosedPersoenlicheItems();
-  settings->writeSettings(); // die Settings ueberstehen das Reload nicht
+  settings->writeSettings(abtList); // die Settings ueberstehen das Reload nicht
   abtList->reload();
-  settings->readSettings();
+  settings->readSettings(abtList);
   kontoTree->load(abtList);
   kontoTree->closeFlaggedPersoenlicheItems();
 }
@@ -618,18 +620,17 @@ void TimeMainWindow::inPersoenlicheKonten(bool hinzufuegen)
 
   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
 
-  if (!kontoTree->isEintragsItem(item)) {
-    if (item->depth()==2) {
-      abtList->moveKontoPersoenlich(abt,ko,hinzufuegen);
-      kontoTree->refreshAllItemsInKonto(abt,ko);
-    } 
-	else {
-      if (item->depth()==3) {
-        abtList->moveUnterKontoPersoenlich(abt,ko,uko,hinzufuegen);
-        kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
-	  }
-	}
+  if (item->depth()==2) {
+    abtList->moveKontoPersoenlich(abt,ko,hinzufuegen);
+    kontoTree->refreshAllItemsInKonto(abt,ko);
     return;
+  }
+  else {
+    if (item->depth()==3) {
+      abtList->moveUnterKontoPersoenlich(abt,ko,uko,hinzufuegen);
+      kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
+      return;
+	}
   }
 
   abtList->moveEintragPersoenlich(abt,ko,uko,idx,hinzufuegen);

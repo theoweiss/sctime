@@ -524,7 +524,7 @@ void AbteilungsListe::moveUnterKontoPersoenlich(const QString& abteilung, const 
   if (persoenlich) mode=FLAG_MODE_OR; else mode=FLAG_MODE_NAND;
 
   EintragsListe* eintragsliste=&(itUko->second);
-  eintragsliste->setFlags(applyFlagMode(eintragsliste->getFlags(),UK_PERSOENLICH,mode));
+  eintragsliste->setFlags(applyFlagMode(eintragsliste->getFlags(),UK_PERSOENLICH,mode));  
   for (EintragsListe::iterator etPos=eintragsliste->begin(); etPos!=eintragsliste->end(); ++etPos) {
     etPos->second.flags=applyFlagMode(etPos->second.flags,UK_PERSOENLICH,mode);
   }

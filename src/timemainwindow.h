@@ -46,7 +46,7 @@ class TimeMainWindow: public QMainWindow
   Q_OBJECT
 
   public:
-    TimeMainWindow(AbteilungsListe *abtlist);
+    TimeMainWindow(KontoDatenInfoZeit* zk);
     QListView* getKontoTree() { return kontoTree; };
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;
@@ -139,6 +139,7 @@ class TimeMainWindow: public QMainWindow
     QAction* fastAbzurMinusAction;
     QAction* eintragRemoveAction;
     AbteilungsListe* abtList;
+    AbteilungsListe* abtListToday;
     StatusBar* statusBar;
     QMimeSourceFactory* mimeSourceFactory;
     DefaultCommentReader* defaultCommentReader;

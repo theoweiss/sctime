@@ -28,33 +28,13 @@
 #include "qpoint.h"
 #include "qsize.h"
 #include <iostream>
-#define READ_OBSOLETE_SETTINGS // Sollen veraltete Ini-Dateien eingelesen werden?
-
-#ifdef WIN32  // unter Windows vorlaeufig keine obsoleten Settings einlesen, wg Kompilier-Problem
-#undef READ_OBSOLETE_SETTINGS
-#endif
-
-#ifdef ZAURUS // Zaurus mag auch keine Obsoleten Settings
-#undef READ_OBSOLETE_SETTINGS
-#endif
-
-#ifdef READ_OBSOLETE_SETTINGS
-#ifdef WIN32
-// Auch unter Windows in Config-Dateien schreiben...
-#include "qfilesettings.h"
-#define QSettings QFileSettings
-#else
-#include "qsettings.h"
-#endif
-#endif
 
 class SCTimeXMLSettings
 {
   public:
 
-    SCTimeXMLSettings(AbteilungsListe* abtlist)
+    SCTimeXMLSettings()
     {
-      abtList = abtlist;
       timeInc = 5*60;
       fastTimeInc = 60*30; 
       zeitKommando = "zeit";
@@ -66,11 +46,11 @@ class SCTimeXMLSettings
       unterKontoWindowSize = QSize(0,0);
     }
 
-    void writeSettings();
+    void writeSettings(AbteilungsListe* abtList);
 
-    void readSettings();
+    void readSettings(AbteilungsListe* abtList);
 
-    void writeShellSkript();
+    void writeShellSkript(AbteilungsListe* abtList);
 
     void setTimeIncrement(int sekunden) { timeInc=sekunden; };
     
@@ -126,19 +106,9 @@ class SCTimeXMLSettings
 
   private:
 
-    void writeSettings(bool global);
-    
-    void readSettings(bool global);
-     
-#ifdef READ_OBSOLETE_SETTINGS
+    void writeSettings(bool global, AbteilungsListe* abtList);
 
-    void readObsSetting(QSettings& settings, const QString& id, const QString& datumsID,bool global);
-
-    void readObsSettings(bool global);
-
-#endif
-
-    AbteilungsListe* abtList;
+    void readSettings(bool global, AbteilungsListe* abtList);
 
     QString zeitKommando;
 
