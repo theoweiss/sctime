@@ -42,7 +42,9 @@
  * connectZeiten gibt an, ob die Schalter der abzurechnenden Zeit mit der Gesamtzeit verbunden werden soll.
  */
 UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  QString& uko, int idx,
-                                   AbteilungsListe* abtlist, bool connectZeiten, QWidget * parent):QDialog(parent,"Einstellungen für Unterkonto", true)
+                                   AbteilungsListe* abtlist, QStringList* taglist,
+                                   bool connectZeiten, QWidget * parent)
+                                   :QDialog(parent,"Einstellungen für Unterkonto", true)
 {
   abtList=abtlist;
   unterKontoName=uko;
@@ -75,7 +77,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
     commentcombo = NULL;
   } else {
     commentedit = NULL;
-    commentcombo = commentcombo = new QComboBox(true,this);
+    commentcombo = new QComboBox(true,this);
     commentcombo->insertStringList(*defaultcomments);
     commentcombo->insertItem(et.kommentar,0);
   }
@@ -90,6 +92,16 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   }
   layout->addSpacing(5);
   layout->addStretch(2);
+  if ((taglist) && (!taglist->isEmpty())) {
+     QGroupBox* taggroup = new QGroupBox(5,Qt::Horizontal,"Tags",this);
+     tagcombo = new QComboBox(taggroup);
+     tagcombo->insertStringList(*taglist);
+     QPushButton * addtagbutton = new QPushButton( "Hinzufügen", taggroup );;     
+     layout->addWidget(taggroup);
+     connect (addtagbutton, SIGNAL(clicked()), this, SLOT(addTag()));
+     layout->addSpacing(5);
+     layout->addStretch(2);
+  } else tagcombo=NULL;
 
   zeitBox=new ZeitBox("Zeit", et.sekunden, this );
   layout->addWidget(zeitBox);
@@ -202,4 +214,13 @@ ZeitBox* UnterKontoDialog::getZeitBox()
   return zeitBox;
 }
 
-
+void UnterKontoDialog::addTag()
+{
+  if (tagcombo) {
+      if (commentedit) {
+           commentedit->setText(tagcombo->currentText()+", "+commentedit->text());
+      } else {
+           commentcombo->setCurrentText(tagcombo->currentText()+", "+commentcombo->currentText());
+      }
+  }
+}

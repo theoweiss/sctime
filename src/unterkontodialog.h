@@ -45,7 +45,9 @@ class UnterKontoDialog: public QDialog
   Q_OBJECT
 
   public:
-    UnterKontoDialog(const QString& abt,const  QString& ko, const  QString& uko, int idx, AbteilungsListe* abtlist, bool connectZeiten, QWidget * parent=0);
+    UnterKontoDialog(const QString& abt,const  QString& ko, const  QString& uko, int idx,
+                     AbteilungsListe* abtlist,  QStringList* taglist,
+                     bool connectZeiten, QWidget * parent=0);
     ZeitBox* getZeitAbzurBox();
     ZeitBox* getZeitBox();
 
@@ -57,10 +59,12 @@ class UnterKontoDialog: public QDialog
 
   private slots:
     virtual void aktivesProjektButtonClicked();
+    virtual void addTag();
 
   private:
     QLineEdit* commentedit;
     QComboBox* commentcombo;
+    QComboBox* tagcombo;    
     QString unterKontoName;
     QString kontoName;
     QString abteilungsName;

@@ -158,6 +158,7 @@ class TimeMainWindow: public QMainWindow
     DefaultCommentReader* defaultCommentReader;
     QToolBar* powerToolBar;
     ToolBar* toolBar;
+    QStringList defaultTags;
     bool paused;
     bool pausedAbzur;
 

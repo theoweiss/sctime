@@ -38,6 +38,7 @@
 #include "statusbar.h"
 #include "qdatetime.h"
 #include "preferencedialog.h"
+#include "defaulttagreader.h"
 #ifndef HAS_NO_DATETIMEEDIT
 #include "datedialog.h"
 #endif
@@ -83,6 +84,9 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
   settings->readSettings(abtList);
   defaultCommentReader = new DefaultCommentReader();
   defaultCommentReader->read(abtList);
+
+  DefaultTagReader defaulttagreader;
+  defaulttagreader.read(&defaultTags);
   
   // restore size+position
   QSize size;
@@ -803,7 +807,7 @@ void TimeMainWindow::callUnterKontoDialog(QListViewItem * item)
 
   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
 
-  unterKontoDialog=new UnterKontoDialog(abt,ko,uko,idx,abtList,true,this);
+  unterKontoDialog=new UnterKontoDialog(abt,ko,uko,idx,abtList,&defaultTags, true,this);
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int )), kontoTree,
   SLOT(refreshItem(const QString&, const QString&, const QString&,int )));
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int)), this, SLOT(zeitChanged()));
