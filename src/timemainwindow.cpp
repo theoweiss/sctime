@@ -441,10 +441,16 @@ void TimeMainWindow::zeitChanged()
   emit gesamtZeitAbzurChanged(zeitAbzur);
   // Beim ersten ueberschreiten von MAX_WORKTIME
   if ((zeit>MAX_WORKTIME)&&(last<=MAX_WORKTIME)) {
+    // last muss _vor_ dem oeffnen der Messagebox gesetzt werden,
+    // da es andernfalls erst nach dem Schliessen der Box gesetzt wird, was bedeuten wuerde,
+    // dass (falls der user nicht sofort reagiert), jede Minute eine neue Box aufpoppt
+    // => nix gut am naechsten morgen, wenn man das ausloggen vergisst :-)
+    last=zeit;
     QMessageBox::warning(this,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
                        QMessageBox::Ok | QMessageBox::Default,0);
   }
-  last=zeit;
+  else
+    last=zeit;
 }
 
 
