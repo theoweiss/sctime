@@ -57,7 +57,7 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
           abtList->setUnterKontoFlags(abt,ko,uko,IS_IN_DATABASE,FLAG_MODE_OR);
         }
       }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;
-    } else
+    } else {
         ret = false;
 #ifdef WIN32
 		QMessageBox::critical(NULL,"Error","Kann Datenbank nicht öffnen\n",
@@ -66,6 +66,7 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
 #else
 		std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
 #endif
+    }
   } else {
      ret = false;
      std::cout<<"Kann Datenbanktreiber nicht initialisieren"<<std::endl;
