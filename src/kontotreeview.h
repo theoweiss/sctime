@@ -63,6 +63,8 @@ class KontoTreeView: public QListView
     
     void closeFlaggedPersoenlicheItems();
 
+    void showAktivesProjekt();
+
   public slots:
 
     virtual void refreshItem(const QString& abt, const QString& ko,const QString& uko, int idx);

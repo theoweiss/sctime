@@ -133,6 +133,7 @@ void KontoTreeView::itemInfo(QListViewItem* item,QString& tops, QString& abts, Q
   }
 }
 
+/** Versieht geschlossene, persoenliche Eintraege mit dem Flag IS_CLOSED */
 void KontoTreeView::flagClosedPersoenlicheItems()
 {
   QListViewItem *topi, *abti, *koi, *ukoi;
@@ -156,6 +157,7 @@ void KontoTreeView::flagClosedPersoenlicheItems()
   }
 }
 
+/** Schliesst persoenliche Eintraege mit dem Flag IS_CLOSED */
 void KontoTreeView::closeFlaggedPersoenlicheItems()
 {
   QListViewItem *topi, *abti, *koi, *ukoi;
@@ -190,6 +192,26 @@ bool KontoTreeView::isEintragsItem(QListViewItem* item)
   return ((d==4)||((d==3)&&(item->firstChild()==NULL)));
 }
 
+/** oeffnet den ast zum aktiven Projekt, so dass man dieses sieht*/
+void KontoTreeView::showAktivesProjekt()
+{
+  QString uko,ko,abt,top;
+  int idx;
+  abtList->getAktiv(abt, ko, uko, idx);
+  int flags = abtList->getEintragFlags(abt,ko,uko,idx);
+  if (flags & UK_PERSOENLICH)
+    top = PERSOENLICHE_KONTEN_STRING;
+  else
+    top = ALLE_KONTEN_STRING;
+  KontoTreeItem *topi,*abti,*koi,*ukoi,*eti;
+  bool itemFound=(sucheItem(top,abt,ko,uko,idx,topi,abti,koi,ukoi,eti));
+  if (itemFound) {
+     topi->setOpen(true);
+     abti->setOpen(true);
+     koi->setOpen(true);
+     ukoi->setOpen(true);
+  }
+}
 
 /** Laedt die uebergebene Abteilungsliste in den Kontobaum
  */

@@ -79,7 +79,7 @@ class TimeMainWindow: public QMainWindow
     
     void editUnterKontoPressed();
     void changeDate(const QDate& datum);
-    void setAktivesProjekt(QListViewItem * item);
+    void setAktivesProjekt(QListViewItem * item);    
     void eintragHinzufuegen();
     void eintragEntfernen();
     void addDeltaToZeit(int delta);

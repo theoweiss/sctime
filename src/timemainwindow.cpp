@@ -225,6 +225,7 @@ TimeMainWindow::TimeMainWindow(AbteilungsListe* abtlist):QMainWindow(0,"sctime")
   changeShortCutSettings(NULL); // Unterkontenmenues deaktivieren...
   
   updateCaption();
+  kontoTree->showAktivesProjekt();
 }
 
 /** Destruktor - speichert vor dem Beenden die Einstellungen */
@@ -456,6 +457,7 @@ void TimeMainWindow::changeDate(const QDate& datum)
 
   kontoTree->load(abtList);
   kontoTree->closeFlaggedPersoenlicheItems();
+  kontoTree->showAktivesProjekt();
   zeitChanged();
   statusBar->dateWarning((datum!=QDate::currentDate()), datum);
 }
