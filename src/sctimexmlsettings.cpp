@@ -30,6 +30,7 @@
 #include "utils.h"
 #include "timecounter.h"
 #include "qregexp.h"
+#include "qtextcodec.h"
 #ifndef NO_XML
 #include "qdom.h"
 #endif
@@ -605,7 +606,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   }
   QTextStream stream( & f);
 
-  stream<<"<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?>"<<endl;
+  stream<<"<?xml version=\"1.0\" encoding=\""<<stream.codec()->name()<<"\"?>"<<endl;
   stream<<doc.toString()<<endl;
 
   f.close();
