@@ -80,7 +80,7 @@ AbteilungsListe::AbteilungsListe(const QDate _datum, AbteilungsListe* abtlist): 
       QString konto=kontPos->first;
       for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin();
            ukontPos!=unterkontoliste->end(); ++ukontPos) {
-        // Konten uebernehmen   
+        // Konten uebernehmen
         EintragsListe* eintragsliste=&(ukontPos->second);
         QString unterkonto=ukontPos->first;
         insertEintrag(abt,konto,unterkonto);
@@ -214,7 +214,7 @@ UnterKontoListe* AbteilungsListe::insertKonto(const QString& abteilung,const QSt
 {
   KontoListe *kontoliste=insertAbteilung(abteilung);
   KontoListe::iterator posKont;
-    
+
   posKont=kontoliste->find(konto);
 
   UnterKontoListe *unterkontoliste;
@@ -224,7 +224,7 @@ UnterKontoListe* AbteilungsListe::insertKonto(const QString& abteilung,const QSt
     unterkontoliste = &((kontoliste->insert(posKont,KontoListe::value_type(konto,UnterKontoListe())))->second);
 
   } else unterkontoliste=&(posKont->second);
-  
+
   return unterkontoliste;
 }
 
@@ -703,7 +703,7 @@ void AbteilungsListe::setAsAktiv(const QString& abteilung, const QString& konto,
     aktivAbteilung=abteilung;
     aktivKonto=konto;
     aktivUnterkonto=unterkonto;
-    
+
     UnterKontoListe::iterator uki;
     UnterKontoListe* ukl;
 
@@ -712,7 +712,7 @@ void AbteilungsListe::setAsAktiv(const QString& abteilung, const QString& konto,
     if (findUnterKonto(uki,ukl, abteilung, konto, unterkonto)) {
       if (uki->second.find(idx)!=uki->second.end())
         aktivEintrag = idx;
-      else 
+      else
         aktivEintrag = (uki->second.begin())->first;
     }
 }
@@ -833,9 +833,9 @@ void AbteilungsListe::clearDefaultComments()
     return kontoDatenInfoSuccess;
   }
 
-  void AbteilungsListe::resetZeitDifferenz()
+  void AbteilungsListe::setZeitDifferenz(int diff)
   {
-     zeitDifferenz = 0;
+     zeitDifferenz = diff;
   }
 
 bool AbteilungsListe::checkIn()

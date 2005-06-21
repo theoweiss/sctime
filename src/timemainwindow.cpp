@@ -690,6 +690,7 @@ void TimeMainWindow::refreshKontoListe()
 {
   kontoTree->flagClosedPersoenlicheItems();
   settings->writeSettings(abtList); // die Settings ueberstehen das Reload nicht
+  int diff = abtList->getZeitDifferenz();
   abtList->reload();
   settings->readSettings(abtList);
   if (abtList!=abtListToday) {
@@ -699,6 +700,7 @@ void TimeMainWindow::refreshKontoListe()
   }
   kontoTree->load(abtList);
   kontoTree->closeFlaggedPersoenlicheItems();
+  abtList->setZeitDifferenz(diff);
 }
 
 void TimeMainWindow::reloadDefaultComments()
@@ -801,7 +803,7 @@ void TimeMainWindow::updateCaption()
 
 void TimeMainWindow::resetDiff()
 {
-   abtList->resetZeitDifferenz();
+   abtList->setZeitDifferenz(0);
    zeitChanged();
 }
 

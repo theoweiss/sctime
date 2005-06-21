@@ -98,7 +98,7 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     bool setUnterKontoFlags(const QString& abteilung, const QString& konto, const QString& unterkonto, int flags, int mode=FLAG_MODE_OVERWRITE);
 
     bool setKontoFlags(const QString& abteilung, const QString& konto, int flags, int mode=FLAG_MODE_OVERWRITE);
-    
+
     bool setAbteilungFlags(const QString& abteilung, int flags, int mode=FLAG_MODE_OVERWRITE);
 
     //void setAllEintragFlags(int flags);
@@ -114,13 +114,13 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     void moveKontoPersoenlich(const QString& abteilung, const QString& konto, bool persoenlich);
 
     int getEintragFlags(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
-    
+
     int getAbteilungFlags(const QString& abteilung);
-    
+
     int getKontoFlags(const QString& abteilung, const QString& konto);
-    
+
     int getUnterKontoFlags(const QString& abteilung, const QString& konto, const QString& unterkonto);
-      
+
     void getAktiv(QString& abteilung, QString& konto, QString& unterkonto, int& idx);
 
     void setAsAktiv(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
@@ -130,19 +130,19 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     bool isPersoenlich(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
 
     void getGesamtZeit(int& sek, int& sekabzur);
-    
+
     int getZeitDifferenz();
 
-    void resetZeitDifferenz();
-    
+    void setZeitDifferenz(int);
+
     const QDate& getDatum();
 
     void setDatum(const QDate& datum);
-    
+
     void clearKonten();
 
     void clearDefaultComments();
-    
+
     void reload();
 
     bool kontoDatenInfoConnected();
