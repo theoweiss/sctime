@@ -215,7 +215,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow(0,"sctime")
   connect(eintragAddAction, SIGNAL(activated()), this, SLOT(eintragHinzufuegen()));
 
   eintragRemoveAction = new QAction( "Eintrag löschen",
-                                      "&Eintrag löschen", 0, this, "eintr loeschen" );
+                                     "&Eintrag löschen", Qt::Key_Delete, this, "eintr loeschen" );
   connect(eintragRemoveAction, SIGNAL(activated()), this, SLOT(eintragEntfernen()));
 
   QAction* min5PlusAction = new QAction( "Zeit incrementieren", QPixmap((const char **)hi22_action_1uparrow ),
@@ -636,6 +636,15 @@ void TimeMainWindow::eintragEntfernen()
   kontoTree->sucheItem(ALLE_KONTEN_STRING,abt,ko,uko,idx,topi,abti,koi,ukoi,eti);
   delete ukoi;
   kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
+  if (kontoTree->sucheItem(top,abt,ko,uko,idx,topi,abti,koi,ukoi,eti)) {
+      for (eti=(KontoTreeItem*)(ukoi->firstChild());
+           (eti!=NULL)&&(eti->text(0).toInt()<=idx);
+           eti=(KontoTreeItem*)(eti->nextSibling()));
+      if (eti!=NULL)
+          kontoTree->setCurrentItem(eti);
+      else
+          kontoTree->setCurrentItem(ukoi);
+  }
   zeitChanged();
 }
 
@@ -862,13 +871,13 @@ void TimeMainWindow::callUnterKontoDialog(QListViewItem * item)
 
   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
 
-  unterKontoDialog=new UnterKontoDialog(abt,ko,uko,idx,abtList,&defaultTags, true,this);
+  unterKontoDialog=new UnterKontoDialog(abt,ko,uko,idx,abtList,&defaultTags, true ,this);
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int )), kontoTree,
   SLOT(refreshItem(const QString&, const QString&, const QString&,int )));
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int)), this, SLOT(zeitChanged()));
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int)),
            this, SLOT(flagsChanged(const QString&, const QString&, const QString&,int)));
-  if (abtList->isAktiv(abt,ko,uko,idx))
+  if (abtList->isAktiv(abt,ko,uko,idx) && (abtList->getDatum()==QDate::currentDate()))
     connect(this, SIGNAL(minuteTick()),unterKontoDialog->getZeitBox(),SLOT(incrMin()));
   unterKontoDialog->show();
 }
