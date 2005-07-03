@@ -1,7 +1,5 @@
 /*
 
-    $Id$
-
     Copyright (C) 2003 Florian Schmitt, Science and Computing AG
                        f.schmitt@science-computing.de
 
