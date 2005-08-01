@@ -655,6 +655,9 @@ void TimeMainWindow::changeDate(const QDate& datum)
   bool currentDateSel = (datum==QDate::currentDate());
 
   kontoTree->flagClosedPersoenlicheItems();
+  std::vector<int> columnwidthlist;
+  kontoTree->getColumnWidthList(columnwidthlist);
+  settings->setColumnWidthList(columnwidthlist);
   settings->writeSettings(abtList);
   settings->writeShellSkript(abtList);
   if (abtListToday!=abtList) {
@@ -686,6 +689,9 @@ void TimeMainWindow::changeDate(const QDate& datum)
 void TimeMainWindow::refreshKontoListe()
 {
   kontoTree->flagClosedPersoenlicheItems();
+  std::vector<int> columnwidthlist;
+  kontoTree->getColumnWidthList(columnwidthlist);
+  settings->setColumnWidthList(columnwidthlist);
   settings->writeSettings(abtList); // die Settings ueberstehen das Reload nicht
   int diff = abtList->getZeitDifferenz();
   abtList->reload();

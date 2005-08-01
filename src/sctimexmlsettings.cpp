@@ -163,6 +163,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
   QDomElement docElem = doc.documentElement();
 
   defaultcommentfiles.clear();
+  columnwidth.clear();
 
   for( QDomNode node1 = docElem.firstChild(); !node1.isNull(); node1 = node1.nextSibling() ) {
     QDomElement elem1 = node1.toElement();
