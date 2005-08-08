@@ -619,8 +619,6 @@ int AbteilungsListe::getUnterKontoFlags(const QString& abteilung, const QString&
 
     if (findUnterKonto(uki,ukl, abteilung, konto, unterkonto)) {
       return uki->second.getFlags();
-
-      return true;
     } else return 0;
 }
 
@@ -660,8 +658,6 @@ int AbteilungsListe::getKontoFlags(const QString& abteilung, const QString& kont
 
     if (findKonto(koi,kol, abteilung, konto)) {
       return koi->second.getFlags();
-
-      return true;
     }
     else
       return 0;
@@ -677,8 +673,6 @@ int AbteilungsListe::getAbteilungFlags(const QString& abteilung)
 
     if (abti!=end()) {
       return abti->second.getFlags();
-
-      return true;
     } else return 0;
 }
 
