@@ -83,7 +83,8 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
     commentedit = NULL;
     commentcombo = new QComboBox(true,this);
     commentcombo->insertStringList(*defaultcomments);
-    commentcombo->insertItem(et.kommentar,0);
+    commentcombo->insertItem(0,et.kommentar);
+    commentcombo->setCurrentIndex(0);
   }
 
   layout->addWidget(new QLabel("Kommentar",this));
@@ -137,10 +138,8 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   connect (aktivesProjekt, SIGNAL(clicked()), this, SLOT(aktivesProjektButtonClicked()));
 
   if (connectZeiten) {
-    connect (zeitBox, SIGNAL(minuteUp()), zeitAbzurBox, SLOT(incrMin()));
-    connect (zeitBox, SIGNAL(minuteDown()), zeitAbzurBox, SLOT(decrMin()));
-    connect (zeitBox, SIGNAL(hourUp()), zeitAbzurBox, SLOT(incrHour()));
-    connect (zeitBox, SIGNAL(hourDown()), zeitAbzurBox, SLOT(decrHour()));
+    connect (zeitBox, SIGNAL(minuteChangedBy(int)), zeitAbzurBox, SLOT(doStepMin(int)));
+    connect (zeitBox, SIGNAL(hourChangedBy(int)), zeitAbzurBox, SLOT(doStepHour(int)));
   }
 
   // Dialog auf die richtige Größe und Position bringen

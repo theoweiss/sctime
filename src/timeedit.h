@@ -28,7 +28,7 @@
 #include "q3groupbox.h"
 #include "qlabel.h"
 
-/** 
+/**
   * TimeEdit ist ein QSpinBox-Objekt, das zusaetzlich Signale zum verschalten der "Scrollbuttons" mehrerer
   * TimeEdits liefert
   */
@@ -39,52 +39,31 @@ class TimeEdit: public QSpinBox
   Q_OBJECT
 
   public:
-  
+
   /**
    * Erzeugt ein TimeEdit-Objekt mit Wertebereich 0..maxVal.
    */
   TimeEdit(int maxVal, QWidget* parent): QSpinBox(0,maxVal,1,parent) { }
 
-  /** Es wird statt dem Erhoehen um eins ein upButtonPressed Signal ausgeloest.
+  /** Es wird statt dessen ein ein stepButtonPressed Signal ausgeloest.
    * (noetig zum gleichschalten mehrerer SpinBoxes).
    */
-  virtual void stepUp()
+  virtual void stepBy(int s)
   {
-  //  QSpinBox::stepUp();
-    emit upButtonPressed();
+    emit stepButtonPressed(s);
   }
-
-
-  /** Es wird statt dem Verringern um eins ein downButtonPressed Signal ausgeloest.
-   * (noetig zum gleichschalten mehrerer SpinBoxes).
-   */
-  virtual void stepDown()
-  {
- //   QSpinBox::stepDown();
-    emit downButtonPressed();
-  }
-
 
   signals:
-    
-    /** Wird durch stepUp ausgeloest */
-    void upButtonPressed();
 
-    /** Wird durch StepDown ausgeloest */
-    void downButtonPressed();
+    /** Wird durch stepBy ausgeloest */
+    void stepButtonPressed(int s);
 
   public slots:
-  
-    /** Erhoeht den Wert um eins, ohne ein *ButtonPressed Signal zu erzeugen. */
-    void incr()
+
+      /** erhoeht/verringert tatsaechlich um step schritte. */
+    void doStep(int s)
     {
-      setValue(value()+1);
-    }
-    
-    /** Verringert den Wert um eins, ohne ein *ButtonPressed Signal zu erzeugen. */
-    void decr()
-    {
-      setValue(value()-1);
+      setValue(value()+s);
     }
 };
 
@@ -96,7 +75,7 @@ class TimeEdit: public QSpinBox
 class ZeitBox: public Q3GroupBox
 {
   Q_OBJECT
-  
+
   public:
 
     /**
@@ -113,15 +92,13 @@ class ZeitBox: public Q3GroupBox
       minuteEdit->setValue((sekunden/60)%60);
       minuteEdit->setWrapping(true);
       new QLabel("m",this);
-      connect(minuteEdit,SIGNAL(upButtonPressed()),this,SLOT(incrMin()));
-      connect(minuteEdit,SIGNAL(downButtonPressed()),this,SLOT(decrMin()));
-      connect(hourEdit,SIGNAL(upButtonPressed()),this,SLOT(incrHour()));
-      connect(hourEdit,SIGNAL(downButtonPressed()),this,SLOT(decrHour()));
-      connect(minuteEdit,SIGNAL(valueChanged(int)),this,SLOT(minuteChanged(int)));
-      connect(hourEdit,SIGNAL(valueChanged(int)),this,SLOT(hourChanged(int)));
+      connect(minuteEdit,SIGNAL(stepButtonPressed(int)),this,SLOT(doStepMin(int)));
+      connect(hourEdit,SIGNAL(stepButtonPressed(int)),this,SLOT(doStepHour(int)));
+      connect(minuteEdit,SIGNAL(valueChanged(int)),this,SLOT(setMinutes(int)));
+      connect(hourEdit,SIGNAL(valueChanged(int)),this,SLOT(setHours(int)));
     }
 
-    int getSekunden() 
+    int getSekunden()
     {
       hourEdit->value(); // Das auslesen der Werte bewirkt, dass per Hand eingegebene
       minuteEdit->value(); // Eintraege ausgewertet werden, und minuteChanged bzw hourChanged ausgeloest wird.
@@ -135,81 +112,56 @@ class ZeitBox: public Q3GroupBox
       hourEdit->setValue(sekunden/3600);
     }
 
-  
+
   public slots:
-    void minuteChanged(int newVal)
+    void setMinutes(int newVal)
     {
-      sekunden=(sekunden/3600)*3600+newVal*60; //Stunden unveraendertlassen, Neue Minuten uebernehmen
+      sekunden=(sekunden/3600)*3600+newVal*60; //Stunden unveraendert lassen, Neue Minuten uebernehmen
     }
 
-    void hourChanged(int newVal)
+    void setHours(int newVal)
     {
       sekunden=(sekunden%3600)+newVal*3600; //Minuten unveraendert lassen, neue Stunden uebernehmen
     }
 
     /**
-     * Erhoeht die Minuten um eine
+     * Veraendert die Minuten um Steps
      */
+    void doStepMin(int steps)
+    {
+      sekunden+=steps*60;
+      if (sekunden<0) sekunden=0;
+      minuteEdit->setValue((sekunden/60)%60);
+      hourEdit->setValue(sekunden/3600);
+      emit minuteChangedBy(steps);
+    }
+
     void incrMin()
     {
-      sekunden+=60;
-      minuteEdit->setValue((sekunden/60)%60);
-      hourEdit->setValue(sekunden/3600);
-      emit minuteUp();
+        doStepMin(1);
     }
 
     /**
-     * Verringert die Minuten um eine
+     * Veraendert die Stunden um Steps
      */
-    void decrMin()
+    void doStepHour(int steps)
     {
-      if (sekunden>=60) sekunden-=60; else sekunden=0;
-      minuteEdit->setValue((sekunden/60)%60);
+      sekunden+=3600*steps;
+      if (sekunden<0) sekunden=0;
       hourEdit->setValue(sekunden/3600);
-      emit minuteDown();
-    }
-
-    /**
-     * Erhoeht die Stunden um eine
-     */
-    void incrHour()
-    {
-      sekunden+=3600;
-      hourEdit->setValue(sekunden/3600);
-      emit hourUp();
-    }
-
-    /**
-     * Verringert die Stunden um eine
-     */
-    void decrHour()
-    {
-      if (sekunden>=3600) sekunden-=3600; else sekunden=0;
-      minuteEdit->setValue((sekunden/60)%60);
-      hourEdit->setValue(sekunden/3600);
-      emit hourDown();
+      emit hourChangedBy(steps);
     }
 
   signals:
     /**
-     * Wird durch incrMin() ausgeloest
+     * Wird durch doStepMinMin() ausgeloest
      */
-    void minuteUp();
+    void minuteChangedBy(int steps);
 
     /**
-     * Wird durch decrMin() ausgeloest
+     * Wird durch doStepHour() ausgeloest
      */
-    void minuteDown();
-
-    /**
-     * Wird durch incrHour() ausgeloest
-     */
-    void hourUp();
-
-    /**
-     * Wird durch decrHour() ausgeloest
-     */
-    void hourDown();
+    void hourChangedBy(int steps);
 
   private:
     TimeEdit *minuteEdit;
