@@ -47,7 +47,7 @@ void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
       filename=configDir+"/"+xmlfilelist[i];
 
       QFile f( filename );
-      if ( !f.open( IO_ReadOnly ) )
+      if ( !f.open( QIODevice::ReadOnly ) )
           return;
       if ( !doc.setContent( &f ) ) {
           f.close();

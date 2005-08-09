@@ -44,7 +44,7 @@ void DefaultTagReader::read(QStringList* taglist)
   filename=configDir+"/defaulttags.xml";
 
   QFile f( filename );
-  if ( !f.open( IO_ReadOnly ) )
+  if ( !f.open( QIODevice::ReadOnly ) )
       return;
   if ( !doc.setContent( &f ) ) {
       f.close();

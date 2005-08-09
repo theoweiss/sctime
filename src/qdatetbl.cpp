@@ -42,14 +42,22 @@
 #include "qdatepicker.h"
 #include "qdatetbl.h"
 
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 
 #include <qdatetime.h>
 #include <qstring.h>
 #include <qpen.h>
 #include <qpainter.h>
 #include <qdialog.h>
-#include <qdict.h>
+#include <q3dict.h>
+//Added by qt3to4:
+#include <QResizeEvent>
+#include <QMouseEvent>
+#include <QFocusEvent>
+#include <Q3Frame>
+#include <QKeyEvent>
+#include <QEvent>
+#include <QWheelEvent>
 #include <assert.h>
 
 class QDateTable::QDateTablePrivate
@@ -74,7 +82,7 @@ public:
      QColor bgColor;
      BackgroundMode bgMode;
    };
-   QDict <DatePaintingMode> customPaintingModes;
+   Q3Dict <DatePaintingMode> customPaintingModes;
 
 };
 
@@ -101,7 +109,7 @@ QDateValidator::date(const QString& text, QDate& d) const
       d = tmp;
       return Acceptable;
     } else
-      return Valid;
+      return QValidator::Intermediate;
 }
 
 void
@@ -110,8 +118,8 @@ QDateValidator::fixup( QString& ) const
 
 }
 
-QDateTable::QDateTable(QCalendarSystem* calendar_, QWidget *parent, QDate date_, const char* name, WFlags f)
-  : QGridView(parent, name, f)
+QDateTable::QDateTable(QCalendarSystem* calendar_, QWidget *parent, QDate date_, const char* name, Qt::WFlags f)
+  : Q3GridView(parent, name, f)
 {
   d = new QDateTablePrivate;
   calendar=calendar_;
@@ -121,7 +129,7 @@ QDateTable::QDateTable(QCalendarSystem* calendar_, QWidget *parent, QDate date_,
       //kdDebug() << "QDateTable ctor: WARNING: Given date is invalid, using current date." << endl;
       date_=QDate::currentDate();
     }
-  setFocusPolicy( QWidget::StrongFocus );
+  setFocusPolicy( Qt::StrongFocus );
   setNumRows(7); // 6 weeks max + headline
   setNumCols(7); // 7 days a week
   setHScrollBarMode(AlwaysOff);
@@ -170,8 +178,8 @@ QDateTable::paintCell(QPainter *painter, int row, int col)
   QPen pen;
   int w=cellWidth();
   int h=cellHeight();
-  QBrush brushBlue(blue);
-  QBrush brushLightblue(white);
+  QBrush brushBlue(Qt::blue);
+  QBrush brushLightblue(Qt::white);
   QFont font;
   // -----
 
@@ -189,21 +197,20 @@ QDateTable::paintCell(QPainter *painter, int row, int col)
 
       if (!normalday)
         {
-          painter->setPen(white);
+          painter->setPen(Qt::white);
           painter->setBrush(brushLightblue);
           painter->drawRect(0, 0, w, h);
-          painter->setPen(blue);
+          painter->setPen(Qt::blue);
         } else {
-          painter->setPen(blue);
+          painter->setPen(Qt::blue);
           painter->setBrush(brushBlue);
           painter->drawRect(0, 0, w, h);
-          painter->setPen(white);
+          painter->setPen(Qt::white);
         }
-      painter->drawText(0, 0, w, h-1, AlignCenter,
+      painter->drawText(0, 0, w, h-1, Qt::AlignCenter,
                         calendar->weekDayName(daynum, true), -1, &rect);
-      painter->setPen(black);
-      painter->moveTo(0, h-1);
-      painter->lineTo(w-1, h-1);
+      painter->setPen(Qt::black);
+      painter->drawLine(0, h-1, w-1, h-1);
       // ----- draw the weekday:
     } else {
       bool paintRect=true;
@@ -217,7 +224,7 @@ QDateTable::paintCell(QPainter *painter, int row, int col)
         { // we are either
           // ° painting a day of the previous month or
           // ° painting a day of the following month
-          painter->setPen(gray);
+          painter->setPen(Qt::gray);
         } else { // paint a day of the current month
           if ( d->useCustomColors )
           {
@@ -241,9 +248,9 @@ QDateTable::paintCell(QPainter *painter, int row, int col)
               }
               painter->setPen( mode->fgColor );
             } else
-              painter->setPen(black);
+              painter->setPen(Qt::black);
           } else //if ( firstWeekDay < 4 ) // <- this doesn' make sense at all!
-          painter->setPen(black);
+          painter->setPen(Qt::black);
         }
 
       pen=painter->pen();
@@ -256,27 +263,27 @@ QDateTable::paintCell(QPainter *painter, int row, int col)
         {
           if(hasFocus())
             { // draw the currently selected date
-              painter->setPen(blue);
-              painter->setBrush(blue);
-              pen=white;
+              painter->setPen(Qt::blue);
+              painter->setBrush(Qt::blue);
+              pen=QPen(Qt::white);
             } else {
-              painter->setPen(gray);
-              painter->setBrush(gray);
-              pen=white;
+              painter->setPen(Qt::gray);
+              painter->setBrush(Qt::gray);
+              pen=QPen(Qt::white);
             }
         } else {
-          painter->setBrush(white);
-          painter->setPen(white);
+          painter->setBrush(Qt::white);
+          painter->setPen(Qt::white);
         }
 
       if ( pCellDate == QDate::currentDate() )
       {
-         painter->setPen(black);
+         painter->setPen(Qt::black);
       }
 
       if ( paintRect ) painter->drawRect(0, 0, w, h);
       painter->setPen(pen);
-      painter->drawText(0, 0, w, h, AlignCenter, text, -1, &rect);
+      painter->drawText(0, 0, w, h, Qt::AlignCenter, text, -1, &rect);
     }
   if(rect.width()>maxCell.width()) maxCell.setWidth(rect.width());
   if(rect.height()>maxCell.height()) maxCell.setHeight(rect.height());
@@ -288,49 +295,49 @@ QDateTable::keyPressEvent( QKeyEvent *e )
     QDate temp = date;
 
     switch( e->key() ) {
-    case Key_Prior:
+    case Qt::Key_PageUp:
         temp = calendar->addMonths( date, -1 );
         setDate(temp);
         return;
-    case Key_Next:
+    case Qt::Key_PageDown:
         temp = calendar->addMonths( date, 1 );
         setDate(temp);
         return;
-    case Key_Up:
+    case Qt::Key_Up:
         if ( calendar->day(date) > 7 ) {
             setDate(date.addDays(-7));
             return;
         }
         break;
-    case Key_Down:
+    case Qt::Key_Down:
         if ( calendar->day(date) <= calendar->daysInMonth(date)-7 ) {
             setDate(date.addDays(7));
             return;
         }
         break;
-    case Key_Left:
+    case Qt::Key_Left:
         if ( calendar->day(date) > 1 ) {
             setDate(date.addDays(-1));
             return;
         }
         break;
-    case Key_Right:
+    case Qt::Key_Right:
         if ( calendar->day(date) < calendar->daysInMonth(date) ) {
             setDate(date.addDays(1));
             return;
         }
         break;
-    case Key_Minus:
+    case Qt::Key_Minus:
         setDate(date.addDays(-1));
         return;
-    case Key_Plus:
+    case Qt::Key_Plus:
         setDate(date.addDays(1));
         return;
-    case Key_N:
+    case Qt::Key_N:
         setDate(QDate::currentDate());
         return;
-    case Key_Return:
-    case Key_Enter:
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
         emit tableClicked();
         return;
     default:
@@ -341,7 +348,7 @@ QDateTable::keyPressEvent( QKeyEvent *e )
 void
 QDateTable::viewportResizeEvent(QResizeEvent * e)
 {
-  QGridView::viewportResizeEvent(e);
+  Q3GridView::viewportResizeEvent(e);
 
   setCellWidth(viewport()->width()/7);
   setCellHeight(viewport()->height()/7);
@@ -422,7 +429,7 @@ QDateTable::contentsMousePressEvent(QMouseEvent *e)
 
   if (  e->button() == Qt::RightButton && d->popupMenuEnabled )
   {
-        QPopupMenu *menu = new QPopupMenu();
+        Q3PopupMenu *menu = new Q3PopupMenu();
         //menu->insertTitle( KGlobal::locale()->formatDate(clickedDate) );
         emit aboutToShowContextMenu( menu, clickedDate );
         menu->popup(e->globalPos());
@@ -478,13 +485,13 @@ QDateTable::getDate() const
 void QDateTable::focusInEvent( QFocusEvent *e )
 {
 //    repaintContents(false);
-    QGridView::focusInEvent( e );
+    Q3GridView::focusInEvent( e );
 }
 
 void QDateTable::focusOutEvent( QFocusEvent *e )
 {
 //    repaintContents(false);
-    QGridView::focusOutEvent( e );
+    Q3GridView::focusOutEvent( e );
 }
 
 QSize
@@ -541,7 +548,7 @@ QDateInternalWeekSelector::QDateInternalWeekSelector
   QFont font;
   // -----
   setFont(font);
-  setFrameStyle(QFrame::NoFrame);
+  setFrame(false);
   setValidator(val);
   connect(this, SIGNAL(returnPressed()), SLOT(weekEnteredSlot()));
 }
@@ -601,7 +608,7 @@ QDateInternalMonthPicker::~QDateInternalMonthPicker() {
 
 QDateInternalMonthPicker::QDateInternalMonthPicker
 (QCalendarSystem* calendar_, const QDate & date, QWidget* parent, const char* name)
-  : QGridView(parent, name),
+  : Q3GridView(parent, name),
     result(0) // invalid
 {
   QRect rect;
@@ -613,7 +620,7 @@ QDateInternalMonthPicker::QDateInternalMonthPicker
   setFont(font);
   setHScrollBarMode(AlwaysOff);
   setVScrollBarMode(AlwaysOff);
-  setFrameStyle(QFrame::NoFrame);
+  setFrameStyle(Q3Frame::NoFrame);
   setNumCols(3);
   d = new QDateInternalMonthPrivate(date.year(), date.month(), date.day());
   // For monthsInYear != 12
@@ -653,7 +660,7 @@ QDateInternalMonthPicker::getResult() const
 void
 QDateInternalMonthPicker::setupPainter(QPainter *p)
 {
-  p->setPen(black);
+  p->setPen(Qt::black);
 }
 
 void
@@ -673,7 +680,7 @@ QDateInternalMonthPicker::paintCell(QPainter* painter, int row, int col)
   text=calendar->monthName(index,
     calendar->year(QDate(d->year, d->month,
     d->day)), false);
-  painter->drawText(0, 0, cellWidth(), cellHeight(), AlignCenter, text);
+  painter->drawText(0, 0, cellWidth(), cellHeight(), Qt::AlignCenter, text);
   if ( activeCol == col && activeRow == row )
       painter->drawRect( 0, 0, cellWidth(), cellHeight() );
 }
@@ -681,7 +688,7 @@ QDateInternalMonthPicker::paintCell(QPainter* painter, int row, int col)
 void
 QDateInternalMonthPicker::contentsMousePressEvent(QMouseEvent *e)
 {
-  if(!isEnabled() || e->button() != LeftButton)
+  if(!isEnabled() || e->button() != Qt::LeftButton)
     {
       return;
     }
@@ -707,7 +714,7 @@ QDateInternalMonthPicker::contentsMousePressEvent(QMouseEvent *e)
 void
 QDateInternalMonthPicker::contentsMouseMoveEvent(QMouseEvent *e)
 {
-  if (e->state() & LeftButton)
+  if (e->state() & Qt::LeftButton)
     {
       int row, col;
       QPoint mouseCoord;
@@ -780,7 +787,7 @@ QDateInternalYearSelector::QDateInternalYearSelector
   calendar=calendar_;
   // -----
   setFont(font);
-  setFrameStyle(QFrame::NoFrame);
+  setFrame(false);
   // we have to respect the limits of QDate here, I fear:
   val->setRange(0, 8000);
   setValidator(val);
@@ -825,18 +832,18 @@ QDateInternalYearSelector::setYear(int year)
 }
 
 QPopupFrame::QPopupFrame(QWidget* parent, const char*  name)
-  : QFrame(parent, name, WType_Popup),
+  : Q3Frame(parent, name, Qt::WType_Popup),
     result(0), // rejected
     main(0)
 {
-  setFrameStyle(QFrame::Box|QFrame::Raised);
+  setFrameStyle(Q3Frame::Box|Q3Frame::Raised);
   setMidLineWidth(2);
 }
 
 void
 QPopupFrame::keyPressEvent(QKeyEvent* e)
 {
-  if(e->key()==Key_Escape)
+  if(e->key()==Qt::Key_Escape)
     {
       result=0; // rejected
       qApp->exit_loop();

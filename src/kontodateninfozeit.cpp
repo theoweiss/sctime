@@ -135,7 +135,7 @@ bool Einchecker::checkin(QDate date, const QString& konto, const QString& uko, i
     QString command="zeit "+date.toString("dd.MM.yyyy")+" "+konto+" "+uko+" "+QString("").arg(roundTo(1.0/3600*sek,0.01))
                     +" "+QString("").arg(roundTo(1.0/3600*sekabzur,0.01))+" "+kommentar.simplifyWhiteSpace();
 
-    std::cout<<"uko"<<uko<<std::endl;
+    std::cout<<"uko"<<uko.toStdString()<<std::endl;
     /*
     if ( !proc.launch("n\n") ) {
         // error handling
@@ -165,14 +165,14 @@ bool Einchecker::checkin(QDate date, const QString& konto, const QString& uko, i
         qs+=c;      
     }
     pclose(file);
-    std::cout<<qs<<std::endl;
+    std::cout<<qs.toStdString()<<std::endl;
 
     QRegExp errorExp=QRegExp("\\* STOP \\*.*\\*{10,100}([^\\*].*)");
     int pos = errorExp.search(qs);
     if (pos > -1) {
           std::cout<<"Fehler aufgetreten"<<std::endl;
           QString error = errorExp.cap(1);
-          std::cout<<"error:"<<error<<std::endl;
+          std::cout<<"error:"<<error.toStdString()<<std::endl;
           QMessageBox::warning( 0,
                 "Warnung",
                 error,

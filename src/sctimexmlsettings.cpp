@@ -24,6 +24,8 @@
 #include "abteilungsliste.h"
 #include "qfile.h"
 #include "qdir.h"
+//Added by qt3to4:
+#include <QTextStream>
 #include "globals.h"
 #include "utils.h"
 #include "timecounter.h"
@@ -43,8 +45,8 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
   QString filename="/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".sh";
   QFile shellFile(configDir+filename);
 
-  if (!shellFile.open(IO_WriteOnly)) {
-          std::cout<<"Kann Ausgabedatei nicht schreiben: "<<configDir+filename<<std::endl;
+  if (!shellFile.open(QIODevice::WriteOnly)) {
+      std::cout<<"Kann Ausgabedatei nicht schreiben: "<<(configDir+filename).toStdString()<<std::endl;
       return;
   }
 
@@ -149,7 +151,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
   }
 
   QFile f( configDir + filename );
-  if ( !f.open( IO_ReadOnly ) ) {
+  if ( !f.open( QIODevice::ReadOnly ) ) {
       return;
       }
   if ( !doc.setContent( &f ) ) {
@@ -601,7 +603,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     filename=configDir+"/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
 
   QFile f(filename);
-  if ( !f.open( IO_WriteOnly) ) {
+  if ( !f.open( QIODevice::WriteOnly) ) {
       std::cerr<<"Kann Settings nicht speichern"<<std::endl;
       return;
   }

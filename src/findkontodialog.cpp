@@ -27,6 +27,9 @@
 #include "qlayout.h"
 #include "qlabel.h"
 #include "qcombobox.h"
+//Added by qt3to4:
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include "abteilungsliste.h"
 #include "timeedit.h"
 #include "qstringlist.h"

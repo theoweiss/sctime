@@ -62,7 +62,7 @@ void DateDialog::dateChangedSlot(QDate date)
       QDate filedate;
       int day=QString(*it).section('-',3,3).section('.',0,0).toInt(&ok);
       if ((ok)&&filedate.setYMD(date.year(),date.month(),day)) {
-        datePicker->dateTable()->setCustomDatePainting(filedate, yellow, QDateTable::CircleMode, red);
+        datePicker->dateTable()->setCustomDatePainting(filedate, Qt::yellow, QDateTable::CircleMode, Qt::red);
       }
     }
     currentMonth = date.month();

@@ -21,8 +21,11 @@
 */
 
 #include <qapplication.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qfont.h>
+//Added by qt3to4:
+#include <QCustomEvent>
+#include <QEvent>
 #include <iostream>
 #include "sctimeapp.h"
 #include "qstring.h"
@@ -83,7 +86,7 @@ static LOCK_FD openlock( const QString &name )
    // open the lockfile
    LOCK_FD fd = new QFile( name );
 
-   if (!fd->open(IO_ReadWrite)) {
+   if (!fd->open(QIODevice::ReadWrite)) {
      ErrorApp EA("Kann Lockfile "+fd->name()+" nicht öffnen",dummy,0);
      exit(1); /* can not open */
    }
@@ -103,7 +106,7 @@ static LOCK_FD openlock(const QString &name )
     LOCK_FD fd = open( QFile::encodeName( name ),
                    O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
     if (fd<0) {
-      std::cerr<<"Kann Lockfile "+name+" nicht öffnen"<<std::endl;
+      std::cerr<<("Kann Lockfile "+name+" nicht öffnen").toStdString()<<std::endl;
       exit(1); /* can not open */
     }
 
@@ -116,20 +119,20 @@ static LOCK_FD openlock(const QString &name )
 #endif
         case EAGAIN:
           {
-            std::cerr<<"Das Lockfile "+name+" wird bereits benutzt.\nFalls Sie sicher sind, dass keine weitere Instanz von sctime läuft, bitte löschen."<<std::endl;
+	    std::cerr<<("Das Lockfile "+name+" wird bereits benutzt.\nFalls Sie sicher sind, dass keine weitere Instanz von sctime läuft, bitte löschen.").toStdString()<<std::endl;
             exit(3);
             break;
           }
         case ENOLCK:   // Weniger komfortables Locking auf Systemen, die es nicht unterstuetzen.
           {
             if (lockFileExistiert) {
-              std::cerr<<"Das Lockfile "+name+" existiert bereits.\nFalls Sie sicher sind, dass keine weitere Instanz von sctime läuft, bitte löschen."<<std::endl;
+              std::cerr<<("Das Lockfile "+name+" existiert bereits.\nFalls Sie sicher sind, dass keine weitere Instanz von sctime läuft, bitte löschen.").toStdString()<<std::endl;
               exit(2);
             }
             break;
           }
         default: {
-             std::cout<<"Error "<<errno<<": "<<strerror(errno)<<": "+name<<std::endl;
+	     std::cout<<"Error "<<errno<<": "<<strerror(errno)<<(": "+name).toStdString()<<std::endl;
              exit(5);
           }
       }
@@ -179,7 +182,7 @@ static void SigIntHandler(int signum)
    //QEvent(QEvent::Quit);
 
    sctimeApp->postEvent(sctimeApp->mainWidget(), event);
-   sctimeApp->wakeUpGuiThread();
+   // =qt4= sctimeApp->wakeUpGuiThread();
 }
 #endif
 
@@ -225,7 +228,7 @@ int main( int argc, char **argv )
   configDir=directory.path();
 
 #ifdef WIN32
-  HANDLE hEvent = CreateEvent(NULL, FALSE, TRUE, (unsigned short *)"sctimeGuardEvent");
+  Qt::HANDLE hEvent = CreateEvent(NULL, FALSE, TRUE, (unsigned short *)"sctimeGuardEvent");
   if ( GetLastError () == ERROR_ALREADY_EXISTS )
   {
     ErrorApp ea("Eine andere Instanz von sctime läuft bereits auf diesem Rechner.",argc, argv );

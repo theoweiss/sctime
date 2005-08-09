@@ -24,7 +24,7 @@
 #ifndef KONTOTREEVIEW_H
 #define KONTOTREEVIEW_H
 
-#include "qlistview.h"
+#include "q3listview.h"
 #include "abteilungsliste.h"
 #include "qstring.h"
 #include "qpixmap.h"
@@ -40,7 +40,7 @@
  * des Kontobaumes kuemmert.
  */
 
-class KontoTreeView: public QListView
+class KontoTreeView: public Q3ListView
 {
 
   Q_OBJECT
@@ -55,9 +55,9 @@ class KontoTreeView: public QListView
 
     void load(AbteilungsListe* abtlist);
 
-    void itemInfo(QListViewItem* item,QString& tops, QString& abts, QString& kos, QString& ukos, int& idx);
+    void itemInfo(Q3ListViewItem* item,QString& tops, QString& abts, QString& kos, QString& ukos, int& idx);
 
-    bool isEintragsItem(QListViewItem* item);
+    bool isEintragsItem(Q3ListViewItem* item);
 
     void flagClosedPersoenlicheItems();
 

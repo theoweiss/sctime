@@ -187,7 +187,7 @@ bool AbteilungsListe::findUnterKonto(UnterKontoListe::iterator& itUk, UnterKonto
 
 KontoListe* AbteilungsListe::insertAbteilung(const QString& abteilung)
 {
-  QString abt=abteilung.simplifyWhiteSpace();
+  QString abt=abteilung.simplified();
 
   if (abteilung=="") return NULL;
 

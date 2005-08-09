@@ -24,15 +24,15 @@
 #define TOOLBAR_H
 
 #include <qstring.h>
-#include "qtoolbar.h"
-#include "qiconset.h"
+#include "q3toolbar.h"
+#include "qicon.h"
 #include "qpixmap.h"
 #include "qtoolbutton.h"
 
-class ToolBar:public QToolBar
+class ToolBar:public Q3ToolBar
 {
   public:
-    ToolBar(QMainWindow * parent = 0):QToolBar(parent)
+    ToolBar(Q3MainWindow * parent = 0):Q3ToolBar(parent)
     {
     }
 };

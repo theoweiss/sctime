@@ -25,13 +25,21 @@
 #define QDATETBL_H
 
 #include <qvalidator.h>
-#include <qgridview.h>
+#include <q3gridview.h>
 #include <qlineedit.h>
 #include <qdatetime.h>
 #include <qcolor.h>
 #include "qcalendarsystemgregorian.h"
+//Added by qt3to4:
+#include <QWheelEvent>
+#include <QFocusEvent>
+#include <QKeyEvent>
+#include <Q3Frame>
+#include <QResizeEvent>
+#include <Q3PopupMenu>
+#include <QMouseEvent>
 
-class QPopupMenu;
+class Q3PopupMenu;
 
 /** Week selection widget.
 * @internal
@@ -65,7 +73,7 @@ private:
 * @version $Id$
 * @author Tim Gilman, Mirko Boehm
 */
-class QDateInternalMonthPicker : public QGridView
+class QDateInternalMonthPicker : public Q3GridView
 {
   Q_OBJECT
 protected:
@@ -165,7 +173,7 @@ private:
  * @author Tim Gilman, Mirko Boehm
  * @version $Id$
  */
-class QPopupFrame : public QFrame
+class QPopupFrame : public Q3Frame
 {
   Q_OBJECT
 protected:
@@ -220,7 +228,7 @@ public:
 
 private:
 
-  virtual bool close(bool alsoDelete) { return QFrame::close(alsoDelete); }
+  virtual bool close(bool alsoDelete) { return Q3Frame::close(alsoDelete); }
 protected:
   virtual void virtual_hook( int id, void* data );
 private:
@@ -253,7 +261,7 @@ public:
  * @version $Id$
  * @author Tim Gilman, Mirko Boehm
  */
-class QDateTable : public QGridView
+class QDateTable : public Q3GridView
 {
     Q_OBJECT
     Q_PROPERTY( QDate date READ getDate WRITE setDate )
@@ -265,7 +273,7 @@ public:
      */
     QDateTable(QCalendarSystem* calendar_, QWidget *parent=0,
 	       QDate date=QDate::currentDate(),
-	       const char* name=0, WFlags f=0);
+	       const char* name=0, Qt::WFlags f=0);
 
     /**
      * The destructor.
@@ -412,7 +420,7 @@ signals:
      *
      * @since 3.2
      */
-    void aboutToShowContextMenu( QPopupMenu * menu, const QDate &date);
+    void aboutToShowContextMenu( Q3PopupMenu * menu, const QDate &date);
 
 protected:
   virtual void virtual_hook( int id, void* data );

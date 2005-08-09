@@ -20,14 +20,17 @@
 #ifndef TIMEMAINWINDOW_H
 #define TIMEMAINWINDOW_H
 
-#include <qlistview.h>
-#include <qmainwindow.h>
+#include <q3listview.h>
+#include <q3mainwindow.h>
+#include <Q3MimeSourceFactory>
+#include <Q3Action>
+//Added by qt3to4:
+#include <QCustomEvent>
 #include "kontodateninfo.h"
 #include "unterkontodialog.h"
 #include "kontotreeview.h"
 #include "toolbar.h"
-#include "qtoolbar.h"
-#include "qaction.h"
+#include "q3toolbar.h"
 #include "sctimexmlsettings.h"
 #include "defaultcommentreader.h"
 
@@ -39,19 +42,19 @@ class StatusBar;
 /** Diese Klasse implementiert das Hauptfenster des Programms,
     und sorgt zudem fuer das Fortschreiten der Zeit.
 */
-class TimeMainWindow: public QMainWindow
+class TimeMainWindow: public Q3MainWindow
 {
   Q_OBJECT
 
   public:
     TimeMainWindow(KontoDatenInfo* zk);
-    QListView* getKontoTree() { return kontoTree; };
+    Q3ListView* getKontoTree() { return kontoTree; };
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;
 
   public slots:
 
-    void callUnterKontoDialog(QListViewItem * item);
+    void callUnterKontoDialog(Q3ListViewItem * item);
 
     void callDateDialog();
 
@@ -76,11 +79,11 @@ class TimeMainWindow: public QMainWindow
     
     void inPersoenlicheKonten(bool hinzufuegen);
     void flagsChanged(const QString& abt, const QString& ko, const QString& uko, int idx);
-    void changeShortCutSettings(QListViewItem * item);
+    void changeShortCutSettings(Q3ListViewItem * item);
     
     void editUnterKontoPressed();
     void changeDate(const QDate& datum);
-    void setAktivesProjekt(QListViewItem * item);
+    void setAktivesProjekt(Q3ListViewItem * item);
     void showAdditionalButtons(bool show);
     void eintragAktivieren();
     void eintragHinzufuegen();
@@ -101,7 +104,7 @@ class TimeMainWindow: public QMainWindow
     void refreshKontoListe();
     void reloadDefaultComments();
     void configClickMode(bool singleClickActivation);
-    void mouseButtonInKontoTreeClicked(int button, QListViewItem * item, const QPoint & pos, int c );    
+    void mouseButtonInKontoTreeClicked(int button, Q3ListViewItem * item, const QPoint & pos, int c );    
     void copyNameToClipboard();
 
   signals:
@@ -144,20 +147,20 @@ class TimeMainWindow: public QMainWindow
   private:
     KontoTreeView* kontoTree;
     UnterKontoDialog* unterKontoDialog;
-    QAction* editUnterKontoAction;
-    QAction* inPersKontAction;
-    QAction* abzurMin5PlusAction;
-    QAction* abzurMin5MinusAction;
-    QAction* fastAbzurPlusAction;
-    QAction* fastAbzurMinusAction;
-    QAction* eintragRemoveAction;
-    QAction* checkInAction;
+    Q3Action* editUnterKontoAction;
+    Q3Action* inPersKontAction;
+    Q3Action* abzurMin5PlusAction;
+    Q3Action* abzurMin5MinusAction;
+    Q3Action* fastAbzurPlusAction;
+    Q3Action* fastAbzurMinusAction;
+    Q3Action* eintragRemoveAction;
+    Q3Action* checkInAction;
     AbteilungsListe* abtList;
     AbteilungsListe* abtListToday;
     StatusBar* statusBar;
-    QMimeSourceFactory* mimeSourceFactory;
+    Q3MimeSourceFactory* mimeSourceFactory;
     DefaultCommentReader* defaultCommentReader;
-    QToolBar* powerToolBar;
+    Q3ToolBar* powerToolBar;
     ToolBar* toolBar;
     QStringList defaultTags;
     bool paused;

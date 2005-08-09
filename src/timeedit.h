@@ -25,7 +25,7 @@
 
 #include "qspinbox.h"
 #include <iostream>
-#include "qgroupbox.h"
+#include "q3groupbox.h"
 #include "qlabel.h"
 
 /** 
@@ -93,7 +93,7 @@ class TimeEdit: public QSpinBox
  * ZeitBox ist ein von QGroupBox abgeleitetes Widget, das eine Spinbox
  * zum editieren der Minuten und eine zum editieren der Stunden verbindet.
  */
-class ZeitBox: public QGroupBox
+class ZeitBox: public Q3GroupBox
 {
   Q_OBJECT
   
@@ -102,7 +102,7 @@ class ZeitBox: public QGroupBox
     /**
     * Erzeugt eine neue Zeitbox mit der Ueberschrift Titel und der voreingestellten Zeit sekunden.
     */
-    ZeitBox(QString titel, int _sekunden, QWidget* parent=0):QGroupBox(5,Qt::Horizontal,titel,parent)
+    ZeitBox(QString titel, int _sekunden, QWidget* parent=0):Q3GroupBox(5,Qt::Horizontal,titel,parent)
     {
       sekunden=_sekunden;
       hourEdit = new TimeEdit(24,this);

@@ -3,7 +3,7 @@
 #ifndef STATUSBAR_H
 #define  STATUSBAR_H
 
-#include "qmainwindow.h"
+#include "q3mainwindow.h"
 #include <qstring.h>
 #include "qstatusbar.h"
 #include "qlabel.h"
@@ -16,7 +16,7 @@ class StatusBar:public QStatusBar
   Q_OBJECT
 
   public:
-    StatusBar(QMainWindow * parent = 0):QStatusBar(parent)
+    StatusBar(Q3MainWindow * parent = 0):QStatusBar(parent)
     {
       addWidget(new QLabel("Gesamtzeit:",this));
       zeitLabel=new QLabel("0",this);
@@ -61,7 +61,7 @@ class StatusBar:public QStatusBar
     {
       if (on) {
         datumsWarnung->setText("Warnung: Es wird der "+datum.toString("dd.MM.yyyy")+" editiert.");
-        datumsWarnung->setPaletteForegroundColor(darkRed);
+        datumsWarnung->setPaletteForegroundColor(Qt::darkRed);
       }
       else
       {

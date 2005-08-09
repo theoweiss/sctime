@@ -22,7 +22,7 @@
 // This file has been ported from KDE to plain QT
 
 #include <qlayout.h>
-#include <qframe.h>
+#include <q3frame.h>
 #include <qpainter.h>
 #include <qdialog.h>
 #include <qstyle.h>
@@ -31,15 +31,23 @@
 #include <qtooltip.h>
 #include <qfont.h>
 #include <qvalidator.h>
-#include <qpopupmenu.h>
+#include <q3popupmenu.h>
 
 #include "qdatepicker.h"
 
 #include <qapplication.h>
-#include <qtoolbar.h>
+#include <q3toolbar.h>
 #include "qcalendarsystem.h"
 
 #include "qdatetbl.h"
+//Added by qt3to4:
+#include <QBoxLayout>
+#include <QResizeEvent>
+#include <QKeyEvent>
+#include <QEvent>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QPixmap>
 
 #include "../pics/cr16-action-1leftarrow.xpm"
 #include "../pics/cr16-action-1rightarrow.xpm"
@@ -55,7 +63,7 @@ public:
 
     void fillWeeksCombo(const QDate &date);
 
-    QToolBar *tb;
+    Q3ToolBar *tb;
     QToolButton *closeButton;
     QComboBox *selectWeek;
     QToolButton *todayButton;
@@ -76,19 +84,19 @@ void QDatePicker::fillWeeksCombo(const QDate &date)
 }
 
 QDatePicker::QDatePicker(QWidget *parent, QDate dt, const char *name)
-  : QFrame(parent,name)
+  : Q3Frame(parent,name)
 {
   init( dt );
 }
 
-QDatePicker::QDatePicker(QWidget *parent, QDate dt, const char *name, WFlags f)
-  : QFrame(parent,name, f)
+QDatePicker::QDatePicker(QWidget *parent, QDate dt, const char *name, Qt::WFlags f)
+  : Q3Frame(parent,name, f)
 {
   init( dt );
 }
 
 QDatePicker::QDatePicker( QWidget *parent, const char *name )
-  : QFrame(parent,name)
+  : Q3Frame(parent,name)
 {
   init( QDate::currentDate() );
 }
@@ -99,7 +107,7 @@ void QDatePicker::init( const QDate &dt )
 
   calendar=new QCalendarSystemGregorian();
 
-  d->tb = new QToolBar("DatePicker-Toolbar",NULL,this);
+  d->tb = new Q3ToolBar("DatePicker-Toolbar",NULL,this);
 
   yearBackward = new QToolButton(d->tb);
   monthBackward = new QToolButton(d->tb);
@@ -119,7 +127,7 @@ void QDatePicker::init( const QDate &dt )
 
   d->selectWeek = new QComboBox(false, this);  // read only week selection
   d->todayButton = new QToolButton(this);
-  d->todayButton->setIconSet(QIconSet(QPixmap((const char **)cr16_action_bookmark)));
+  d->todayButton->setIconSet(QIcon(QPixmap((const char **)cr16_action_bookmark)));
 
   QToolTip::add(yearForward, "Nächstes Jahr");
   QToolTip::add(yearBackward, "Voriges Jahr");
@@ -135,10 +143,10 @@ void QDatePicker::init( const QDate &dt )
   line->setValidator(val);
   line->installEventFilter( this );
 
-  yearForward->setIconSet(QIconSet(QPixmap((const char **)cr16_action_2rightarrow)));
-  yearBackward->setIconSet(QIconSet(QPixmap((const char **)cr16_action_2leftarrow)));
-  monthForward->setIconSet(QIconSet(QPixmap((const char **)cr16_action_1rightarrow)));
-  monthBackward->setIconSet(QIconSet(QPixmap((const char **)cr16_action_1leftarrow)));
+  yearForward->setIconSet(QIcon(QPixmap((const char **)cr16_action_2rightarrow)));
+  yearBackward->setIconSet(QIcon(QPixmap((const char **)cr16_action_2leftarrow)));
+  monthForward->setIconSet(QIcon(QPixmap((const char **)cr16_action_1rightarrow)));
+  monthBackward->setIconSet(QIcon(QPixmap((const char **)cr16_action_1leftarrow)));
 
   setDate(dt); // set button texts
   connect(table, SIGNAL(dateChanged(QDate)), SLOT(dateChangedSlot(QDate)));
@@ -190,7 +198,7 @@ QDatePicker::eventFilter(QObject *o, QEvent *e )
           return true; // eat event
        }
    }
-   return QFrame::eventFilter( o, e );
+   return Q3Frame::eventFilter( o, e );
 }
 
 void
@@ -320,12 +328,12 @@ QDatePicker::selectMonthClicked()
   QDate date = table->getDate();
   int i, month, months = calendar->monthsInYear(date);
 
-  QPopupMenu popup(selectMonth);
+  Q3PopupMenu popup(selectMonth);
 
   for (i = 1; i <= months; i++)
     popup.insertItem(calendar->monthName(i, calendar->year(date)), i);
 
-  popup.setActiveItem(calendar->month(date) - 1);
+  // =qt4= popup.setActiveItem(calendar->month(date) - 1);
 
   if ( (month = popup.exec(selectMonth->mapToGlobal(QPoint(0, 0)), calendar->month(date) - 1)) == -1 ) return;  // canceled
 
@@ -445,10 +453,12 @@ QDatePicker::setFontSize(int s)
       maxMonthRect.setHeight(QMAX(r.height(),  maxMonthRect.height()));
     }
 
+/* =qt4=
   QSize metricBound = style().sizeFromContents(QStyle::CT_ToolButton,
                                                selectMonth,
                                                maxMonthRect);
   selectMonth->setMinimumSize(metricBound);
+*/
 
   table->setFontSize(s);
 }

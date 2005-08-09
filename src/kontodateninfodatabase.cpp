@@ -27,6 +27,8 @@
 #include "qsqldatabase.h"
 #include "qmessagebox.h"
 #include "qapplication.h"
+//Added by qt3to4:
+#include <QSqlQuery>
 #include "globals.h"
 
 /**
@@ -61,8 +63,8 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
         ret = false;
 #ifdef WIN32
 		QMessageBox::critical(NULL,"Error","Kann Datenbank nicht öffnen\n",
-                              QMessageBox::Ok, QMessageBox::NoButton,
-                              QMessageBox::NoButton);
+                              QMessageBox::Ok, Qt::NoButton,
+                              Qt::NoButton);
 #else
 		std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
 #endif

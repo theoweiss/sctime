@@ -6,7 +6,10 @@
 TEMPLATE = app
 VERSIONSTR = \"0.48cvs\"
 CONFIG += release warn_on qt
+CONFIG += uic3
 OBJECTS_DIR = ../obj
+QT += qt3support
+QT += xml  sql 
 TARGET = ../bin/sctime
 DEFINES += BUILDDATESTR=$$BUILDDATESTR VERSIONSTR=$$VERSIONSTR
 SOURCES += abteilungsliste.cpp \
@@ -54,7 +57,8 @@ HEADERS += abteilungsliste.h \
            qcalendarsystemgregorian.h \
            qdatepicker.h \
            qdatetbl.h \
-           defaulttagreader.h
+           defaulttagreader.h \
+           datedialogbase.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \

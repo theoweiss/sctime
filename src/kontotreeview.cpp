@@ -22,7 +22,7 @@
 */
 
 #include "kontotreeview.h"
-#include "qlistview.h"
+#include "q3listview.h"
 #include "abteilungsliste.h"
 #include "qstring.h"
 #include "qpixmap.h"
@@ -30,14 +30,14 @@
 #include <iostream>
 #include "globals.h"
 #include "../pics/hi16_action_apply.xpm"
-#include "kontotreetooltip.h"
+// =qt4= #include "kontotreetooltip.h"
 #include <vector>
 
 
 /**
  * Erzeugt ein neues Objekt zur Anzeige des Kontobaums. Seine Daten bezieht es aus abtlist.
  */
-KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const std::vector<int>& columnwidth): QListView(parent, "Konten", 0)
+KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const std::vector<int>& columnwidth): Q3ListView(parent, "Konten", 0)
 {
 
   addColumn ("Konten");
@@ -55,7 +55,7 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
   setSelectionMode(NoSelection);
 
   load(abtlist);
-  new KontoTreeToolTip(this,abtlist);
+  // =qt4= new KontoTreeToolTip(this,abtlist);
   for (int i=0; i<columnwidth.size(); i++) {
       setColumnWidth(i,columnwidth[i]);
   }
@@ -105,7 +105,7 @@ bool KontoTreeView::sucheItem(const QString& tops, const QString& abts, const QS
 
 KontoTreeItem* KontoTreeView::sucheKontoItem(const QString& tops, const QString& abts, const QString& kos)
 {
-  QListViewItem *topi,*abti,*koi;
+  Q3ListViewItem *topi,*abti,*koi;
 
   for (topi=firstChild(); (topi!=NULL)&&(topi->text(0)!=tops); topi=topi->nextSibling());
   if (topi==NULL) return NULL;
@@ -122,7 +122,7 @@ KontoTreeItem* KontoTreeView::sucheKontoItem(const QString& tops, const QString&
 /**
  * Liefert in tops, abts, kos, ukos, id den String bzw Wert des Toplevel-,Abteilungs-,...-Items
  */
-void KontoTreeView::itemInfo(QListViewItem* item,QString& tops, QString& abts, QString& kos, QString& ukos, int& idx)
+void KontoTreeView::itemInfo(Q3ListViewItem* item,QString& tops, QString& abts, QString& kos, QString& ukos, int& idx)
 {
   tops=abts=kos=ukos="";
   idx=-1;
@@ -147,7 +147,7 @@ void KontoTreeView::itemInfo(QListViewItem* item,QString& tops, QString& abts, Q
 /** Versieht geschlossene, persoenliche Eintraege mit dem Flag IS_CLOSED */
 void KontoTreeView::flagClosedPersoenlicheItems()
 {
-  QListViewItem *topi, *abti, *koi, *ukoi;
+  Q3ListViewItem *topi, *abti, *koi, *ukoi;
   for (topi=firstChild(); (topi!=NULL)&&(topi->text(0)!=PERSOENLICHE_KONTEN_STRING); topi=topi->nextSibling());
   if (topi==NULL) return;
 
@@ -171,7 +171,7 @@ void KontoTreeView::flagClosedPersoenlicheItems()
 /** Schliesst persoenliche Eintraege mit dem Flag IS_CLOSED */
 void KontoTreeView::closeFlaggedPersoenlicheItems()
 {
-  QListViewItem *topi, *abti, *koi, *ukoi;
+  Q3ListViewItem *topi, *abti, *koi, *ukoi;
   for (topi=firstChild(); (topi!=NULL)&&(topi->text(0)!=PERSOENLICHE_KONTEN_STRING); topi=topi->nextSibling());
   if (topi==NULL) return;
   for (abti=topi->firstChild(); (abti!=NULL); abti=abti->nextSibling()) {
@@ -196,7 +196,7 @@ void KontoTreeView::closeFlaggedPersoenlicheItems()
  *  True, falls das uebergebene Item ein Item ist, das einen Eintrag repraesentiert.
  */
 
-bool KontoTreeView::isEintragsItem(QListViewItem* item)
+bool KontoTreeView::isEintragsItem(Q3ListViewItem* item)
 {
   if (!item) return false;
   int d=item->depth();
@@ -230,7 +230,7 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
 {
   abtList=abtlist;
 
-  QListViewItem *next, *topi;
+  Q3ListViewItem *next, *topi;
 
   topi=firstChild();
   while (topi!=NULL) {

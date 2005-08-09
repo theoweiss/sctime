@@ -1,0 +1,10 @@
+camen@home src $ grep qt4 *
+ kontotreeview.cpp:// =qt4= #include "kontotreetooltip.h"
+ kontotreeview.cpp:  // =qt4= new KontoTreeToolTip(this,abtlist);
+ qdatepicker.cpp:  // =qt4= popup.setActiveItem(calendar->month(date) - 1);
+ qdatepicker.cpp:/* =qt4=
+ sctime.cpp:   // =qt4= sctimeApp->wakeUpGuiThread();
+
+
+--
+Marcus

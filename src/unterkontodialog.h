@@ -32,7 +32,7 @@
 #include "qlineedit.h"
 #include "qcheckbox.h"
 #include "abteilungsliste.h"
-#include "qlistview.h"
+#include "q3listview.h"
 #include "timeedit.h"
 
 

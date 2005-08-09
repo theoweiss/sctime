@@ -24,27 +24,27 @@
 #ifndef KONTOTREE_ITEM_H
 #define KONTOTREE_ITEM_H
 
-#include "qlistview.h"
+#include "q3listview.h"
 #include "qpainter.h"
 
-class KontoTreeItem: public QListViewItem
+class KontoTreeItem: public Q3ListViewItem
 {
   public:
 
-    KontoTreeItem ( QListView * parent ): QListViewItem(parent) { isBold=false; }
-    KontoTreeItem ( QListViewItem * parent ): QListViewItem(parent) { isBold=false; }
+    KontoTreeItem ( Q3ListView * parent ): Q3ListViewItem(parent) { isBold=false; }
+    KontoTreeItem ( Q3ListViewItem * parent ): Q3ListViewItem(parent) { isBold=false; }
 
     
-    KontoTreeItem ( QListView * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null )
-     :QListViewItem(parent,label1,label2,label3,label4,label5,label6,label7,label8)
+    KontoTreeItem ( Q3ListView * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null )
+     :Q3ListViewItem(parent,label1,label2,label3,label4,label5,label6,label7,label8)
     {
       isBold=false;
       isGray=false;
     }
 
 
-    KontoTreeItem ( QListViewItem * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null )
-     :QListViewItem(parent,label1,label2,label3,label4,label5,label6,label7,label8)
+    KontoTreeItem ( Q3ListViewItem * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null )
+     :Q3ListViewItem(parent,label1,label2,label3,label4,label5,label6,label7,label8)
     {
       isBold=false;
       isGray=false;
@@ -60,11 +60,11 @@ class KontoTreeItem: public QListViewItem
         p->setFont(newfont);
       }
       else
-        if (isGray) newcg.setColor(QColorGroup::Text,gray);
+        if (isGray) newcg.setColor(QColorGroup::Text,Qt::gray);
      if (text(column).stripWhiteSpace()=="0:00") {
-        newcg.setColor(QColorGroup::Text,gray);
+        newcg.setColor(QColorGroup::Text,Qt::gray);
       }
-      QListViewItem::paintCell(p,newcg,column,width,align);
+      Q3ListViewItem::paintCell(p,newcg,column,width,align);
     }
 
 
