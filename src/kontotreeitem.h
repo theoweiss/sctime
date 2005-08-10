@@ -34,7 +34,7 @@ class KontoTreeItem: public Q3ListViewItem
     KontoTreeItem ( Q3ListView * parent ): Q3ListViewItem(parent) { isBold=false; }
     KontoTreeItem ( Q3ListViewItem * parent ): Q3ListViewItem(parent) { isBold=false; }
 
-    
+
     KontoTreeItem ( Q3ListView * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null )
      :Q3ListViewItem(parent,label1,label2,label3,label4,label5,label6,label7,label8)
     {
@@ -50,7 +50,6 @@ class KontoTreeItem: public Q3ListViewItem
       isGray=false;
     }
 
-    
     virtual void paintCell ( QPainter * p, const QColorGroup & cg, int column, int width, int align )
     {
       QColorGroup newcg=cg;

@@ -28,9 +28,9 @@
 #include "qpixmap.h"
 #include "timecounter.h"
 #include <iostream>
+#include "qevent.h"
 #include "globals.h"
 #include "../pics/hi16_action_apply.xpm"
-// =qt4= #include "kontotreetooltip.h"
 #include <vector>
 
 
@@ -52,10 +52,9 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
 
   setRootIsDecorated(TRUE);
 
-  setSelectionMode(NoSelection);
+  setSelectionMode(Q3ListView::NoSelection);
 
   load(abtlist);
-  // =qt4= new KontoTreeToolTip(this,abtlist);
   for (int i=0; i<columnwidth.size(); i++) {
       setColumnWidth(i,columnwidth[i]);
   }
@@ -281,6 +280,27 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
   refreshItem(abt,ko,uko,idx);
 }
 
+bool KontoTreeView::event ( QEvent * e )
+{
+    if (e->type()==QEvent::ToolTip) {
+        QHelpEvent* qh= dynamic_cast <QHelpEvent*>(e);
+        QPoint contpos(qh->pos());
+        contpos-=QPoint(viewport()->pos());
+        KontoTreeItem * item=dynamic_cast<KontoTreeItem *>(itemAt(contpos));
+        if (isEintragsItem(item)) {
+            QString top,uko,ko,abt;
+            int idx;
+            itemInfo(item,top,abt,ko,uko,idx);
+            QString beschreibung=abtList->getBeschreibung(abt,ko,uko).simplifyWhiteSpace();
+            if (beschreibung!="") {
+                QToolTip::showText(qh->globalPos(),beschreibung,this);
+                qh->accept();
+                return true;
+            }
+        }
+    }
+    return Q3ListView::event(e);
+}
 
 /**
  * Zaehlt die Eintraeg in der Eintragsliste etl mit den Flags flags.

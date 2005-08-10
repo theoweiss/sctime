@@ -73,6 +73,9 @@ class KontoTreeView: public Q3ListView
     void refreshAllItemsInUnterkonto(const QString& abt, const QString& ko,const QString& uko);
     void refreshAllItemsInKonto(const QString& abt, const QString& ko);
 
+  protected:
+      virtual bool event ( QEvent * e );
+
   private:
     QPixmap* aktivPixmap;
     QPixmap emptyPixmap;
