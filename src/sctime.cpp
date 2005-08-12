@@ -119,7 +119,7 @@ static LOCK_FD openlock(const QString &name )
 #endif
         case EAGAIN:
           {
-	    std::cerr<<("Das Lockfile "+name+" wird bereits benutzt.\nFalls Sie sicher sind, dass keine weitere Instanz von sctime läuft, bitte löschen.").toStdString()<<std::endl;
+            std::cerr<<("Das Lockfile "+name+" wird bereits benutzt.\nFalls Sie sicher sind, dass keine weitere Instanz von sctime läuft, bitte löschen.").toStdString()<<std::endl;
             exit(3);
             break;
           }
@@ -132,7 +132,7 @@ static LOCK_FD openlock(const QString &name )
             break;
           }
         default: {
-	     std::cout<<"Error "<<errno<<": "<<strerror(errno)<<(": "+name).toStdString()<<std::endl;
+             std::cout<<"Error "<<errno<<": "<<strerror(errno)<<(": "+name).toStdString()<<std::endl;
              exit(5);
           }
       }
@@ -166,27 +166,6 @@ static void closelock(LOCK_FD fd , const QString &name)
 
 SCTimeApp* sctimeApp;
 
-#ifndef WIN32
-#ifndef sighandler_t
-typedef void (*sighandler_t)(int);
-#endif
-sighandler_t OldSigIntHandler;
-sighandler_t OldSigTermHandler;
-
-/** Sighandler for SIGINT
-**/
-static void SigIntHandler(int signum)
-{
-   QEvent* event = new QCustomEvent(SIGINT_EVENT_ID);
-   //event->accept();
-   //QEvent(QEvent::Quit);
-
-   sctimeApp->postEvent(sctimeApp->mainWidget(), event);
-   // =qt4= sctimeApp->wakeUpGuiThread();
-}
-#endif
-
-
 /** main: hier wird ueberprueft, ob die Applikation ueberhaupt starten soll
  * (Lockfiles,...), und falls ja, wird SCTimeApp initialisiert und
  ausgefuehrt */
@@ -208,7 +187,7 @@ int main( int argc, char **argv )
       configdirstring = envpointer;
   else {
       configdirstring = CONFIGSUBDIR; // default Configdir
-      #ifndef WIN32
+#ifndef WIN32
       directory.cd(directory.homeDirPath());
 #else
       if (!directory.cd("H:\\")) {
@@ -234,25 +213,13 @@ int main( int argc, char **argv )
     ErrorApp ea("Eine andere Instanz von sctime läuft bereits auf diesem Rechner.",argc, argv );
     return false;
   }
-#else
-  signal(SIGHUP,SIG_IGN);  // Schliessen des uebergeordneten Prozesses ignorieren.
 #endif
 
   LOCK_FD lfp=openlock(configDir+"/LOCK");
 
   sctimeApp= new SCTimeApp( argc, argv );
-  #ifndef WIN32
-  OldSigIntHandler = signal(SIGINT,&SigIntHandler);
-  OldSigTermHandler = signal(SIGTERM,&SigIntHandler);
-  #endif
 
   sctimeApp->exec();
-
-  #ifndef WIN32
-  signal(SIGINT,OldSigIntHandler);
-  signal(SIGTERM,OldSigTermHandler);
-  #endif
-
 
   closelock(lfp, configDir+"/LOCK");
 

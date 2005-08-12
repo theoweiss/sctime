@@ -1,7 +1,6 @@
 camen@home src $ grep qt4 *
  qdatepicker.cpp:  // =qt4= popup.setActiveItem(calendar->month(date) - 1);
  qdatepicker.cpp:/* =qt4=
- sctime.cpp:   // =qt4= sctimeApp->wakeUpGuiThread();
 
 
 --

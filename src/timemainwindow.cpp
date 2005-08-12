@@ -357,14 +357,6 @@ void TimeMainWindow::configClickMode(bool singleClickActivation)
     }
 }
 
-void TimeMainWindow::customEvent( QCustomEvent * e)
-{
-   if (e->type()==SIGINT_EVENT_ID) {
-      close();
-   }
-   Q3MainWindow::customEvent(e);
-}
-
 void TimeMainWindow::copyNameToClipboard()
 {
     QClipboard *cb = QApplication::clipboard();

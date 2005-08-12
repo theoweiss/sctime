@@ -64,23 +64,21 @@ class TimeMainWindow: public Q3MainWindow
 
     void pause();
 
-    void customEvent(QCustomEvent * e);
-
     void pauseAbzur(bool on);
 
     void zeitChanged();
-    
+
     void updateCaption();
 
     void save();
 
     void resetDiff();
     void checkIn();
-    
+
     void inPersoenlicheKonten(bool hinzufuegen);
     void flagsChanged(const QString& abt, const QString& ko, const QString& uko, int idx);
     void changeShortCutSettings(Q3ListViewItem * item);
-    
+
     void editUnterKontoPressed();
     void changeDate(const QDate& datum);
     void setAktivesProjekt(Q3ListViewItem * item);
@@ -97,14 +95,14 @@ class TimeMainWindow: public Q3MainWindow
     void subAbzurTimeInc();
     void addFastAbzurTimeInc();
     void subFastAbzurTimeInc();
-    
+
     void callFindKontoDialog();
     void callHelpDialog();
     void callPreferenceDialog();
     void refreshKontoListe();
     void reloadDefaultComments();
     void configClickMode(bool singleClickActivation);
-    void mouseButtonInKontoTreeClicked(int button, Q3ListViewItem * item, const QPoint & pos, int c );    
+    void mouseButtonInKontoTreeClicked(int button, Q3ListViewItem * item, const QPoint & pos, int c );
     void copyNameToClipboard();
 
   signals:
@@ -112,10 +110,10 @@ class TimeMainWindow: public Q3MainWindow
     void gesamtZeitChanged(int) ;
 
     /** Wird ausgeloest, falls sich die abzurechnende Gesamtzeit
-      * geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden. 
+      * geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden.
       */
     void gesamtZeitAbzurChanged(int) ;
-    
+
     /**
       * Wird minuetlich ausgeloest, falls keine Pause aktiv ist.
       */
