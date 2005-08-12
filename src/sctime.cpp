@@ -23,9 +23,6 @@
 #include <qapplication.h>
 #include <q3listview.h>
 #include <qfont.h>
-//Added by qt3to4:
-#include <QCustomEvent>
-#include <QEvent>
 #include <iostream>
 #include "sctimeapp.h"
 #include "qstring.h"
