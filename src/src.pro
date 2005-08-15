@@ -34,8 +34,7 @@ HEADERS += abteilungsliste.h \
            datedialog.h \
            kontotreeitem.h \
            timecounter.h \
-           eintragsliste.h \
-           kontotreetooltip.h \
+           eintragsliste.h \          
            timeedit.h \
            errorapp.h \
            kontotreeview.h \
@@ -57,8 +56,7 @@ HEADERS += abteilungsliste.h \
            qcalendarsystemgregorian.h \
            qdatepicker.h \
            qdatetbl.h \
-           defaulttagreader.h \
-           datedialogbase.h
+           defaulttagreader.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \
