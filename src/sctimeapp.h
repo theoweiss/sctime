@@ -52,10 +52,12 @@ class SCTimeApp: public QApplication
 
     SCTimeApp( int &argc, char **argv ): QApplication (argc,argv)
     {
+#ifndef WIN32
       connect(this, SIGNAL(unixSignal(int)), this, SLOT(sighandler(int)));
       watchUnixSignal(SIGINT,true);
       watchUnixSignal(SIGTERM,true);
       watchUnixSignal(SIGHUP,true);
+#endif
       mainWindow=new TimeMainWindow(&zk);
       setMainWidget( mainWindow );
       mainWindow->show();
@@ -67,6 +69,7 @@ class SCTimeApp: public QApplication
     }
 
   public slots:
+#ifndef WIN32
     void sighandler(int nr)
     {
         switch(nr) {
@@ -78,5 +81,6 @@ class SCTimeApp: public QApplication
                 break;
         }
     }
+#endif
 };
 
