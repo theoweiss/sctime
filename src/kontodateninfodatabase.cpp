@@ -27,6 +27,7 @@
 #include "qsqldatabase.h"
 #include "qmessagebox.h"
 #include "qapplication.h"
+#include "qvariant.h"
 //Added by qt3to4:
 #include <QSqlQuery>
 #include "globals.h"
@@ -40,11 +41,10 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
   // PluginDir setzen
   QApplication::addLibraryPath(execDir+"/lib");
   abtList->clear();
-  QSqlDatabase *defaultDB = QSqlDatabase::addDatabase( "QODBC3" );
-  if ( defaultDB ) {
-    defaultDB->setDatabaseName( "zeit" );
+  QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC3" );  
+  defaultDB.setDatabaseName( "zeit" );
 
-    if ( defaultDB->open() ) {
+  if ( defaultDB.open() ) {
       QSqlQuery query( "select gb.name,konto.name,unterkonto.name,unterkonto.beschreibung from konto,unterkonto,gb WHERE konto.konto_id = unterkonto.konto_id AND gb.gb_id = konto.gb_id AND unterkonto.eintragbar=\'y\';", defaultDB);
       if ( query.isActive() ) {
         while ( query.next() ) {
@@ -59,7 +59,7 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
           abtList->setUnterKontoFlags(abt,ko,uko,IS_IN_DATABASE,FLAG_MODE_OR);
         }
       }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;
-    } else {
+  } else {
         ret = false;
 #ifdef WIN32
 		QMessageBox::critical(NULL,"Error","Kann Datenbank nicht öffnen\n",
@@ -68,13 +68,9 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
 #else
 		std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
 #endif
-    }
-  } else {
-     ret = false;
-     std::cout<<"Kann Datenbanktreiber nicht initialisieren"<<std::endl;
-  }
+    }  
 
-  defaultDB->close();
+  defaultDB.close();
   return ret;
 }
 

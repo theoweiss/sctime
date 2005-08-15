@@ -36,6 +36,7 @@
 #define LOCK_FD int
 #else
 #include <windows.h>
+#include <io.h>
 #define LOCK_FD QFile*
 #endif
 
@@ -204,7 +205,7 @@ int main( int argc, char **argv )
   configDir=directory.path();
 
 #ifdef WIN32
-  Qt::HANDLE hEvent = CreateEvent(NULL, FALSE, TRUE, (unsigned short *)"sctimeGuardEvent");
+  Qt::HANDLE hEvent = CreateEventA(NULL, FALSE, TRUE, "sctimeGuardEvent");
   if ( GetLastError () == ERROR_ALREADY_EXISTS )
   {
     ErrorApp ea("Eine andere Instanz von sctime läuft bereits auf diesem Rechner.",argc, argv );
