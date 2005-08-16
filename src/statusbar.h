@@ -3,7 +3,7 @@
 #ifndef STATUSBAR_H
 #define  STATUSBAR_H
 
-#include "q3mainwindow.h"
+#include <QWidget>
 #include <qstring.h>
 #include "qstatusbar.h"
 #include "qlabel.h"
@@ -16,7 +16,7 @@ class StatusBar:public QStatusBar
   Q_OBJECT
 
   public:
-    StatusBar(Q3MainWindow * parent = 0):QStatusBar(parent)
+    StatusBar(QWidget * parent = 0):QStatusBar(parent)
     {
       addWidget(new QLabel("Gesamtzeit:",this));
       zeitLabel=new QLabel("0",this);
@@ -34,7 +34,7 @@ class StatusBar:public QStatusBar
       sekunden=sec;
       repaintZeitFeld();
     }
-    
+
     void repaintZeitFeld()
     {
       TimeCounter tc(sekunden);
@@ -50,7 +50,7 @@ class StatusBar:public QStatusBar
       }
       zeitLabel->setText(text);
     }
-    
+
     void setDiff(int sec)
     {
       secDiff=sec;

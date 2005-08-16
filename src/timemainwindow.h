@@ -21,16 +21,16 @@
 #define TIMEMAINWINDOW_H
 
 #include <q3listview.h>
-#include <q3mainwindow.h>
+#include <QMainWindow>
 #include <Q3MimeSourceFactory>
-#include <Q3Action>
+#include <QAction>
 //Added by qt3to4:
 #include <QCustomEvent>
 #include "kontodateninfo.h"
 #include "unterkontodialog.h"
 #include "kontotreeview.h"
 #include "toolbar.h"
-#include "q3toolbar.h"
+#include <QToolBar>
 #include "sctimexmlsettings.h"
 #include "defaultcommentreader.h"
 
@@ -42,7 +42,7 @@ class StatusBar;
 /** Diese Klasse implementiert das Hauptfenster des Programms,
     und sorgt zudem fuer das Fortschreiten der Zeit.
 */
-class TimeMainWindow: public Q3MainWindow
+class TimeMainWindow: public QMainWindow
 {
   Q_OBJECT
 
@@ -145,20 +145,20 @@ class TimeMainWindow: public Q3MainWindow
   private:
     KontoTreeView* kontoTree;
     UnterKontoDialog* unterKontoDialog;
-    Q3Action* editUnterKontoAction;
-    Q3Action* inPersKontAction;
-    Q3Action* abzurMin5PlusAction;
-    Q3Action* abzurMin5MinusAction;
-    Q3Action* fastAbzurPlusAction;
-    Q3Action* fastAbzurMinusAction;
-    Q3Action* eintragRemoveAction;
-    Q3Action* checkInAction;
+    QAction* editUnterKontoAction;
+    QAction* inPersKontAction;
+    QAction* abzurMin5PlusAction;
+    QAction* abzurMin5MinusAction;
+    QAction* fastAbzurPlusAction;
+    QAction* fastAbzurMinusAction;
+    QAction* eintragRemoveAction;
+    QAction* checkInAction;
     AbteilungsListe* abtList;
     AbteilungsListe* abtListToday;
     StatusBar* statusBar;
     Q3MimeSourceFactory* mimeSourceFactory;
     DefaultCommentReader* defaultCommentReader;
-    Q3ToolBar* powerToolBar;
+    QToolBar* powerToolBar;
     ToolBar* toolBar;
     QStringList defaultTags;
     bool paused;

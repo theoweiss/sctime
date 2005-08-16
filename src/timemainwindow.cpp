@@ -23,9 +23,9 @@
 #include "timemainwindow.h"
 #include "qclipboard.h"
 #include "qapplication.h"
-#include "q3popupmenu.h"
-#include "qmenubar.h"
-#include <Q3Action>
+#include <QMenu>
+#include <QMenuBar>
+#include <QAction>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QGridLayout>
@@ -76,7 +76,7 @@
 
 
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
-TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):Q3MainWindow(0,"sctime")
+TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
 {
   std::vector<QString> xmlfilelist;
   QDate heute;
@@ -117,21 +117,15 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):Q3MainWindow(0,"sctime")
   setCentralWidget(kontoTree);
 
   statusBar = new StatusBar(this);
-  toolBar   = new ToolBar(this);
+  toolBar   = new ToolBar("Main ToolBar", this);
+  toolBar->setIconSize(QSize(22,22));
 
   configClickMode(settings->singleClickActivation());
 
-  Q3PopupMenu * kontomenu = new Q3PopupMenu( this );
-  menuBar()->insertItem( "&Konto", kontomenu );
-
-  Q3PopupMenu * zeitmenu = new Q3PopupMenu( this );
-  menuBar()->insertItem( "&Zeit", zeitmenu );
-
-  Q3PopupMenu * settingsmenu = new Q3PopupMenu( this );
-  menuBar()->insertItem( "&Einstellungen", settingsmenu );
-
-  Q3PopupMenu * hilfemenu = new Q3PopupMenu( this );
-  menuBar()->insertItem( "&Hilfe", hilfemenu );
+  QMenu * kontomenu = menuBar()->addMenu("&Konto");
+  QMenu * zeitmenu = menuBar()->addMenu("&Zeit");
+  QMenu * settingsmenu = menuBar()->addMenu("&Einstellungen");
+  QMenu * hilfemenu = menuBar()->addMenu("&Hilfe");
 
   QTimer* timer = new QTimer(this);
   connect( timer,SIGNAL(timeout()), this, SLOT(minutenUhr()));
@@ -141,112 +135,119 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):Q3MainWindow(0,"sctime")
   connect( autosavetimer,SIGNAL(timeout()), this, SLOT(save()));
   autosavetimer->start(300000); //Alle 5 Minuten ticken.
 
-  Q3Action* pauseAction = new Q3Action( "Pause", QPixmap((const char **)hi22_action_player_pause ),
-                                        "&Pause", Qt::CTRL+Qt::Key_P, this, "pause" );
-  connect(pauseAction, SIGNAL(activated()), this, SLOT(pause()));
+  QAction* pauseAction = new QAction( QPixmap((const char **)hi22_action_player_pause ),
+                                      "&Pause", this);
+  pauseAction->setShortcut(Qt::CTRL+Qt::Key_P);
+  connect(pauseAction, SIGNAL(triggered()), this, SLOT(pause()));
 
-  Q3Action* pauseAbzurAction = new Q3Action( "Pausiert nur die abzurechnende Zeit", QPixmap((const char **)hi22_action_player_pause_half ),
-                                             "Pause der &abzur. Zeit", Qt::CTRL+Qt::Key_A, this, "pause Abzur" ,true);
+  QAction* pauseAbzurAction = new QAction( QPixmap((const char **)hi22_action_player_pause_half ),
+                                           "Pause der &abzur. Zeit", this);
+  pauseAbzurAction->setShortcut(Qt::CTRL+Qt::Key_A);
+  pauseAbzurAction->setStatusTip("Pausiert nur die abzurechnende Zeit");
+  pauseAbzurAction->setCheckable(true);
   connect(pauseAbzurAction, SIGNAL(toggled(bool)), this, SLOT(pauseAbzur(bool)));
 
-  Q3Action* saveAction = new Q3Action( "Save", QPixmap((const char **)hi22_action_filesave ),
-                                       "&Save", Qt::CTRL+Qt::Key_S, this, "save" );
-  connect(saveAction, SIGNAL(activated()), this, SLOT(save()));
+  QAction* saveAction = new QAction( QPixmap((const char **)hi22_action_filesave ),"&Save", this);
+  saveAction->setShortcut(Qt::CTRL+Qt::Key_S);
+  connect(saveAction, SIGNAL(triggered()), this, SLOT(save()));
 
-  Q3Action* copyAction = new Q3Action( "Name ins Clipboard kopieren",
-                                       "&Copy", Qt::CTRL+Qt::Key_C, this, "copy" );
-  connect(copyAction, SIGNAL(activated()), this, SLOT(copyNameToClipboard()));
+  QAction* copyAction = new QAction("&Copy", this);
+  copyAction->setShortcut(Qt::CTRL+Qt::Key_C);
+  copyAction->setStatusTip("Name ins Clipboard kopieren");
+  connect(copyAction, SIGNAL(triggered()), this, SLOT(copyNameToClipboard()));
 
-  Q3Action* changeDateAction = new Q3Action( "Datum Wählen",
-                                             "&Datum wählen", Qt::CTRL+Qt::Key_D, this, "datum wählen" );
-  connect(changeDateAction, SIGNAL(activated()), this, SLOT(callDateDialog()));
+  QAction* changeDateAction = new QAction( "&Datum wählen", this);
+  changeDateAction->setShortcut(Qt::CTRL+Qt::Key_D);
+  connect(changeDateAction, SIGNAL(triggered()), this, SLOT(callDateDialog()));
 
-  Q3Action* resetAction = new Q3Action( "Zeitdifferenz auf Null setzen",
-                                        "&Differenz auf Null", Qt::CTRL+Qt::Key_N, this, "differenz null" );
-  connect(resetAction, SIGNAL(activated()), this, SLOT(resetDiff()));
+  QAction* resetAction = new QAction( "&Differenz auf Null", this);
+  resetAction->setShortcut(Qt::CTRL+Qt::Key_N);
+  resetAction->setStatusTip("Zeitdifferenz auf Null setzen");
+  connect(resetAction, SIGNAL(triggered()), this, SLOT(resetDiff()));
 
 #ifndef NO_CHECKIN_ACTION
-  checkInAction = new QAction( "Aktuellen Tag einchecken",
-                                      "&Tag einchecken", 0, this, "checkin" );
-  connect(checkInAction, SIGNAL(activated()), this, SLOT(checkIn()));
+  checkInAction = new QAction( "&Tag einchecken", this);
+  checkInAction->setShortcut("Aktuellen Tag einchecken");
+  connect(checkInAction, SIGNAL(triggered()), this, SLOT(checkIn()));
 #endif
 
-  inPersKontAction = new Q3Action( "In persönliche Konten", QPixmap((const char **)hi22_action_attach),
-                                   "In persönliche &Konten", Qt::CTRL+Qt::Key_K, this, "persoenliche Konten", true);
+  inPersKontAction = new QAction( QPixmap((const char **)hi22_action_attach),"In persönliche &Konten", this);
+  inPersKontAction->setShortcut(Qt::CTRL+Qt::Key_K);
+  inPersKontAction->setCheckable(true);
   connect(inPersKontAction, SIGNAL(toggled(bool)), this, SLOT(inPersoenlicheKonten(bool)));
 
-  Q3Action* quitAction = new Q3Action( "Programm beenden",
-                                       "&Beenden", Qt::CTRL+Qt::Key_Q, this, "beenden" );
-  connect(quitAction, SIGNAL(activated()), this, SLOT(close()));
+  QAction* quitAction = new QAction("&Beenden", this);
+  quitAction->setShortcut(Qt::CTRL+Qt::Key_Q);
+  quitAction->setStatusTip("Programm beenden");
+  connect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
 
-  Q3Action* findKontoAction = new Q3Action( "Konto suchen",
-                                            "&Suchen", Qt::CTRL+Qt::Key_F, this, "suchen" );
-  connect(findKontoAction, SIGNAL(activated()), this, SLOT(callFindKontoDialog()));
+  QAction* findKontoAction = new QAction("&Suchen", this);
+  findKontoAction->setShortcut(Qt::CTRL+Qt::Key_F);
+  findKontoAction->setStatusTip("Konto suchen");
+  connect(findKontoAction, SIGNAL(triggered()), this, SLOT(callFindKontoDialog()));
 
-  Q3Action* refreshAction = new Q3Action( "Kontoliste neu laden",
-                                          "&Kontoliste neu laden", Qt::CTRL+Qt::Key_R, this, "refresh" );
-  connect(refreshAction, SIGNAL(activated()), this, SLOT(refreshKontoListe()));
+  QAction* refreshAction = new QAction("&Kontoliste neu laden", this);
+  refreshAction->setShortcut(Qt::CTRL+Qt::Key_R);
+  connect(refreshAction, SIGNAL(triggered()), this, SLOT(refreshKontoListe()));
 
-  Q3Action* preferenceAction = new Q3Action( "sctime konfigurieren",
-                                             "sctime &konfigurieren", 0, this, "configsctime" );
-  connect(preferenceAction, SIGNAL(activated()), this, SLOT(callPreferenceDialog()));
+  QAction* preferenceAction = new QAction("sctime &konfigurieren",this);
+  connect(preferenceAction, SIGNAL(triggered()), this, SLOT(callPreferenceDialog()));
 
-  Q3Action* defaultCommentAction = new Q3Action( "Default Kommentare neu einlesen",
-                                                 "&Default Kommentare neu einlesen", 0, this, "reloaddefcomment" );
-  connect(defaultCommentAction, SIGNAL(activated()), this, SLOT(reloadDefaultComments()));
+  QAction* defaultCommentAction = new QAction("&Default Kommentare neu einlesen", this);
+  connect(defaultCommentAction, SIGNAL(triggered()), this, SLOT(reloadDefaultComments()));
 
 #ifndef NO_TEXTEDIT
-  Q3Action* helpAction = new Q3Action( "Anleitung",
-                                       "&Anleitung", Qt::Key_F1, this, "anleitung" );
-  connect(helpAction, SIGNAL(activated()), this, SLOT(callHelpDialog()));
+  QAction* helpAction = new QAction("&Anleitung", this);
+  helpAction->setShortcut(Qt::Key_F1);
+  connect(helpAction, SIGNAL(triggered()), this, SLOT(callHelpDialog()));
 #endif
 
-  Q3Action* aboutAction = new Q3Action( "About sctime",
-                                        "&About", 0, this, "about" );
-  connect(aboutAction, SIGNAL(activated()), this, SLOT(callAboutBox()));
+  QAction* aboutAction = new QAction("&About", this);
+  aboutAction->setStatusTip("About sctime");
+  connect(aboutAction, SIGNAL(triggered()), this, SLOT(callAboutBox()));
 
-  editUnterKontoAction = new Q3Action( "Unterkonto editieren", QPixmap((const char **)hi22_action_edit ),
-                                       "&Editieren", 0, this, "unterkonto editieren" );
-  connect(editUnterKontoAction, SIGNAL(activated()), this, SLOT(editUnterKontoPressed()));
+  editUnterKontoAction = new QAction(QPixmap((const char **)hi22_action_edit ), "&Editieren", this);
+  editUnterKontoAction->setStatusTip("Unterkonto editieren");
+  connect(editUnterKontoAction, SIGNAL(triggered()), this, SLOT(editUnterKontoPressed()));
 
-  Q3Action* eintragActivateAction = new Q3Action( "Eintrag aktivieren",
-                                                  "Eintrag a&ktivieren", Qt::CTRL+Qt::Key_X, this, "eintr aktiv" );
-  connect(eintragActivateAction, SIGNAL(activated()), this, SLOT(eintragAktivieren()));
+  QAction* eintragActivateAction = new QAction("Eintrag a&ktivieren", this);
+  eintragActivateAction->setShortcut(Qt::CTRL+Qt::Key_X);
+  connect(eintragActivateAction, SIGNAL(triggered()), this, SLOT(eintragAktivieren()));
 
-  Q3Action* eintragAddAction = new Q3Action( "Eintrag hinzufuegen", QPixmap((const char **)hi22_action_queue ),
-                                             "&Eintrag hinzufügen", 0, this, "eintr hinz" );
-  connect(eintragAddAction, SIGNAL(activated()), this, SLOT(eintragHinzufuegen()));
+  QAction* eintragAddAction = new QAction(QPixmap((const char **)hi22_action_queue ),
+                                             "&Eintrag hinzufügen", this);
+  connect(eintragAddAction, SIGNAL(triggered()), this, SLOT(eintragHinzufuegen()));
 
-  eintragRemoveAction = new Q3Action( "Eintrag löschen",
-                                      "&Eintrag löschen", Qt::Key_Delete, this, "eintr loeschen" );
-  connect(eintragRemoveAction, SIGNAL(activated()), this, SLOT(eintragEntfernen()));
+  eintragRemoveAction = new QAction("&Eintrag löschen", this);
+  eintragRemoveAction->setShortcut(Qt::Key_Delete);
+  connect(eintragRemoveAction, SIGNAL(triggered()), this, SLOT(eintragEntfernen()));
 
-  Q3Action* min5PlusAction = new Q3Action( "Zeit incrementieren", QPixmap((const char **)hi22_action_1uparrow ),
-                                           "Zeit incrementieren", 0, this, "+5Min" );
-  Q3Action* min5MinusAction = new Q3Action( "Zeit decrementieren", QPixmap((const char **)hi22_action_1downarrow ),
-                                            "Zeit decrementieren", 0, this, "-5Min" );
+  QAction* min5PlusAction = new QAction(QPixmap((const char **)hi22_action_1uparrow ),
+                                           "Zeit incrementieren", this);
+  QAction* min5MinusAction = new QAction(QPixmap((const char **)hi22_action_1downarrow ),
+                                            "Zeit decrementieren", this);
 
-  Q3Action* fastPlusAction = new Q3Action( "Zeit schnell incrementieren", QPixmap((const char **)hi22_action_2uparrow ),
-                                           "Zeit schnell incrementieren", 0, this, "+30Min" );
-  Q3Action* fastMinusAction = new Q3Action( "Zeit schnell decrementieren", QPixmap((const char **)hi22_action_2downarrow ),
-                                            "Zeit schnell decrementieren", 0, this, "-30Min" );
+  QAction* fastPlusAction = new QAction(QPixmap((const char **)hi22_action_2uparrow ),
+                                           "Zeit schnell incrementieren", this);
+  QAction* fastMinusAction = new QAction(QPixmap((const char **)hi22_action_2downarrow ),
+                                            "Zeit schnell decrementieren", this);
 
-  abzurMin5PlusAction = new Q3Action( "Abrechenbare Zeit incrementieren", QPixmap((const char **)hi22_action_1uparrow_half ),
-                                      "Abrechenbare Zeit incrementieren", 0, this, "+5Min" );
-  abzurMin5MinusAction = new Q3Action( "Abrechenbare Zeit decrementieren", QPixmap((const char **)hi22_action_1downarrow_half ),
-                                       "Abrechenbare Zeit decrementieren", 0, this, "-5Min" );
+  abzurMin5PlusAction = new QAction(QPixmap((const char **)hi22_action_1uparrow_half ),
+                                      "Abrechenbare Zeit incrementieren", this);
+  abzurMin5MinusAction = new QAction(QPixmap((const char **)hi22_action_1downarrow_half ),
+                                       "Abrechenbare Zeit decrementieren", this);
 
-  fastAbzurPlusAction = new Q3Action( "Abrechenbare Zeit schnell incrementieren", QPixmap((const char **)hi22_action_2uparrow_half ),
-                                      "Abrechenbare Zeit schnell incrementieren", 0, this, "+30Min" );
-  fastAbzurMinusAction = new Q3Action( "Abrechenbare Zeit schnell decrementieren", QPixmap((const char **)hi22_action_2downarrow_half ),
-                                       "Abrechenbare Zeit schnell decrementieren", 0, this, "-30Min" );
+  fastAbzurPlusAction = new QAction(QPixmap((const char **)hi22_action_2uparrow_half ),
+                                      "Abrechenbare Zeit schnell incrementieren", this);
+  fastAbzurMinusAction = new QAction(QPixmap((const char **)hi22_action_2downarrow_half ),
+                                       "Abrechenbare Zeit schnell decrementieren", this);
 
   connect(kontoTree, SIGNAL(currentChanged(Q3ListViewItem * )), this, SLOT(changeShortCutSettings(Q3ListViewItem * ) ));
 
-  connect(min5PlusAction, SIGNAL(activated()), this, SLOT(addTimeInc()));
-  connect(min5MinusAction, SIGNAL(activated()), this, SLOT(subTimeInc()));
-  connect(fastPlusAction, SIGNAL(activated()), this, SLOT(addFastTimeInc()));
-  connect(fastMinusAction, SIGNAL(activated()), this, SLOT(subFastTimeInc()));
+  connect(min5PlusAction, SIGNAL(triggered()), this, SLOT(addTimeInc()));
+  connect(min5MinusAction, SIGNAL(triggered()), this, SLOT(subTimeInc()));
+  connect(fastPlusAction, SIGNAL(triggered()), this, SLOT(addFastTimeInc()));
+  connect(fastMinusAction, SIGNAL(triggered()), this, SLOT(subFastTimeInc()));
 
   connect(this,SIGNAL(eintragSelected(bool)), min5PlusAction, SLOT(setEnabled(bool)));
   connect(this,SIGNAL(eintragSelected(bool)), min5MinusAction, SLOT(setEnabled(bool)));
@@ -256,37 +257,39 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):Q3MainWindow(0,"sctime")
 
   connect(this,SIGNAL(aktivierbarerEintragSelected(bool)), eintragActivateAction, SLOT(setEnabled(bool)));
 
-  editUnterKontoAction->addTo(toolBar);
-  saveAction->addTo(toolBar);
-  inPersKontAction->addTo(toolBar);
-  eintragAddAction->addTo(toolBar);
-  pauseAction->addTo(toolBar);
-  min5PlusAction->addTo(toolBar);
-  min5MinusAction->addTo(toolBar);
-  fastPlusAction->addTo(toolBar);
-  fastMinusAction->addTo(toolBar);
-  editUnterKontoAction->addTo(kontomenu);
-  eintragActivateAction->addTo(kontomenu);
-  eintragAddAction->addTo(kontomenu);
-  eintragRemoveAction->addTo(kontomenu);
-  saveAction->addTo(kontomenu);
-  pauseAction->addTo(kontomenu);
-  pauseAbzurAction->addTo(kontomenu);
-  findKontoAction->addTo(kontomenu);
-  refreshAction->addTo(kontomenu);
-  changeDateAction->addTo(zeitmenu);
-  resetAction->addTo(zeitmenu);
-#ifndef NO_CHECKIN_ACTION
-  checkInAction->addTo(zeitmenu);
-#endif
+  toolBar->addAction(editUnterKontoAction);
+  toolBar->addAction(saveAction);
+  toolBar->addAction(inPersKontAction);
+  toolBar->addAction(eintragAddAction);
+  toolBar->addAction(pauseAction);
+  toolBar->addAction(min5PlusAction);
+  toolBar->addAction(min5MinusAction);
+  toolBar->addAction(fastPlusAction);
+  toolBar->addAction(fastMinusAction);
+  kontomenu->addAction(editUnterKontoAction);
+  kontomenu->addAction(eintragActivateAction);
+  kontomenu->addAction(eintragAddAction);
+  kontomenu->addAction(eintragRemoveAction);
+  kontomenu->addAction(saveAction);
+  kontomenu->addAction(pauseAction);
+  kontomenu->addAction(pauseAbzurAction);
+  kontomenu->addAction(findKontoAction);
+  kontomenu->addAction(refreshAction);
   kontomenu->insertSeparator();
-  quitAction->addTo(kontomenu);
-  defaultCommentAction->addTo(settingsmenu);
-  preferenceAction->addTo(settingsmenu);
+  kontomenu->addAction(quitAction);
+  zeitmenu->addAction(changeDateAction);
+  zeitmenu->addAction(resetAction);
+#ifndef NO_CHECKIN_ACTION
+  zeitmenu->addAction(checkInAction);
+#endif
+  settingsmenu->addAction(defaultCommentAction);
+  settingsmenu->addAction(preferenceAction);
   #ifndef NO_TEXTEDIT
-  helpAction->addTo(hilfemenu);
+  hilfemenu->addAction(helpAction);
   #endif
-  aboutAction->addTo(hilfemenu);
+  hilfemenu->addAction(aboutAction);
+
+  addToolBar(toolBar);
 
   zeitChanged();
 
@@ -311,16 +314,16 @@ void TimeMainWindow::showAdditionalButtons(bool show)
 {
    if (show) {
       if (powerToolBar!=NULL) return;
-      powerToolBar   = new Q3ToolBar(this);
-
-      abzurMin5PlusAction->addTo(powerToolBar);
-      abzurMin5MinusAction->addTo(powerToolBar);
-      fastAbzurPlusAction->addTo(powerToolBar);
-      fastAbzurMinusAction->addTo(powerToolBar);
-      connect(abzurMin5PlusAction, SIGNAL(activated()), this, SLOT(addAbzurTimeInc()));
-      connect(abzurMin5MinusAction, SIGNAL(activated()), this, SLOT(subAbzurTimeInc()));
-      connect(fastAbzurPlusAction, SIGNAL(activated()), this, SLOT(addFastAbzurTimeInc()));
-      connect(fastAbzurMinusAction, SIGNAL(activated()), this, SLOT(subFastAbzurTimeInc()));
+      powerToolBar = addToolBar("Power Buttons");
+      powerToolBar->setIconSize(toolBar->iconSize());
+      powerToolBar->addAction(abzurMin5PlusAction);
+      powerToolBar->addAction(abzurMin5MinusAction);
+      powerToolBar->addAction(fastAbzurPlusAction);
+      powerToolBar->addAction(fastAbzurMinusAction);
+      connect(abzurMin5PlusAction, SIGNAL(triggered()), this, SLOT(addAbzurTimeInc()));
+      connect(abzurMin5MinusAction, SIGNAL(triggered()), this, SLOT(subAbzurTimeInc()));
+      connect(fastAbzurPlusAction, SIGNAL(triggered()), this, SLOT(addFastAbzurTimeInc()));
+      connect(fastAbzurMinusAction, SIGNAL(triggered()), this, SLOT(subFastAbzurTimeInc()));
       connect(this,SIGNAL(eintragSelected(bool)), abzurMin5PlusAction, SLOT(setEnabled(bool)));
       connect(this,SIGNAL(eintragSelected(bool)), abzurMin5MinusAction, SLOT(setEnabled(bool)));
       connect(this,SIGNAL(eintragSelected(bool)), fastAbzurPlusAction, SLOT(setEnabled(bool)));
