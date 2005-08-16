@@ -21,7 +21,6 @@
 */
 
 #include <qapplication.h>
-#include <q3listview.h>
 #include <qfont.h>
 #include <iostream>
 #include "sctimeapp.h"

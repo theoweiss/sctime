@@ -25,7 +25,8 @@
 
 #include "qspinbox.h"
 #include <iostream>
-#include "q3groupbox.h"
+#include <QGroupBox>
+#include <QHBoxLayout>
 #include "qlabel.h"
 
 /**
@@ -72,7 +73,7 @@ class TimeEdit: public QSpinBox
  * ZeitBox ist ein von QGroupBox abgeleitetes Widget, das eine Spinbox
  * zum editieren der Minuten und eine zum editieren der Stunden verbindet.
  */
-class ZeitBox: public Q3GroupBox
+class ZeitBox: public QGroupBox
 {
   Q_OBJECT
 
@@ -81,17 +82,22 @@ class ZeitBox: public Q3GroupBox
     /**
     * Erzeugt eine neue Zeitbox mit der Ueberschrift Titel und der voreingestellten Zeit sekunden.
     */
-    ZeitBox(QString titel, int _sekunden, QWidget* parent=0):Q3GroupBox(5,Qt::Horizontal,titel,parent)
+    ZeitBox(QString titel, int _sekunden, QWidget* parent=0):QGroupBox(titel,parent)
     {
+      QHBoxLayout *layout = new QHBoxLayout(this);
       sekunden=_sekunden;
       hourEdit = new TimeEdit(24,this);
       hourEdit->setValue(sekunden/3600);
-      new QLabel("h",this);
-      addSpace(0);
+      layout->addStretch(0);
+      layout->addWidget(hourEdit);
+      layout->addWidget(new QLabel("h",this));
+      layout->addStretch(0);
       minuteEdit = new TimeEdit(60,this);
       minuteEdit->setValue((sekunden/60)%60);
       minuteEdit->setWrapping(true);
-      new QLabel("m",this);
+      layout->addWidget(minuteEdit);
+      layout->addWidget(new QLabel("m",this));
+      layout->addStretch(0);
       connect(minuteEdit,SIGNAL(stepButtonPressed(int)),this,SLOT(doStepMin(int)));
       connect(hourEdit,SIGNAL(stepButtonPressed(int)),this,SLOT(doStepHour(int)));
       connect(minuteEdit,SIGNAL(valueChanged(int)),this,SLOT(setMinutes(int)));
