@@ -32,11 +32,11 @@
 #include <qfont.h>
 #include <qvalidator.h>
 #include <q3popupmenu.h>
+#include <QMenuItem>
 
 #include "qdatepicker.h"
 
 #include <qapplication.h>
-#include <q3toolbar.h>
 #include "qcalendarsystem.h"
 
 #include "qdatetbl.h"
@@ -63,7 +63,6 @@ public:
 
     void fillWeeksCombo(const QDate &date);
 
-    Q3ToolBar *tb;
     QToolButton *closeButton;
     QComboBox *selectWeek;
     QToolButton *todayButton;
@@ -107,14 +106,37 @@ void QDatePicker::init( const QDate &dt )
 
   calendar=new QCalendarSystemGregorian();
 
-  d->tb = new Q3ToolBar("DatePicker-Toolbar",NULL,this);
+  //d->tb = new QToolBar("DatePicker-Toolbar",this);
 
-  yearBackward = new QToolButton(d->tb);
-  monthBackward = new QToolButton(d->tb);
-  selectMonth = new QToolButton(d->tb);
-  selectYear = new QToolButton(d->tb);
-  monthForward = new QToolButton(d->tb);
-  yearForward = new QToolButton(d->tb);
+  QBoxLayout * topLayout = new QVBoxLayout(this);
+
+  d->navigationLayout = new QHBoxLayout(topLayout);
+  d->navigationLayout->addStretch();
+  yearBackward = new QToolButton(this);
+  yearBackward->setAutoRaise(true);
+  d->navigationLayout->addWidget(yearBackward);
+  monthBackward = new QToolButton(this);
+  monthBackward ->setAutoRaise(true);
+  d->navigationLayout->addWidget(monthBackward);
+  d->navigationLayout->addSpacing(1);
+
+  selectMonth = new QToolButton(this);
+  selectMonth ->setAutoRaise(true);
+  d->navigationLayout->addWidget(selectMonth);
+  selectYear = new QToolButton(this);
+  selectYear->setToggleButton(true);
+  selectYear->setAutoRaise(true);
+  d->navigationLayout->addWidget(selectYear);
+  d->navigationLayout->addSpacing(1);
+
+  monthForward = new QToolButton(this);
+  monthForward ->setAutoRaise(true);
+  d->navigationLayout->addWidget(monthForward);
+  yearForward = new QToolButton(this);
+  yearForward ->setAutoRaise(true);
+  d->navigationLayout->addWidget(yearForward);
+  d->navigationLayout->addStretch();
+
   line = new QLineEdit(this);
   val = new QDateValidator(this);
   table = new QDateTable(calendar, this);
@@ -162,11 +184,6 @@ void QDatePicker::init( const QDate &dt )
   connect(selectYear, SIGNAL(clicked()), SLOT(selectYearClicked()));
   connect(line, SIGNAL(returnPressed()), SLOT(lineEnterPressed()));
   table->setFocus();
-
-  QBoxLayout * topLayout = new QVBoxLayout(this);
-
-  d->navigationLayout = new QHBoxLayout(topLayout);
-  d->navigationLayout->addWidget(d->tb);
 
   topLayout->addWidget(table);
 
@@ -333,7 +350,9 @@ QDatePicker::selectMonthClicked()
   for (i = 1; i <= months; i++)
     popup.insertItem(calendar->monthName(i, calendar->year(date)), i);
 
-  // =qt4= popup.setActiveItem(calendar->month(date) - 1);
+  QMenuItem *item = popup.findItem (calendar->month(date));
+  if (item)
+    popup.setActiveAction(item);
 
   if ( (month = popup.exec(selectMonth->mapToGlobal(QPoint(0, 0)), calendar->month(date) - 1)) == -1 ) return;  // canceled
 
@@ -453,12 +472,14 @@ QDatePicker::setFontSize(int s)
       maxMonthRect.setHeight(QMAX(r.height(),  maxMonthRect.height()));
     }
 
-/* =qt4=
-  QSize metricBound = style().sizeFromContents(QStyle::CT_ToolButton,
-                                               selectMonth,
-                                               maxMonthRect);
+    QStyleOptionToolButton qstb;
+
+    QSize metricBound = style()->sizeFromContents(QStyle::CT_ToolButton, &qstb,
+                                               maxMonthRect, selectMonth);
+
+
   selectMonth->setMinimumSize(metricBound);
-*/
+
 
   table->setFontSize(s);
 }
@@ -470,7 +491,7 @@ QDatePicker::setCloseButton( bool enable )
         return;
 
     if ( enable ) {
-        d->closeButton = new QToolButton( d->tb );
+        d->closeButton = new QToolButton( this );
         d->navigationLayout->addWidget(d->closeButton);
         QToolTip::add(d->closeButton,"Schliessen");
         //d->closeButton->setPixmap( SmallIcon("remove") );

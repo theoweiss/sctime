@@ -60,23 +60,23 @@ class QDatePicker: public Q3Frame
   Q_PROPERTY( QDate date READ date WRITE setDate)
   Q_PROPERTY( bool closeButton READ hasCloseButton WRITE setCloseButton )
   Q_PROPERTY( int fontSize READ fontSize WRITE setFontSize )
-  
+
 public:
   /** The usual constructor.  The given date will be displayed
    * initially.
    **/
   QDatePicker(QWidget *parent=0,
-	      QDate=QDate::currentDate(),
-	      const char *name=0);
+              QDate=QDate::currentDate(),
+              const char *name=0);
 
   /** The usual constructor.  The given date will be displayed
    * initially.
    * @since 3.1
    **/
   QDatePicker(QWidget *parent,
-	      QDate,
-	      const char *name,
-	      Qt::WFlags f); // ### KDE 4.0: Merge
+              QDate,
+              const char *name,
+              Qt::WFlags f); // ### KDE 4.0: Merge
 
   /**
    * Standard qt widget constructor. The initial date will be the
