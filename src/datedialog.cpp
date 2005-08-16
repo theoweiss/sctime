@@ -32,14 +32,17 @@
 #include <iostream>
 
 DateDialog::DateDialog(const QDate& datum, QWidget *parent)
-: DateDialogBase(parent)
+: QDialog(parent)
 {
+  setupUi(this);
   // to make sure month gets updated
   currentMonth=-1;
   currentYear=-1;
   connect(datePicker, SIGNAL(dateChanged(QDate)), this, SLOT(dateChangedSlot(QDate)));
   connect(applyButton, SIGNAL(clicked()), this, SLOT(apply()));
   connect(datePicker, SIGNAL(tableDoubleClicked()), this, SLOT(apply()));
+  connect(okbutton, SIGNAL(clicked()), this, SLOT(accept()));
+  connect(cancelbutton, SIGNAL(clicked()), this, SLOT(reject()));
 
   datePicker->setDate(datum);
 

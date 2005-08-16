@@ -6,7 +6,7 @@
 TEMPLATE = app
 VERSIONSTR = \"0.48cvs\"
 CONFIG += release warn_on qt
-CONFIG += uic3
+CONFIG += uic
 OBJECTS_DIR = ../obj
 QT += qt3support
 QT += xml  sql 

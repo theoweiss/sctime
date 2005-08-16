@@ -1,235 +1,226 @@
-<!DOCTYPE UI><UI version="3.0" stdsetdef="1">
-<class>PreferenceDialogBase</class>
-<widget class="QDialog">
-    <property name="name">
-        <cstring>PreferenceDialogBase</cstring>
-    </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-        </rect>
-    </property>
-    <property name="caption">
-        <string>Einstellungen</string>
-    </property>
-    <property name="sizeGripEnabled">
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>PreferenceDialogBase</class>
+ <widget class="QDialog" name="PreferenceDialogBase" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>414</width>
+    <height>342</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Einstellungen</string>
+  </property>
+  <property name="sizeGripEnabled" >
+   <bool>true</bool>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>10</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <widget class="QTabWidget" name="TabWidget2" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>1</hsizetype>
+       <vsizetype>1</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Allgemein</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>10</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <widget class="QCheckBox" name="entrySaveCheckbox" >
+         <property name="text" >
+          <string>Kommentare für nächsten Tag übernehmen</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="powerUserCheckbox" >
+         <property name="text" >
+          <string>Poweruser Ansicht</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="singleClickCheckbox" >
+         <property name="text" >
+          <string>Konto durch Singleclick aktivieren</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Minimum</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab" >
+      <attribute name="title" >
+       <string>Zeitinkrement</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>10</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>11</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="TextLabel1" >
+           <property name="text" >
+            <string>Einfache Zeitinkrement Buttons</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="zeitIncBox" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>11</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="TextLabel1_2" >
+           <property name="text" >
+            <string>Schnelle Zeitinkrement Buttons</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QSpinBox" name="fastZeitIncBox" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Minimum</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>11</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>0</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonOk" >
+       <property name="text" >
+        <string>&amp;OK</string>
+       </property>
+       <property name="shortcut" >
+        <string/>
+       </property>
+       <property name="autoDefault" >
         <bool>true</bool>
-    </property>
-    <vbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="QTabWidget">
-            <property name="name">
-                <cstring>TabWidget2</cstring>
-            </property>
-            <property name="sizePolicy">
-                <sizepolicy>
-                    <hsizetype>1</hsizetype>
-                    <vsizetype>1</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                </sizepolicy>
-            </property>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Allgemein</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>entrySaveCheckbox</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Kommentare für nächsten Tag übernehmen</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox">
-                        <property name="name">
-                            <cstring>powerUserCheckbox</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Poweruser Ansicht</string>
-                        </property>
-                    </widget>
-                    <widget class="QCheckBox" row="2" column="0">
-                        <property name="name">
-                            <cstring>singleClickCheckbox</cstring>
-                        </property>
-                        <property name="text">
-                            <string>Konto durch Singleclick aktivieren</string>
-                        </property>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer2</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Minimum</enum>
-                        </property>
-                        <property name="sizeHint">
-                            <size>
-                                <width>20</width>
-                                <height>0</height>
-                            </size>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
-            <widget class="QWidget">
-                <property name="name">
-                    <cstring>tab</cstring>
-                </property>
-                <attribute name="title">
-                    <string>Zeitinkrement</string>
-                </attribute>
-                <vbox>
-                    <property name="name">
-                        <cstring>unnamed</cstring>
-                    </property>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout6</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>TextLabel1</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Einfache Zeitinkrement Buttons</string>
-                                </property>
-                            </widget>
-                            <widget class="QSpinBox">
-                                <property name="name">
-                                    <cstring>zeitIncBox</cstring>
-                                </property>
-                            </widget>
-                        </hbox>
-                    </widget>
-                    <widget class="QLayoutWidget">
-                        <property name="name">
-                            <cstring>layout7</cstring>
-                        </property>
-                        <hbox>
-                            <property name="name">
-                                <cstring>unnamed</cstring>
-                            </property>
-                            <widget class="QLabel">
-                                <property name="name">
-                                    <cstring>TextLabel1_2</cstring>
-                                </property>
-                                <property name="text">
-                                    <string>Schnelle Zeitinkrement Buttons</string>
-                                </property>
-                            </widget>
-                            <widget class="QSpinBox">
-                                <property name="name">
-                                    <cstring>fastZeitIncBox</cstring>
-                                </property>
-                            </widget>
-                        </hbox>
-                    </widget>
-                    <spacer>
-                        <property name="name">
-                            <cstring>spacer7</cstring>
-                        </property>
-                        <property name="orientation">
-                            <enum>Qt::Vertical</enum>
-                        </property>
-                        <property name="sizeType">
-                            <enum>Minimum</enum>
-                        </property>
-                    </spacer>
-                </vbox>
-            </widget>
-        </widget>
-        <widget class="QLayoutWidget">
-            <property name="name">
-                <cstring>layout2</cstring>
-            </property>
-            <hbox>
-                <property name="name">
-                    <cstring>unnamed</cstring>
-                </property>
-                <spacer>
-                    <property name="name">
-                        <cstring>Qt::Horizontal Spacing2</cstring>
-                    </property>
-                    <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                    </property>
-                    <property name="sizeType">
-                        <enum>Expanding</enum>
-                    </property>
-                </spacer>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>buttonOk</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;OK</string>
-                    </property>
-                    <property name="accel">
-                        <string></string>
-                    </property>
-                    <property name="autoDefault">
-                        <bool>true</bool>
-                    </property>
-                    <property name="default">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-                <widget class="QPushButton">
-                    <property name="name">
-                        <cstring>buttonCancel</cstring>
-                    </property>
-                    <property name="text">
-                        <string>&amp;Cancel</string>
-                    </property>
-                    <property name="accel">
-                        <string></string>
-                    </property>
-                    <property name="autoDefault">
-                        <bool>true</bool>
-                    </property>
-                </widget>
-            </hbox>
-        </widget>
-    </vbox>
-</widget>
-<connections>
-    <connection>
-        <sender>buttonOk</sender>
-        <signal>clicked()</signal>
-        <receiver>PreferenceDialogBase</receiver>
-        <slot>accept()</slot>
-    </connection>
-    <connection>
-        <sender>buttonCancel</sender>
-        <signal>clicked()</signal>
-        <receiver>PreferenceDialogBase</receiver>
-        <slot>reject()</slot>
-    </connection>
-</connections>
-<tabstops>
-    <tabstop>buttonOk</tabstop>
-    <tabstop>buttonCancel</tabstop>
-    <tabstop>TabWidget2</tabstop>
-    <tabstop>entrySaveCheckbox</tabstop>
-</tabstops>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+       </property>
+       <property name="default" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonCancel" >
+       <property name="text" >
+        <string>&amp;Cancel</string>
+       </property>
+       <property name="shortcut" >
+        <string/>
+       </property>
+       <property name="autoDefault" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <tabstops>
+  <tabstop>buttonOk</tabstop>
+  <tabstop>buttonCancel</tabstop>
+  <tabstop>TabWidget2</tabstop>
+  <tabstop>entrySaveCheckbox</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

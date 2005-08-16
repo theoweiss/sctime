@@ -26,14 +26,15 @@
 #ifndef DATEDIALOG_H
 #define DATEDIALOG_H
 
-#include "datedialogbase.h"
+#include "ui_datedialogbase.h"
 #include <qdatetime.h>
+#include <QDialog>
 
 
  /**
   * Der Dialog zum Eingeben eines Datums
   */
-class DateDialog : public DateDialogBase
+class DateDialog : public QDialog, private Ui::DateDialogBase
 {
   Q_OBJECT
 

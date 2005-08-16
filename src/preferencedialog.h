@@ -24,14 +24,15 @@
 #ifndef PREFERENCEDIALOG_H
 #define PREFERENCEDIALOG_H
 
-#include "preferencedialogbase.h"
+#include "ui_preferencedialogbase.h"
+#include <QDialog>
 #include "sctimexmlsettings.h"
 
 
  /**
   * Der Dialog zum Eingeben eines Datums
   */
-class PreferenceDialog : public PreferenceDialogBase
+class PreferenceDialog : public QDialog, private Ui::PreferenceDialogBase
 {
   Q_OBJECT
 

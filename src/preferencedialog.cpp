@@ -26,8 +26,12 @@
 
 
 PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent)
-: PreferenceDialogBase(parent)
+: QDialog(parent)
 {
+    setupUi(this);
+    connect(buttonOk, SIGNAL(clicked()), this, SLOT(accept()));
+    connect(buttonCancel, SIGNAL(clicked()), this, SLOT(reject()));
+
     settings = _settings;
     zeitIncBox->setValue(settings->timeIncrement()/60);
     fastZeitIncBox->setValue(settings->fastTimeIncrement()/60);
