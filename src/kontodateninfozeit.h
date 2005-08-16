@@ -26,8 +26,6 @@
 
 #include "kontodateninfo.h"
 #include "qobject.h"
-#include "q3process.h"
-
 
 class Einchecker:QObject
 {
@@ -53,7 +51,6 @@ signals:
     void finishedEintrag();
 
 private:
-    Q3Process proc;
     AbteilungsListe* abtList;
     AbteilungsListe::iterator abtPos;
     KontoListe::iterator kontPos;
