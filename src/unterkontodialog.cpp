@@ -27,13 +27,11 @@
 #include "qlineedit.h"
 #include "qstringlist.h"
 #include "qcombobox.h"
-#include "q3groupbox.h"
+#include <QGroupBox>
 #include "qcheckbox.h"
-//Added by qt3to4:
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include "abteilungsliste.h"
-#include "q3listview.h"
 #include "timeedit.h"
 #include "unterkontodialog.h"
 #include <iostream>
@@ -98,10 +96,13 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   layout->addSpacing(5);
   layout->addStretch(2);
   if ((taglist) && (!taglist->isEmpty())) {
-     Q3GroupBox* taggroup = new Q3GroupBox(5,Qt::Horizontal,"Tags",this);
+     QGroupBox* taggroup = new QGroupBox("Tags",this);
+     QHBoxLayout *hboxLayout = new QHBoxLayout(taggroup);
      tagcombo = new QComboBox(taggroup);
+     hboxLayout->addWidget(tagcombo);
      tagcombo->insertStringList(*taglist);
      QPushButton * addtagbutton = new QPushButton( "Hinzufügen", taggroup );;
+     hboxLayout->addWidget(addtagbutton);
      layout->addWidget(taggroup);
      connect (addtagbutton, SIGNAL(clicked()), this, SLOT(addTag()));
      layout->addSpacing(5);

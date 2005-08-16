@@ -32,7 +32,6 @@
 #include "qlineedit.h"
 #include "qcheckbox.h"
 #include "abteilungsliste.h"
-#include "q3listview.h"
 #include "timeedit.h"
 
 
@@ -64,11 +63,11 @@ class UnterKontoDialog: public QDialog
   private:
     QLineEdit* commentedit;
     QComboBox* commentcombo;
-    QComboBox* tagcombo;    
+    QComboBox* tagcombo;
     QString unterKontoName;
     QString kontoName;
     QString abteilungsName;
-    int eintragIndex;    
+    int eintragIndex;
     AbteilungsListe* abtList;
     ZeitBox *zeitBox;
     ZeitBox *zeitAbzurBox;
