@@ -164,8 +164,10 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
 
   QDomElement docElem = doc.documentElement();
 
-  defaultcommentfiles.clear();
-  columnwidth.clear();
+  if (global) {
+    defaultcommentfiles.clear();
+    columnwidth.clear();
+  }
 
   for( QDomNode node1 = docElem.firstChild(); !node1.isNull(); node1 = node1.nextSibling() ) {
     QDomElement elem1 = node1.toElement();
@@ -370,10 +372,10 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
               if (ystr.isNull()) continue;
               unterKontoWindowSize=QSize(xstr.toInt(),ystr.toInt());
             }
-            if (elem2.tagName()=="defaultcommentsfile") {
+            if ((global) && (elem2.tagName()=="defaultcommentsfile")) {
                 defaultcommentfiles.push_back(elem2.attribute("name","defaultcomments.xml"));
             }
-            if (elem2.tagName()=="column") {
+            if ((global) && (elem2.tagName()=="column")) {
                 columnwidth.push_back(elem2.attribute("width","50").toInt());
             }
           }
@@ -383,8 +385,10 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
   }
 
   // fixme: Hack fuer reibungsfreie Migration auf neue sctime Version...
-  if (defaultcommentfiles.empty())
+  if ((global) && (defaultcommentfiles.empty())) {
+      std::cout<<defaultcommentfiles.size();
       defaultcommentfiles.push_back("defaultcomments.xml");
+  }
 
   if (!aktiveskontotag.isNull()) {
     QString abtstr=aktiveskontotag.attribute("abteilung");
