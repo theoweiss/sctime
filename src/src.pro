@@ -8,8 +8,7 @@ VERSIONSTR = \"0.48cvs\"
 CONFIG += release warn_on qt
 CONFIG += uic
 OBJECTS_DIR = ../obj
-QT += qt3support
-QT += xml  sql 
+QT += qt3support xml sql gui core 
 TARGET = ../bin/sctime
 DEFINES += BUILDDATESTR=$$BUILDDATESTR VERSIONSTR=$$VERSIONSTR
 SOURCES += abteilungsliste.cpp \
