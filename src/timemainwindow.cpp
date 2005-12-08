@@ -102,6 +102,9 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
   resize(size);
   move(pos);
 
+  statusBar = new StatusBar(this);
+  setStatusBar(statusBar);
+
   std::vector<int> columnwidthlist;
 
   settings->getColumnWidthList(columnwidthlist);
@@ -116,7 +119,6 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
 
   setCentralWidget(kontoTree);
 
-  statusBar = new StatusBar(this);
   toolBar   = new ToolBar("Main ToolBar", this);
   toolBar->setIconSize(QSize(22,22));
 

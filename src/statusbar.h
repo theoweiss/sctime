@@ -18,9 +18,8 @@ class StatusBar:public QStatusBar
   public:
     StatusBar(QWidget * parent = 0):QStatusBar(parent)
     {
-      addWidget(new QLabel("Gesamtzeit:",this));
-      zeitLabel=new QLabel("0",this);
-      addWidget(zeitLabel);
+      zeitLabel=new QLabel("Gesamtzeit: 0",this);
+      addPermanentWidget(zeitLabel);
       connect(parent,SIGNAL(gesamtZeitChanged(int)),this, SLOT(setSekunden(int)));
       datumsWarnung=new QLabel("",this);
       addWidget(datumsWarnung);
@@ -48,7 +47,7 @@ class StatusBar:public QStatusBar
         else
           text=text+"/"+diffstr;
       }
-      zeitLabel->setText(text);
+      zeitLabel->setText("Gesamtzeit: "+text);
     }
 
     void setDiff(int sec)
