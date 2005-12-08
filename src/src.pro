@@ -71,7 +71,7 @@ IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/sc_logo.xpm 
 FORMS += datedialogbase.ui \
          preferencedialogbase.ui 
-target.path = $(prefix)/bin 
+target.path = /$(prefix)/bin 
 INSTALLS += target 
 !win32{
   BUILDDATESTR = \""`date`"\"

@@ -7,15 +7,6 @@
 
 // Set any POSIX/XOPEN defines at the top of this file to turn on specific APIs
 
-// DNS system header files are a mess!
-// <resolv.h> includes <arpa/nameser.h>. <arpa/nameser.h> is using
-// 'u_char' and includes <sys/types.h>.  Now the problem is that
-// <sys/types.h> defines 'u_char' only if __USE_BSD is defined.
-// __USE_BSD is defined in <features.h> if _BSD_SOURCE is defined.
-#ifndef _BSD_SOURCE
-#  define _BSD_SOURCE
-#endif
-
 // 1) need to reset default environment if _BSD_SOURCE is defined
 // 2) need to specify POSIX thread interfaces explicitly in glibc 2.0
 // 3) it seems older glibc need this to include the X/Open stuff
@@ -29,10 +20,8 @@
 // We are hot - unistd.h should have turned on the specific APIs we requested
 
 
-#ifdef QT_THREAD_SUPPORT
+#include <features.h>
 #include <pthread.h>
-#endif
-
 #include <dirent.h>
 #include <fcntl.h>
 #include <grp.h>
@@ -48,30 +37,59 @@
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/wait.h>
-
-// DNS header files are not fully covered by X/Open specifications.
-// In particular nothing is said about res_* :/
-// Header files <netinet/in.h> and <arpa/nameser.h> are not included
-// by <resolv.h> on older versions of the GNU C library. Note that
-// <arpa/nameser.h> must be included before <resolv.h>.
 #include <netinet/in.h>
-#include <arpa/nameser.h>
-#include <resolv.h>
+#ifndef QT_NO_IPV6IFNAME
+#include <net/if.h>
+#endif
 
-
-#if !defined(QT_NO_COMPAT)
+#ifdef QT_LARGEFILE_SUPPORT
+#define QT_STATBUF              struct stat64
+#define QT_STATBUF4TSTAT        struct stat64
+#define QT_STAT                 ::stat64
+#define QT_FSTAT                ::fstat64
+#define QT_LSTAT                ::lstat64
+#define QT_OPEN                 ::open64
+#define QT_TRUNCATE             ::truncate64
+#define QT_FTRUNCATE            ::ftruncate64
+#define QT_LSEEK                ::lseek64
+#else
 #define QT_STATBUF		struct stat
 #define QT_STATBUF4TSTAT	struct stat
 #define QT_STAT			::stat
 #define QT_FSTAT		::fstat
+#define QT_LSTAT		::lstat
+#define QT_OPEN                 ::open
+#define QT_TRUNCATE             ::truncate
+#define QT_FTRUNCATE            ::ftruncate
+#define QT_LSEEK                ::lseek
+#endif
+
+#ifdef QT_LARGEFILE_SUPPORT
+#define QT_FOPEN                ::fopen64
+#define QT_FSEEK                ::fseeko64
+#define QT_FTELL                ::ftello64
+#define QT_FGETPOS              ::fgetpos64
+#define QT_FSETPOS              ::fsetpos64
+#define QT_FPOS_T               fpos64_t
+#define QT_OFF_T                off64_t
+#else
+#define QT_FOPEN                ::fopen
+#define QT_FSEEK                ::fseek
+#define QT_FTELL                ::ftell
+#define QT_FGETPOS              ::fgetpos
+#define QT_FSETPOS              ::fsetpos
+#define QT_FPOS_T               fpos_t
+#define QT_OFF_T                long
+#endif
+
 #define QT_STAT_REG		S_IFREG
 #define QT_STAT_DIR		S_IFDIR
 #define QT_STAT_MASK		S_IFMT
 #define QT_STAT_LNK		S_IFLNK
+#define QT_SOCKET_CONNECT	::connect
+#define QT_SOCKET_BIND		::bind
 #define QT_FILENO		fileno
-#define QT_OPEN			::open
 #define QT_CLOSE		::close
-#define QT_LSEEK		::lseek
 #define QT_READ			::read
 #define QT_WRITE		::write
 #define QT_ACCESS		::access
@@ -85,7 +103,6 @@
 #define QT_OPEN_CREAT		O_CREAT
 #define QT_OPEN_TRUNC		O_TRUNC
 #define QT_OPEN_APPEND		O_APPEND
-#endif
 
 #define QT_SIGNAL_RETTYPE	void
 #define QT_SIGNAL_ARGS		int
