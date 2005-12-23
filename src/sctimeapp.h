@@ -37,7 +37,7 @@
 
 class SCTimeApp: public QApplication
 {
-    Q_OBJECT;
+  Q_OBJECT
 
   TimeMainWindow* mainWindow;
   private:
