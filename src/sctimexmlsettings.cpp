@@ -606,7 +606,8 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   else
     filename=configDir+"/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
 
-  QFile f(filename);
+  QFile f(filename+"~");
+  f.remove();
   if ( !f.open( QIODevice::WriteOnly) ) {
       std::cerr<<"Kann Settings nicht speichern"<<std::endl;
       return;
@@ -617,5 +618,8 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   stream<<doc.toString()<<endl;
 
   f.close();
+  QFile oldfile(filename);
+  oldfile.remove();
+  f.rename(filename);
   #endif
 }
