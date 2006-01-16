@@ -30,6 +30,9 @@
 #include <iostream>
 #include "timemainwindow.h"
 #include "sctimexmlsettings.h"
+#include "GetOpt.h"
+#include <QFileInfo>
+#include <QDir>
 
 /**
  *  In dieser Klasse wird hauptsaechlich ein TimeMainWindow erzeugt und mit Daten versorgt.
@@ -41,24 +44,37 @@ class SCTimeApp: public QApplication
 
   TimeMainWindow* mainWindow;
   private:
-    #ifdef WIN32
-    KontoDatenInfoDatabase zk;
-    #else
-    KontoDatenInfoZeit zk;
-    #endif
-
+    KontoDatenInfo* zk;
 
   public:
 
     SCTimeApp( int &argc, char **argv ): QApplication (argc,argv)
     {
+      GetOpt opts(argc, argv);
+      QString zeitkontenfile;
+      opts.addOption('f',"zeitkontenfile", &zeitkontenfile);
+      opts.parse();
+
 #ifndef WIN32
       connect(this, SIGNAL(unixSignal(int)), this, SLOT(sighandler(int)));
       watchUnixSignal(SIGINT,true);
       watchUnixSignal(SIGTERM,true);
       watchUnixSignal(SIGHUP,true);
+      if (zeitkontenfile.isEmpty())
+          zk = new KontoDatenInfoZeit();
+      else
+      {
+          if (zeitkontenfile.startsWith("~/"))
+              zeitkontenfile.replace(0,2,QDir::homePath()+"/");
+          zk = new KontoDatenInfoZeit(QFileInfo(zeitkontenfile).canonicalFilePath());
+      }
+#else
+      if (zeitkontenfile.isEmpty())
+          zk = new KontoDatenInfoDatabase();
+      else
+          zk = new KontoDatenInfoZeit(QFileInfo(zeitkontenfile).canonicalFilePath());
 #endif
-      mainWindow=new TimeMainWindow(&zk);
+      mainWindow=new TimeMainWindow(zk);
       setMainWidget( mainWindow );
       mainWindow->show();
     }
@@ -66,6 +82,7 @@ class SCTimeApp: public QApplication
     virtual ~SCTimeApp()
     {
       delete mainWindow;
+      delete zk;
     }
 
   public slots:

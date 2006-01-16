@@ -64,10 +64,14 @@ private:
 class KontoDatenInfoZeit: public KontoDatenInfo
 {
   public:
+    KontoDatenInfoZeit();
+    KontoDatenInfoZeit(QString sourcefile);
     virtual bool readInto(AbteilungsListe * abtlist);
+    bool readZeitFile(FILE *file, AbteilungsListe * abtlist);
     virtual bool checkIn(AbteilungsListe* abtlist);
   private:
     Einchecker* ec;
+    QString m_DatenFileName;
 };
 
 #endif

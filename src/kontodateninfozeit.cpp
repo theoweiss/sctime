@@ -162,7 +162,7 @@ bool Einchecker::checkin(QDate date, const QString& konto, const QString& uko, i
       // Konto, unterkonto sind eindeutig durch leerzeichen getrennt,
       // der Rest muss gesondert behandelt werden.
       if (fread(&c,1,1,file)>0)
-        qs+=c;      
+        qs+=c;
     }
     pclose(file);
     std::cout<<qs.toStdString()<<std::endl;
@@ -209,9 +209,59 @@ void Einchecker::onExit()
     emit finishedEintrag();*/
 }
 
+KontoDatenInfoZeit::KontoDatenInfoZeit()
+{
+    m_DatenFileName="";
+}
+
+KontoDatenInfoZeit::KontoDatenInfoZeit(QString sourcefile)
+{
+    m_DatenFileName=sourcefile;
+}
+
+bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
+{
+    char zeile[800];
+    int unterkontoCounter=0;
+
+    while (!feof(file)) {
+      // Konto, unterkonto sind eindeutig durch leerzeichen getrennt,
+      // der Rest muss gesondert behandelt werden.
+        if (fscanf(file,"%[^\n]",zeile)==1) {
+        // Falls alle drei Strings korrekt eingelesen wurden...
+
+            unterkontoCounter++;
+            QString qstringzeile(zeile);
+            QStringList ql = qstringzeile.split("|");
+
+            if (ql.size()<7) {
+                continue;
+            }
+
+        // Kostenstelle trennt Abteilung von Beschreibung, also
+        // dort splitten
+            QString abt = ql[2].simplifyWhiteSpace();
+            QString konto = ql[0].simplifyWhiteSpace();
+            QString unterkonto = ql[1].simplifyWhiteSpace();
+
+            QString beschreibung = ql[6].simplifyWhiteSpace();
+
+            if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
+
+            abtList->insertEintrag(abt,konto,unterkonto);
+            abtList->setBeschreibung(abt,konto,unterkonto,beschreibung);
+            abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
+
+        }
+        fscanf(file,"\n");
+    }
+    return (unterkontoCounter>0);
+}
 
 bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
 {
+#ifdef OLD_ZEITKONTEN
+
   abtList->clear();
   char rest[800], konto[200], unterkonto[200];
 
@@ -251,6 +301,29 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
     std::cerr<<"Kann \"zeitkonten\" nicht ausfuehren."<<std::endl;
     return false;
   }
+#else
+  abtList->clear();
+  FILE* file;
+  if (m_DatenFileName.isEmpty()) {
+    file = popen("zeitkonten --beschreibung --separator='|'", "r");
+    if (!file) {
+      std::cerr<<"Kann \"zeitkonten\" nicht ausfuehren."<<std::endl;
+      return false;
+    }
+  } else {
+      file = fopen(m_DatenFileName, "r");
+      if (!file) {
+          std::cerr<<"Kann "<<m_DatenFileName.toStdString()<<" nicht oeffnen."<<std::endl;
+          return false;
+      }
+  }
+  bool result=readZeitFile(file,abtList);
+  if (m_DatenFileName.isEmpty())
+      pclose(file);
+  else
+      fclose(file);
+  return result;
+#endif
 }
 
 

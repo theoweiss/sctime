@@ -26,7 +26,8 @@ SOURCES += abteilungsliste.cpp \
            qdatepicker.cpp \
            qdatetbl.cpp \
            utils.cpp \
-           defaulttagreader.cpp
+           defaulttagreader.cpp \
+           GetOpt.cpp
 HEADERS += abteilungsliste.h \
            kontoliste.h \
            statusbar.h \
@@ -55,7 +56,8 @@ HEADERS += abteilungsliste.h \
            qcalendarsystemgregorian.h \
            qdatepicker.h \
            qdatetbl.h \
-           defaulttagreader.h
+           defaulttagreader.h \
+           GetOpt.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \

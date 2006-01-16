@@ -3,7 +3,7 @@ Version 0.41b
 5.8.2003
 
 sctime provides a graphical interface which allows users to record the times used for
-specific projects. 
+specific projects.
 
 DEVELOPER:
 Florian Schmitt f.schmitt@science-computing.de
@@ -19,7 +19,7 @@ REQUIREMENTS:
 The zeittools are required to access the database.
 
 BUILDING:
-A qt3 Library is required. Please check the paths in the apropriate 
+A qt3 Library is required. Please check the paths in the apropriate
 Makefile before running make.
 
 INSTALL:
@@ -32,9 +32,8 @@ named "zeit" and "zeitkonten". By the script "zeit" the data can be checked into
 As a "zeit" script is not yet available under GPL, so you'll probably have to do without
 database functionality (as long as you don't write your own wrapper).
 The script "zeitkonten" should deliver a list of accounts, with each line consisting of the
-following information:
-account subaccount department accounting-nr comment
-Department and comment are the only strings which may contain spaces.
+following information, which is separated by pipe symbols (|):
+account|subaccount|department|accounting-nr|person responsible|type|comment
 
 DOCUMENTATION:
 The source is documented in Docbook style. You might also want to check
