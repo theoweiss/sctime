@@ -24,9 +24,9 @@
 #ifdef WIN32
 #include "kontodateninfodatabase.h"
 #else
-#include "kontodateninfozeit.h"
 #include "signal.h"
 #endif
+#include "kontodateninfozeit.h"
 #include <iostream>
 #include "timemainwindow.h"
 #include "sctimexmlsettings.h"

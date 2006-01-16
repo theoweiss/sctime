@@ -4,7 +4,7 @@
 # Target is an application:  ../bin/sctime
 
 TEMPLATE = app
-VERSIONSTR = \"0.48cvs\"
+VERSIONSTR = \"0.50\"
 CONFIG += release warn_on qt
 CONFIG += uic
 OBJECTS_DIR = ../obj
@@ -27,6 +27,7 @@ SOURCES += abteilungsliste.cpp \
            qdatetbl.cpp \
            utils.cpp \
            defaulttagreader.cpp \
+           kontodateninfozeit.cpp \
            GetOpt.cpp
 HEADERS += abteilungsliste.h \
            kontoliste.h \
@@ -57,6 +58,7 @@ HEADERS += abteilungsliste.h \
            qdatepicker.h \
            qdatetbl.h \
            defaulttagreader.h \
+           kontodateninfozeit.h \
            GetOpt.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
@@ -77,8 +79,6 @@ target.path = /$(prefix)/bin
 INSTALLS += target
 !win32{
   BUILDDATESTR = \""`date`"\"
-  HEADERS += kontodateninfozeit.h
-  SOURCES += kontodateninfozeit.cpp
 }
 isEmpty(BUILDDATESTR){
   BUILDDATESTR = \""unknown"\"

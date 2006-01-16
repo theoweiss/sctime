@@ -20,9 +20,6 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-// Wird unter Win32 nicht benoetigt
-#ifndef WIN32
-
 #include "kontodateninfozeit.h"
 #include <iostream>
 #include <iomanip>
@@ -356,4 +353,3 @@ bool KontoDatenInfoZeit::checkIn(AbteilungsListe* abtlist)
   return ret;
 }
 
-#endif
