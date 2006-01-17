@@ -60,6 +60,7 @@
 #include "globals.h"
 #include "qdir.h"
 #include "qfileinfo.h"
+#include "GetOpt.h"
 
 #ifndef CONFIGSUBDIR
 #define CONFIGSUBDIR ".sctime"
@@ -179,19 +180,28 @@ int main( int argc, char **argv )
   // Pruefen, ob das Configdir ueber das environment gesetzt wurde
   QString configdirstring;
   char *envpointer;
-  envpointer = getenv("SCTIME_CONFIG_DIR");
-  if (envpointer)
-      configdirstring = envpointer;
-  else {
-      configdirstring = CONFIGSUBDIR; // default Configdir
+
+  GetOpt opts(argc, argv);
+  opts.addOption('f',"configdir", &configdirstring);
+  opts.parse();
+  if (configdirstring.startsWith("~/"))
+      configdirstring.replace(0,2,QDir::homePath()+"/");
+
+  if (configdirstring.isEmpty()) {
+    envpointer = getenv("SCTIME_CONFIG_DIR");
+    if (envpointer)
+        configdirstring = envpointer;
+    else {
+        configdirstring = CONFIGSUBDIR; // default Configdir
 #ifndef WIN32
-      directory.cd(directory.homeDirPath());
+        directory.cd(directory.homeDirPath());
 #else
-      if (!directory.cd("H:\\")) {
-         ErrorApp ea("Kann nicht auf H:\\ zugreifen.",argc, argv );
-         return false;
-      }
+        if (!directory.cd("H:\\")) {
+           ErrorApp ea("Kann nicht auf H:\\ zugreifen.",argc, argv );
+           return false;
+        }
 #endif
+    }
   }
 
   // neues directory anlegen, hineinwechseln, und merken.
