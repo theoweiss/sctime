@@ -131,6 +131,12 @@ class TimeMainWindow: public QMainWindow
      */
     void eintragSelected(bool isEintrag);
 
+    /**
+     * Wird mit true ausgeloest, wenn ein Item im Kontobaum
+     * selektiert wurde, zu dem weitere Eintraege hinzugefuegt werden koennen
+     */
+    void augmentableItemSelected(bool isEintrag);
+
     /** Wird mit true ausgeloest, falls auf das aktuelle Datum gewechselt wird, bei allen anderen
         Datumswechseln mit false. */
     void currentDateSelected(bool);

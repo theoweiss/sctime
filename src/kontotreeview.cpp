@@ -202,6 +202,17 @@ bool KontoTreeView::isEintragsItem(Q3ListViewItem* item)
   return ((d==4)||((d==3)&&(item->firstChild()==NULL)));
 }
 
+/**
+ *  True, falls das uebergebene Item ein Item ist, das ein Unterkonto repraesentiert.
+ */
+
+bool KontoTreeView::isUnterkontoItem(Q3ListViewItem* item)
+{
+    if (!item) return false;
+    int d=item->depth();
+    return (d==3);
+}
+
 /** oeffnet den Ast zum aktiven Projekt, so dass man dieses sieht*/
 void KontoTreeView::showAktivesProjekt()
 {

@@ -255,7 +255,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
   connect(this,SIGNAL(eintragSelected(bool)), min5MinusAction, SLOT(setEnabled(bool)));
   connect(this,SIGNAL(eintragSelected(bool)), fastPlusAction, SLOT(setEnabled(bool)));
   connect(this,SIGNAL(eintragSelected(bool)), fastMinusAction, SLOT(setEnabled(bool)));
-  connect(this,SIGNAL(eintragSelected(bool)), eintragAddAction, SLOT(setEnabled(bool)));
+  connect(this,SIGNAL(augmentableItemSelected(bool)), eintragAddAction, SLOT(setEnabled(bool)));
 
   connect(this,SIGNAL(aktivierbarerEintragSelected(bool)), eintragActivateAction, SLOT(setEnabled(bool)));
 
@@ -590,7 +590,7 @@ void TimeMainWindow::eintragHinzufuegen()
 {
   Q3ListViewItem * item=kontoTree->currentItem();
 
-  if (!kontoTree->isEintragsItem(item)) return;
+  if ((!kontoTree->isEintragsItem(item))&&(!kontoTree->isUnterkontoItem(item))) return;
 
   QString top,uko,ko,abt;
   int oldidx;
@@ -784,6 +784,7 @@ void TimeMainWindow::changeShortCutSettings(Q3ListViewItem * item)
     editUnterKontoAction->setEnabled(!abtList->checkInState());
     /* Eigentlich sollte das Signal in editierbarerEintragSelected umbenannt werden... */
     emit eintragSelected(!abtList->checkInState());
+    emit augmentableItemSelected(!abtList->checkInState());
     if (abtListToday==abtList)
       emit aktivierbarerEintragSelected(!abtList->checkInState());
   }
@@ -793,6 +794,7 @@ void TimeMainWindow::changeShortCutSettings(Q3ListViewItem * item)
     inPersKontAction->setEnabled((!abtList->checkInState())&&(item&&(item->depth()>=2)&&(item->depth()<=3)));
     editUnterKontoAction->setEnabled(false);
     emit eintragSelected(false);
+    emit augmentableItemSelected(!abtList->checkInState()&&kontoTree->isUnterkontoItem(item));
     emit aktivierbarerEintragSelected(false);
     eintragRemoveAction->setEnabled(false);
   }

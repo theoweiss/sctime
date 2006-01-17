@@ -59,6 +59,8 @@ class KontoTreeView: public Q3ListView
 
     bool isEintragsItem(Q3ListViewItem* item);
 
+    bool isUnterkontoItem(Q3ListViewItem* item);
+
     void flagClosedPersoenlicheItems();
 
     void closeFlaggedPersoenlicheItems();
