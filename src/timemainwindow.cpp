@@ -1003,8 +1003,12 @@ void TimeMainWindow::callAboutBox()
   QGridLayout* layout=new QGridLayout(aboutBox,7,3);
   QLabel* logo=new QLabel(aboutBox);
   logo->setPixmap(QPixmap((const char **)scLogo_15Farben_xpm));
+  // huh?!? why do we need these strange numbers? I guess its a bug in qt.
+  layout->setRowMinimumHeight(0,logo->pixmap()->height()+69);
+
   layout->addWidget(logo,0,0);
-  QLabel versioninfo(QString("<h2>sctime</h2><nobr><b>Version:</b> ")+VERSIONSTR+"</nobr><br><nobr><b>Datum des Builds:</b> "+BUILDDATESTR+"</nobr>",aboutBox);
+  QLabel versioninfo(QString("<h2>sctime</h2><nobr><b>Version:</b> ")+VERSIONSTR+
+                             "</nobr><br><nobr><b>Datum des Builds:</b> "+BUILDDATESTR+"</nobr>",aboutBox);
   versioninfo.setTextFormat(Qt::RichText);
   layout->addWidget(&versioninfo,0,1);
   layout->addItem(new QSpacerItem(0, 20), 1, 0);
