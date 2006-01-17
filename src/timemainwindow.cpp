@@ -1007,14 +1007,14 @@ void TimeMainWindow::callAboutBox()
   QLabel versioninfo(QString("<h2>sctime</h2><nobr><b>Version:</b> ")+VERSIONSTR+"</nobr><br><nobr><b>Datum des Builds:</b> "+BUILDDATESTR+"</nobr>",aboutBox);
   versioninfo.setTextFormat(Qt::RichText);
   layout->addWidget(&versioninfo,0,1);
-  layout->addRowSpacing(1,10);
+  layout->addItem(new QSpacerItem(0, 20), 1, 0);
   layout->addWidget(new QLabel("Core Developer:",aboutBox),2,0);
   layout->addWidget(new QLabel("Florian Schmitt <f.schmitt@science-computing.de>",aboutBox),2,1);
   layout->addWidget(new QLabel("Patches:",aboutBox),3,0);
   layout->addWidget(new QLabel("Marcus Camen <m.camen@science-computing.de>",aboutBox),3,1);
-  layout->addRowSpacing(4,18);
+  layout->addItem(new QSpacerItem(0, 18), 4, 0);
   layout->addMultiCellWidget(new QLabel("<center>This Program is licensed under the GNU Public License.</center>",aboutBox),5,5,0,1);
-  layout->addRowSpacing(6,18);
+  layout->addItem(new QSpacerItem(0, 18), 6, 0);
 
   QHBoxLayout* buttonlayout=new QHBoxLayout();
   QPushButton * okbutton=new QPushButton( "OK", aboutBox);
@@ -1025,6 +1025,7 @@ void TimeMainWindow::callAboutBox()
   layout->addMultiCellLayout(buttonlayout,7,7,0,1);
   connect (okbutton, SIGNAL(clicked()), aboutBox, SLOT(close()));
   layout->addRowSpacing(8,10);
+  layout->addItem(new QSpacerItem(0, 10), 8, 0);
 
   aboutBox->exec();
 
