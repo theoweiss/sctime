@@ -366,6 +366,8 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
     itemFound=true;
   }
 
+  ukoi->setBold((etl->getFlags())&UK_PERSOENLICH);
+
   if ((etl->getFlags()&IS_DISABLED)!=0)
     return; // Deaktivierte Unterkonten nicht anfassen
 
