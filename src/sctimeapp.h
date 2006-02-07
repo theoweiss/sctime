@@ -48,12 +48,8 @@ class SCTimeApp: public QApplication
 
   public:
 
-    SCTimeApp( int &argc, char **argv ): QApplication (argc,argv)
+    SCTimeApp( int &argc, char **argv, QString zeitkontenfile ): QApplication (argc,argv)
     {
-      GetOpt opts(argc, argv);
-      QString zeitkontenfile;
-      opts.addOption('f',"zeitkontenfile", &zeitkontenfile);
-      opts.parse();
 
 #ifndef WIN32
       connect(this, SIGNAL(unixSignal(int)), this, SLOT(sighandler(int)));
@@ -75,7 +71,7 @@ class SCTimeApp: public QApplication
           zk = new KontoDatenInfoZeit(QFileInfo(zeitkontenfile).canonicalFilePath());
 #endif
       mainWindow=new TimeMainWindow(zk);
-      setMainWidget( mainWindow );
+      setMainWidget(mainWindow);
       mainWindow->show();
     }
 

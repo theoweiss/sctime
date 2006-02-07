@@ -179,11 +179,14 @@ int main( int argc, char **argv )
   execDir=executable.dirPath(true);
   // Pruefen, ob das Configdir ueber das environment gesetzt wurde
   QString configdirstring;
+  QString zeitkontenfile;
   char *envpointer;
 
   GetOpt opts(argc, argv);
   opts.addOption('f',"configdir", &configdirstring);
+  opts.addOption('f',"zeitkontenfile", &zeitkontenfile);
   opts.parse();
+
   if (configdirstring.startsWith("~/"))
       configdirstring.replace(0,2,QDir::homePath()+"/");
 
@@ -224,7 +227,7 @@ int main( int argc, char **argv )
 
   LOCK_FD lfp=openlock(configDir+"/LOCK");
 
-  sctimeApp= new SCTimeApp( argc, argv );
+  sctimeApp= new SCTimeApp( argc, argv , zeitkontenfile);
 
   sctimeApp->exec();
 
