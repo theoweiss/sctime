@@ -666,8 +666,10 @@ void TimeMainWindow::changeDate(const QDate& datum)
   if (abtListToday!=abtList) {
     settings->writeSettings(abtListToday);
     settings->writeShellSkript(abtListToday);
-    if (currentDateSel)
+    //if (currentDateSel) {
       delete abtList;
+      abtList=NULL;
+    //}
   }
   if (currentDateSel) {
     abtList=abtListToday;
