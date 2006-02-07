@@ -112,3 +112,6 @@ irix-cc{
   DEFINES += IRIX
   QMAKE_LIBS_QT += -lGL
 }
+irix-g++{
+  DEFINES += IRIX
+}
