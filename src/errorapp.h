@@ -21,11 +21,9 @@
 
 */
 
-#include <qapplication.h>
-#include <qmessagebox.h>
-#include <iostream>
-#include "timemainwindow.h"
-#include "qstring.h"
+#include <QApplication>
+#include <QMessageBox>
+#include <QString>
 
 
 /**
