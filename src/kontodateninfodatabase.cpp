@@ -31,6 +31,7 @@
 //Added by qt3to4:
 #include <QSqlQuery>
 #include "globals.h"
+#include "descdata.h"
 
 /**
  * Liest aus einer ODBC-Datenbank nach abtList
@@ -41,7 +42,7 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
   // PluginDir setzen
   QApplication::addLibraryPath(execDir+"/lib");
   abtList->clear();
-  QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC3" );  
+  QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC3" );
   defaultDB.setDatabaseName( "zeit" );
 
   if ( defaultDB.open() ) {
@@ -55,20 +56,20 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
           abtList->insertEintrag(abt,ko,uko);
           if (beschreibung.isEmpty())
               beschreibung="";
-          abtList->setBeschreibung(abt,ko,uko,beschreibung);
+          abtList->setDescription(abt,ko,uko,DescData(beschreibung,"",""));
           abtList->setUnterKontoFlags(abt,ko,uko,IS_IN_DATABASE,FLAG_MODE_OR);
         }
       }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;
   } else {
         ret = false;
 #ifdef WIN32
-		QMessageBox::critical(NULL,"Error","Kann Datenbank nicht öffnen\n",
+                QMessageBox::critical(NULL,"Error","Kann Datenbank nicht öffnen\n",
                               QMessageBox::Ok, Qt::NoButton,
                               Qt::NoButton);
 #else
-		std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
+                std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
 #endif
-    }  
+    }
 
   defaultDB.close();
   return ret;

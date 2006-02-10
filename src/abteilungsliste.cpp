@@ -82,7 +82,7 @@ AbteilungsListe::AbteilungsListe(const QDate _datum, AbteilungsListe* abtlist): 
         EintragsListe* eintragsliste=&(ukontPos->second);
         QString unterkonto=ukontPos->first;
         insertEintrag(abt,konto,unterkonto);
-        setBeschreibung(abt,konto,unterkonto,eintragsliste->beschreibung());
+        setDescription(abt,konto,unterkonto,eintragsliste->description());
         setUnterKontoFlags(abt,konto,unterkonto,eintragsliste->getFlags(),FLAG_MODE_OVERWRITE);
 
         // Default Kommentare kopieren
@@ -264,23 +264,23 @@ int AbteilungsListe::insertEintrag(const QString& abteilung, const QString& kont
 }
 
 
-void AbteilungsListe::setBeschreibung(const QString& abteilung, const QString& konto, const QString& unterkonto, const QString& beschreibung)
+void AbteilungsListe::setDescription(const QString& abteilung, const QString& konto, const QString& unterkonto, const DescData& descdata)
 {
   UnterKontoListe *unterkontoliste;
   UnterKontoListe::iterator itUk;
   if (!findUnterKonto(itUk,unterkontoliste,abteilung,konto,unterkonto)) return;
-  itUk->second.setBeschreibung(beschreibung);
+  itUk->second.setDescription(descdata);
 }
 
 
-QString AbteilungsListe::getBeschreibung(const QString& abteilung, const QString& konto, const QString& unterkonto)
+DescData AbteilungsListe::getDescription(const QString& abteilung, const QString& konto, const QString& unterkonto)
 {
   UnterKontoListe *unterkontoliste;
   UnterKontoListe::iterator itUk;
 
-  if (!findUnterKonto(itUk,unterkontoliste,abteilung,konto,unterkonto)) return "";
+  if (!findUnterKonto(itUk,unterkontoliste,abteilung,konto,unterkonto)) return DescData();
 
-  return itUk->second.beschreibung();
+  return itUk->second.description();
 }
 
 

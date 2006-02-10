@@ -28,7 +28,8 @@ SOURCES += abteilungsliste.cpp \
            utils.cpp \
            defaulttagreader.cpp \
            kontodateninfozeit.cpp \
-           GetOpt.cpp
+           GetOpt.cpp \
+           descdata.cpp
 HEADERS += abteilungsliste.h \
            kontoliste.h \
            statusbar.h \
@@ -59,7 +60,8 @@ HEADERS += abteilungsliste.h \
            qdatetbl.h \
            defaulttagreader.h \
            kontodateninfozeit.h \
-           GetOpt.h
+           GetOpt.h \
+           descdata.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \

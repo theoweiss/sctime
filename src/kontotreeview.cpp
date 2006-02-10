@@ -302,7 +302,7 @@ bool KontoTreeView::event ( QEvent * e )
             QString top,uko,ko,abt;
             int idx;
             itemInfo(item,top,abt,ko,uko,idx);
-            QString beschreibung=abtList->getBeschreibung(abt,ko,uko).simplifyWhiteSpace();
+            QString beschreibung=abtList->getDescription(abt,ko,uko).description().simplifyWhiteSpace();
             if (beschreibung!="") {
                 QToolTip::showText(qh->globalPos(),beschreibung,this);
                 qh->accept();

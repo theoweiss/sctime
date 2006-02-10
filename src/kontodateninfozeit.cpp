@@ -235,18 +235,19 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
                 continue;
             }
 
-        // Kostenstelle trennt Abteilung von Beschreibung, also
-        // dort splitten
             QString abt = ql[2].simplifyWhiteSpace();
             QString konto = ql[0].simplifyWhiteSpace();
             QString unterkonto = ql[1].simplifyWhiteSpace();
+
+            QString verantwortlicher = ql[4].simplifyWhiteSpace();
+            QString typ = ql[5].simplifyWhiteSpace();
 
             QString beschreibung = ql[6].simplifyWhiteSpace();
 
             if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
 
             abtList->insertEintrag(abt,konto,unterkonto);
-            abtList->setBeschreibung(abt,konto,unterkonto,beschreibung);
+            abtList->setDescription(abt,konto,unterkonto,DescData(beschreibung,verantwortlicher,typ));
             abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
 
         }

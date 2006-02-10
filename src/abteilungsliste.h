@@ -77,9 +77,9 @@ class AbteilungsListe: public std::map<QString,KontoListe>
 
     bool setEintrag(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, const UnterKontoEintrag& uk, bool regular=false);
 
-    void setBeschreibung(const QString& abteilung, const QString& konto, const QString& unterkonto, const QString& beschreibung);
+    void setDescription(const QString& abteilung, const QString& konto, const QString& unterkonto, const DescData& descData);
 
-    QString getBeschreibung(const QString& abteilung, const QString& konto, const QString& unterkonto);
+    DescData getDescription(const QString& abteilung, const QString& konto, const QString& unterkonto);
 
     bool setKommentar(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, const QString& kommentar);
 
