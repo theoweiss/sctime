@@ -30,6 +30,7 @@
 #include <iostream>
 #include "qevent.h"
 #include "globals.h"
+#include "descdata.h"
 #include "../pics/hi16_action_apply.xpm"
 #include <vector>
 
@@ -41,6 +42,8 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
 {
 
   addColumn ("Konten");
+  setColumnAlignment(1,Qt::AlignCenter);
+  addColumn ("Typ");
   addColumn ("Aktiv");
   addColumn ("Zeit");
   setColumnAlignment(2,Qt::AlignRight);
@@ -254,7 +257,6 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
   allekonten->setOpen(false);
 
   if (abtList) {
-
     AbteilungsListe::iterator abtPos;
 
     for (abtPos=abtList->begin(); abtPos!=abtList->end(); ++abtPos) {
@@ -268,11 +270,12 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
               continue; // Deaktivierte Unterkonten nicht anzeigen
           }
           EintragsListe* eintragsliste=&(ukontPos->second);
+          DescData dd=eintragsliste->description();
           for (EintragsListe::iterator etPos=eintragsliste->begin(); etPos!=eintragsliste->end(); ++etPos) {
 
             TimeCounter tc(etPos->second.sekunden), tcAbzur(etPos->second.sekundenAbzur);
             if (etPos==eintragsliste->begin()) {
-              KontoTreeItem* newItem=new KontoTreeItem( kontoitem, ukontPos->first, "", tc.toString(),
+                KontoTreeItem* newItem=new KontoTreeItem( kontoitem, ukontPos->first, dd.type(), "", tc.toString(),
                                                       tcAbzur.toString() , etPos->second.kommentar);
               newItem->setGray(abtList->checkInState());
              // newItem->setBold((etPos->second.kommentar!="")||(etPos->second.sekunden!=0)||(etPos->second.sekundenAbzur!=0));
@@ -374,6 +377,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
   if (itemFound) {
     bool etiFound=(eti!=NULL);
     ukHasSubTree=(etl->size()>1);
+    DescData dd=etl->description();
     if (!ukHasSubTree)
       eti=ukoi;
     else {
@@ -382,7 +386,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
         QString qs;
         qs.setNum(etl->begin()->first);
         eti=new KontoTreeItem(ukoi,qs);
-        ukoi->setPixmap(1,emptyPixmap);ukoi->setText(2,"");ukoi->setText(3,"");ukoi->setText(4,"");
+        ukoi->setPixmap(2,emptyPixmap);ukoi->setText(1,"");ukoi->setText(3,"");ukoi->setText(4,"");ukoi->setText(5,"");
         refreshItem(abt,ko,uko,etl->begin()->first);
         if (etl->begin()->first==idx) etiFound=true;
         newUkSubTreeOpened=true;
@@ -395,21 +399,22 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       }
     }
 
-    eti->setText(4,etiter->second.kommentar);
+    eti->setText(5,etiter->second.kommentar);
     TimeCounter tc(etiter->second.sekunden), tcAbzur(etiter->second.sekundenAbzur);
-    eti->setText(2,tc.toString());
-    eti->setText(3,tcAbzur.toString());
+    eti->setText(1,dd.type());
+    eti->setText(3,tc.toString());
+    eti->setText(4,tcAbzur.toString());
     //eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
 
     eti->setBold((etiter->second.flags)&UK_PERSOENLICH);
 
     if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
       {
-        eti->setPixmap(1,*aktivPixmap);
+        eti->setPixmap(2,*aktivPixmap);
         setSelected(eti,true);
       }
     else
-      eti->setPixmap(1,emptyPixmap);
+      eti->setPixmap(2,emptyPixmap);
 
     bool inPersKontenGefunden=sucheItem(PERSOENLICHE_KONTEN_STRING,abt,ko,uko,idx,topi,abti,koi,ukoi,eti);
 
@@ -433,23 +438,23 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       if (!koi) koi=new KontoTreeItem(abti,ko);
       if (!ukoi) {
         if (!ukHasSubTree) {
-          eti=ukoi=new KontoTreeItem(koi,uko,"",tc.toString(), tcAbzur.toString(),etiter->second.kommentar);
+            eti=ukoi=new KontoTreeItem(koi,uko,dd.type(), "",tc.toString(), tcAbzur.toString(),etiter->second.kommentar);
         }
         else
           ukoi=new KontoTreeItem(koi,uko);
       }
         if (!eti) {
 
-          eti=new KontoTreeItem(ukoi,QString().setNum(idx),"",tc.toString(), tcAbzur.toString(),etiter->second.kommentar);
+            eti=new KontoTreeItem(ukoi,QString().setNum(idx),dd.type(), "",tc.toString(), tcAbzur.toString(),etiter->second.kommentar);
 
       }
       topi->setOpen(true); abti->setOpen(true); koi->setOpen(true); ukoi->setOpen(true);
      // eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
       eti->setGray(abtList->checkInState());
       if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
-        eti->setPixmap(1,*aktivPixmap);
+        eti->setPixmap(2,*aktivPixmap);
       else
-        eti->setPixmap(1,emptyPixmap);
+        eti->setPixmap(2,emptyPixmap);
     }
     if ((inPersKontenGefunden)&&((etiter->second.flags)&UK_PERSOENLICH)) {
       int firstEintrag=firstEintragWithFlags(etl,UK_PERSOENLICH);
@@ -460,7 +465,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
         if (newUkSubTreeOpened)
         { /*QString qs;
           qs.setNum(firstEintrag);*/
-          ukoi->setPixmap(1,emptyPixmap);ukoi->setText(2,"");ukoi->setText(3,"");ukoi->setText(4,"");
+            ukoi->setPixmap(2,emptyPixmap);ukoi->setText(1,"");ukoi->setText(3,"");ukoi->setText(4,"");ukoi->setText(5,"");
         }
         if (!etiFound) {
           QString qs;
@@ -471,12 +476,13 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       }
 
       if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
-        eti->setPixmap(1,*aktivPixmap);
+        eti->setPixmap(2,*aktivPixmap);
       else
-        eti->setPixmap(1,emptyPixmap);
-      eti->setText(4,etiter->second.kommentar);
-      eti->setText(2,tc.toString());
-      eti->setText(3,tcAbzur.toString());
+        eti->setPixmap(2,emptyPixmap);
+      eti->setText(5,etiter->second.kommentar);
+      eti->setText(1,dd.type());
+      eti->setText(3,tc.toString());
+      eti->setText(4,tcAbzur.toString());
       eti->setGray(abtList->checkInState());
      // eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
     }

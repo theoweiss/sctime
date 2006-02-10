@@ -46,17 +46,28 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
   defaultDB.setDatabaseName( "zeit" );
 
   if ( defaultDB.open() ) {
-      QSqlQuery query( "select gb.name,konto.name,unterkonto.name,unterkonto.beschreibung from konto,unterkonto,gb WHERE konto.konto_id = unterkonto.konto_id AND gb.gb_id = konto.gb_id AND unterkonto.eintragbar=\'y\';", defaultDB);
+      QSqlQuery query(
+              "SELECT gb.name,konto.name,unterkonto.name,unterkonto.beschreibung,tuser.name,unterkonto.art "
+              "FROM konto,gb,unterkonto "
+              "LEFT JOIN tuser ON (tuser.user_id = unterkonto.verantwortlich) "
+              "WHERE konto.konto_id = unterkonto.konto_id AND gb.gb_id = konto.gb_id AND unterkonto.eintragbar=\'y\';",
+            defaultDB);
       if ( query.isActive() ) {
         while ( query.next() ) {
           QString abt = query.value(0).toString().simplifyWhiteSpace();
           QString ko = query.value(1).toString().simplifyWhiteSpace();
           QString uko = query.value(2).toString().simplifyWhiteSpace();
           QString beschreibung = query.value(3).toString();
+          QString responsible = query.value(4).toString().simplifyWhiteSpace();;
+          QString type = query.value(5).toString().simplifyWhiteSpace();;
           abtList->insertEintrag(abt,ko,uko);
           if (beschreibung.isEmpty())
               beschreibung="";
-          abtList->setDescription(abt,ko,uko,DescData(beschreibung,"",""));
+          if (responsible.isEmpty())
+              responsible="";
+          if (type.isEmpty())
+              type="";
+          abtList->setDescription(abt,ko,uko,DescData(beschreibung,responsible,type));
           abtList->setUnterKontoFlags(abt,ko,uko,IS_IN_DATABASE,FLAG_MODE_OR);
         }
       }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;
