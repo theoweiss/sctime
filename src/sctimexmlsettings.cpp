@@ -192,11 +192,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
                 abtList->setKontoFlags(abteilungstr,kontostr,IS_CLOSED,FLAG_MODE_NAND);
               if (elem2.attribute("open")=="no")
                 abtList->setKontoFlags(abteilungstr,kontostr,IS_CLOSED,FLAG_MODE_OR);
-              if (elem2.attribute("persoenlich")=="yes")
-                abtList->setKontoFlags(abteilungstr,kontostr,UK_PERSOENLICH,FLAG_MODE_OR);
-              else
-                //if (elem2.attribute("persoenlich")=="no")
-                  abtList->setKontoFlags(abteilungstr,kontostr,UK_PERSOENLICH,FLAG_MODE_NAND);
+              abtList->moveKontoPersoenlich(abteilungstr,kontostr,(elem2.attribute("persoenlich")=="yes"));
 
               bool kontoPers=((abtList->getKontoFlags(abteilungstr,kontostr))&UK_PERSOENLICH);
 
@@ -213,18 +209,8 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
                     if (elem3.attribute("open")=="no")
                       abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,
                                                   IS_CLOSED,FLAG_MODE_OR);
-                    if (elem3.attribute("persoenlich")=="yes")
-                      abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,
-                                                  UK_PERSOENLICH,FLAG_MODE_OR);
-                    else
-                      if (elem3.attribute("persoenlich")=="no")
-                        abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,
-                                                    UK_PERSOENLICH,FLAG_MODE_NAND);
-                      else
-                        if (kontoPers) abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,
-                                                                   UK_PERSOENLICH,FLAG_MODE_OR);
-                        else abtList->setUnterKontoFlags(abteilungstr,kontostr,unterkontostr,
-                                                                   UK_PERSOENLICH,FLAG_MODE_NAND);
+                    if ((elem3.attribute("persoenlich")=="yes")||(elem3.attribute("persoenlich")=="no"))
+                      abtList->moveUnterKontoPersoenlich(abteilungstr,kontostr,unterkontostr,(elem3.attribute("persoenlich")=="yes"));
 
                     bool ukontPers=((abtList->getUnterKontoFlags(abteilungstr,kontostr,unterkontostr))
                                     &UK_PERSOENLICH);
