@@ -50,7 +50,7 @@ class TimeMainWindow: public QMainWindow
     TimeMainWindow(KontoDatenInfo* zk);
     Q3ListView* getKontoTree() { return kontoTree; };
     virtual ~TimeMainWindow();
-    SCTimeXMLSettings* settings;
+    SCTimeXMLSettings* settings;        
 
   public slots:
 

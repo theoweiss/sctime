@@ -661,15 +661,18 @@ void TimeMainWindow::changeDate(const QDate& datum)
   std::vector<int> columnwidthlist;
   kontoTree->getColumnWidthList(columnwidthlist);
   settings->setColumnWidthList(columnwidthlist);
-  settings->writeSettings(abtList);
-  settings->writeShellSkript(abtList);
   if (abtListToday!=abtList) {
     settings->writeSettings(abtListToday);
     settings->writeShellSkript(abtListToday);
+    settings->writeSettings(abtList);
+    settings->writeShellSkript(abtList);    
     //if (currentDateSel) {
       delete abtList;
       abtList=NULL;
     //}
+  } else {
+  	settings->writeSettings(abtList);
+    settings->writeShellSkript(abtList);
   }
   if (currentDateSel) {
     abtList=abtListToday;
