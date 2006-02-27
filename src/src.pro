@@ -5,7 +5,7 @@
 
 TEMPLATE = app
 VERSIONSTR = \"0.50\"
-CONFIG += release warn_on qt
+CONFIG += warn_on qt
 CONFIG += uic
 OBJECTS_DIR = ../obj
 QT += qt3support xml sql gui core
@@ -28,6 +28,7 @@ SOURCES += abteilungsliste.cpp \
            utils.cpp \
            defaulttagreader.cpp \
            kontodateninfozeit.cpp \
+           kontotreeitem.cpp \
            GetOpt.cpp \
            descdata.cpp
 HEADERS += abteilungsliste.h \
@@ -86,6 +87,9 @@ isEmpty(BUILDDATESTR){
   BUILDDATESTR = \""unknown"\"
 }
 linux-g++-static{
+  LIBS += -ldl
+}
+linux-g++-static-debug{
   LIBS += -ldl
 }
 linux-g++{

@@ -67,21 +67,31 @@ class KontoTreeView: public Q3ListView
 
     void showAktivesProjekt();
 
-    void getColumnWidthList(std::vector<int>& columnwidth);
+    void getColumnWidthList(std::vector<int>& columnwidth);           
 
   public slots:
 
     virtual void refreshItem(const QString& abt, const QString& ko,const QString& uko, int idx);
     void refreshAllItemsInUnterkonto(const QString& abt, const QString& ko,const QString& uko);
-    void refreshAllItemsInKonto(const QString& abt, const QString& ko);
+    void refreshAllItemsInKonto(const QString& abt, const QString& ko);    
 
   protected:
+      virtual Q3DragObject* dragObject ();
       virtual bool event ( QEvent * e );
+#ifdef USE_QT4_DRAGNDROP
+      virtual void mouseMoveEvent(QMouseEvent *event);
+      virtual void mousePressEvent(QMouseEvent *event);      
+#endif
+
+      virtual void dragEnterEvent(QDragEnterEvent *event);
+      virtual void dropEvent(QDropEvent *event);  
+      virtual void dragMoveEvent(QDragMoveEvent *event);
 
   private:
     QPixmap* aktivPixmap;
     QPixmap emptyPixmap;
     AbteilungsListe* abtList;
+    QPoint dragStartPosition;
 
 };
 

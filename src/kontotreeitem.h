@@ -26,62 +26,33 @@
 
 #include "q3listview.h"
 #include "qpainter.h"
+#include <Q3DragObject>
+#include <QDropEvent>
+
+class KontoTreeView;
+
+
 
 class KontoTreeItem: public Q3ListViewItem
 {
   public:
 
-    KontoTreeItem ( Q3ListView * parent ): Q3ListViewItem(parent) { isBold=false; }
-    KontoTreeItem ( Q3ListViewItem * parent ): Q3ListViewItem(parent) { isBold=false; }
+    KontoTreeItem ( Q3ListView * parent );
+    KontoTreeItem ( Q3ListViewItem * parent );
 
 
-    KontoTreeItem ( Q3ListView * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null )
-     :Q3ListViewItem(parent,label1,label2,label3,label4,label5,label6,label7,label8)
-    {
-      isBold=false;
-      isGray=false;
-    }
+    KontoTreeItem ( Q3ListView * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );
 
+    KontoTreeItem ( Q3ListViewItem * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );
 
-    KontoTreeItem ( Q3ListViewItem * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null )
-     :Q3ListViewItem(parent,label1,label2,label3,label4,label5,label6,label7,label8)
-    {
-      isBold=false;
-      isGray=false;
-    }
+    virtual void paintCell ( QPainter * p, const QColorGroup & cg, int column, int width, int align );
+ /*   bool acceptDrop ( const QMimeSource * mime );
+    
+    void dropped (QDropEvent * e);*/
+       
+    void setBold(bool bold);
 
-    virtual void paintCell ( QPainter * p, const QColorGroup & cg, int column, int width, int align )
-    {
-      QColorGroup newcg=cg;
-      if (column==0) {
-        QFont newfont=p->font();
-        if (isBold) newfont.setWeight(QFont::DemiBold);
-        p->setFont(newfont);
-      }
-      else
-        if (isGray) newcg.setColor(QColorGroup::Text,Qt::gray);
-     if (text(column).stripWhiteSpace()=="0:00") {
-        newcg.setColor(QColorGroup::Text,Qt::gray);
-      }
-      Q3ListViewItem::paintCell(p,newcg,column,width,align);
-    }
-
-
-    void setBold(bool bold)
-    {
-      if (bold!=isBold) {
-        isBold=bold;
-        repaint();
-      }
-    }
-
-    void setGray(bool gray)
-    {
-      if (gray!=isGray) {
-        isGray=gray;
-        repaint();
-      }
-    }
+    void setGray(bool gray);
 
   private:
     bool isBold;
