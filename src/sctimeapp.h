@@ -81,16 +81,22 @@ class SCTimeApp: public QApplication
       delete zk;
     }
 
+  void commitData ( QSessionManager & manager ) 
+  {
+  	mainWindow->save();
+  }
+
   public slots:
 #ifndef WIN32
     void sighandler(int nr)
     {
         switch(nr) {
             case SIGINT:
-            case SIGTERM:
-                mainWindow->close();
+            case SIGTERM:                
+                mainWindow->save();               
+                exit(0);
                 break;
-            case SIGHUP:
+            case SIGHUP:            
                 break;
         }
     }
