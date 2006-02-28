@@ -46,7 +46,7 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
   QFile shellFile(configDir+filename);
 
   if (!shellFile.open(QIODevice::WriteOnly)) {
-      std::cout<<"Kann Ausgabedatei nicht schreiben: "<<(configDir+filename).toStdString()<<std::endl;
+      std::cout<<"Kann Ausgabedatei nicht schreiben: "<<(configDir+filename).toLocal8Bit().constData()<<std::endl;
       return;
   }
 
