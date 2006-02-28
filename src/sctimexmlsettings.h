@@ -139,6 +139,36 @@ class SCTimeXMLSettings
         columnwidth = list;
     }
 
+    bool useCustomFont()
+    {
+    	return m_useCustomFont;
+    }
+    
+    void setUseCustomFont(bool useCustomFont)
+    {
+    	m_useCustomFont=useCustomFont;
+    }
+    
+    QString customFont()
+    {
+    	return m_customFont;
+    }
+    
+    void setCustomFont(QString customFont)
+    {
+        m_customFont=customFont;
+    }
+    
+    int customFontSize()
+    {
+    	return m_customFontSize;
+    }
+    
+    void setCustomFontSize(int customFontSize)
+    {
+        m_customFontSize=customFontSize;
+    }
+
 
   private:
 
@@ -159,7 +189,10 @@ class SCTimeXMLSettings
     bool alwaysSaveEintrag;
     bool _powerUserView;
     bool _singleClickActivation;
+    bool m_useCustomFont;
     int _maxWorkingTime;
+    QString m_customFont;
+    int m_customFontSize;
 
     QPoint unterKontoWindowPosition;
     QSize unterKontoWindowSize;

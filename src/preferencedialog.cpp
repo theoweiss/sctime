@@ -23,6 +23,7 @@
 #include "preferencedialog.h"
 #include "qspinbox.h"
 #include "qcheckbox.h"
+#include <QFontDialog>
 
 
 PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent)
@@ -31,13 +32,34 @@ PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent
     setupUi(this);
     connect(buttonOk, SIGNAL(clicked()), this, SLOT(accept()));
     connect(buttonCancel, SIGNAL(clicked()), this, SLOT(reject()));
+    connect(customFontSelectButton, SIGNAL(clicked()), this, SLOT(selectCustomFont()));
 
     settings = _settings;
     zeitIncBox->setValue(settings->timeIncrement()/60);
     fastZeitIncBox->setValue(settings->fastTimeIncrement()/60);
     entrySaveCheckbox->setChecked(settings->alwaysSaveEntry());
     powerUserCheckbox->setChecked(settings->powerUserView());
-    singleClickCheckbox->setChecked(settings->singleClickActivation());
+    singleClickCheckbox->setChecked(settings->singleClickActivation());    
+    customFontCheckBox->setChecked(settings->useCustomFont());
+    customFontSelectButton->setEnabled(settings->useCustomFont());
+    QString custFont=settings->customFont();
+	int custFontSize=settings->customFontSize();
+	if (custFont.isEmpty()) {
+		selectedFont=this->font();
+	} else {
+		selectedFont=QFont(custFont, custFontSize);
+	}
+	fontPreview->setFont(selectedFont);
+}
+
+void PreferenceDialog::selectCustomFont()
+{
+	bool ok;	
+    QFont font = QFontDialog::getFont(&ok, selectedFont, this);
+    if (ok) {
+    	selectedFont=font;
+    }
+    fontPreview->setFont(selectedFont);
 }
 
 PreferenceDialog::~PreferenceDialog()
@@ -52,4 +74,8 @@ void PreferenceDialog::accept()
     settings->setAlwaysSaveEntry(entrySaveCheckbox->isChecked());
     settings->setPowerUserView(powerUserCheckbox->isChecked());
     settings->setSingleClickActivation(singleClickCheckbox->isChecked());
+    settings->setUseCustomFont(customFontCheckBox->isChecked());
+    settings->setCustomFont(selectedFont.family());
+	settings->setCustomFontSize(selectedFont.pointSize());
+    
 }

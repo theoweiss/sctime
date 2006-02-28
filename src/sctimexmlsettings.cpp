@@ -167,7 +167,8 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
   if (global) {
     defaultcommentfiles.clear();
     columnwidth.clear();
-  }
+    setUseCustomFont(false);
+  }  
 
   for( QDomNode node1 = docElem.firstChild(); !node1.isNull(); node1 = node1.nextSibling() ) {
     QDomElement elem1 = node1.toElement();
@@ -340,6 +341,11 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             }
             if (elem2.tagName()=="poweruserview") {
               setPowerUserView((elem2.attribute("on")=="yes"));
+            }            
+            if (elem2.tagName()=="customfont") {
+              setUseCustomFont(true);
+              setCustomFont(elem2.attribute("family"));
+              setCustomFontSize(elem2.attribute("size").toInt());
             }
             if (elem2.tagName()=="singleclickactivation") {
               setSingleClickActivation((elem2.attribute("on")=="yes"));
@@ -443,7 +449,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     mainwindowsizetag.setAttribute("height",mainwindowSize.height());
     generaltag.appendChild(mainwindowsizetag);
 
-    for (int i=0; i<columnwidth.size(); i++) {
+    for (unsigned int i=0; i<columnwidth.size(); i++) {
         QDomElement columnwidthtag = doc.createElement("column");
         columnwidthtag.setAttribute("width",columnwidth[i]);
         generaltag.appendChild(columnwidthtag);
@@ -460,6 +466,15 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     if (powerUserView()) on="yes";
     powerusertag.setAttribute("on",on);
     generaltag.appendChild(powerusertag);
+    
+    if (useCustomFont()) {
+        QDomElement customfonttag = doc.createElement("customfont");    
+        QString size="";
+        size=size.arg(customFontSize());
+        customfonttag.setAttribute("family",customFont());
+        customfonttag.setAttribute("size",size);
+        generaltag.appendChild(customfonttag);
+    }
 
     QDomElement singleclicktag = doc.createElement("singleclickactivation");
     on="no";

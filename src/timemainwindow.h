@@ -159,6 +159,7 @@ class TimeMainWindow: public QMainWindow
     QAction* fastAbzurMinusAction;
     QAction* eintragRemoveAction;
     QAction* checkInAction;
+    QFont qtDefaultFont;
     AbteilungsListe* abtList;
     AbteilungsListe* abtListToday;
     StatusBar* statusBar;

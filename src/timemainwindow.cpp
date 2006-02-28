@@ -33,6 +33,7 @@
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QCustomEvent>
+#include <QFont>
 #include "kontotreeview.h"
 #include "time.h"
 #include "qtimer.h"
@@ -90,6 +91,13 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
   settings->readSettings(abtList);
   defaultCommentReader = new DefaultCommentReader();
   settings->getDefaultCommentFiles(xmlfilelist);
+  qtDefaultFont=QApplication::font();
+  if (settings->useCustomFont())
+  {
+    QString custFont=settings->customFont();
+    int custFontSize=settings->customFontSize();
+    QApplication::setFont(QFont(custFont,custFontSize));
+  }  
   defaultCommentReader->read(abtList,xmlfilelist);
 
   DefaultTagReader defaulttagreader;
@@ -929,6 +937,13 @@ void TimeMainWindow::callPreferenceDialog()
   preferenceDialog.exec();
   showAdditionalButtons(settings->powerUserView());
   configClickMode(settings->singleClickActivation());
+  if (settings->useCustomFont()) {
+  	QApplication::setFont(QFont(settings->customFont(),settings->customFontSize()));
+  }
+  else
+  {
+    QApplication::setFont(qtDefaultFont);
+  }
 }
 
 /**

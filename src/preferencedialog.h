@@ -26,6 +26,7 @@
 
 #include "ui_preferencedialogbase.h"
 #include <QDialog>
+#include <QFont>
 #include "sctimexmlsettings.h"
 
 
@@ -53,9 +54,12 @@ protected:
 protected slots:
   /*$PROTECTED_SLOTS$*/
   virtual void          accept();
+  virtual void          selectCustomFont();
 
 signals:
   // signals
+private:
+  QFont selectedFont;
 };
 
 #endif
