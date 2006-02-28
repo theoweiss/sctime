@@ -9,7 +9,7 @@
     <x>0</x>
     <y>0</y>
     <width>624</width>
-    <height>399</height>
+    <height>430</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -64,6 +64,13 @@
         <widget class="QCheckBox" name="singleClickCheckbox" >
          <property name="text" >
           <string>Konto durch Singleclick aktivieren</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="showTypeCheckBox" >
+         <property name="text" >
+          <string>Kontotyp anzeigen</string>
          </property>
         </widget>
        </item>

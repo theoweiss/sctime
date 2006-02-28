@@ -49,6 +49,11 @@ class SCTimeXMLSettings
       columnwidth.clear();
       unterKontoWindowPosition = QPoint(0,0);
       unterKontoWindowSize = QSize(0,0);
+      m_showTypeColumn=false;
+      m_useCustomFont=false;
+      m_customFont="helvetica";
+      m_customFontSize=10;
+      
     }
 
     void writeSettings(AbteilungsListe* abtList);
@@ -169,6 +174,15 @@ class SCTimeXMLSettings
         m_customFontSize=customFontSize;
     }
 
+    bool showTypeColumn()
+    {
+    	return m_showTypeColumn;
+    }
+    
+    void setShowTypeColumn(bool showTypeColumn)
+    {
+    	m_showTypeColumn=showTypeColumn;
+    }
 
   private:
 
@@ -190,6 +204,7 @@ class SCTimeXMLSettings
     bool _powerUserView;
     bool _singleClickActivation;
     bool m_useCustomFont;
+    bool m_showTypeColumn;
     int _maxWorkingTime;
     QString m_customFont;
     int m_customFontSize;

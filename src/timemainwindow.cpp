@@ -34,6 +34,7 @@
 #include <QVBoxLayout>
 #include <QCustomEvent>
 #include <QFont>
+#include <Q3Header>
 #include "kontotreeview.h"
 #include "time.h"
 #include "qtimer.h"
@@ -119,13 +120,19 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
 
  // setCaption("sctime "+abtList->getDatum().toString("dd.MM.yyyy"));
   kontoTree=new KontoTreeView( this, abtList, columnwidthlist );
-  kontoTree->closeFlaggedPersoenlicheItems();
+  kontoTree->closeFlaggedPersoenlicheItems();  
 
   mimeSourceFactory=new Q3MimeSourceFactory();
   mimeSourceFactory->setPixmap("/images/scLogo_15Farben.png",QPixmap((const char **)scLogo_15Farben_xpm));
   setIcon(QPixmap((const char **)sc_logo_xpm));
 
   setCentralWidget(kontoTree);
+  
+  if (!settings->showTypeColumn()) {  	
+  	kontoTree->hideColumn(1);
+  	kontoTree->setColumnWidthMode(1,Q3ListView::Manual);
+  	kontoTree->header()->setResizeEnabled(false, 1);
+  }
 
   toolBar   = new ToolBar("Main ToolBar", this);
   toolBar->setIconSize(QSize(22,22));
@@ -933,6 +940,8 @@ void TimeMainWindow::callFindKontoDialog()
 
 void TimeMainWindow::callPreferenceDialog()
 {
+  bool oldshowtypecolumn = settings->showTypeColumn();
+	
   PreferenceDialog preferenceDialog(settings, this);
   preferenceDialog.exec();
   showAdditionalButtons(settings->powerUserView());
@@ -943,6 +952,15 @@ void TimeMainWindow::callPreferenceDialog()
   else
   {
     QApplication::setFont(qtDefaultFont);
+  }
+  if (!settings->showTypeColumn()) {
+  	kontoTree->hideColumn(1);
+  	kontoTree->header()->setResizeEnabled(false, 1);
+  } else
+  {
+  	if (!oldshowtypecolumn)
+    	kontoTree->header()->setResizeEnabled(true, 1);
+    	kontoTree->adjustColumn(1);
   }
 }
 

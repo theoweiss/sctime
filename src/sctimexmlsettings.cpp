@@ -339,6 +339,9 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             if (elem2.tagName()=="saveeintrag") {
               alwaysSaveEintrag=(elem2.attribute("always")=="yes");
             }
+            if (elem2.tagName()=="typecolumn") {
+              m_showTypeColumn=(elem2.attribute("show")=="yes");
+            }
             if (elem2.tagName()=="poweruserview") {
               setPowerUserView((elem2.attribute("on")=="yes"));
             }            
@@ -466,6 +469,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     if (powerUserView()) on="yes";
     powerusertag.setAttribute("on",on);
     generaltag.appendChild(powerusertag);
+    
+    QDomElement typecolumntag = doc.createElement("typecolumn");
+    on="no";
+    if (showTypeColumn()) on="yes";
+    typecolumntag.setAttribute("show",on);
+    generaltag.appendChild(typecolumntag);
     
     if (useCustomFont()) {
         QDomElement customfonttag = doc.createElement("customfont");    

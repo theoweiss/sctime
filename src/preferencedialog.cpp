@@ -39,7 +39,8 @@ PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent
     fastZeitIncBox->setValue(settings->fastTimeIncrement()/60);
     entrySaveCheckbox->setChecked(settings->alwaysSaveEntry());
     powerUserCheckbox->setChecked(settings->powerUserView());
-    singleClickCheckbox->setChecked(settings->singleClickActivation());    
+    singleClickCheckbox->setChecked(settings->singleClickActivation()); 
+    showTypeCheckBox->setChecked(settings->showTypeColumn());
     customFontCheckBox->setChecked(settings->useCustomFont());
     customFontSelectButton->setEnabled(settings->useCustomFont());
     QString custFont=settings->customFont();
@@ -74,6 +75,7 @@ void PreferenceDialog::accept()
     settings->setAlwaysSaveEntry(entrySaveCheckbox->isChecked());
     settings->setPowerUserView(powerUserCheckbox->isChecked());
     settings->setSingleClickActivation(singleClickCheckbox->isChecked());
+    settings->setShowTypeColumn(showTypeCheckBox->isChecked());
     settings->setUseCustomFont(customFontCheckBox->isChecked());
     settings->setCustomFont(selectedFont.family());
 	settings->setCustomFontSize(selectedFont.pointSize());
