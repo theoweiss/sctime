@@ -969,7 +969,12 @@ void TimeMainWindow::callPreferenceDialog()
  */
 void TimeMainWindow::setAktivesProjekt(Q3ListViewItem * item)
 {
+  bool currentDateSel = (abtList->getDatum()==QDate::currentDate());
   if (!kontoTree->isEintragsItem(item)) return;
+  if (!currentDateSel) {
+    abtList->setAsAktiv("","","",0);
+    return;
+  }
 
   QString uko,ko,abt,top ;
   int idx;
