@@ -529,7 +529,7 @@ void TimeMainWindow::zeitChanged()
     // dass (falls der user nicht sofort reagiert), jede Minute eine neue Box aufpoppt
     // => nix gut am naechsten morgen, wenn man das ausloggen vergisst :-)
     last=zeit;
-    QMessageBox::warning(this,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
+    QMessageBox::warning(0,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
                        QMessageBox::Ok | QMessageBox::Default,0);
   }
   else
@@ -543,7 +543,7 @@ void TimeMainWindow::zeitChanged()
 void TimeMainWindow::pause()
 {
   paused=true;
-  QMessageBox::warning(this,"Pause Dialog","Die Zeiterfassung wurde angehalten. Ende der Pause mit OK.",
+  QMessageBox::warning(0,"Pause Dialog","Die Zeiterfassung wurde angehalten. Ende der Pause mit OK.",
                        QMessageBox::Ok | QMessageBox::Default,0);
   paused=false;
 }
@@ -860,12 +860,12 @@ void TimeMainWindow::flagsChanged(const QString& abt, const QString& ko, const Q
 void TimeMainWindow::checkIn()
 {
   if (abtList->getDatum()>=QDate::currentDate()) {
-    QMessageBox::critical(this,"Fehler","Heutiges Datum kann nicht über die GUI eingecheckt werden.\nZeiten nicht eingecheckt!",
+    QMessageBox::critical(0,"Fehler","Heutiges Datum kann nicht über die GUI eingecheckt werden.\nZeiten nicht eingecheckt!",
                        QMessageBox::Ok | QMessageBox::Default,0);
     return;
   }
   if (abtList->checkInState()) {
-    QMessageBox::critical(this,"Fehler","Ausgewähltes Datum ist bereits eingecheckt.\nZeiten nicht eingecheckt!",
+    QMessageBox::critical(0,"Fehler","Ausgewähltes Datum ist bereits eingecheckt.\nZeiten nicht eingecheckt!",
                        QMessageBox::Ok | QMessageBox::Default,0);
     return;
   }
@@ -874,7 +874,7 @@ void TimeMainWindow::checkIn()
 
   // do checkin
   if (!abtList->checkIn()) {
-    QMessageBox::critical(this,"Fehler","Fehler beim einchecken.\nZeiten nicht eingecheckt!",
+    QMessageBox::critical(0,"Fehler","Fehler beim einchecken.\nZeiten nicht eingecheckt!",
                        QMessageBox::Ok | QMessageBox::Default,0);
     return;
   } else {
@@ -926,7 +926,7 @@ void TimeMainWindow::callFindKontoDialog()
 
   QString abt=abtList->findAbteilungOfKonto(konto);
   if (abt=="") {
-    QMessageBox::warning(this,"Konto nicht gefunden","Das Konto "+konto+" konnte nicht gefunden werden.",
+    QMessageBox::warning(0,"Konto nicht gefunden","Das Konto "+konto+" konnte nicht gefunden werden.",
                        QMessageBox::Ok | QMessageBox::Default,0);
     return;
   }

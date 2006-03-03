@@ -479,7 +479,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     if (useCustomFont()) {
         QDomElement customfonttag = doc.createElement("customfont");    
         QString size="";
-        size=size.arg(customFontSize());
+        size=size.setNum(customFontSize());
         customfonttag.setAttribute("family",customFont());
         customfonttag.setAttribute("size",size);
         generaltag.appendChild(customfonttag);

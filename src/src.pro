@@ -4,7 +4,7 @@
 # Target is an application:  ../bin/sctime
 
 TEMPLATE = app
-VERSIONSTR = \"0.51\"
+VERSIONSTR = \"0.52\"
 CONFIG += warn_on qt
 CONFIG += uic
 OBJECTS_DIR = ../obj
@@ -30,7 +30,8 @@ SOURCES += abteilungsliste.cpp \
            kontodateninfozeit.cpp \
            kontotreeitem.cpp \
            GetOpt.cpp \
-           descdata.cpp
+           descdata.cpp \
+           smallfontdialog.cpp
 HEADERS += abteilungsliste.h \
            kontoliste.h \
            statusbar.h \
@@ -62,7 +63,8 @@ HEADERS += abteilungsliste.h \
            defaulttagreader.h \
            kontodateninfozeit.h \
            GetOpt.h \
-           descdata.h
+           descdata.h \
+           smallfontdialog.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \

@@ -23,7 +23,7 @@
 #include "preferencedialog.h"
 #include "qspinbox.h"
 #include "qcheckbox.h"
-#include <QFontDialog>
+#include "smallfontdialog.h"
 
 
 PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent)
@@ -39,26 +39,26 @@ PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent
     fastZeitIncBox->setValue(settings->fastTimeIncrement()/60);
     entrySaveCheckbox->setChecked(settings->alwaysSaveEntry());
     powerUserCheckbox->setChecked(settings->powerUserView());
-    singleClickCheckbox->setChecked(settings->singleClickActivation()); 
+    singleClickCheckbox->setChecked(settings->singleClickActivation());
     showTypeCheckBox->setChecked(settings->showTypeColumn());
     customFontCheckBox->setChecked(settings->useCustomFont());
     customFontSelectButton->setEnabled(settings->useCustomFont());
     QString custFont=settings->customFont();
-	int custFontSize=settings->customFontSize();
-	if (custFont.isEmpty()) {
-		selectedFont=this->font();
-	} else {
-		selectedFont=QFont(custFont, custFontSize);
-	}
-	fontPreview->setFont(selectedFont);
+        int custFontSize=settings->customFontSize();
+        if (custFont.isEmpty()) {
+                selectedFont=this->font();
+        } else {
+                selectedFont=QFont(custFont, custFontSize);
+        }
+        fontPreview->setFont(selectedFont);
 }
 
 void PreferenceDialog::selectCustomFont()
 {
-	bool ok;	
-    QFont font = QFontDialog::getFont(&ok, selectedFont, this);
+        bool ok;
+    QFont font = SmallFontDialog::getFont(&ok, selectedFont, this);
     if (ok) {
-    	selectedFont=font;
+        selectedFont=font;
     }
     fontPreview->setFont(selectedFont);
 }
@@ -78,6 +78,6 @@ void PreferenceDialog::accept()
     settings->setShowTypeColumn(showTypeCheckBox->isChecked());
     settings->setUseCustomFont(customFontCheckBox->isChecked());
     settings->setCustomFont(selectedFont.family());
-	settings->setCustomFontSize(selectedFont.pointSize());
-    
+        settings->setCustomFontSize(selectedFont.pointSize());
+
 }
