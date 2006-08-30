@@ -55,9 +55,10 @@ class UnterKontoDialog: public QDialog
 
   signals:
     void entryChanged(const QString&, const QString&, const QString&, int idx);
+    void entryActivated();
 
   private slots:
-    virtual void aktivesProjektButtonClicked();
+    virtual void projektAktivierenButtonClicked();
     virtual void addTag();
 
   private:
@@ -72,7 +73,7 @@ class UnterKontoDialog: public QDialog
     ZeitBox *zeitBox;
     ZeitBox *zeitAbzurBox;
     QCheckBox* persoenlichesKonto;
-    QCheckBox* aktivesProjekt;
+    QPushButton* projektAktivieren;
 };
 
 #endif

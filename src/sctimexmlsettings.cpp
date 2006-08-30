@@ -79,12 +79,12 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
                firstInBereich=false;
              }
              QString kommentar=etPos->second.kommentar.replace(apostrophExp,""); // Apostrophe nicht in Skript speichern!
-             stream<<zeitKommando<<"  "<<
-                     abtList->getDatum().toString("dd.MM.yyyy")<<"  "<<
-                     kontPos->first<<"  "<<ukontPos->first<<"\t\t"<<
+             stream<<zeitKommando<<" "<<
+                     abtList->getDatum().toString("dd.MM.yyyy")<<" "<<
+                     kontPos->first<<" "<<ukontPos->first<<"\t"<<
                      roundTo(1.0/3600*etPos->second.sekunden,0.01)<<"/"<<
                      roundTo(1.0/3600*etPos->second.sekundenAbzur,0.01)<<
-                     "  \'"<<kommentar.simplifyWhiteSpace()<<"\'\n";
+                     " \'"<<kommentar.simplifyWhiteSpace()<<"\'\n";
           }
         }
       }

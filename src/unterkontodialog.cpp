@@ -119,24 +119,29 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   layout->addSpacing(5);
   layout->addStretch(2);
 
+  QHBoxLayout* buttonlayout=new QHBoxLayout(layout,3);
 
-  aktivesProjekt=new QCheckBox("Projekt aktivieren",this);
-  aktivesProjekt->setChecked(abtList->isAktiv(abt,ko,uko,idx));
-  layout->addWidget(aktivesProjekt);
+  projektAktivieren=new QPushButton("Eintrag aktivieren",this);
+  projektAktivieren->setDisabled(abtList->isAktiv(abt,ko,uko,idx));  
+  buttonlayout->addWidget(projektAktivieren);
+  buttonlayout->addSpacing(10);
+  buttonlayout->addStretch(1);
   persoenlichesKonto=new QCheckBox("In Persönliche Konten",this);
   persoenlichesKonto->setChecked(et.flags&UK_PERSOENLICH);
-  layout->addWidget(persoenlichesKonto);
+  buttonlayout->addWidget(persoenlichesKonto);
+  buttonlayout->addStretch(1);
   layout->addSpacing(10);
   layout->addStretch(2);
 
-  QHBoxLayout* buttonlayout=new QHBoxLayout(layout,3);
-
-  buttonlayout->addWidget(okbutton);
+  buttonlayout=new QHBoxLayout(layout,3);
+  buttonlayout->addStretch(1);
+  buttonlayout->addWidget(okbutton);  
   buttonlayout->addWidget(cancelbutton);
 
   connect (okbutton, SIGNAL(clicked()), this, SLOT(accept()));
   connect (cancelbutton, SIGNAL(clicked()), this, SLOT(reject()));
-  connect (aktivesProjekt, SIGNAL(clicked()), this, SLOT(aktivesProjektButtonClicked()));
+  connect (projektAktivieren, SIGNAL(clicked()), this, SLOT(projektAktivierenButtonClicked()));
+  connect (this, SIGNAL(entryActivated()),projektAktivieren, SLOT(disable())); 
 
   if (connectZeiten) {
     connect (zeitBox, SIGNAL(minuteChangedBy(int)), zeitAbzurBox, SLOT(doStepMin(int)));
@@ -175,20 +180,7 @@ void UnterKontoDialog::accept()
     zeitAbzurBox->getSekunden(), flags));
   abtList->moveEintragPersoenlich(abteilungsName,kontoName,unterKontoName,eintragIndex,
     (persoenlichesKonto->isChecked()));
-
-  if (aktivesProjekt->isChecked()) {
-    int oldidx;
-    QString oldabt, oldko, olduk;
-    abtList->getAktiv(oldabt, oldko, olduk,oldidx);
-    abtList->setAsAktiv(abteilungsName,kontoName,unterKontoName,eintragIndex);
-    emit entryChanged(oldabt,oldko,olduk,oldidx);
-  }
-  else {
-    if (abtList->isAktiv(abteilungsName,kontoName,unterKontoName,eintragIndex))
-      {
-        abtList->setAsAktiv("","","",0);
-      }
-  }
+  
   emit entryChanged(abteilungsName,kontoName,unterKontoName,eintragIndex);
 
   // Größe des Dialogs festhalten
@@ -198,14 +190,9 @@ void UnterKontoDialog::accept()
   QDialog::accept();
 };
 
-
-/**
- *  Behinhaltet die Logik, um beim Click auf Aktives Projekt zusaetzlich auch das persoenliche Projekt
- *  zu aktivieren
- */
-void UnterKontoDialog::aktivesProjektButtonClicked()
+void UnterKontoDialog::projektAktivierenButtonClicked()
 {
-  if ((aktivesProjekt->isOn())&&(!persoenlichesKonto->isOn())) emit persoenlichesKonto->toggle();
+    emit entryActivated();
 }
 
 ZeitBox* UnterKontoDialog::getZeitAbzurBox()

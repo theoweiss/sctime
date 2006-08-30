@@ -907,6 +907,7 @@ void TimeMainWindow::callUnterKontoDialog(Q3ListViewItem * item)
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int)), this, SLOT(zeitChanged()));
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int)),
            this, SLOT(flagsChanged(const QString&, const QString&, const QString&,int)));
+  connect(unterKontoDialog, SIGNAL(entryActivated()), this, SLOT(eintragAktivieren()));
   if (abtList->isAktiv(abt,ko,uko,idx) && (abtList->getDatum()==QDate::currentDate()))
     connect(this, SIGNAL(minuteTick()),unterKontoDialog->getZeitBox(),SLOT(incrMin()));
   unterKontoDialog->show();
