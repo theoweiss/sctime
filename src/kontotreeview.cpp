@@ -32,6 +32,7 @@
 #include "globals.h"
 #include "descdata.h"
 #include "../pics/hi16_action_apply.xpm"
+#include "../pics/hi16_action_stamp.xpm"
 #include <vector>
 #include <QApplication>
 
@@ -52,7 +53,8 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
   setColumnAlignment(3,Qt::AlignRight);
   addColumn ("Kommentar");
 
-  aktivPixmap=new QPixmap((const char **)hi16_action_apply);
+  aktivPixmap=QPixmap((const char **)hi16_action_apply);
+  bereitPixmap=QPixmap((const char **)hi16_action_stamp);
 
   setRootIsDecorated(true);
   
@@ -145,14 +147,14 @@ void KontoTreeView::dropEvent(QDropEvent *event)
     }
 }
 
-	
+
 void KontoTreeView::dragEnterEvent(QDragEnterEvent *event)
-{    
+{
     if ((event->action()!=QDropEvent::Move) && (event->mimeData()->hasFormat("application/sctime.account"))) {
         QPoint contpos(event->pos());
         contpos-=QPoint(viewport()->pos());
-        KontoTreeItem * item=dynamic_cast<KontoTreeItem *>(itemAt(contpos));        
-        if (isEintragsItem(item)) {           
+        KontoTreeItem * item=dynamic_cast<KontoTreeItem *>(itemAt(contpos));
+        if (isEintragsItem(item)) {
            event->acceptAction();
         }
     }
@@ -160,11 +162,11 @@ void KontoTreeView::dragEnterEvent(QDragEnterEvent *event)
 
 void KontoTreeView::dragMoveEvent(QDragMoveEvent *event)
 {
-	if ((event->action()!=QDropEvent::Move) && (event->mimeData()->hasFormat("application/sctime.account"))) {
+    if ((event->action()!=QDropEvent::Move) && (event->mimeData()->hasFormat("application/sctime.account"))) {
         QPoint contpos(event->pos());
         contpos-=QPoint(viewport()->pos());
-        KontoTreeItem * item=dynamic_cast<KontoTreeItem *>(itemAt(contpos));        
-        if (isEintragsItem(item)) {           
+        KontoTreeItem * item=dynamic_cast<KontoTreeItem *>(itemAt(contpos));
+        if (isEintragsItem(item)) {
            event->acceptAction();
         }
         else {
@@ -180,7 +182,6 @@ Q3DragObject* KontoTreeView::dragObject ()
     	QString top,uko,ko,abt;
         int idx;
         itemInfo(item,top,abt,ko,uko,idx);
-        
 
         QString data;
         data=top+"|"+abt+"|"+ko+"|"+uko+"|"+data.setNum(idx);
@@ -404,11 +405,10 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
             TimeCounter tc(etPos->second.sekunden), tcAbzur(etPos->second.sekundenAbzur);
             if (etPos==eintragsliste->begin()) {
                 KontoTreeItem* newItem=new KontoTreeItem( kontoitem, ukontPos->first, dd.type(), "", tc.toString(),
-                                                      tcAbzur.toString() , etPos->second.kommentar);                                                                      
+                                                      tcAbzur.toString() , etPos->second.kommentar);
                 newItem->setGray(abtList->checkInState());
                 newItem->setDragEnabled(true);
                 newItem->setDropEnabled(true);
-              
              // newItem->setBold((etPos->second.kommentar!="")||(etPos->second.sekunden!=0)||(etPos->second.sekundenAbzur!=0));
             }
             // Sorgt dafuer, dass das Konto in Persoenliche Konten kommt
@@ -430,8 +430,8 @@ bool KontoTreeView::event ( QEvent * e )
 	
 	switch (e->type())
 	{
-		case (QEvent::ToolTip): 
-		{		   
+		case (QEvent::ToolTip):
+		{
 	        QHelpEvent* qh= dynamic_cast <QHelpEvent*>(e);
 	        QPoint contpos(qh->pos());
 	        contpos-=QPoint(viewport()->pos());
@@ -448,9 +448,9 @@ bool KontoTreeView::event ( QEvent * e )
 	            }
 	        }
 	        break; 
-	    }	    
+	    }
 	    default:
-	        break;    	    
+	        break;
     }
     return Q3ListView::event(e);
 }
@@ -501,6 +501,8 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
 
   if (!abtList->findEintrag(etiter,etl,abt,ko,uko,idx)) return;
 
+  QStringList bereitschaften=etl->getBereitschaft();
+
   KontoTreeItem *topi,*abti,*koi,*ukoi,*eti;
   bool itemFound=(sucheItem(ALLE_KONTEN_STRING,abt,ko,uko,idx,topi,abti,koi,ukoi,eti));
   if ((koi)&&(!ukoi)) {
@@ -515,10 +517,14 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
 
   if (itemFound) {
     bool etiFound=(eti!=NULL);
-    ukHasSubTree=(etl->size()>1);
+    ukHasSubTree=((etl->size()+bereitschaften.size())>1);
     DescData dd=etl->description();
     if (!ukHasSubTree)
+    {
+      if (ukoi->firstChild())
+        delete ukoi->firstChild();
       eti=ukoi;
+    }
     else {
       if (ukoi->firstChild()==NULL) // Wir brauchen einen Unterbaum, der aber noch leer ist
       {
@@ -538,6 +544,17 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
         eti=new KontoTreeItem(ukoi,qs);
         ukoi->setOpen(true);
       }
+      ukoi->setText(1,"");
+      ukoi->setText(3,"");
+      ukoi->setText(4,"");
+      if (bereitschaften.size()>=1) {
+        ukoi->setPixmap(2,bereitPixmap);
+        ukoi->setText(5,bereitschaften.join("; "));
+      }
+      else {
+        ukoi->setPixmap(2,emptyPixmap);
+        ukoi->setText(5,"");
+      }
     }
 
     eti->setText(5,etiter->second.kommentar);
@@ -553,7 +570,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
 
     if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
       {
-        eti->setPixmap(2,*aktivPixmap);
+        eti->setPixmap(2,aktivPixmap);
         setSelected(eti,true);
       }
     else
@@ -569,7 +586,8 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
           delete ukoi;
           if (!koi->firstChild()) {
             delete koi;
-            if (!abti->firstChild()) delete abti;
+            if (!abti->firstChild())
+              delete abti;
           }
         }
       }
@@ -586,9 +604,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
           ukoi=new KontoTreeItem(koi,uko);
       }
         if (!eti) {
-
             eti=new KontoTreeItem(ukoi,QString().setNum(idx),dd.type(), "",tc.toString(), tcAbzur.toString(),etiter->second.kommentar);
-
       }
       eti->setDragEnabled(true);
       eti->setDropEnabled(true);
@@ -596,14 +612,17 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
      // eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
       eti->setGray(abtList->checkInState());
       if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
-        eti->setPixmap(2,*aktivPixmap);
+        eti->setPixmap(2,aktivPixmap);
       else
         eti->setPixmap(2,emptyPixmap);
     }
     if ((inPersKontenGefunden)&&((etiter->second.flags)&UK_PERSOENLICH)) {
       int firstEintrag=firstEintragWithFlags(etl,UK_PERSOENLICH);
-      if (!ukHasSubTree)
+      if (!ukHasSubTree) {
         eti=ukoi;
+        if (ukoi->firstChild())
+          delete ukoi->firstChild();
+      }
       else {
         bool etiFound=(eti!=NULL);
         if (newUkSubTreeOpened)
@@ -617,12 +636,23 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
           QString qs;
           qs.setNum(idx);
           eti=new KontoTreeItem(ukoi,qs);
-          ukoi->setOpen(true);          
+          ukoi->setOpen(true);
+        }
+        ukoi->setText(1,"");
+        ukoi->setText(3,"");
+        ukoi->setText(4,"");
+        if (bereitschaften.size()>=1) {
+          ukoi->setPixmap(2,bereitPixmap);
+          ukoi->setText(5,bereitschaften.join("; "));
+        }
+        else {
+          ukoi->setPixmap(2,emptyPixmap);
+          ukoi->setText(5,"");
         }
       }
 
       if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
-        eti->setPixmap(2,*aktivPixmap);
+        eti->setPixmap(2,aktivPixmap);
       else
         eti->setPixmap(2,emptyPixmap);
       eti->setText(5,etiter->second.kommentar);

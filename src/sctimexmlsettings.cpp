@@ -168,9 +168,9 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
     defaultcommentfiles.clear();
     columnwidth.clear();
     setUseCustomFont(false);
-  }  
+  }
 
-  for( QDomNode node1 = docElem.firstChild(); !node1.isNull(); node1 = node1.nextSibling() ) {
+  for(QDomNode node1 = docElem.firstChild(); !node1.isNull(); node1 = node1.nextSibling()) {
     QDomElement elem1 = node1.toElement();
     if( !elem1.isNull() ) {
       if (elem1.tagName()=="abteilung") {
@@ -220,6 +220,18 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
                     for( QDomNode node4 = elem3.firstChild(); !node4.isNull(); node4 = node4.nextSibling() ) {
                       QDomElement elem4 = node4.toElement();
                       if( !elem4.isNull() ) {
+                        if (elem4.tagName()=="bereitschaft") {
+                          QString bereitschaft=elem4.attribute("type");
+                          if (bereitschaft.isNull()) continue;
+                          UnterKontoListe::iterator itUk;
+                          UnterKontoListe* ukl;
+                          if (abtList->findUnterKonto(itUk,ukl,abteilungstr,kontostr,unterkontostr)) {
+                            QStringList bereitschaften;
+                            bereitschaften=itUk->second.getBereitschaft();
+                            bereitschaften.append(bereitschaft);
+                            itUk->second.setBereitschaft(bereitschaften);
+                          }
+                        }
                         if (elem4.tagName()=="eintrag") {
                           QString eintragstr=elem4.attribute("nummer");
                           if (eintragstr.isNull()) continue;
@@ -555,6 +567,16 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
         else if (kontpers) {
           ukontIsEmpty=false;
           ukonttag.setAttribute("persoenlich","no"); // Falls Einstellung vom zugeh. Konto abweicht.
+        }
+
+        if (!global) {
+          QStringList bereitschaften= ukontPos->second.getBereitschaft();
+          for (int i=0; i<bereitschaften.size(); i++)
+          {
+            QDomElement bertag = doc.createElement( "bereitschaft" );
+            bertag.setAttribute("type",bereitschaften.at(i));
+            ukonttag.appendChild (bertag);
+          }
         }
 
         if ((!global)||alwaysSaveEintrag) {

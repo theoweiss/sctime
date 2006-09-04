@@ -80,11 +80,23 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
     {
       //flags=0;
       Map_Int_UnterKontoEintrag::clear();
+      bereitschaft.clear();
+    }
+
+    QStringList getBereitschaft()
+    {
+      return bereitschaft;
+    }
+
+    void setBereitschaft(QStringList _bereitschaft)
+    {
+      bereitschaft=_bereitschaft;
     }
 
   private:
     DescData descData;
     QStringList defaultCommentList;
+    QStringList bereitschaft;
     int flags;
 };
 

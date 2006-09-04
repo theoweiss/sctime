@@ -55,6 +55,7 @@
 #ifndef NO_TEXTEDIT
 #include "q3textedit.h"
 #endif
+#include "bereitschaftsdateninfozeit.h"
 #include "qfile.h"
 #include "findkontodialog.h"
 #include "sctimehelp.h"
@@ -74,6 +75,7 @@
 #include "../pics/hi22_action_1downarrow_half.xpm"
 #include "../pics/hi22_action_2uparrow_half.xpm"
 #include "../pics/hi22_action_2downarrow_half.xpm"
+#include "../pics/hi16_action_stamp.xpm"
 #include "../pics/zero.xpm"
 
 
@@ -90,7 +92,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
   powerToolBar = NULL;
   settings=new SCTimeXMLSettings();
   settings->readSettings(abtList);
-  defaultCommentReader = new DefaultCommentReader();
+
   settings->getDefaultCommentFiles(xmlfilelist);
   qtDefaultFont=QApplication::font();
   if (settings->useCustomFont())
@@ -99,7 +101,10 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
     int custFontSize=settings->customFontSize();
     QApplication::setFont(QFont(custFont,custFontSize));
   }  
-  defaultCommentReader->read(abtList,xmlfilelist);
+  defaultCommentReader.read(abtList,xmlfilelist);
+
+  BereitschaftsDatenInfoZeit bereitschaftsdatenReader;
+  bereitschaftsdatenReader.readInto(BereitschaftsListe::getInstance());
 
   DefaultTagReader defaulttagreader;
   defaulttagreader.read(&defaultTags);
@@ -239,6 +244,11 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
   eintragRemoveAction->setShortcut(Qt::Key_Delete);
   connect(eintragRemoveAction, SIGNAL(triggered()), this, SLOT(eintragEntfernen()));
 
+  QAction* bereitschaftsAction = new QAction(QPixmap((const char **)hi16_action_stamp ),
+                                             "&Bereitschaftszeiten setzen", this);
+  bereitschaftsAction->setShortcut(Qt::CTRL+Qt::Key_B);
+  connect(bereitschaftsAction, SIGNAL(triggered()), this, SLOT(editBereitschaftPressed()));
+
   QAction* min5PlusAction = new QAction(QPixmap((const char **)hi22_action_1uparrow ),
                                            "Zeit incrementieren", this);
   QAction* min5MinusAction = new QAction(QPixmap((const char **)hi22_action_1downarrow ),
@@ -271,6 +281,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
   connect(this,SIGNAL(eintragSelected(bool)), fastPlusAction, SLOT(setEnabled(bool)));
   connect(this,SIGNAL(eintragSelected(bool)), fastMinusAction, SLOT(setEnabled(bool)));
   connect(this,SIGNAL(augmentableItemSelected(bool)), eintragAddAction, SLOT(setEnabled(bool)));
+  connect(this,SIGNAL(unterkontoSelected(bool)), bereitschaftsAction, SLOT(setEnabled(bool)));
 
   connect(this,SIGNAL(aktivierbarerEintragSelected(bool)), eintragActivateAction, SLOT(setEnabled(bool)));
 
@@ -278,6 +289,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
   toolBar->addAction(saveAction);
   toolBar->addAction(inPersKontAction);
   toolBar->addAction(eintragAddAction);
+  toolBar->addAction(bereitschaftsAction);
   toolBar->addAction(pauseAction);
   toolBar->addAction(min5PlusAction);
   toolBar->addAction(min5MinusAction);
@@ -292,6 +304,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
   kontomenu->addAction(pauseAbzurAction);
   kontomenu->addAction(findKontoAction);
   kontomenu->addAction(refreshAction);
+  kontomenu->addAction(bereitschaftsAction);
   kontomenu->insertSeparator();
   kontomenu->addAction(quitAction);
   zeitmenu->addAction(changeDateAction);
@@ -320,7 +333,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
 /** Destruktor - speichert vor dem Beenden die Einstellungen */
 TimeMainWindow::~TimeMainWindow()
 {
-   save();
+   save();   
    delete settings;
    if (abtList!=abtListToday)
      delete abtListToday;
@@ -587,6 +600,11 @@ void TimeMainWindow::editUnterKontoPressed()
   emit callUnterKontoDialog(kontoTree->currentItem());
 }
 
+void TimeMainWindow::editBereitschaftPressed()
+{
+  emit callBereitschaftsDialog(kontoTree->currentItem());
+}
+
 
 /**
  * Aktiviert einen Eintrag
@@ -735,10 +753,10 @@ void TimeMainWindow::reloadDefaultComments()
   settings->getDefaultCommentFiles(xmlfilelist);
   if (abtList!=abtListToday) {
     abtListToday->clearDefaultComments();
-    defaultCommentReader->read(abtListToday,xmlfilelist);
+    defaultCommentReader.read(abtListToday,xmlfilelist);
   }
   abtList->clearDefaultComments();
-  defaultCommentReader->read(abtList,xmlfilelist);
+  defaultCommentReader.read(abtList,xmlfilelist);
 }
 
 /**
@@ -783,6 +801,7 @@ void TimeMainWindow::inPersoenlicheKonten(bool hinzufuegen)
 void TimeMainWindow::changeShortCutSettings(Q3ListViewItem * item)
 {
   bool iseintragsitem=kontoTree->isEintragsItem(item);
+  bool isUnterkontoItem=kontoTree->isUnterkontoItem(item);
   inPersoenlicheKontenAllowed=false; //Vorsorglich disablen, sonst Seiteneffekte mit flagsChanged.
   inPersKontAction->setEnabled(false);
 
@@ -791,6 +810,8 @@ void TimeMainWindow::changeShortCutSettings(Q3ListViewItem * item)
   int idx;
 
   if (item) kontoTree->itemInfo(item,top,abt,ko,uko,idx);
+
+  emit unterkontoSelected(isUnterkontoItem);
 
   if (iseintragsitem) {
 
@@ -814,7 +835,7 @@ void TimeMainWindow::changeShortCutSettings(Q3ListViewItem * item)
     inPersKontAction->setEnabled((!abtList->checkInState())&&(item&&(item->depth()>=2)&&(item->depth()<=3)));
     editUnterKontoAction->setEnabled(false);
     emit eintragSelected(false);
-    emit augmentableItemSelected(!abtList->checkInState()&&kontoTree->isUnterkontoItem(item));
+    emit augmentableItemSelected(!abtList->checkInState()&&isUnterkontoItem);
     emit aktivierbarerEintragSelected(false);
     eintragRemoveAction->setEnabled(false);
   }
@@ -908,6 +929,8 @@ void TimeMainWindow::callUnterKontoDialog(Q3ListViewItem * item)
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int)),
            this, SLOT(flagsChanged(const QString&, const QString&, const QString&,int)));
   connect(unterKontoDialog, SIGNAL(entryActivated()), this, SLOT(eintragAktivieren()));
+  connect(unterKontoDialog, SIGNAL(bereitschaftChanged(const QString&, const QString&, const QString&)),
+          kontoTree, SLOT(refreshAllItemsInUnterkonto(const QString&, const QString&, const QString&)));
   if (abtList->isAktiv(abt,ko,uko,idx) && (abtList->getDatum()==QDate::currentDate()))
     connect(this, SIGNAL(minuteTick()),unterKontoDialog->getZeitBox(),SLOT(incrMin()));
   unterKontoDialog->show();
@@ -1079,4 +1102,67 @@ void TimeMainWindow::callAboutBox()
 
   aboutBox->exec();
 
+}
+
+void TimeMainWindow::callBereitschaftsDialog(Q3ListViewItem * item)
+{
+  if ((!kontoTree->isUnterkontoItem(item))||(abtList->checkInState()))
+    return;
+
+  QString top,uko,ko,abt;
+
+  int idx;
+
+  kontoTree->itemInfo(item,top,abt,ko,uko,idx);
+
+  UnterKontoListe *ukl;
+  UnterKontoListe::iterator ukiter;
+
+  if (!abtList->findUnterKonto(ukiter, ukl, abt, ko, uko)) {
+    std::cerr<<"Unterkonto nicht gefunden!"<<std::endl;
+    return;
+  }
+
+  QDialog dialog(this);
+  dialog.setWindowTitle("Bereitschaftszeiten");
+
+  QVBoxLayout* layout=new QVBoxLayout(&dialog);
+  layout->setMargin(15);
+
+  QPushButton * okbutton=new QPushButton("OK", &dialog);
+  okbutton->setDefault(true);
+  QPushButton * cancelbutton=new QPushButton("Abbruch", &dialog);
+  
+  layout->addStretch(1);
+  
+
+  QLabel* infolabel=new QLabel (QString("Bitte wählen Sie die geleisteten Bereitschaften für dieses ")+
+          "Unterkonto aus.", &dialog);
+  infolabel->setWordWrap(true);
+  layout->addWidget(infolabel);
+  
+  layout->addSpacing(10);
+
+  QStringList bereitschaften = ukiter->second.getBereitschaft();
+  BereitschaftsView* bereitschaftsView=new BereitschaftsView(&dialog);
+  bereitschaftsView->setSelectionList(bereitschaften);
+  layout->addWidget(bereitschaftsView);
+
+  QHBoxLayout* buttonlayout=new QHBoxLayout(layout,3);
+  buttonlayout->addStretch(1);
+  buttonlayout->addWidget(okbutton);
+  buttonlayout->addWidget(cancelbutton);
+
+  connect (okbutton, SIGNAL(clicked()), &dialog, SLOT(accept()));
+  connect (cancelbutton, SIGNAL(clicked()), &dialog, SLOT(reject()));
+
+  dialog.exec();
+  if (dialog.result())
+  {
+    QStringList bereitschaftenNeu = bereitschaftsView->getSelectionList();
+    if (bereitschaften!=bereitschaftenNeu) {
+      ukiter->second.setBereitschaft(bereitschaftenNeu);
+      kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
+    }
+  }
 }

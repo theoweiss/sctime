@@ -55,9 +55,8 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
 
   UnterKontoEintrag et;
   EintragsListe::iterator etiter;
-  EintragsListe* unterkonto;
 
-  if (!abtList->findEintrag(etiter,unterkonto, abt, ko, uko,idx)) {
+  if (!abtList->findEintrag(etiter,m_unterkonto, abt, ko, uko,idx)) {
     std::cerr<<"Unterkonto nicht gefunden!"<<std::endl;
     return;
   }
@@ -71,7 +70,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   okbutton->setDefault(true);
   QPushButton * cancelbutton=new QPushButton( "Abbruch", this );
 
-  QStringList* defaultcomments = unterkonto->getDefaultCommentList();
+  QStringList* defaultcomments = m_unterkonto->getDefaultCommentList();
 
   // seufz, leider treffen sich QCombobox und QLineedit erst auf QWidget-Ebene
   if (defaultcomments->empty()) {
@@ -119,6 +118,11 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   layout->addSpacing(5);
   layout->addStretch(2);
 
+  /*m_bereitschaften = m_unterkonto->getBereitschaft();
+
+  bereitschaftsView=new BereitschaftsView(this);
+  bereitschaftsView->setSelectionList(m_bereitschaften);
+  layout->addWidget(bereitschaftsView);*/
   QHBoxLayout* buttonlayout=new QHBoxLayout(layout,3);
 
   projektAktivieren=new QPushButton("Eintrag aktivieren",this);
@@ -140,8 +144,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
 
   connect (okbutton, SIGNAL(clicked()), this, SLOT(accept()));
   connect (cancelbutton, SIGNAL(clicked()), this, SLOT(reject()));
-  connect (projektAktivieren, SIGNAL(clicked()), this, SLOT(projektAktivierenButtonClicked()));
-  connect (this, SIGNAL(entryActivated()),projektAktivieren, SLOT(disable())); 
+  connect (projektAktivieren, SIGNAL(clicked()), this, SLOT(projektAktivierenButtonClicked()));  
 
   if (connectZeiten) {
     connect (zeitBox, SIGNAL(minuteChangedBy(int)), zeitAbzurBox, SLOT(doStepMin(int)));
@@ -180,8 +183,14 @@ void UnterKontoDialog::accept()
     zeitAbzurBox->getSekunden(), flags));
   abtList->moveEintragPersoenlich(abteilungsName,kontoName,unterKontoName,eintragIndex,
     (persoenlichesKonto->isChecked()));
-  
+  /*QStringList bereitschaften = bereitschaftsView->getSelectionList();
+  m_unterkonto->setBereitschaft(bereitschaften);*/
+
   emit entryChanged(abteilungsName,kontoName,unterKontoName,eintragIndex);
+
+  /*if (m_bereitschaften!=bereitschaften) {
+     emit bereitschaftChanged(abteilungsName,kontoName,unterKontoName);
+  }*/
 
   // Größe des Dialogs festhalten
   TimeMainWindow *timeMainWindow = static_cast<TimeMainWindow *>(qApp->mainWidget());
@@ -192,6 +201,7 @@ void UnterKontoDialog::accept()
 
 void UnterKontoDialog::projektAktivierenButtonClicked()
 {
+    projektAktivieren->setDisabled(true);
     emit entryActivated();
 }
 

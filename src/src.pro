@@ -31,7 +31,10 @@ SOURCES += abteilungsliste.cpp \
            kontotreeitem.cpp \
            GetOpt.cpp \
            descdata.cpp \
-           smallfontdialog.cpp
+           smallfontdialog.cpp \
+           bereitschaftsdateninfozeit.cpp \
+           bereitschaftsliste.cpp \
+           bereitschaftsview.cpp
 HEADERS += abteilungsliste.h \
            kontoliste.h \
            statusbar.h \
@@ -64,7 +67,10 @@ HEADERS += abteilungsliste.h \
            kontodateninfozeit.h \
            GetOpt.h \
            descdata.h \
-           smallfontdialog.h
+           smallfontdialog.h \
+           bereitschaftsdateninfozeit.h \
+           bereitschaftsliste.h \
+           bereitschaftsview.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \

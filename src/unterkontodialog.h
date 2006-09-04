@@ -33,6 +33,7 @@
 #include "qcheckbox.h"
 #include "abteilungsliste.h"
 #include "timeedit.h"
+#include "bereitschaftsview.h"
 
 
 
@@ -55,6 +56,7 @@ class UnterKontoDialog: public QDialog
 
   signals:
     void entryChanged(const QString&, const QString&, const QString&, int idx);
+    void bereitschaftChanged(const QString&, const QString&, const QString&);
     void entryActivated();
 
   private slots:
@@ -74,6 +76,9 @@ class UnterKontoDialog: public QDialog
     ZeitBox *zeitAbzurBox;
     QCheckBox* persoenlichesKonto;
     QPushButton* projektAktivieren;
+    EintragsListe* m_unterkonto;
+    //BereitschaftsView* bereitschaftsView;
+    //QStringList m_bereitschaften;
 };
 
 #endif

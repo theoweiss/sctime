@@ -21,41 +21,25 @@
 
 */
 
-#ifndef UNTERKONTOLISTE_H
-#define  UNTERKONTOLISTE_H
+#ifndef BEREITSCHAFTSDATENINFOZEIT_H
+#define  BEREITSCHAFTSINFOZEIT_H
 
-#include <qstring.h>
-#include <map>
-#include "eintragsliste.h"
+#include "qobject.h"
+#include "bereitschaftsliste.h"
 
-typedef std::map<QString,EintragsListe> Map_QString_EintragsListe; // Visual-C-Workaround
-
-class UnterKontoListe: public std::map<QString,EintragsListe>
+/**
+  * Liest die Bereitschaftsdaten ueber die Zeittools ein.
+  */
+class BereitschaftsDatenInfoZeit
 {
   public:
-    UnterKontoListe(): std::map<QString,EintragsListe>()
-    {
-      flags=0;
-    }
-
-    void setFlags(int _flags)
-    {
-      flags=_flags;
-    }
-
-    int getFlags()
-    {
-      return flags;
-    }
-
-    void clear()
-    {
-      flags=0;
-      Map_QString_EintragsListe::clear();
-    }
-
+    BereitschaftsDatenInfoZeit();
+    BereitschaftsDatenInfoZeit(QString sourcefile);
+    virtual bool readInto(BereitschaftsListe * berlist);
+    bool readBereitschaftsFile(FILE *file, BereitschaftsListe * berlist);
+    virtual ~BereitschaftsDatenInfoZeit() {};
   private:
-    int flags;
+    QString m_DatenFileName;
 };
 
 #endif

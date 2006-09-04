@@ -80,6 +80,7 @@ class TimeMainWindow: public QMainWindow
     void changeShortCutSettings(Q3ListViewItem * item);
 
     void editUnterKontoPressed();
+    void editBereitschaftPressed();
     void changeDate(const QDate& datum);
     void setAktivesProjekt(Q3ListViewItem * item);
     void showAdditionalButtons(bool show);
@@ -99,6 +100,7 @@ class TimeMainWindow: public QMainWindow
     void callFindKontoDialog();
     void callHelpDialog();
     void callPreferenceDialog();
+    void callBereitschaftsDialog(Q3ListViewItem * item);
     void refreshKontoListe();
     void reloadDefaultComments();
     void configClickMode(bool singleClickActivation);
@@ -130,12 +132,19 @@ class TimeMainWindow: public QMainWindow
      * Unterkonto mit mehreren Eintraegen) mit false
      */
     void eintragSelected(bool isEintrag);
+    /**
+      Wird mit true ausgeloest, wenn ein Unterkonto im Kontobaum
+     * selektiert wurde, bei anderen Selektionen (Konto,Abteilung oder
+     * blosser Eintrag) mit false
+     */
 
+    void unterkontoSelected(bool isUnterkonto);
     /**
      * Wird mit true ausgeloest, wenn ein Item im Kontobaum
      * selektiert wurde, zu dem weitere Eintraege hinzugefuegt werden koennen
      */
-    void augmentableItemSelected(bool isEintrag);
+
+    void augmentableItemSelected(bool isAugmentable);
 
     /** Wird mit true ausgeloest, falls auf das aktuelle Datum gewechselt wird, bei allen anderen
         Datumswechseln mit false. */
@@ -164,7 +173,7 @@ class TimeMainWindow: public QMainWindow
     AbteilungsListe* abtListToday;
     StatusBar* statusBar;
     Q3MimeSourceFactory* mimeSourceFactory;
-    DefaultCommentReader* defaultCommentReader;
+    DefaultCommentReader defaultCommentReader;
     QToolBar* powerToolBar;
     ToolBar* toolBar;
     QStringList defaultTags;

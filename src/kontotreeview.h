@@ -88,7 +88,8 @@ class KontoTreeView: public Q3ListView
       virtual void dragMoveEvent(QDragMoveEvent *event);
 
   private:
-    QPixmap* aktivPixmap;
+    QPixmap aktivPixmap;
+    QPixmap bereitPixmap;
     QPixmap emptyPixmap;
     AbteilungsListe* abtList;
     QPoint dragStartPosition;
