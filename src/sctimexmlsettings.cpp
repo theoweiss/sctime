@@ -72,6 +72,16 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
       UnterKontoListe* unterkontoliste=&(kontPos->second);
       for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {
         EintragsListe* eintragsliste=&(ukontPos->second);
+        QStringList bereitschaften= eintragsliste->getBereitschaft();
+        if ((bereitschaften.size()&&firstInBereich)) {
+          stream<<"\n# Bereich: "<<abt<<"\n";
+          firstInBereich=false;
+        }
+        for (int i; i<bereitschaften.size(); i++)
+        {
+           stream<<"zeitbereit "<<abtList->getDatum().toString("dd.MM.yyyy")<<" "<<
+                 kontPos->first<<" "<<ukontPos->first<<"\t"<<bereitschaften.at(i)<<"\n";
+        }
         for (EintragsListe::iterator etPos=eintragsliste->begin(); etPos!=eintragsliste->end(); ++etPos) {
           if ((etPos->second.sekunden!=0)||(etPos->second.sekundenAbzur!=0)) {
              if (firstInBereich) {
