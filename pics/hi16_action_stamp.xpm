@@ -1,0 +1,27 @@
+/* XPM */
+static char *hi16_action_stamp[] = {
+/* columns rows colors chars-per-pixel */
+"16 16 5 1",
+"  c black",
+". c #808000",
+"X c #C0C000",
+"o c #FFFFC0",
+"O c None",
+/* pixels */
+"OOOOOO   OOOOOOO",
+"OOOOO ooX OOOOOO",
+"OOOO o...X OOOOO",
+"OOOO oXXXX OOOOO",
+"OOOO XXXX. OOOOO",
+"OOOOO ... OOOOOO",
+"OOOOOO   OOOOOOO",
+"OOOOOO X OOOOOOO",
+"OO     X     OOO",
+"O oooo   oooo OO",
+" oXXXXXXXXXXXX O",
+"               O",
+" X.X.     .X.X O",
+" .X.X.   .X.X. O",
+" X.X.X. .X.X.X O",
+"O             OO"
+};
