@@ -39,6 +39,15 @@ aktuellen Zeiten und Einstellungen werden automatisch alle f&uuml;nf \
 Minuten gespeichert, dies kann aber auch explizit &uuml;ber die \
 entsprechende Men&uuml;funktion geschehen.</p> \
 \
+<p>Erfassung von Bereitschaftszeiten:\
+Das Unterkonto des Kunden/Projekts/Auftrags zu dem die Bereitschaft \
+geh&ouml;rt markieren. \
+Auf den Stempel in der Menüleiste klicken. Eine Auswahl m&ouml;glicher \
+Bereitschaftskategorien wird angezeigt. \
+Eine oder mehrere Kategorien ausw&auml;hlen, ok klicken. \
+Zum l&ouml;schen, wieder auf den Stempel klicken, angew&auml;hlte Kategorien \
+abw&auml;hlen, ok.\
+</p>\
 <p>Unter \
 Unix werden die Daten in ~/.sctime gesichert. Wichtig sind vor allem \
 die zeit*.sh Dateien. \

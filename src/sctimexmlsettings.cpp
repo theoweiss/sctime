@@ -77,7 +77,7 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
           stream<<"\n# Bereich: "<<abt<<"\n";
           firstInBereich=false;
         }
-        for (int i; i<bereitschaften.size(); i++)
+        for (int i=0; i<bereitschaften.size(); i++)
         {
            stream<<"zeitbereit "<<abtList->getDatum().toString("dd.MM.yyyy")<<" "<<
                  kontPos->first<<" "<<ukontPos->first<<"\t"<<bereitschaften.at(i)<<"\n";
