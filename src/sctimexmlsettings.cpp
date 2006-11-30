@@ -34,6 +34,7 @@
 #ifndef NO_XML
 #include "qdom.h"
 #endif
+#define WIN_CODEC "CP1252"
 
 /** Schreibt die Eintraege in ein Shellskript */
 void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
@@ -57,11 +58,16 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
   QRegExp apostrophExp=QRegExp("'");
 
   TimeCounter tc(sek), tcAbzur(abzurSek);
+#ifndef WIN32
+  QString codec=stream.codec()->name();
+#else
+  QString codec=WIN_CODEC;
+#endif
   stream<<"#!/bin/sh\n\n";
   stream<<"# Zeit Aufrufe von sctime "<<VERSIONSTR<<" generiert \n"
     <<"# Gesamtzeit: "<<tc.toString()<<"/"<<tcAbzur.toString()<<"\n";
-  stream<<"LC_CTYPE="<<QTextCodec::locale()<<"\n";
-  stream<<"export LC_CTYPE\n";
+  stream<<"ZEIT_ENCODING="<<codec<<"\n";
+  stream<<"export ZEIT_ENCODING\n";
 
   AbteilungsListe::iterator abtPos;
 
@@ -656,8 +662,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
       return;
   }
   QTextStream stream( & f);
-
-  stream<<"<?xml version=\"1.0\" encoding=\""<<stream.codec()->name()<<"\"?>"<<endl;
+#ifndef WIN32
+  QString codec=stream.codec()->name();
+#else
+  QString codec=WIN_CODEC;
+#endif;
+  stream<<"<?xml version=\"1.0\" encoding=\""<<codec<<"\"?>"<<endl;
   stream<<doc.toString()<<endl;
 
   f.close();

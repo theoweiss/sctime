@@ -90,7 +90,7 @@ void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
                                                           itUk->second.addDefaultComment(commentstr);
                                                       }
                                                       else
-                                                          std::cerr<<"Kann Unterkonto für Defaultkommentar nicht finden!"<<std::endl;
+                                                          std::cerr<<"Kann Unterkonto "<<unterkontostr.toStdString()<<" für Defaultkommentar nicht finden!"<<std::endl;
                                                   }
                                               }
                                           }
