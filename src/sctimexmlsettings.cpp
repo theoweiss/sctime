@@ -57,10 +57,11 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
   QRegExp apostrophExp=QRegExp("'");
 
   TimeCounter tc(sek), tcAbzur(abzurSek);
-
+  stream<<"#!/bin/sh\n\n";
   stream<<"# Zeit Aufrufe von sctime "<<VERSIONSTR<<" generiert \n"
     <<"# Gesamtzeit: "<<tc.toString()<<"/"<<tcAbzur.toString()<<"\n";
-
+  stream<<"LC_CTYPE="<<QTextCodec::locale()<<"\n";
+  stream<<"export LC_CTYPE\n";
 
   AbteilungsListe::iterator abtPos;
 
