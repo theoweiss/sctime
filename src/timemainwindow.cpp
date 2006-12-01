@@ -415,7 +415,7 @@ void TimeMainWindow::minutenUhr()
 
   if (!paused) {
     abtListToday->getAktiv(abt,ko,uko,idx);
-    int delta=lastMinuteTick.secsTo(QDateTime::currentDateTime());
+    int delta=lastMinuteTick.secsTo(QDateTime::currentDateTime());    
     if ((delta<120)&&(delta>0)) // Check if we have won or lost a minute.
       abtListToday->minuteVergangen(!pausedAbzur);
     else
@@ -423,6 +423,7 @@ void TimeMainWindow::minutenUhr()
       QString extrawarnung="";
       if (delta<0)
         extrawarnung="\nACHTUNG: Die Zeit wird zurueckgestellt, wenn Sie mit Ja quittieren!!!";
+      lastMinuteTick=QDateTime::currentDateTime(); // we might spend some time in the dialog... set things back to normal
       int answer= QMessageBox::question(this, "Zeitinkonsistenz",
                                    QString("Das System schien fuer ")+QString::number(delta/60)+" Minuten zu haengen oder die Systemzeit wurde veraendert.\n"
                                    "Soll die entstandene Zeitdifferenz auf das aktive Unterkonto gebucht werden?"+extrawarnung, QMessageBox::Yes,QMessageBox::No);
