@@ -168,6 +168,7 @@ class TimeMainWindow: public QMainWindow
     QAction* fastAbzurMinusAction;
     QAction* eintragRemoveAction;
     QAction* checkInAction;
+    QDateTime lastMinuteTick;
     QFont qtDefaultFont;
     AbteilungsListe* abtList;
     AbteilungsListe* abtListToday;

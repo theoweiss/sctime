@@ -35,6 +35,7 @@
 #include <QCustomEvent>
 #include <QFont>
 #include <Q3Header>
+#include <QTextStream>
 #include "kontotreeview.h"
 #include "time.h"
 #include "qtimer.h"
@@ -152,6 +153,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
   QTimer* timer = new QTimer(this);
   connect( timer,SIGNAL(timeout()), this, SLOT(minutenUhr()));
   timer->start(60000); //Alle 60 Sekunden ticken
+  lastMinuteTick=QDateTime::currentDateTime();
 
   QTimer* autosavetimer=new QTimer(this);
   connect( autosavetimer,SIGNAL(timeout()), this, SLOT(save()));
@@ -413,12 +415,32 @@ void TimeMainWindow::minutenUhr()
 
   if (!paused) {
     abtListToday->getAktiv(abt,ko,uko,idx);
-    abtListToday->minuteVergangen(!pausedAbzur);
+    int delta=lastMinuteTick.secsTo(QDateTime::currentDateTime());
+    if ((delta<120)&&(delta>0)) // Check if we have won or lost a minute.
+      abtListToday->minuteVergangen(!pausedAbzur);
+    else
+    {
+      QString extrawarnung="";
+      if (delta<0)
+        extrawarnung="\nACHTUNG: Die Zeit wird zurueckgestellt, wenn Sie mit Ja quittieren!!!";
+      int answer= QMessageBox::question(this, "Zeitinkonsistenz",
+                                   QString("Das System schien fuer ")+QString::number(delta/60)+" Minuten zu haengen oder die Systemzeit wurde veraendert.\n"
+                                   "Soll die entstandene Zeitdifferenz auf das aktive Unterkonto gebucht werden?"+extrawarnung, QMessageBox::Yes,QMessageBox::No);
+      if (answer==QMessageBox::Yes)
+        abtListToday->changeZeit(abt, ko, uko, idx, delta, false);
+      QFile logFile(configDir+"/sctime.log");
+
+      if (logFile.open(QIODevice::Append)) {
+         QTextStream stream(&logFile);
+         stream<<"Zeitinkonsitenz am "<<QDateTime::currentDateTime().toString()<<" Dauer: "<<QString::number(delta/60)<<" Minuten.\n";
+      }
+    }
     kontoTree->refreshItem(abt,ko,uko,idx);
     zeitChanged();
     emit minuteTick();
     if (!pausedAbzur) emit minuteAbzurTick();
   }
+  lastMinuteTick=QDateTime::currentDateTime();
 
   //fix-me: falls bis zu zwei Minuten nach Mitternacht das gestrige Datum
   //eingestellt ist, aufs neue Datum umstellen - Aergernis, falls jemand zw 0:00 und 0:02 tatsaechlich
