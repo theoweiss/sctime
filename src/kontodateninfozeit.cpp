@@ -228,7 +228,7 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
         // Falls alle drei Strings korrekt eingelesen wurden...
 
             unterkontoCounter++;
-            QString qstringzeile(zeile);
+            QString qstringzeile=QString::fromLocal8Bit(zeile);
             QStringList ql = qstringzeile.split("|");
 
             if (ql.size()<7) {
@@ -258,48 +258,6 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
 
 bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
 {
-#ifdef OLD_ZEITKONTEN
-
-  abtList->clear();
-  char rest[800], konto[200], unterkonto[200];
-
-  FILE* file;
-
-  if ((file = popen("zeitkonten --beschreibung", "r")) != NULL)
-  {
-    int unterkontoCounter=0;
-
-    QRegExp kostenstelle("\\s.\\d\\d\\d\\d\\d\\b");
-    while (!feof(file)) {
-      // Konto, unterkonto sind eindeutig durch leerzeichen getrennt,
-      // der Rest muss gesondert behandelt werden.
-      if (fscanf(file,"%s%s%[^\n]",konto,unterkonto,rest)==3) {
-        // Falls alle drei Strings korrekt eingelesen wurden...
-
-        unterkontoCounter++;
-        QString qstringrest(rest), abt,beschreibung;
-
-        // Kostenstelle trennt Abteilung von Beschreibung, also
-        // dort splitten
-        abt = qstringrest.section(kostenstelle,0,0).simplifyWhiteSpace();
-        beschreibung = qstringrest.section(kostenstelle,1);
-
-        if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
-
-        abtList->insertEintrag(abt,konto,unterkonto);
-        abtList->setBeschreibung(abt,konto,unterkonto,beschreibung);
-        abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
-      }
-    }
-    pclose(file);
-    return (unterkontoCounter>0);
-  }
-  else
-  {
-    std::cerr<<"Kann \"zeitkonten\" nicht ausfuehren."<<std::endl;
-    return false;
-  }
-#else
   abtList->clear();
   FILE* file;
   if (m_DatenFileName.isEmpty()) {
@@ -321,7 +279,6 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
   else
       fclose(file);
   return result;
-#endif
 }
 
 
