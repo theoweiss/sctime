@@ -420,6 +420,14 @@ void TimeMainWindow::minutenUhr()
       abtListToday->minuteVergangen(!pausedAbzur);
     else
     {
+      QFile logFile(configDir+"/sctime.log");
+
+      if (logFile.open(QIODevice::Append)) {
+         QTextStream stream(&logFile);
+         stream<<"Zeitinkonsistenz am "<<QDateTime::currentDateTime().toString()<<" Dauer: "<<QString::number(delta/60-1)<<" Minuten.\n";
+      }
+      logFile.close();
+
       QString extrawarnung="";
       if (delta<0)
         extrawarnung="\nACHTUNG: Die Zeit wird zurueckgestellt, wenn Sie mit Ja quittieren!!!";
@@ -429,12 +437,6 @@ void TimeMainWindow::minutenUhr()
                                    "Soll die entstandene Zeitdifferenz auf das aktive Unterkonto gebucht werden?"+extrawarnung, QMessageBox::Yes,QMessageBox::No);
       if (answer==QMessageBox::Yes)
         abtListToday->changeZeit(abt, ko, uko, idx, delta, false);
-      QFile logFile(configDir+"/sctime.log");
-
-      if (logFile.open(QIODevice::Append)) {
-         QTextStream stream(&logFile);
-         stream<<"Zeitinkonsitenz am "<<QDateTime::currentDateTime().toString()<<" Dauer: "<<QString::number(delta/60)<<" Minuten.\n";
-      }
     }
     kontoTree->refreshItem(abt,ko,uko,idx);
     zeitChanged();
