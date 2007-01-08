@@ -840,10 +840,11 @@ void TimeMainWindow::changeShortCutSettings(Q3ListViewItem * item)
 
   if (iseintragsitem) {
 
-    if (item->depth()<=3)
+    if ((item->depth()<=3)||(item->parent()->childCount()<=1))
        eintragRemoveAction->setEnabled(false);
-    else
+    else {
        eintragRemoveAction->setEnabled(true);
+    }
 
     flagsChanged(abt,ko,uko,idx);
     inPersKontAction->setEnabled(!abtList->checkInState());
