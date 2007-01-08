@@ -84,6 +84,7 @@ class SCTimeApp: public QApplication
   void commitData ( QSessionManager & manager ) 
   {
   	mainWindow->save();
+  	QApplication::commitData(manager);
   }
 
   public slots:
@@ -92,11 +93,11 @@ class SCTimeApp: public QApplication
     {
         switch(nr) {
             case SIGINT:
-            case SIGTERM:                
-                mainWindow->save();               
+            case SIGTERM:
+                mainWindow->save();
                 exit(0);
                 break;
-            case SIGHUP:            
+            case SIGHUP:
                 break;
         }
     }
