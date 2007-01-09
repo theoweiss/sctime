@@ -4,12 +4,20 @@
 # Target is an application:  ../bin/sctime
 
 TEMPLATE = app
-VERSIONSTR = \"0.53\"
+VERSIONSTR = "'\"0.54-pre\"'"
 CONFIG += warn_on qt
 CONFIG += uic
 OBJECTS_DIR = ../obj
 QT += qt3support xml sql gui core
 TARGET = ../bin/sctime
+!win32{
+  BUILDDATESTR = "\"\\\"`date`\\\"\""
+}
+isEmpty(BUILDDATESTR){
+  BUILDDATESTR = "\\\"unknown\\\""
+}
+#VERSIONSTR="\"0.53\""
+#BUILDDATESTR="\"unknown\""
 DEFINES += BUILDDATESTR=$$BUILDDATESTR VERSIONSTR=$$VERSIONSTR
 SOURCES += abteilungsliste.cpp \
            datedialog.cpp \
@@ -88,12 +96,6 @@ FORMS += datedialogbase.ui \
          preferencedialogbase.ui
 target.path = /$(prefix)/bin
 INSTALLS += target
-!win32{
-  BUILDDATESTR = \""`date`"\"
-}
-isEmpty(BUILDDATESTR){
-  BUILDDATESTR = \""unknown"\"
-}
 linux-g++-static{
   LIBS += -ldl
 }
@@ -129,3 +131,12 @@ irix-cc{
 irix-g++{
   DEFINES += IRIX
 }
+mac {
+  ICON = ../pics/scTime.icns
+  QMAKE_INFO_PLIST = Info.plist
+  TARGET = ../bin/scTime
+  QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.4u.sdk
+  DEFINES+=MACOS
+  CONFIG+=x86 ppc
+}
+

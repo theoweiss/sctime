@@ -130,7 +130,9 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
 
   mimeSourceFactory=new Q3MimeSourceFactory();
   mimeSourceFactory->setPixmap("/images/scLogo_15Farben.png",QPixmap((const char **)scLogo_15Farben_xpm));
+#ifndef Q_WS_MAC
   setIcon(QPixmap((const char **)sc_logo_xpm));
+#endif
 
   setCentralWidget(kontoTree);
   

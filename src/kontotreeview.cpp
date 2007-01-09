@@ -61,7 +61,11 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
   setAcceptDrops(true);
   //viewport()->setAcceptDrops(true);
 
+#ifndef MACOS
   setSelectionMode(Q3ListView::NoSelection);
+#else
+  setSelectionMode(Q3ListView::Single);
+#endif
 
   load(abtlist);
   for (unsigned int i=0; i<columnwidth.size(); i++) {
