@@ -21,24 +21,18 @@
 
 */
 
-#ifndef BEREITSCHAFTSDATENINFOZEIT_H
-#define  BEREITSCHAFTSDATENINFOZEIT_H
+#ifndef BEREITSCHAFTSDATENINFODATABASE_H
+#define  BEREITSCHAFTSDATENINFODATABASE_H
 
 #include "bereitschaftsdateninfo.h"
 
 /**
-  * Liest die Bereitschaftsdaten ueber die Zeittools ein.
+  * Liest die Bereitschaftsdaten ueber die Datenbank ein.
   */
-class BereitschaftsDatenInfoZeit: public BereitschaftsDatenInfo
+class BereitschaftsDatenInfoDatabase: public BereitschaftsDatenInfo
 {
   public:
-    BereitschaftsDatenInfoZeit();
-    BereitschaftsDatenInfoZeit(QString sourcefile);
     virtual bool readInto(BereitschaftsListe * berlist);
-    bool readBereitschaftsFile(FILE *file, BereitschaftsListe * berlist);
-    virtual ~BereitschaftsDatenInfoZeit() {};
-  private:
-    QString m_DatenFileName;
 };
 
 #endif

@@ -56,7 +56,12 @@
 #ifndef NO_TEXTEDIT
 #include "q3textedit.h"
 #endif
+#include "bereitschaftsdateninfo.h"
+#ifdef WIN32
+#include "bereitschaftsdateninfodatabase.h"
+#else
 #include "bereitschaftsdateninfozeit.h"
+#endif
 #include "qfile.h"
 #include "findkontodialog.h"
 #include "sctimehelp.h"
@@ -104,7 +109,11 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
   }  
   defaultCommentReader.read(abtList,xmlfilelist);
 
+#ifdef WIN32
+  BereitschaftsDatenInfoDatabase bereitschaftsdatenReader;
+#else
   BereitschaftsDatenInfoZeit bereitschaftsdatenReader;
+#endif
   bereitschaftsdatenReader.readInto(BereitschaftsListe::getInstance());
 
   DefaultTagReader defaulttagreader;

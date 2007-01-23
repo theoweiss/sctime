@@ -16,7 +16,7 @@ TARGET = ../bin/sctime
 isEmpty(BUILDDATESTR){
   BUILDDATESTR = "\\\"unknown\\\""
 }
-#VERSIONSTR="\"0.53\""
+#VERSIONSTR="\"0.54-pre\""
 #BUILDDATESTR="\"unknown\""
 DEFINES += BUILDDATESTR=$$BUILDDATESTR VERSIONSTR=$$VERSIONSTR
 SOURCES += abteilungsliste.cpp \
@@ -76,6 +76,7 @@ HEADERS += abteilungsliste.h \
            GetOpt.h \
            descdata.h \
            smallfontdialog.h \
+           bereitschaftsdateninfo.h \
            bereitschaftsdateninfozeit.h \
            bereitschaftsliste.h \
            bereitschaftsview.h
@@ -108,8 +109,8 @@ linux-g++{
 win32{
   DEFINES += WIN32
   QMAKE_CXXFLAGS += -GX
-  SOURCES += kontodateninfodatabase.cpp
-  HEADERS += kontodateninfodatabase.h
+  SOURCES += kontodateninfodatabase.cpp bereitschaftsdateninfodatabase.cpp
+  HEADERS += kontodateninfodatabase.h bereitschaftsdateninfodatabase.h
 }
 hpux-acc{
   DEFINES += HPUX
