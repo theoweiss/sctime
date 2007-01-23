@@ -178,6 +178,9 @@ void UnterKontoDialog::accept()
   else
     comment = commentcombo->currentText();
 
+  comment=comment.remove("\n");
+  comment=comment.remove("\r");
+
   abtList->setEintrag(abteilungsName,kontoName,unterKontoName,eintragIndex,
     UnterKontoEintrag(comment,zeitBox->getSekunden(),
     zeitAbzurBox->getSekunden(), flags));
