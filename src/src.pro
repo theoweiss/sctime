@@ -4,17 +4,17 @@
 # Target is an application:  ../bin/sctime
 
 TEMPLATE = app
-VERSIONSTR = "'\"0.54-pre\"'"
+VERSIONSTR = '\"0.54-pre\"'
 CONFIG += warn_on qt
 CONFIG += uic
 OBJECTS_DIR = ../obj
 QT += qt3support xml sql gui core
 TARGET = ../bin/sctime
 !win32{
-  BUILDDATESTR = "\"\\\"`date`\\\"\""
+  BUILDDATESTR = '"`date`"'
 }
 isEmpty(BUILDDATESTR){
-  BUILDDATESTR = "\\\"unknown\\\""
+  BUILDDATESTR = '"unknown"'
 }
 #VERSIONSTR="\"0.54-pre\""
 #BUILDDATESTR="\"unknown\""

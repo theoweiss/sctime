@@ -20,6 +20,7 @@
 
 #define NO_CHECKIN_ACTION
 
+#include "utils.h"
 #include "timemainwindow.h"
 #include "qclipboard.h"
 #include "qapplication.h"
@@ -1113,8 +1114,8 @@ void TimeMainWindow::callAboutBox()
   layout->setRowMinimumHeight(0,logo->pixmap()->height()+69);
 
   layout->addWidget(logo,0,0);
-  QLabel versioninfo(QString("<h2>sctime</h2><nobr><b>Version:</b> ")+VERSIONSTR+
-                             "</nobr><br><nobr><b>Datum des Builds:</b> "+BUILDDATESTR+"</nobr>",aboutBox);
+  QLabel versioninfo(QString("<h2>sctime</h2><nobr><b>Version:</b> ")+QUOTEME(VERSIONSTR)+
+                             "</nobr><br><nobr><b>Datum des Builds:</b> "+QUOTEME(BUILDDATESTR)+"</nobr>",aboutBox);
   versioninfo.setTextFormat(Qt::RichText);
   layout->addWidget(&versioninfo,0,1);
   layout->addItem(new QSpacerItem(0, 20), 1, 0);
