@@ -57,7 +57,7 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
   bereitPixmap=QPixmap((const char **)hi16_action_stamp);
 
   setRootIsDecorated(true);
-  
+  viewport()->installEventFilter(this);
   setAcceptDrops(true);
   //viewport()->setAcceptDrops(true);
 
@@ -429,34 +429,27 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
   refreshItem(abt,ko,uko,idx);
 }
 
-bool KontoTreeView::event ( QEvent * e )
+bool KontoTreeView::eventFilter ( QObject* obj, QEvent * e )
 {
-	
-	switch (e->type())
-	{
-		case (QEvent::ToolTip):
-		{
-	        QHelpEvent* qh= dynamic_cast <QHelpEvent*>(e);
-	        QPoint contpos(qh->pos());
-	        contpos-=QPoint(viewport()->pos());
-	        KontoTreeItem * item=dynamic_cast<KontoTreeItem *>(itemAt(contpos));
-	        if (isEintragsItem(item)) {
-	            QString top,uko,ko,abt;
-	            int idx;
-	            itemInfo(item,top,abt,ko,uko,idx);
-	            QString beschreibung=abtList->getDescription(abt,ko,uko).description().simplifyWhiteSpace();
-	            if (beschreibung!="") {
-	                QToolTip::showText(qh->globalPos(),beschreibung,this);
-	                qh->accept();
-	                return true;
-	            }
-	        }
-	        break; 
-	    }
-	    default:
-	        break;
-    }
-    return Q3ListView::event(e);
+  if ((obj==viewport())&&(e->type()==QEvent::ToolTip))
+  {
+        QHelpEvent* qh= dynamic_cast <QHelpEvent*>(e);
+        QPoint contpos(qh->pos());
+        //contpos-=QPoint(viewport()->pos());
+        KontoTreeItem * item=dynamic_cast<KontoTreeItem *>(itemAt(contpos));
+        if (isEintragsItem(item)) {
+            QString top,uko,ko,abt;
+            int idx;
+            itemInfo(item,top,abt,ko,uko,idx);
+            QString beschreibung=abtList->getDescription(abt,ko,uko).description().simplifyWhiteSpace();
+            if (beschreibung!="") {
+               QToolTip::showText(qh->globalPos(),beschreibung,this);
+                qh->accept();
+                return true;
+            }
+        }
+  }
+  return Q3ListView::eventFilter(obj,e);
 }
 
 /**

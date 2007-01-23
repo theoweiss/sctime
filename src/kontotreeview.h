@@ -77,7 +77,7 @@ class KontoTreeView: public Q3ListView
 
   protected:
       virtual Q3DragObject* dragObject ();
-      virtual bool event ( QEvent * e );
+      virtual bool eventFilter ( QObject* obj, QEvent * e );
 #ifdef USE_QT4_DRAGNDROP
       virtual void mouseMoveEvent(QMouseEvent *event);
       virtual void mousePressEvent(QMouseEvent *event);      
