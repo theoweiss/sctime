@@ -34,6 +34,7 @@ class BereitschaftsDatenInfo
 {
   public:
     virtual bool readInto(BereitschaftsListe * berlist)=0;
+    virtual ~BereitschaftsDatenInfo() {};
 };
 
 #endif
