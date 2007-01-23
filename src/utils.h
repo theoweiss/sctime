@@ -5,6 +5,7 @@
 float roundTo(float f, float step);
 
 // Quotes the given argument
-#define QUOTEME(x) #x
+#define QUOTEME(x) QUOTEME_HELPER(x)
+#define QUOTEME_HELPER(x) #x
 
 #endif
