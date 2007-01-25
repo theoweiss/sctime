@@ -342,6 +342,9 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
               if (kommandostr.isNull()) continue;
               zeitKommando=kommandostr;
             }
+            if (elem2.tagName()=="dragndrop") {
+              setDragNDrop(elem2.attribute("on")=="yes");
+            }
             if (elem2.tagName()=="max_working_time") {
               QString secondsstr=elem2.attribute("seconds");
               if (secondsstr.isNull()) continue;
@@ -518,6 +521,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     if (singleClickActivation()) on="yes";
     singleclicktag.setAttribute("on",on);
     generaltag.appendChild(singleclicktag);
+
+    QDomElement dragndroptag = doc.createElement("dragndrop");
+    on="no";
+    if (dragNDrop()) on="yes";
+    dragndroptag.setAttribute("on",on);
+    generaltag.appendChild(dragndroptag);
 
     QDomElement kontodlgwindowpositiontag = doc.createElement( "kontodlgwindowposition" );
     kontodlgwindowpositiontag.setAttribute("x",unterKontoWindowPosition.x());

@@ -51,6 +51,7 @@ class SCTimeXMLSettings
       unterKontoWindowSize = QSize(0,0);
       m_showTypeColumn=false;
       m_useCustomFont=false;
+      m_dragNDrop=true;
       m_customFont="helvetica";
       m_customFontSize=10;
       
@@ -184,6 +185,16 @@ class SCTimeXMLSettings
     	m_showTypeColumn=showTypeColumn;
     }
 
+    bool dragNDrop()
+    {
+        return m_dragNDrop;
+    }
+
+    void setDragNDrop(bool on)
+    {
+        m_dragNDrop=on;
+    }
+
   private:
 
     void writeSettings(bool global, AbteilungsListe* abtList);
@@ -203,6 +214,7 @@ class SCTimeXMLSettings
     bool alwaysSaveEintrag;
     bool _powerUserView;
     bool _singleClickActivation;
+    bool m_dragNDrop;
     bool m_useCustomFont;
     bool m_showTypeColumn;
     int _maxWorkingTime;

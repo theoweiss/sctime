@@ -41,6 +41,7 @@ PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent
     powerUserCheckbox->setChecked(settings->powerUserView());
     singleClickCheckbox->setChecked(settings->singleClickActivation());
     showTypeCheckBox->setChecked(settings->showTypeColumn());
+    dragNDropCheckbox->setChecked(settings->dragNDrop());
     customFontCheckBox->setChecked(settings->useCustomFont());
     customFontSelectButton->setEnabled(settings->useCustomFont());
     QString custFont=settings->customFont();
@@ -78,6 +79,7 @@ void PreferenceDialog::accept()
     settings->setShowTypeColumn(showTypeCheckBox->isChecked());
     settings->setUseCustomFont(customFontCheckBox->isChecked());
     settings->setCustomFont(selectedFont.family());
-        settings->setCustomFontSize(selectedFont.pointSize());
+    settings->setDragNDrop(dragNDropCheckbox->isChecked());
+    settings->setCustomFontSize(selectedFont.pointSize());
 
 }

@@ -340,6 +340,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
   changeShortCutSettings(NULL); // Unterkontenmenues deaktivieren...
 
   updateCaption();
+  kontoTree->setAcceptDrops(settings->dragNDrop());
   kontoTree->showAktivesProjekt();
   showAdditionalButtons(settings->powerUserView());
 }
@@ -1008,6 +1009,7 @@ void TimeMainWindow::callPreferenceDialog()
   preferenceDialog.exec();
   showAdditionalButtons(settings->powerUserView());
   configClickMode(settings->singleClickActivation());
+  kontoTree->setAcceptDrops(settings->dragNDrop());
   if (settings->useCustomFont()) {
   	QApplication::setFont(QFont(settings->customFont(),settings->customFontSize()));
   }

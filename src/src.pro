@@ -4,7 +4,7 @@
 # Target is an application:  ../bin/sctime
 
 TEMPLATE = app
-VERSIONSTR = '\"0.54-pre\"'
+VERSIONSTR = '"0.54-pre"'
 CONFIG += warn_on qt
 CONFIG += uic
 OBJECTS_DIR = ../obj

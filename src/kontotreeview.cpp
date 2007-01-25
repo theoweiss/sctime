@@ -58,8 +58,6 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
 
   setRootIsDecorated(true);
   viewport()->installEventFilter(this);
-  setAcceptDrops(true);
-  //viewport()->setAcceptDrops(true);
 
 #ifndef MACOS
   setSelectionMode(Q3ListView::NoSelection);
