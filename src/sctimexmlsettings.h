@@ -59,6 +59,8 @@ class SCTimeXMLSettings
 
     void writeSettings(AbteilungsListe* abtList);
 
+    void readSettings();
+
     void readSettings(AbteilungsListe* abtList);
 
     void writeShellSkript(AbteilungsListe* abtList);
@@ -195,6 +197,16 @@ class SCTimeXMLSettings
         m_dragNDrop=on;
     }
 
+    QString zeitKontenKommando()
+    {
+        return m_zeitKontenKommando;
+    }
+
+    void setZeitKontenKommando(const QString& command)
+    {
+        m_zeitKontenKommando=command;
+    }
+
   private:
 
     void writeSettings(bool global, AbteilungsListe* abtList);
@@ -202,6 +214,7 @@ class SCTimeXMLSettings
     void readSettings(bool global, AbteilungsListe* abtList);
 
     QString zeitKommando;
+    QString m_zeitKontenKommando;
 
     int timeInc,fastTimeInc;
 

@@ -52,13 +52,17 @@ class SCTimeApp: public QApplication
     {
 
 #ifndef WIN32
+      SCTimeXMLSettings settings;
+      settings.readSettings();
       connect(this, SIGNAL(unixSignal(int)), this, SLOT(sighandler(int)));
       watchUnixSignal(SIGINT,true);
       watchUnixSignal(SIGTERM,true);
       watchUnixSignal(SIGHUP,true);
-      if (zeitkontenfile.isEmpty())
+      if (zeitkontenfile.isEmpty()) {
           zk = new KontoDatenInfoZeit();
-      else
+          if (!settings.zeitKontenKommando().isEmpty())
+            static_cast<KontoDatenInfoZeit*>(zk)->setKommando(settings.zeitKontenKommando());
+      } else
       {
           if (zeitkontenfile.startsWith("~/"))
               zeitkontenfile.replace(0,2,QDir::homePath()+"/");

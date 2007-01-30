@@ -261,9 +261,14 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
   abtList->clear();
   FILE* file;
   if (m_DatenFileName.isEmpty()) {
-    file = popen("zeitkonten --beschreibung --separator='|'", "r");
+    QString command;
+    if (m_Kommando.isEmpty())
+      command="zeitkonten --beschreibung --separator='|'";
+    else
+      command=m_Kommando;
+    file = popen(command, "r");
     if (!file) {
-      std::cerr<<"Kann \"zeitkonten\" nicht ausfuehren."<<std::endl;
+      std::cerr<<"Kann Kommando \""<<command.toStdString()<<"\" nicht ausfuehren."<<std::endl;
       return false;
     }
   } else {
@@ -281,6 +286,10 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
   return result;
 }
 
+void KontoDatenInfoZeit::setKommando(const QString& command)
+{
+  m_Kommando=command;
+}
 
 bool KontoDatenInfoZeit::checkIn(AbteilungsListe* abtlist)
 {

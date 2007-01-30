@@ -143,6 +143,12 @@ void SCTimeXMLSettings::readSettings(AbteilungsListe* abtList)
   readSettings(false, abtList);
 }
 
+void SCTimeXMLSettings::readSettings()
+{
+  // Nur globale Einstellungen lesen
+  readSettings(true, NULL);
+}
+
 /**
  * Liest alle Einstellungen.
  */
@@ -158,12 +164,14 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
   else {
     filename="/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
     QFileInfo qf(configDir+"/checkedin"+filename);
-    if (qf.exists()) {
-      filename="/checkedin"+filename;
-      abtList->setCheckInState(true);
+    if (abtList) {
+        if (qf.exists()) {
+          filename="/checkedin"+filename;
+          abtList->setCheckInState(true);
+        }
+        else
+          abtList->setCheckInState(false);
     }
-    else
-      abtList->setCheckInState(false);
   }
 
   QFile f( configDir + filename );
@@ -189,7 +197,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
   for(QDomNode node1 = docElem.firstChild(); !node1.isNull(); node1 = node1.nextSibling()) {
     QDomElement elem1 = node1.toElement();
     if( !elem1.isNull() ) {
-      if (elem1.tagName()=="abteilung") {
+      if ((elem1.tagName()=="abteilung")&&(abtList)) {
         QString abteilungstr=elem1.attribute("name");
         if (abteilungstr.isNull()) continue;
         abtList->insertAbteilung(abteilungstr);
@@ -342,6 +350,11 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
               if (kommandostr.isNull()) continue;
               zeitKommando=kommandostr;
             }
+            if (elem2.tagName()=="zeitkontenkommando") {
+              QString zeitkontenkommandostr=elem2.firstChild().toCharacterData().data();
+              if (zeitkontenkommandostr.isNull()) continue;
+              setZeitKontenKommando(zeitkontenkommandostr);
+            }
             if (elem2.tagName()=="dragndrop") {
               setDragNDrop(elem2.attribute("on")=="yes");
             }
@@ -410,13 +423,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
     }
   }
 
-  // fixme: Hack fuer reibungsfreie Migration auf neue sctime Version...
-  if ((global) && (defaultcommentfiles.empty())) {
-      std::cout<<defaultcommentfiles.size();
-      defaultcommentfiles.push_back("defaultcomments.xml");
-  }
-
-  if (!aktiveskontotag.isNull()) {
+  if ((!aktiveskontotag.isNull())&&abtList) {
     QString abtstr=aktiveskontotag.attribute("abteilung");
     QString kostr=aktiveskontotag.attribute("konto");
     QString ukostr=aktiveskontotag.attribute("unterkonto");
@@ -466,6 +473,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     QDomElement zeitkommandotag = doc.createElement( "zeitkommando" );
     zeitkommandotag.appendChild(doc.createTextNode(zeitKommando));
     generaltag.appendChild(zeitkommandotag);
+
+    if (!zeitKontenKommando().isEmpty()) {
+      QDomElement zeitkontenkommandotag = doc.createElement( "zeitkontenkommando" );
+      zeitkontenkommandotag.appendChild(doc.createTextNode(zeitKontenKommando()));
+      generaltag.appendChild(zeitkontenkommandotag);
+    }
 
     if (MAX_WORKTIME_DEFAULT!=_maxWorkingTime) {
         QDomElement maxworktag = doc.createElement( "max_working_time" );
