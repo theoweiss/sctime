@@ -3,6 +3,7 @@
 
 #include <QListView>
 #include <QStringList>
+#include "bereitschaftsmodel.h"
 
 class BereitschaftsView: public QListView
 {
@@ -11,6 +12,8 @@ public:
   ~BereitschaftsView ();
   void setSelectionList(QStringList list);
   QStringList getSelectionList();
+private:
+  BereitschaftsModel m_model;
 };
 
 #endif

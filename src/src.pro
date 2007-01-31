@@ -42,7 +42,8 @@ SOURCES += abteilungsliste.cpp \
            smallfontdialog.cpp \
            bereitschaftsdateninfozeit.cpp \
            bereitschaftsliste.cpp \
-           bereitschaftsview.cpp
+           bereitschaftsview.cpp \
+           bereitschaftsmodel.cpp
 HEADERS += abteilungsliste.h \
            kontoliste.h \
            statusbar.h \
@@ -79,7 +80,8 @@ HEADERS += abteilungsliste.h \
            bereitschaftsdateninfo.h \
            bereitschaftsdateninfozeit.h \
            bereitschaftsliste.h \
-           bereitschaftsview.h
+           bereitschaftsview.h \
+           bereitschaftsmodel.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \
