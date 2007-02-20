@@ -106,6 +106,7 @@ class TimeMainWindow: public QMainWindow
     void configClickMode(bool singleClickActivation);
     void mouseButtonInKontoTreeClicked(int button, Q3ListViewItem * item, const QPoint & pos, int c );
     void copyNameToClipboard();
+    void showContextMenu(Q3ListViewItem * item, const QPoint& pos, int col);
 
   signals:
     /** Wird ausgeloest, falls sich die Gesamtzeit geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden. */
@@ -132,18 +133,18 @@ class TimeMainWindow: public QMainWindow
      * Unterkonto mit mehreren Eintraegen) mit false
      */
     void eintragSelected(bool isEintrag);
+
     /**
       Wird mit true ausgeloest, wenn ein Unterkonto im Kontobaum
      * selektiert wurde, bei anderen Selektionen (Konto,Abteilung oder
      * blosser Eintrag) mit false
      */
-
     void unterkontoSelected(bool isUnterkonto);
+
     /**
      * Wird mit true ausgeloest, wenn ein Item im Kontobaum
      * selektiert wurde, zu dem weitere Eintraege hinzugefuegt werden koennen
      */
-
     void augmentableItemSelected(bool isAugmentable);
 
     /** Wird mit true ausgeloest, falls auf das aktuelle Datum gewechselt wird, bei allen anderen

@@ -298,6 +298,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk):QMainWindow()
   connect(this,SIGNAL(unterkontoSelected(bool)), bereitschaftsAction, SLOT(setEnabled(bool)));
 
   connect(this,SIGNAL(aktivierbarerEintragSelected(bool)), eintragActivateAction, SLOT(setEnabled(bool)));
+  connect(kontoTree,SIGNAL(contextMenuRequested(Q3ListViewItem *, const QPoint& ,int)), this, SLOT(showContextMenu(Q3ListViewItem *, const QPoint& ,int)));
 
   toolBar->addAction(editUnterKontoAction);
   toolBar->addAction(saveAction);
@@ -945,6 +946,29 @@ void TimeMainWindow::checkIn()
   kontoTree->load(abtList);
   kontoTree->closeFlaggedPersoenlicheItems();
   kontoTree->showAktivesProjekt();
+}
+
+void TimeMainWindow::showContextMenu(Q3ListViewItem * item, const QPoint& pos, int col)
+{
+  if (kontoTree->isEintragsItem(item))
+    return;
+  QString top,uko,konto,abt;
+  int idx;
+  kontoTree->itemInfo(item,top,abt,konto,uko,idx);
+
+  QMenu contextMenu(this);
+  QAction* openInAllAccountsAction=NULL;
+  if (top!=ALLE_KONTEN_STRING)
+    openInAllAccountsAction=contextMenu.addAction("Zu diesem Konto in \"Alle Konten\" springen");
+  //contextMenu.popup(pos);
+  QAction* action=contextMenu.exec(pos);
+  if ((openInAllAccountsAction)&&(action==openInAllAccountsAction)) {
+     Q3ListViewItem *newitem = kontoTree->sucheKontoItem(ALLE_KONTEN_STRING,abt,konto);
+     if (item) {
+       kontoTree->setCurrentItem(newitem);
+       kontoTree->ensureItemVisible(newitem);
+     }
+  }
 }
 
 /**
