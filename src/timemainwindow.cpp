@@ -956,6 +956,7 @@ void TimeMainWindow::showContextMenu(Q3ListViewItem * item, const QPoint& mousep
   QString top,uko,konto,abt;
   int idx;
   kontoTree->itemInfo(item,top,abt,konto,uko,idx);
+  int depth=item->depth();
 
   QPoint pos=mousepos;
   QMenu contextMenu(this);
@@ -969,9 +970,11 @@ void TimeMainWindow::showContextMenu(Q3ListViewItem * item, const QPoint& mousep
     }
   }
   QAction* openInAllAccountsAction=NULL;
-  if (top!=ALLE_KONTEN_STRING)
+  if ((top!=ALLE_KONTEN_STRING)&&(depth>=1))
     openInAllAccountsAction=contextMenu.addAction("Zu diesem Konto in \"Alle Konten\" springen");
-  QAction* bgColorAction=contextMenu.addAction("Hintergrundfarbe setzen");
+  QAction* bgColorAction=NULL;
+  if ((depth>=1)&&(depth<=3))
+    bgColorAction=contextMenu.addAction("Hintergrundfarbe setzen");
   QAction* action=contextMenu.exec(pos);
   if (action) {
     if (action==openInAllAccountsAction) {

@@ -28,11 +28,13 @@ void ColorChooser::colorButtonPressed(QAbstractButton * button)
 {
   m_selectedColor=button->palette().button().color();
   chosenColorButton->setPalette(button->palette());
+  activateOwnColor(true);
 }
 
 void ColorChooser::activateOwnColor(bool activate)
 {
-  colorGroupBox->setEnabled(activate);
+  //colorGroupBox->setEnabled(activate);
+  useOwnColorCheckBox->setChecked(activate);
   chosenGroupBox->setEnabled(activate);
   if (activate)
     chosenColorButton->setText("");
