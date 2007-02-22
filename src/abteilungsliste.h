@@ -25,6 +25,7 @@
 #include "kontoliste.h"
 #include "qdatetime.h"
 #include <iostream>
+#include <QColor>
 
 #define IS_DISABLED 8
 #define IS_IN_DATABASE 4
@@ -80,6 +81,11 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     void setDescription(const QString& abteilung, const QString& konto, const QString& unterkonto, const DescData& descData);
 
     DescData getDescription(const QString& abteilung, const QString& konto, const QString& unterkonto);
+
+    void setBgColor(QColor bgColor, const QString& abteilung, const QString& konto="", const QString& unterkonto="");
+    QColor getBgColor(const QString& abteilung, const QString& konto="", const QString& unterkonto="");
+    void unsetBgColor(const QString& abteilung, const QString& konto="", const QString& unterkonto="");
+    bool hasBgColor(const QString& abteilung, const QString& konto="", const QString& unterkonto="");
 
     bool setKommentar(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, const QString& kommentar);
 

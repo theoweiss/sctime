@@ -206,6 +206,9 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
         if (elem1.attribute("open")=="no")
           abtList->setAbteilungFlags(abteilungstr,IS_CLOSED,FLAG_MODE_OR);
 
+        if (!elem1.attribute("color").isEmpty()) {
+           abtList->setBgColor(str2color(elem1.attribute("color")),abteilungstr);
+        }
         for( QDomNode node2 = elem1.firstChild(); !node2.isNull(); node2 = node2.nextSibling() ) {
           QDomElement elem2 = node2.toElement();
           if( !elem2.isNull() ) {
@@ -218,6 +221,9 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
               if (elem2.attribute("open")=="no")
                 abtList->setKontoFlags(abteilungstr,kontostr,IS_CLOSED,FLAG_MODE_OR);
               abtList->moveKontoPersoenlich(abteilungstr,kontostr,(elem2.attribute("persoenlich")=="yes"));
+              if (!elem2.attribute("color").isEmpty()) {
+                   abtList->setBgColor(str2color(elem2.attribute("color")),abteilungstr,kontostr);
+              }
 
               bool kontoPers=((abtList->getKontoFlags(abteilungstr,kontostr))&UK_PERSOENLICH);
 
@@ -236,6 +242,10 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
                                                   IS_CLOSED,FLAG_MODE_OR);
                     if ((elem3.attribute("persoenlich")=="yes")||(elem3.attribute("persoenlich")=="no"))
                       abtList->moveUnterKontoPersoenlich(abteilungstr,kontostr,unterkontostr,(elem3.attribute("persoenlich")=="yes"));
+
+                    if (!elem3.attribute("color").isEmpty()) {
+                      abtList->setBgColor(str2color(elem3.attribute("color")),abteilungstr,kontostr,unterkontostr);
+                    }
 
                     bool ukontPers=((abtList->getUnterKontoFlags(abteilungstr,kontostr,unterkontostr))
                                     &UK_PERSOENLICH);
@@ -576,6 +586,13 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     abttag.setAttribute("name",abteilungstr);
     bool abtIsEmpty=true;
 
+    if (global) {
+        if (abtList->hasBgColor(abteilungstr)) {
+          abtIsEmpty=false;
+          abttag.setAttribute("color",color2str(abtList->getBgColor(abteilungstr)));
+        }
+    }
+
     KontoListe* kontoliste=&(abtPos->second);
     for (KontoListe::iterator kontPos=kontoliste->begin(); kontPos!=kontoliste->end(); ++kontPos) {
       QString kontostr=kontPos->first;
@@ -587,6 +604,13 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
       if (kontpers) {
         kontIsEmpty=false;
         konttag.setAttribute("persoenlich","yes");
+      }
+
+      if (global) {
+        if (abtList->hasBgColor(abteilungstr,kontostr)) {
+          kontIsEmpty=false;
+          konttag.setAttribute("color",color2str(abtList->getBgColor(abteilungstr,kontostr)));
+        }
       }
 
       UnterKontoListe* unterkontoliste=&(kontPos->second);
@@ -605,6 +629,13 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
         else if (kontpers) {
           ukontIsEmpty=false;
           ukonttag.setAttribute("persoenlich","no"); // Falls Einstellung vom zugeh. Konto abweicht.
+        }
+
+        if (global) {
+          if (abtList->hasBgColor(abteilungstr,kontostr,unterkontostr)) {
+            ukontIsEmpty=false;
+            ukonttag.setAttribute("color",color2str(abtList->getBgColor(abteilungstr,kontostr,unterkontostr)));
+          }
         }
 
         if (!global) {
@@ -696,3 +727,20 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   f.rename(filename);
   #endif
 }
+
+QString SCTimeXMLSettings::color2str(const QColor& color)
+{
+  return QString().sprintf("#%.2x%.2x%.2x",color.red(),color.green(),color.blue());
+}
+
+QColor SCTimeXMLSettings::str2color(const QString& str)
+{
+  if (str.length()!=7)
+    return Qt::white;
+  QColor color;
+  color.setRed(str.mid(1,2).toInt(NULL,16));
+  color.setGreen(str.mid(3,2).toInt(NULL,16));
+  color.setBlue(str.mid(5,2).toInt(NULL,16));
+  return color;
+}
+

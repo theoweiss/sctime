@@ -54,7 +54,6 @@ class SCTimeXMLSettings
       m_dragNDrop=true;
       m_customFont="helvetica";
       m_customFontSize=10;
-      
     }
 
     void writeSettings(AbteilungsListe* abtList);
@@ -212,6 +211,10 @@ class SCTimeXMLSettings
     void writeSettings(bool global, AbteilungsListe* abtList);
 
     void readSettings(bool global, AbteilungsListe* abtList);
+
+    QString color2str(const QColor& color);
+
+    QColor str2color(const QString& str);
 
     QString zeitKommando;
     QString m_zeitKontenKommando;

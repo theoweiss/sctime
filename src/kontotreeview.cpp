@@ -130,7 +130,7 @@ void KontoTreeView::dropEvent(QDropEvent *event)
         QStringList datlist=data.split("|");
         UnterKontoEintrag eintrag;
         abtList->getEintrag(eintrag,datlist[1],datlist[2],datlist[3],datlist[4].toInt());
-                                
+
         int deltasek=eintrag.sekunden;
         int deltasekabzur=eintrag.sekundenAbzur;
         
@@ -394,9 +394,11 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
     for (abtPos=abtList->begin(); abtPos!=abtList->end(); ++abtPos) {
       KontoTreeItem* abteilungsitem=new KontoTreeItem( allekonten, abtPos->first );
       KontoListe* kontoliste=&(abtPos->second);
+      abteilungsitem->setBgColor(abtList->getBgColor(abtPos->first));
       for (KontoListe::iterator kontPos=kontoliste->begin(); kontPos!=kontoliste->end(); ++kontPos) {
         KontoTreeItem* kontoitem= new KontoTreeItem( abteilungsitem, kontPos->first);
         UnterKontoListe* unterkontoliste=&(kontPos->second);
+        kontoitem->setBgColor(abtList->getBgColor(abtPos->first,kontPos->first));
         for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {
           if ((ukontPos->second.getFlags()&IS_DISABLED)!=0) {
               continue; // Deaktivierte Unterkonten nicht anzeigen
@@ -411,6 +413,7 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
                 newItem->setGray(abtList->checkInState());
                 newItem->setDragEnabled(true);
                 newItem->setDropEnabled(true);
+                newItem->setBgColor(abtList->getBgColor(abtPos->first,kontPos->first,ukontPos->first));
              // newItem->setBold((etPos->second.kommentar!="")||(etPos->second.sekunden!=0)||(etPos->second.sekundenAbzur!=0));
             }
             // Sorgt dafuer, dass das Konto in Persoenliche Konten kommt
@@ -505,7 +508,11 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
     itemFound=true;
   }
 
+  koi->setBgColor(abtList->getBgColor(abt,ko));
+  abti->setBgColor(abtList->getBgColor(abt));
+
   ukoi->setBold((etl->getFlags())&UK_PERSOENLICH);
+  ukoi->setBgColor(abtList->getBgColor(abt,ko,uko));
 
   if ((etl->getFlags()&IS_DISABLED)!=0)
     return; // Deaktivierte Unterkonten nicht anfassen
@@ -542,6 +549,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       ukoi->setText(1,"");
       ukoi->setText(3,"");
       ukoi->setText(4,"");
+      ukoi->setBgColor(abtList->getBgColor(abt,ko,uko));
       if (bereitschaften.size()>=1) {
         ukoi->setPixmap(2,bereitPixmap);
         ukoi->setText(5,bereitschaften.join("; "));
@@ -559,6 +567,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
     eti->setText(4,tcAbzur.toString());
     eti->setDragEnabled(true);
     eti->setDropEnabled(true);
+    eti->setBgColor(abtList->getBgColor(abt,ko,uko));
     //eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
 
     eti->setBold((etiter->second.flags)&UK_PERSOENLICH);
@@ -610,6 +619,11 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
         eti->setPixmap(2,aktivPixmap);
       else
         eti->setPixmap(2,emptyPixmap);
+      QColor color=abtList->getBgColor(abt,ko,uko);
+      eti->setBgColor(color);
+      ukoi->setBgColor(color);
+      koi->setBgColor(abtList->getBgColor(abt,ko));
+      abti->setBgColor(abtList->getBgColor(abt));
     }
     if ((inPersKontenGefunden)&&((etiter->second.flags)&UK_PERSOENLICH)) {
       int firstEintrag=firstEintragWithFlags(etl,UK_PERSOENLICH);
@@ -636,6 +650,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
         ukoi->setText(1,"");
         ukoi->setText(3,"");
         ukoi->setText(4,"");
+        ukoi->setBgColor(abtList->getBgColor(abt,ko,uko));
         if (bereitschaften.size()>=1) {
           ukoi->setPixmap(2,bereitPixmap);
           ukoi->setText(5,bereitschaften.join("; "));
@@ -654,9 +669,12 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       eti->setText(1,dd.type());
       eti->setText(3,tc.toString());
       eti->setText(4,tcAbzur.toString());
-      eti->setGray(abtList->checkInState());      
+      eti->setGray(abtList->checkInState());
       eti->setDragEnabled(true);
       eti->setDropEnabled(true);
+      eti->setBgColor(abtList->getBgColor(abt,ko,uko));
+      koi->setBgColor(abtList->getBgColor(abt,ko));
+      abti->setBgColor(abtList->getBgColor(abt));
      // eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
     }
   }
@@ -674,6 +692,7 @@ void KontoTreeView::refreshAllItemsInUnterkonto(const QString& abt, const QStrin
   if (!abtList->findUnterKonto(itUk,unterkontoliste,abt,ko,uko)) return;
 
   EintragsListe* eintragsliste=&(itUk->second);
+
   for (EintragsListe::iterator etPos=eintragsliste->begin(); etPos!=eintragsliste->end(); ++etPos) {
     refreshItem(abt,ko,uko,etPos->first);
   }
@@ -690,6 +709,7 @@ void KontoTreeView::refreshAllItemsInKonto(const QString& abt, const QString& ko
 
   if (!abtList->findKonto(itKo,kontoliste,abt,ko)) return;
 
+  KontoTreeItem *koi;
   UnterKontoListe* unterkontoliste=&(itKo->second);
   for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {
     EintragsListe* eintragsliste=&(ukontPos->second);

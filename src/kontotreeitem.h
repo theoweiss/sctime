@@ -54,9 +54,12 @@ class KontoTreeItem: public Q3ListViewItem
 
     void setGray(bool gray);
 
+    void setBgColor(const QColor bgColor);
+
   private:
     bool isBold;
     bool isGray;
+    QColor m_bgColor;
 };
 
 #endif

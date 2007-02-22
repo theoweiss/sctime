@@ -27,12 +27,14 @@
 
 KontoTreeItem::KontoTreeItem ( Q3ListView * parent ): Q3ListViewItem(parent) 
 { 
-	isBold=false; 
+	isBold=false;
+	m_bgColor=Qt::white;
 }
 
 KontoTreeItem::KontoTreeItem ( Q3ListViewItem * parent ): Q3ListViewItem(parent) 
 { 
-	isBold=false; 
+	isBold=false;
+	m_bgColor=Qt::white;
 }
 
 
@@ -41,6 +43,7 @@ KontoTreeItem::KontoTreeItem ( Q3ListView * parent, QString label1, QString labe
 {
    isBold=false;
    isGray=false;
+   m_bgColor=Qt::white;
 }
 
 
@@ -49,6 +52,7 @@ KontoTreeItem::KontoTreeItem ( Q3ListViewItem * parent, QString label1, QString 
 {
    isBold=false;
    isGray=false;
+   m_bgColor=Qt::white;
 }
 
 void KontoTreeItem::paintCell ( QPainter * p, const QColorGroup & cg, int column, int width, int align )
@@ -61,6 +65,7 @@ void KontoTreeItem::paintCell ( QPainter * p, const QColorGroup & cg, int column
   }
   else
     if (isGray) newcg.setColor(QColorGroup::Text,Qt::gray);
+  newcg.setColor(QColorGroup::Background,m_bgColor);
   if (text(column).stripWhiteSpace()=="0:00") {
     newcg.setColor(QColorGroup::Text,Qt::gray);
   }
@@ -99,5 +104,11 @@ void KontoTreeItem::setGray(bool gray)
   }
 }
 
-
+void KontoTreeItem::setBgColor(const QColor bgColor)
+{
+  if (bgColor!=m_bgColor) {
+    m_bgColor=bgColor;
+    repaint();
+  }
+}
 

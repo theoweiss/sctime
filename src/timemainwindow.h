@@ -101,6 +101,7 @@ class TimeMainWindow: public QMainWindow
     void callHelpDialog();
     void callPreferenceDialog();
     void callBereitschaftsDialog(Q3ListViewItem * item);
+    void callColorDialog(Q3ListViewItem * item);
     void refreshKontoListe();
     void reloadDefaultComments();
     void configClickMode(bool singleClickActivation);

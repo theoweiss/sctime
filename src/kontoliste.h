@@ -35,6 +35,8 @@ class KontoListe: public Map_QString_UnterKontoListe
     KontoListe(): std::map<QString,UnterKontoListe>()
     {
       flags=0;
+      m_hasColor=false;
+      m_bgColor=Qt::white;
     }
 
     void setFlags(int _flags)
@@ -53,8 +55,31 @@ class KontoListe: public Map_QString_UnterKontoListe
       Map_QString_UnterKontoListe::clear();
     }
 
+    void setBgColor(QColor bgColor)
+    {
+      m_bgColor=bgColor;
+      m_hasColor=true;
+    }
+
+    QColor getBgColor()
+    {
+      return m_bgColor;
+    }
+
+    bool hasBgColor()
+    {
+      return m_hasColor;
+    }
+
+    void unsetBgColor()
+    {
+      m_hasColor=false;
+    }
+
   private:
     int flags;
+    QColor m_bgColor;
+    bool m_hasColor;
 };
 
 

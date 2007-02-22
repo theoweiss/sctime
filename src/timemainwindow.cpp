@@ -37,6 +37,7 @@
 #include <QFont>
 #include <Q3Header>
 #include <QTextStream>
+#include "colorchooser.h"
 #include "kontotreeview.h"
 #include "time.h"
 #include "qtimer.h"
@@ -389,12 +390,12 @@ void TimeMainWindow::configClickMode(bool singleClickActivation)
                this, SLOT(callUnterKontoDialog(Q3ListViewItem *)) );
     disconnect(kontoTree, SIGNAL(doubleClicked(Q3ListViewItem *)),
                this, SLOT(setAktivesProjekt(Q3ListViewItem *)));
-    disconnect(kontoTree, SIGNAL(contextMenuRequested(Q3ListViewItem *, const QPoint& ,int)),
-               this, SLOT(callUnterKontoDialog(Q3ListViewItem *)));
+    //disconnect(kontoTree, SIGNAL(contextMenuRequested(Q3ListViewItem *, const QPoint& ,int)),
+    //           this, SLOT(callUnterKontoDialog(Q3ListViewItem *)));
 
     if (!singleClickActivation) {
-        connect(kontoTree, SIGNAL(contextMenuRequested(Q3ListViewItem *, const QPoint& ,int)),
-                this, SLOT(callUnterKontoDialog(Q3ListViewItem *)) );
+        //connect(kontoTree, SIGNAL(contextMenuRequested(Q3ListViewItem *, const QPoint& ,int)),
+        //        this, SLOT(callUnterKontoDialog(Q3ListViewItem *)) );
         connect(kontoTree, SIGNAL(doubleClicked(Q3ListViewItem *)),
                 this, SLOT(setAktivesProjekt(Q3ListViewItem *)));
         }
@@ -948,26 +949,44 @@ void TimeMainWindow::checkIn()
   kontoTree->showAktivesProjekt();
 }
 
-void TimeMainWindow::showContextMenu(Q3ListViewItem * item, const QPoint& pos, int col)
+void TimeMainWindow::showContextMenu(Q3ListViewItem * item, const QPoint& mousepos, int col)
 {
-  if (kontoTree->isEintragsItem(item))
-    return;
+  //if (kontoTree->isEintragsItem(item))
+  //  return;
   QString top,uko,konto,abt;
   int idx;
   kontoTree->itemInfo(item,top,abt,konto,uko,idx);
 
+  QPoint pos=mousepos;
   QMenu contextMenu(this);
+  QAction* editAction=NULL;
+  if (kontoTree->isEintragsItem(item)) {
+    editAction=contextMenu.addAction("Editieren");
+    QRect editRect=contextMenu.actionGeometry(editAction);
+    if (!settings->singleClickActivation()) {
+      contextMenu.setActiveAction (editAction);
+      pos-=QPoint(5,5);
+    }
+  }
   QAction* openInAllAccountsAction=NULL;
   if (top!=ALLE_KONTEN_STRING)
     openInAllAccountsAction=contextMenu.addAction("Zu diesem Konto in \"Alle Konten\" springen");
-  //contextMenu.popup(pos);
+  QAction* bgColorAction=contextMenu.addAction("Hintergrundfarbe setzen");
   QAction* action=contextMenu.exec(pos);
-  if ((openInAllAccountsAction)&&(action==openInAllAccountsAction)) {
-     Q3ListViewItem *newitem = kontoTree->sucheKontoItem(ALLE_KONTEN_STRING,abt,konto);
-     if (item) {
-       kontoTree->setCurrentItem(newitem);
-       kontoTree->ensureItemVisible(newitem);
-     }
+  if (action) {
+    if (action==openInAllAccountsAction) {
+      Q3ListViewItem *newitem = kontoTree->sucheKontoItem(ALLE_KONTEN_STRING,abt,konto);
+      if (item) {
+        kontoTree->setCurrentItem(newitem);
+        kontoTree->ensureItemVisible(newitem);
+      }
+    }
+    if (action==editAction) {
+      callUnterKontoDialog(item);
+    }
+    if (action==bgColorAction) {
+      callColorDialog(item);
+    }
   }
 }
 
@@ -1229,4 +1248,28 @@ void TimeMainWindow::callBereitschaftsDialog(Q3ListViewItem * item)
       kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
     }
   }
+}
+
+void TimeMainWindow::callColorDialog(Q3ListViewItem * item)
+{
+   QString top,uko,ko,abt;
+   int idx;
+   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
+   
+   ColorChooser cc(abtList->hasBgColor(abt,ko,uko),abtList->getBgColor(abt,ko,uko));
+   cc.exec();
+   if (cc.result()) {
+     QColor* color=cc.selectedColor();
+     if (color)
+       abtList->setBgColor(*color, abt,ko,uko);
+     else
+       abtList->unsetBgColor(abt,ko,uko);
+     if (ko!="") {
+       if(uko!="")
+         kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
+       else
+         kontoTree->refreshAllItemsInKonto(abt,ko);
+     } else
+       kontoTree->load(abtList);
+   }
 }

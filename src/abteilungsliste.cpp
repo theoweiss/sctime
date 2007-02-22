@@ -845,3 +845,102 @@ void AbteilungsListe::setCheckInState(bool state)
 {
   checkedIn = state;
 }
+
+void AbteilungsListe::setBgColor(QColor bgColor, const QString& abteilung,
+                               const QString& konto, const QString& unterkonto)
+{
+  if (abteilung!="") {
+    if (konto!="") {
+      if (unterkonto!="") {
+        UnterKontoListe::iterator itUk;
+        UnterKontoListe* unterkontoliste;
+        if (findUnterKonto(itUk, unterkontoliste, abteilung, konto, unterkonto))
+          itUk->second.setBgColor(bgColor);
+      }
+      else {
+        KontoListe::iterator itKo;
+        KontoListe* kontoliste;
+        if (findKonto(itKo, kontoliste, abteilung, konto))
+          itKo->second.setBgColor(bgColor);
+      }
+    }
+    else {
+      iterator posAbt=find(abteilung);
+      if (posAbt!=end())
+        posAbt->second.setBgColor(bgColor);
+    }
+  }
+}
+
+QColor AbteilungsListe::getBgColor(const QString& abteilung, const QString& konto, const QString& unterkonto)
+{
+  if (abteilung!="") {
+    if (konto!="") {
+      if (unterkonto!="") {
+        UnterKontoListe::iterator itUk;
+        UnterKontoListe* unterkontoliste;
+        if ((findUnterKonto(itUk, unterkontoliste, abteilung, konto, unterkonto))&&(itUk->second.hasBgColor()))
+          return itUk->second.getBgColor();
+      }
+      KontoListe::iterator itKo;
+      KontoListe* kontoliste;
+      if ((findKonto(itKo, kontoliste, abteilung, konto))&&(itKo->second.hasBgColor()))
+          return itKo->second.getBgColor();
+    }
+    iterator posAbt=find(abteilung);
+    if ((posAbt!=end())&&(posAbt->second.hasBgColor()))
+      return posAbt->second.getBgColor();
+  }
+  return Qt::white;
+}
+
+void AbteilungsListe::unsetBgColor(const QString& abteilung, const QString& konto, const QString& unterkonto)
+{
+  if (abteilung!="") {
+    if (konto!="") {
+      if (unterkonto!="") {
+        UnterKontoListe::iterator itUk;
+        UnterKontoListe* unterkontoliste;
+        if (findUnterKonto(itUk, unterkontoliste, abteilung, konto, unterkonto))
+          itUk->second.unsetBgColor();
+      }
+      else {
+        KontoListe::iterator itKo;
+        KontoListe* kontoliste;
+        if (findKonto(itKo, kontoliste, abteilung, konto))
+          itKo->second.unsetBgColor();
+      }
+    }
+    else {
+      iterator posAbt=find(abteilung);
+      if (posAbt!=end())
+        posAbt->second.unsetBgColor();
+    }
+  }
+}
+
+bool AbteilungsListe::hasBgColor(const QString& abteilung, const QString& konto, const QString& unterkonto)
+{
+  if (abteilung!="") {
+    if (konto!="") {
+      if (unterkonto!="") {
+        UnterKontoListe::iterator itUk;
+        UnterKontoListe* unterkontoliste;
+        if (findUnterKonto(itUk, unterkontoliste, abteilung, konto, unterkonto))
+          return itUk->second.hasBgColor();
+      }
+      else {
+        KontoListe::iterator itKo;
+        KontoListe* kontoliste;
+        if (findKonto(itKo, kontoliste, abteilung, konto))
+          return itKo->second.hasBgColor();
+      }
+    }
+    else {
+      iterator posAbt=find(abteilung);
+      if (posAbt!=end())
+        return posAbt->second.hasBgColor();
+    }
+  }
+  return false;
+}

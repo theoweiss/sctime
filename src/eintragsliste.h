@@ -30,6 +30,7 @@
 #include "qstringlist.h"
 #include "descdata.h"
 #include <iostream>
+#include <QColor>
 
 typedef std::map<int,UnterKontoEintrag> Map_Int_UnterKontoEintrag; // Visual-C-Workaround
 
@@ -39,6 +40,8 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
     EintragsListe(): std::map<int,UnterKontoEintrag>()
     {
       flags=0;
+      m_hasColor=false;
+      m_bgColor=Qt::white;
     }
 
     void setDescription(DescData descdata)
@@ -93,11 +96,34 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
       bereitschaft=_bereitschaft;
     }
 
+    void setBgColor(QColor bgColor)
+    {
+      m_bgColor=bgColor;
+      m_hasColor=true;
+    }
+
+    QColor getBgColor()
+    {
+      return m_bgColor;
+    }
+
+    bool hasBgColor()
+    {
+      return m_hasColor;
+    }
+
+    void unsetBgColor()
+    {
+      m_hasColor=false;
+    }
+
   private:
     DescData descData;
     QStringList defaultCommentList;
     QStringList bereitschaft;
     int flags;
+    QColor m_bgColor;
+    bool m_hasColor;
 };
 
 #endif

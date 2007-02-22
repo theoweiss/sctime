@@ -43,7 +43,8 @@ SOURCES += abteilungsliste.cpp \
            bereitschaftsdateninfozeit.cpp \
            bereitschaftsliste.cpp \
            bereitschaftsview.cpp \
-           bereitschaftsmodel.cpp
+           bereitschaftsmodel.cpp \
+           colorchooser.cpp
 HEADERS += abteilungsliste.h \
            kontoliste.h \
            statusbar.h \
@@ -81,7 +82,8 @@ HEADERS += abteilungsliste.h \
            bereitschaftsdateninfozeit.h \
            bereitschaftsliste.h \
            bereitschaftsview.h \
-           bereitschaftsmodel.h
+           bereitschaftsmodel.h \
+           colorchooser.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \
@@ -96,7 +98,8 @@ IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/scLogo_15Farben.xpm \
           ../pics/sc_logo.xpm
 FORMS += datedialogbase.ui \
-         preferencedialogbase.ui
+         preferencedialogbase.ui \
+         colorchooserbase.ui
 target.path = /$(prefix)/bin
 INSTALLS += target
 linux-g++-static{
