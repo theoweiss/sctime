@@ -161,6 +161,7 @@ class TimeMainWindow: public QMainWindow
     void aktivierbarerEintragSelected(bool isActivable);
 
   private:
+    void closeEvent(QCloseEvent * event);
     KontoTreeView* kontoTree;
     UnterKontoDialog* unterKontoDialog;
     QAction* editUnterKontoAction;

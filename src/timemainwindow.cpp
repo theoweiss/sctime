@@ -52,7 +52,8 @@
 #ifndef HAS_NO_DATETIMEEDIT
 #include "datedialog.h"
 #endif
-#include "qpoint.h"
+#include <QPoint>
+#include <QRect>
 #include "globals.h"
 #include "qinputdialog.h"
 #ifndef NO_TEXTEDIT
@@ -336,10 +337,15 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   showAdditionalButtons(settings->powerUserView());
 }
 
-/** Destruktor - speichert vor dem Beenden die Einstellungen */
+void TimeMainWindow::closeEvent(QCloseEvent * event)
+{
+  save();
+  QMainWindow::closeEvent(event);
+}
+
+/** Destruktor  */
 TimeMainWindow::~TimeMainWindow()
 {
-   save();   
    delete settings;
    if (abtList!=abtListToday)
      delete abtListToday;
