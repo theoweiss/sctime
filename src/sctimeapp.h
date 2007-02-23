@@ -23,10 +23,12 @@
 #include <qapplication.h>
 #ifdef WIN32
 #include "kontodateninfodatabase.h"
+#include "bereitschaftsdateninfodatabase.h"
 #else
 #include "signal.h"
 #endif
 #include "kontodateninfozeit.h"
+#include "bereitschaftsdateninfozeit.h"
 #include <iostream>
 #include "timemainwindow.h"
 #include "sctimexmlsettings.h"
@@ -45,10 +47,11 @@ class SCTimeApp: public QApplication
   TimeMainWindow* mainWindow;
   private:
     KontoDatenInfo* zk;
+    BereitschaftsDatenInfo* bereitschaftsdatenReader;
 
   public:
 
-    SCTimeApp( int &argc, char **argv, QString zeitkontenfile ): QApplication (argc,argv)
+    SCTimeApp( int &argc, char **argv, QString zeitkontenfile, QString bereitschaftsfile ): QApplication (argc,argv)
     {
 
 #ifndef WIN32
@@ -64,17 +67,25 @@ class SCTimeApp: public QApplication
             static_cast<KontoDatenInfoZeit*>(zk)->setKommando(settings.zeitKontenKommando());
       } else
       {
-          if (zeitkontenfile.startsWith("~/"))
-              zeitkontenfile.replace(0,2,QDir::homePath()+"/");
-          zk = new KontoDatenInfoZeit(QFileInfo(zeitkontenfile).canonicalFilePath());
+          zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
+      }
+      if (bereitschaftsfile.isEmpty()) {
+         bereitschaftsdatenReader=new BereitschaftsDatenInfoZeit();
+      } else
+      {
+        bereitschaftsdatenReader=new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
       }
 #else
       if (zeitkontenfile.isEmpty())
           zk = new KontoDatenInfoDatabase();
       else
-          zk = new KontoDatenInfoZeit(QFileInfo(zeitkontenfile).canonicalFilePath());
+          zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
+      if (zeitkontenfile.isEmpty())
+          bereitschaftsdatenReader=new BereitschaftsDatenInfoDatabase();
+      else
+        bereitschaftsdatenReader=new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
 #endif
-      mainWindow=new TimeMainWindow(zk);
+      mainWindow=new TimeMainWindow(zk,bereitschaftsdatenReader);
       setMainWidget(mainWindow);
       mainWindow->show();
     }
@@ -106,5 +117,14 @@ class SCTimeApp: public QApplication
         }
     }
 #endif
+  private:
+    QString canonicalPath(QString path)
+    {
+#ifndef WIN32
+      if (path.startsWith("~/"))
+         path.replace(0,2,QDir::homePath()+"/");
+#endif
+      return QFileInfo(path).canonicalFilePath();
+    }
 };
 

@@ -27,6 +27,7 @@
 //Added by qt3to4:
 #include <QCustomEvent>
 #include "kontodateninfo.h"
+#include "bereitschaftsdateninfo.h"
 #include "unterkontodialog.h"
 #include "kontotreeview.h"
 #include "toolbar.h"
@@ -47,7 +48,7 @@ class TimeMainWindow: public QMainWindow
   Q_OBJECT
 
   public:
-    TimeMainWindow(KontoDatenInfo* zk);
+    TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* bereitschaftsdatenReader);
     Q3ListView* getKontoTree() { return kontoTree; };
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;        
