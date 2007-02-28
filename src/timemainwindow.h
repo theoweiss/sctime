@@ -102,7 +102,9 @@ class TimeMainWindow: public QMainWindow
     void callHelpDialog();
     void callPreferenceDialog();
     void callBereitschaftsDialog(Q3ListViewItem * item);
-    void callColorDialog(Q3ListViewItem * item);
+    void callColorDialog();
+    void jumpToAlleKonten();
+
     void refreshKontoListe();
     void reloadDefaultComments();
     void configClickMode(bool singleClickActivation);
@@ -172,6 +174,8 @@ class TimeMainWindow: public QMainWindow
     QAction* fastAbzurMinusAction;
     QAction* eintragRemoveAction;
     QAction* checkInAction;
+    QAction* bgColorAction;
+    QAction* jumpAction;
     QDateTime lastMinuteTick;
     QFont qtDefaultFont;
     AbteilungsListe* abtList;

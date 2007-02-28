@@ -254,6 +254,10 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   bereitschaftsAction->setShortcut(Qt::CTRL+Qt::Key_B);
   connect(bereitschaftsAction, SIGNAL(triggered()), this, SLOT(editBereitschaftPressed()));
 
+  bgColorAction = new QAction("&Hintergrundfarbe wählen", this);
+
+  jumpAction = new QAction("&Zu selektiertem Konto in \"Alle Konten\" springen", this);
+
   QAction* min5PlusAction = new QAction(QPixmap((const char **)hi22_action_1uparrow ),
                                            "Zeit incrementieren", this);
   QAction* min5MinusAction = new QAction(QPixmap((const char **)hi22_action_1downarrow ),
@@ -280,6 +284,9 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   connect(min5MinusAction, SIGNAL(triggered()), this, SLOT(subTimeInc()));
   connect(fastPlusAction, SIGNAL(triggered()), this, SLOT(addFastTimeInc()));
   connect(fastMinusAction, SIGNAL(triggered()), this, SLOT(subFastTimeInc()));
+
+  connect(bgColorAction, SIGNAL(triggered()),this, SLOT(callColorDialog()));
+  connect(jumpAction, SIGNAL(triggered()),this, SLOT(jumpToAlleKonten()));
 
   connect(this,SIGNAL(eintragSelected(bool)), min5PlusAction, SLOT(setEnabled(bool)));
   connect(this,SIGNAL(eintragSelected(bool)), min5MinusAction, SLOT(setEnabled(bool)));
@@ -311,6 +318,8 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   kontomenu->addAction(findKontoAction);
   kontomenu->addAction(refreshAction);
   kontomenu->addAction(bereitschaftsAction);
+  kontomenu->addAction(bgColorAction);
+  kontomenu->addAction(jumpAction);
   kontomenu->insertSeparator();
   kontomenu->addAction(quitAction);
   zeitmenu->addAction(changeDateAction);
@@ -848,9 +857,13 @@ void TimeMainWindow::changeShortCutSettings(Q3ListViewItem * item)
 
   emit unterkontoSelected(isUnterkontoItem);
 
+  int depth=-1;
+  if (item)
+    depth=item->depth();
+
   if (iseintragsitem) {
 
-    if ((item->depth()<=3)||(item->parent()->childCount()<=1))
+    if ((depth<=3)||(item->parent()->childCount()<=1))
        eintragRemoveAction->setEnabled(false);
     else {
        eintragRemoveAction->setEnabled(true);
@@ -875,6 +888,8 @@ void TimeMainWindow::changeShortCutSettings(Q3ListViewItem * item)
     emit aktivierbarerEintragSelected(false);
     eintragRemoveAction->setEnabled(false);
   }
+  bgColorAction->setEnabled((depth>=1)&&(depth<=3));
+  jumpAction->setEnabled((top!=ALLE_KONTEN_STRING)&&(depth>=1));
   inPersoenlicheKontenAllowed=true; // Wieder enablen.
 }
 
@@ -946,8 +961,8 @@ void TimeMainWindow::checkIn()
 
 void TimeMainWindow::showContextMenu(Q3ListViewItem * item, const QPoint& mousepos, int col)
 {
-  //if (kontoTree->isEintragsItem(item))
-  //  return;
+  /*if (kontoTree->isEintragsItem(item))
+    return;
   QString top,uko,konto,abt;
   int idx;
   kontoTree->itemInfo(item,top,abt,konto,uko,idx);
@@ -985,7 +1000,9 @@ void TimeMainWindow::showContextMenu(Q3ListViewItem * item, const QPoint& mousep
     if (action==bgColorAction) {
       callColorDialog(item);
     }
-  }
+  }*/
+   if (!settings->singleClickActivation())
+     callUnterKontoDialog(item);
 }
 
 /**
@@ -1248,8 +1265,9 @@ void TimeMainWindow::callBereitschaftsDialog(Q3ListViewItem * item)
   }
 }
 
-void TimeMainWindow::callColorDialog(Q3ListViewItem * item)
+void TimeMainWindow::callColorDialog()
 {
+   Q3ListViewItem * item=kontoTree->currentItem();
    QString top,uko,ko,abt;
    int idx;
    kontoTree->itemInfo(item,top,abt,ko,uko,idx);
@@ -1269,5 +1287,18 @@ void TimeMainWindow::callColorDialog(Q3ListViewItem * item)
          kontoTree->refreshAllItemsInKonto(abt,ko);
      } else
        kontoTree->load(abtList);
+   }
+}
+
+void TimeMainWindow::jumpToAlleKonten()
+{
+   Q3ListViewItem * item=kontoTree->currentItem();
+   QString top,uko,konto,abt;
+   int idx;
+   kontoTree->itemInfo(item,top,abt,konto,uko,idx);
+   Q3ListViewItem *newitem = kontoTree->sucheKontoItem(ALLE_KONTEN_STRING,abt,konto);
+   if (newitem) {
+      kontoTree->setCurrentItem(newitem);
+      kontoTree->ensureItemVisible(newitem);
    }
 }
