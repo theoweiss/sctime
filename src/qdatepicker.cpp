@@ -21,9 +21,7 @@
 
 // This file has been ported from KDE to plain QT
 
-#include <qlayout.h>
 #include <QFrame>
-#include <qpainter.h>
 #include <qdialog.h>
 #include <qstyle.h>
 #include <qtoolbutton.h>
@@ -31,12 +29,8 @@
 #include <qtooltip.h>
 #include <qfont.h>
 #include <qvalidator.h>
-#include <QMenuItem>
-#include <QDesktopWidget>
 
 #include "qdatepicker.h"
-
-#include <qapplication.h>
 
 #include <QBoxLayout>
 #include <QVBoxLayout>
@@ -341,6 +335,4 @@ QDatePicker::setFontSize(int s)
   table->setFont(currfont);
 }
 
-void QDatePicker::virtual_hook( int /*id*/, void* /*data*/ )
-{ /*BASE::virtual_hook( id, data );*/ }
 

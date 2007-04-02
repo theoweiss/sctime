@@ -27,8 +27,6 @@
 #include <QFrame>
 #include <QValidator>
 #include <QCalendarWidget>
-#include <QEvent>
-#include <QResizeEvent>
 #include <QLineEdit>
 
 class QToolButton;
@@ -231,8 +229,6 @@ private:
   /// the font size for the widget
   int fontsize;
 
-protected:
-  virtual void virtual_hook( int id, void* data );
 private:
   void init( const QDate &dt );
   void fillWeeksCombo(const QDate &date);
