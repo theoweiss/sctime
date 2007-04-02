@@ -29,10 +29,7 @@ SOURCES += abteilungsliste.cpp \
            sctime.cpp \
            preferencedialog.cpp \
            defaultcommentreader.cpp \
-           qcalendarsystem.cpp \
-           qcalendarsystemgregorian.cpp \
            qdatepicker.cpp \
-           qdatetbl.cpp \
            utils.cpp \
            defaulttagreader.cpp \
            kontodateninfozeit.cpp \
@@ -69,10 +66,7 @@ HEADERS += abteilungsliste.h \
            preferencedialog.h \
            defaultcommentreader.h \
            utils.h \
-           qcalendarsystem.h \
-           qcalendarsystemgregorian.h \
            qdatepicker.h \
-           qdatetbl.h \
            defaulttagreader.h \
            kontodateninfozeit.h \
            GetOpt.h \

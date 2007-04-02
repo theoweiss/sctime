@@ -25,15 +25,121 @@
 #define QDATEPICKER_H
 #include <qdatetime.h>
 #include <q3frame.h>
-#include "qcalendarsystem.h"
+#include <QValidator>
+#include <QCalendarWidget>
 //Added by qt3to4:
 #include <QEvent>
 #include <QResizeEvent>
+#include <QLineEdit>
+#include <Q3GridView>
 
-class QLineEdit;
 class QToolButton;
-class QDateValidator;
-class QDateTable;
+
+/** Week selection widget.
+* @internal
+* @version $Id$
+* @author Stephan Binner
+*/
+class QDateInternalWeekSelector : public QLineEdit
+{
+  Q_OBJECT
+protected:
+  QIntValidator *val;
+  int result;
+public slots:
+  void weekEnteredSlot();
+  void setMaxWeek(int max);
+signals:
+  void closeMe(int);
+public:
+  QDateInternalWeekSelector( QWidget* parent=0, const char* name=0);
+  int getWeek();
+  void setWeek(int week);
+
+private:
+  class QDateInternalWeekPrivate;
+  QDateInternalWeekPrivate *d;
+};
+
+/**
+* Validates user-entered dates.
+*/
+class QDateValidator : public QValidator
+{
+public:
+    QDateValidator(QWidget* parent=0, const char* name=0);
+    virtual State validate(QString&, int&) const;
+    virtual void fixup ( QString & input ) const;
+    State date(const QString&, QDate&) const;
+};
+
+/**
+ * Frame with popup menu behavior.
+ * @author Tim Gilman, Mirko Boehm
+ * @version $Id$
+ */
+class QPopupFrame : public Q3Frame
+{
+  Q_OBJECT
+protected:
+  /**
+   * The result. It is returned from exec() when the popup window closes.
+   */
+  int result;
+  /**
+   * Catch key press events.
+   */
+  virtual void keyPressEvent(QKeyEvent* e);
+  /**
+   * The only subwidget that uses the whole dialog window.
+   */
+  QWidget *main;
+public slots:
+  /**
+   * Close the popup window. This is called from the main widget, usually.
+   * @p r is the result returned from exec().
+   */
+  void close(int r);
+public:
+  /**
+   * The contructor. Creates a dialog without buttons.
+   */
+  QPopupFrame(QWidget* parent=0, const char*  name=0);
+  /**
+   * Set the main widget. You cannot set the main widget from the constructor,
+   * since it must be a child of the frame itselfes.
+   * Be careful: the size is set to the main widgets size. It is up to you to
+   * set the main widgets correct size before setting it as the main
+   * widget.
+   */
+  void setMainWidget(QWidget* m);
+  /**
+   * The resize event. Simply resizes the main widget to the whole
+   * widgets client size.
+   */
+  virtual void resizeEvent(QResizeEvent*);
+  /**
+   * Open the popup window at position pos.
+   */
+  void popup(const QPoint &pos);
+  /**
+   * Execute the popup window.
+   */
+  int exec(QPoint p);
+  /**
+   * Dito.
+   */
+  int exec(int x, int y);
+
+private:
+
+  virtual bool close(bool alsoDelete) { return Q3Frame::close(alsoDelete); }
+protected:
+  virtual void virtual_hook( int id, void* data );
+private:
+  class QPopupFramePrivate;
+  QPopupFramePrivate *d;
+};
 
 /**
  * Provides a widget for calendar date input.
@@ -58,7 +164,6 @@ class QDatePicker: public Q3Frame
 {
   Q_OBJECT
   Q_PROPERTY( QDate date READ date WRITE setDate)
-  Q_PROPERTY( bool closeButton READ hasCloseButton WRITE setCloseButton )
   Q_PROPERTY( int fontSize READ fontSize WRITE setFontSize )
 
 public:
@@ -109,7 +214,7 @@ public:
   /**
    * @returns the selected date.
    */
-  const QDate &date() const;
+  const QDate date() const;
 
   /**
    * Enables or disables the widget.
@@ -121,7 +226,7 @@ public:
    * widget.
    * @since 3.2
    */
-  QDateTable *dateTable() const { return table; };
+  QCalendarWidget *dateTable() const { return table; };
 
   /**
    * Sets the font size of the widgets elements.
@@ -133,68 +238,25 @@ public:
   int fontSize() const
     { return fontsize; }
 
-  /**
-   * By calling this method with @p enable = true, KDatePicker will show
-   * a little close-button in the upper button-row. Clicking the
-   * close-button will cause the KDatePicker's topLevelWidget()'s close()
-   * method being called. This is mostly useful for toplevel datepickers
-   * without a window manager decoration.
-   * @see hasCloseButton
-   * @since 3.1
-   */
-  void setCloseButton( bool enable );
-
-  /**
-   * @returns true if a KDatePicker shows a close-button.
-   * @see setCloseButton
-   * @since 3.1
-   */
-  bool hasCloseButton() const;
-
 protected:
   /// to catch move keyEvents when QLineEdit has keyFocus
   virtual bool eventFilter(QObject *o, QEvent *e );
   /// the resize event
   virtual void resizeEvent(QResizeEvent*);
-  /// the year forward button
-  QToolButton *yearForward;
-  /// the year backward button
-  QToolButton *yearBackward;
-  /// the month forward button
-  QToolButton *monthForward;
-  /// the month backward button
-  QToolButton *monthBackward;
-  /// the button for selecting the month directly
-  QToolButton *selectMonth;
-  /// the button for selecting the year directly
-  QToolButton *selectYear;
   /// the line edit to enter the date directly
   QLineEdit *line;
   /// the validator for the line edit:
   QDateValidator *val;
   /// the date table
-  QDateTable *table;
+  QCalendarWidget *table;
   /// the size calculated during resize events
     //  QSize sizehint;
   /// the widest month string in pixels:
   QSize maxMonthRect;
 protected slots:
-  void dateChangedSlot(QDate);
-  void tableClickedSlot();
-  void tableDoubleClickedSlot();
-  void monthForwardClicked();
-  void monthBackwardClicked();
-  void yearForwardClicked();
-  void yearBackwardClicked();
+  void dateChangedSlot();
+  void tableClickedSlot(QDate date);
 
-  /**
-   * @since 3.1
-   */
-  void selectMonthClicked();
-  /**
-   * @since 3.1
-   */
-  void selectYearClicked();
   /**
    * @since 3.1
    */
@@ -208,8 +270,9 @@ protected slots:
    */
   void weekSelected(int);
 
+  void currentPageChangedSlot ( int year, int month );
+
 signals:
-  // ### KDE 4.0 Make all QDate parameters const references
 
   /** This signal is emitted each time the selected date is changed.
    *  Usually, this does not mean that the date has been entered,
@@ -234,10 +297,6 @@ signals:
    *  clicking on it in the table.
    */
   void tableClicked();
-  /** This signal is emitted when the day has been selected by
-   *  Doubleclicking on it in the table.
-   */
-  void tableDoubleClicked();
 
 private:
   /// the font size for the widget
@@ -248,7 +307,6 @@ protected:
 private:
   void init( const QDate &dt );
   void fillWeeksCombo(const QDate &date);
-  QCalendarSystem* calendar;
   class QDatePickerPrivate;
   QDatePickerPrivate *d;
 };

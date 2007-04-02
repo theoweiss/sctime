@@ -28,8 +28,8 @@
 #include <qstringlist.h>
 #include "datedialog.h"
 #include "globals.h"
-#include "qdatetbl.h"
 #include <iostream>
+#include <QTextCharFormat>
 
 DateDialog::DateDialog(const QDate& datum, QWidget *parent)
 : QDialog(parent)
@@ -40,7 +40,7 @@ DateDialog::DateDialog(const QDate& datum, QWidget *parent)
   currentYear=-1;
   connect(datePicker, SIGNAL(dateChanged(QDate)), this, SLOT(dateChangedSlot(QDate)));
   connect(applyButton, SIGNAL(clicked()), this, SLOT(apply()));
-  connect(datePicker, SIGNAL(tableDoubleClicked()), this, SLOT(apply()));
+  connect(datePicker, SIGNAL(tableClicked()), this, SLOT(apply()));
   connect(okbutton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(cancelbutton, SIGNAL(clicked()), this, SLOT(reject()));
 
@@ -65,7 +65,10 @@ void DateDialog::dateChangedSlot(QDate date)
       QDate filedate;
       int day=QString(*it).section('-',3,3).section('.',0,0).toInt(&ok);
       if ((ok)&&filedate.setYMD(date.year(),date.month(),day)) {
-        datePicker->dateTable()->setCustomDatePainting(filedate, Qt::yellow, QDateTable::CircleMode, Qt::red);
+        QTextCharFormat dtf=datePicker->dateTable()->dateTextFormat(filedate);
+        dtf.setForeground(QBrush(Qt::red));
+        dtf.setBackground(QBrush(Qt::red));
+        datePicker->dateTable()->setDateTextFormat(filedate, dtf);
       }
     }
     currentMonth = date.month();

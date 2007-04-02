@@ -32,6 +32,7 @@
 #ifndef WIN32
 #include <sys/file.h>
 #include <unistd.h>
+#include <errno.h>
 #define LOCK_FD int
 #else
 #include <windows.h>
@@ -50,10 +51,6 @@
 
 #ifdef SUN
 #include <fcntl.h>
-#include <errno.h>
-#endif
-
-#if defined(__GNUC__) && (__GNUC__ >=4)
 #include <errno.h>
 #endif
 

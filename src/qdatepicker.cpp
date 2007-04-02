@@ -33,13 +33,13 @@
 #include <qvalidator.h>
 #include <q3popupmenu.h>
 #include <QMenuItem>
+#include <QDesktopWidget>
+#include <iostream>
 
 #include "qdatepicker.h"
 
 #include <qapplication.h>
-#include "qcalendarsystem.h"
 
-#include "qdatetbl.h"
 //Added by qt3to4:
 #include <QBoxLayout>
 #include <QResizeEvent>
@@ -55,24 +55,192 @@
 #include "../pics/cr16-action-2leftarrow.xpm"
 #include "../pics/cr16-action-bookmark.xpm"
 
+QDateValidator::QDateValidator(QWidget* parent, const char* name)
+    : QValidator(parent, name)
+{
+}
+
+QValidator::State
+QDateValidator::validate(QString& text, int&) const
+{
+  QDate temp;
+  // ----- everything is tested in date():
+  return date(text, temp);
+}
+
+QValidator::State
+QDateValidator::date(const QString& text, QDate& d) const
+{
+  QDate tmp = QDate::fromString(text,Qt::ISODate);
+  if (!tmp.isNull())
+    {
+      d = tmp;
+      return Acceptable;
+    } else
+      return QValidator::Intermediate;
+}
+
+void
+QDateValidator::fixup( QString& ) const
+{
+
+}
+
+QDateInternalWeekSelector::QDateInternalWeekSelector
+(QWidget* parent, const char* name)
+  : QLineEdit(parent, name),
+    val(new QIntValidator(this)),
+    result(0)
+{
+  QFont font;
+  // -----
+  setFont(font);
+  setFrame(false);
+  setValidator(val);
+  connect(this, SIGNAL(returnPressed()), SLOT(weekEnteredSlot()));
+}
+
+void
+QDateInternalWeekSelector::weekEnteredSlot()
+{
+  bool ok;
+  int week;
+  // ----- check if this is a valid week:
+  week=text().toInt(&ok);
+  if(!ok)
+    {
+      return;
+    }
+  result=week;
+  emit(closeMe(1));
+}
+
+int
+QDateInternalWeekSelector::getWeek()
+{
+  return result;
+}
+
+void
+QDateInternalWeekSelector::setWeek(int week)
+{
+  QString temp;
+  // -----
+  temp.setNum(week);
+  setText(temp);
+}
+
+void
+QDateInternalWeekSelector::setMaxWeek(int max)
+{
+  val->setRange(1, max);
+}
+
+QPopupFrame::QPopupFrame(QWidget* parent, const char*  name)
+  : Q3Frame(parent, name, Qt::WType_Popup),
+    result(0), // rejected
+    main(0)
+{
+  setFrameStyle(Q3Frame::Box|Q3Frame::Raised);
+  setMidLineWidth(2);
+}
+
+void
+QPopupFrame::keyPressEvent(QKeyEvent* e)
+{
+  if(e->key()==Qt::Key_Escape)
+    {
+      result=0; // rejected
+      qApp->exit_loop();
+    }
+}
+
+void
+QPopupFrame::close(int r)
+{
+  result=r;
+  qApp->exit_loop();
+}
+
+void
+QPopupFrame::setMainWidget(QWidget* m)
+{
+  main=m;
+  if(main!=0)
+    {
+      resize(main->width()+2*frameWidth(), main->height()+2*frameWidth());
+    }
+}
+
+void
+QPopupFrame::resizeEvent(QResizeEvent*)
+{
+  if(main!=0)
+    {
+      main->setGeometry(frameWidth(), frameWidth(),
+          width()-2*frameWidth(), height()-2*frameWidth());
+    }
+}
+
+void
+QPopupFrame::popup(const QPoint &pos)
+{
+  // Make sure the whole popup is visible.
+  QDesktopWidget qdw;
+  QRect d = qdw.screenGeometry(pos);
+  int x = pos.x();
+  int y = pos.y();
+  int w = width();
+  int h = height();
+  if (x+w > d.x()+d.width())
+    x = d.width() - w;
+  if (y+h > d.y()+d.height())
+    y = d.height() - h;
+  if (x < d.x())
+    x = 0;
+  if (y < d.y())
+    y = 0;
+
+  // Pop the thingy up.
+  move(x, y);
+  show();
+}
+
+int
+QPopupFrame::exec(QPoint pos)
+{
+  popup(pos);
+  repaint();
+  qApp->enter_loop();
+  hide();
+  return result;
+}
+
+int
+QPopupFrame::exec(int x, int y)
+{
+  return exec(QPoint(x, y));
+}
+
+void QPopupFrame::virtual_hook( int, void* )
+{ /*BASE::virtual_hook( id, data ); */}
 
 class QDatePicker::QDatePickerPrivate
 {
 public:
-    QDatePickerPrivate() : closeButton(0L), selectWeek(0L), todayButton(0), navigationLayout(0) {}
+    QDatePickerPrivate() : selectWeek(0L), todayButton(0) {}
 
     void fillWeeksCombo(const QDate &date);
 
-    QToolButton *closeButton;
     QComboBox *selectWeek;
     QToolButton *todayButton;
-    QBoxLayout *navigationLayout;
 };
 
 void QDatePicker::fillWeeksCombo(const QDate &date)
 {
   // every year can have a different number of weeks
-  int i, weeks = calendar->weeksInYear(calendar->year(date));
+  // the 28th of december is always in the last week...
+  int i, weeks = (QDate(date.year(),12,28)).weekNumber();
 
   if ( d->selectWeek->count() == weeks ) return;  // we already have the correct number
 
@@ -104,42 +272,11 @@ void QDatePicker::init( const QDate &dt )
 {
   d = new QDatePickerPrivate();
 
-  calendar=new QCalendarSystemGregorian();
-
-  //d->tb = new QToolBar("DatePicker-Toolbar",this);
-
   QBoxLayout * topLayout = new QVBoxLayout(this);
-
-  d->navigationLayout = new QHBoxLayout(topLayout);
-  d->navigationLayout->addStretch();
-  yearBackward = new QToolButton(this);
-  yearBackward->setAutoRaise(true);
-  d->navigationLayout->addWidget(yearBackward);
-  monthBackward = new QToolButton(this);
-  monthBackward ->setAutoRaise(true);
-  d->navigationLayout->addWidget(monthBackward);
-  d->navigationLayout->addSpacing(1);
-
-  selectMonth = new QToolButton(this);
-  selectMonth ->setAutoRaise(true);
-  d->navigationLayout->addWidget(selectMonth);
-  selectYear = new QToolButton(this);
-  selectYear->setToggleButton(true);
-  selectYear->setAutoRaise(true);
-  d->navigationLayout->addWidget(selectYear);
-  d->navigationLayout->addSpacing(1);
-
-  monthForward = new QToolButton(this);
-  monthForward ->setAutoRaise(true);
-  d->navigationLayout->addWidget(monthForward);
-  yearForward = new QToolButton(this);
-  yearForward ->setAutoRaise(true);
-  d->navigationLayout->addWidget(yearForward);
-  d->navigationLayout->addStretch();
 
   line = new QLineEdit(this);
   val = new QDateValidator(this);
-  table = new QDateTable(calendar, this);
+  table = new QCalendarWidget(this);
   QFont font;
   fontsize = font.pointSize();
   if (fontsize == -1)
@@ -150,14 +287,9 @@ void QDatePicker::init( const QDate &dt )
   d->selectWeek = new QComboBox(false, this);  // read only week selection
   d->todayButton = new QToolButton(this);
   d->todayButton->setIconSet(QIcon(QPixmap((const char **)cr16_action_bookmark)));
+  table->setFirstDayOfWeek(Qt::Monday);
 
-  QToolTip::add(yearForward, "Nächstes Jahr");
-  QToolTip::add(yearBackward, "Voriges Jahr");
-  QToolTip::add(monthForward, "Nächster Monat");
-  QToolTip::add(monthBackward, "Voriger Monat");
   QToolTip::add(d->selectWeek, "Woche wählen");
-  QToolTip::add(selectMonth, "Monat wählen");
-  QToolTip::add(selectYear, "Jahr wählen");
   QToolTip::add(d->todayButton, "Heutigen Tag wählen");
 
   // -----
@@ -165,23 +297,12 @@ void QDatePicker::init( const QDate &dt )
   line->setValidator(val);
   line->installEventFilter( this );
 
-  yearForward->setIconSet(QIcon(QPixmap((const char **)cr16_action_2rightarrow)));
-  yearBackward->setIconSet(QIcon(QPixmap((const char **)cr16_action_2leftarrow)));
-  monthForward->setIconSet(QIcon(QPixmap((const char **)cr16_action_1rightarrow)));
-  monthBackward->setIconSet(QIcon(QPixmap((const char **)cr16_action_1leftarrow)));
-
   setDate(dt); // set button texts
-  connect(table, SIGNAL(dateChanged(QDate)), SLOT(dateChangedSlot(QDate)));
-  connect(table, SIGNAL(tableClicked()), SLOT(tableClickedSlot()));
-  connect(table, SIGNAL(tableDoubleClicked()), SLOT(tableDoubleClickedSlot()));
-  connect(monthForward, SIGNAL(clicked()), SLOT(monthForwardClicked()));
-  connect(monthBackward, SIGNAL(clicked()), SLOT(monthBackwardClicked()));
-  connect(yearForward, SIGNAL(clicked()), SLOT(yearForwardClicked()));
-  connect(yearBackward, SIGNAL(clicked()), SLOT(yearBackwardClicked()));
+  connect(table, SIGNAL(selectionChanged()), SLOT(dateChangedSlot()));
+  connect(table, SIGNAL(activated(QDate)), SLOT(tableClickedSlot(QDate)));
+  connect(table,SIGNAL(currentPageChanged(int, int)), SLOT(currentPageChangedSlot(int, int)));
   connect(d->selectWeek, SIGNAL(activated(int)), SLOT(weekSelected(int)));
   connect(d->todayButton, SIGNAL(clicked()), SLOT(todayButtonClicked()));
-  connect(selectMonth, SIGNAL(clicked()), SLOT(selectMonthClicked()));
-  connect(selectYear, SIGNAL(clicked()), SLOT(selectYearClicked()));
   connect(line, SIGNAL(returnPressed()), SLOT(lineEnterPressed()));
   table->setFocus();
 
@@ -196,13 +317,12 @@ void QDatePicker::init( const QDate &dt )
 QDatePicker::~QDatePicker()
 {
   delete d;
-  delete calendar;
 }
 
 bool
 QDatePicker::eventFilter(QObject *o, QEvent *e )
 {
-   if ( e->type() == QEvent::KeyPress ) {
+ /*  if ( e->type() == QEvent::KeyPress ) {
       QKeyEvent *k = (QKeyEvent *)e;
 
       if ( (k->key() == Qt::Key_Prior) ||
@@ -214,7 +334,7 @@ QDatePicker::eventFilter(QObject *o, QEvent *e )
           table->setFocus();
           return true; // eat event
        }
-   }
+   }*/
    return Q3Frame::eventFilter( o, e );
 }
 
@@ -224,30 +344,27 @@ QDatePicker::resizeEvent(QResizeEvent* e)
   QWidget::resizeEvent(e);
 }
 
-void
-QDatePicker::dateChangedSlot(QDate date)
+void QDatePicker::currentPageChangedSlot (int year, int month)
 {
+  QDate date=QDate(year,month,1);
+  fillWeeksCombo(date);
+  d->selectWeek->setCurrentItem(date.weekNumber() - 1);
+}
+
+void
+QDatePicker::dateChangedSlot()
+{
+    QDate date=table->selectedDate();
     line->setText(date.toString(Qt::ISODate));
-    selectMonth->setText(calendar->monthName(date, false));
-    fillWeeksCombo(date);
-    d->selectWeek->setCurrentItem(calendar->weekNumber(date) - 1);
-    selectYear->setText(calendar->yearString(date, false));
 
     emit(dateChanged(date));
 }
 
 void
-QDatePicker::tableClickedSlot()
+QDatePicker::tableClickedSlot(QDate date)
 {
-  emit(dateSelected(table->getDate()));
+  emit(dateSelected(date));
   emit(tableClicked());
-}
-
-void
-QDatePicker::tableDoubleClickedSlot()
-{
-  emit(dateSelected(table->getDate()));
-  emit(tableDoubleClicked());
 }
 
 /*const QDate&
@@ -256,10 +373,10 @@ QDatePicker::getDate() const
   return table->getDate();
 }*/
 
-const QDate &
+const QDate
 QDatePicker::date() const
 {
-    return table->getDate();
+    return table->selectedDate();
 }
 
 bool
@@ -267,11 +384,9 @@ QDatePicker::setDate(const QDate& date)
 {
     if(date.isValid())
     {
-        table->setDate(date);
+        table->setSelectedDate(date);
         fillWeeksCombo(date);
-        d->selectWeek->setCurrentItem(calendar->weekNumber(date) - 1);
-        selectMonth->setText(calendar->monthName(date, false));
-        selectYear->setText(calendar->yearString(date, true));
+        d->selectWeek->setCurrentItem(date.weekNumber() - 1);
         line->setText(date.toString(Qt::ISODate));
         return true;
     }
@@ -282,127 +397,27 @@ QDatePicker::setDate(const QDate& date)
 }
 
 void
-QDatePicker::monthForwardClicked()
-{
-    QDate temp;
-    temp = calendar->addMonths( table->getDate(), 1 );
-
-    setDate( temp );
-}
-
-void
-QDatePicker::monthBackwardClicked()
-{
-    QDate temp;
-    temp = calendar->addMonths( table->getDate(), -1 );
-
-    setDate( temp );
-}
-
-void
-QDatePicker::yearForwardClicked()
-{
-    QDate temp;
-    temp = calendar->addYears( table->getDate(), 1 );
-
-    setDate( temp );
-}
-
-void
-QDatePicker::yearBackwardClicked()
-{
-    QDate temp;
-    temp = calendar->addYears( table->getDate(), -1 );
-
-    setDate( temp );
-}
-
-//void QDatePicker::selectWeekClicked() {}  // ### in 3.2 obsolete; kept for binary compatibility
-
-void
 QDatePicker::weekSelected(int week)
 {
   week++; // week number starts with 1
 
-  QDate date = table->getDate();
-  int year = calendar->year(date);
+  int year = table->yearShown();
 
-  calendar->setYMD(date, year, 1, 1);
-  date = calendar->addDays(date, -7);
-  while (calendar->weekNumber(date) != 1)
-    date = calendar->addDays(date, 1);
+  QDate date = QDate(year, 1, 1);
+  date=date.addDays(-7);
+  while (date.weekNumber() != 1)
+    date=date.addDays(1);
 
   // date is now first day in week 1 some day in week 1
-  date = calendar->addDays(date, (week - calendar->weekNumber(date)) * 7);
+  date=date.addDays((week - date.weekNumber()) * 7);
 
   setDate(date);
-}
-
-void
-QDatePicker::selectMonthClicked()
-{
-  // every year can have different month names (in some calendar systems)
-  QDate date = table->getDate();
-  int i, month, months = calendar->monthsInYear(date);
-
-  Q3PopupMenu popup(selectMonth);
-
-  for (i = 1; i <= months; i++)
-    popup.insertItem(calendar->monthName(i, calendar->year(date)), i);
-
-  QMenuItem *item = popup.findItem (calendar->month(date));
-  if (item)
-    popup.setActiveAction(item);
-
-  if ( (month = popup.exec(selectMonth->mapToGlobal(QPoint(0, 0)), calendar->month(date) - 1)) == -1 ) return;  // canceled
-
-  int day = calendar->day(date);
-  // ----- construct a valid date in this month:
-  //date.setYMD(date.year(), month, 1);
-  //date.setYMD(date.year(), month, QMIN(day, date.daysInMonth()));
-  calendar->setYMD(date, calendar->year(date), month,
-                   QMIN(day, calendar->daysInMonth(date)));
-  // ----- set this month
-  setDate(date);
-}
-
-void
-QDatePicker::selectYearClicked()
-{
-  int year;
-  QPopupFrame* popup = new QPopupFrame(this);
-  QDateInternalYearSelector* picker = new QDateInternalYearSelector(calendar, popup);
-  // -----
-  picker->resize(picker->sizeHint());
-  popup->setMainWidget(picker);
-  connect(picker, SIGNAL(closeMe(int)), popup, SLOT(close(int)));
-  picker->setFocus();
-  if(popup->exec(selectYear->mapToGlobal(QPoint(0, selectMonth->height()))))
-    {
-      QDate date;
-      int day;
-      // -----
-      year=picker->getYear();
-      date=table->getDate();
-      day=calendar->day(date);
-      // ----- construct a valid date in this month:
-      //date.setYMD(year, date.month(), 1);
-      //date.setYMD(year, date.month(), QMIN(day, date.daysInMonth()));
-      calendar->setYMD(date, year, calendar->month(date),
-                       QMIN(day, calendar->daysInMonth(date)));
-      // ----- set this month
-      setDate(date);
-    } else {
-    }
-  delete popup;
 }
 
 void
 QDatePicker::setEnabled(bool enable)
 {
   QWidget *widgets[]= {
-    yearForward, yearBackward, monthForward, monthBackward,
-    selectMonth, selectYear,
     line, table, d->selectWeek, d->todayButton };
   const int Size=sizeof(widgets)/sizeof(widgets[0]);
   int count;
@@ -440,75 +455,9 @@ QDatePicker::sizeHint() const
 void
 QDatePicker::setFontSize(int s)
 {
-  QWidget *buttons[]= {
-    // yearBackward,
-    // monthBackward,
-    selectMonth,
-    selectYear,
-    // monthForward,
-    // yearForward
-  };
-  const int NoOfButtons=sizeof(buttons)/sizeof(buttons[0]);
-  int count;
-  QFont font;
-  QRect r;
-  // -----
-  fontsize=s;
-  for(count=0; count<NoOfButtons; ++count)
-    {
-      font=buttons[count]->font();
-      font.setPointSize(s);
-      buttons[count]->setFont(font);
-    }
-  QFontMetrics metrics(selectMonth->fontMetrics());
-
-  for (int i = 1; ; ++i)
-    {
-      QString str = calendar->monthName(i,
-         calendar->year(table->getDate()), false);
-      if (str.isNull()) break;
-      r=metrics.boundingRect(str);
-      maxMonthRect.setWidth(QMAX(r.width(), maxMonthRect.width()));
-      maxMonthRect.setHeight(QMAX(r.height(),  maxMonthRect.height()));
-    }
-
-    QStyleOptionToolButton qstb;
-
-    QSize metricBound = style()->sizeFromContents(QStyle::CT_ToolButton, &qstb,
-                                               maxMonthRect, selectMonth);
-
-
-  selectMonth->setMinimumSize(metricBound);
-
-
-  table->setFontSize(s);
-}
-
-void
-QDatePicker::setCloseButton( bool enable )
-{
-    if ( enable == (d->closeButton != 0L) )
-        return;
-
-    if ( enable ) {
-        d->closeButton = new QToolButton( this );
-        d->navigationLayout->addWidget(d->closeButton);
-        QToolTip::add(d->closeButton,"Schliessen");
-        //d->closeButton->setPixmap( SmallIcon("remove") );
-        connect( d->closeButton, SIGNAL( clicked() ),
-                 topLevelWidget(), SLOT( close() ) );
-    }
-    else {
-        delete d->closeButton;
-        d->closeButton = 0L;
-    }
-
-    updateGeometry();
-}
-
-bool QDatePicker::hasCloseButton() const
-{
-    return (d->closeButton != 0L);
+  QFont currfont=table->font();
+  currfont.setPointSize(s);
+  table->setFont(currfont);
 }
 
 void QDatePicker::virtual_hook( int /*id*/, void* /*data*/ )
