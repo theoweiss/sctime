@@ -24,14 +24,12 @@
 #ifndef QDATEPICKER_H
 #define QDATEPICKER_H
 #include <qdatetime.h>
-#include <q3frame.h>
+#include <QFrame>
 #include <QValidator>
 #include <QCalendarWidget>
-//Added by qt3to4:
 #include <QEvent>
 #include <QResizeEvent>
 #include <QLineEdit>
-#include <Q3GridView>
 
 class QToolButton;
 
@@ -93,7 +91,7 @@ public:
  *
  * @short A date selection widget.
  **/
-class QDatePicker: public Q3Frame
+class QDatePicker: public QFrame
 {
   Q_OBJECT
   Q_PROPERTY( QDate date READ date WRITE setDate)
@@ -114,7 +112,7 @@ public:
   QDatePicker(QWidget *parent,
               QDate,
               const char *name,
-              Qt::WFlags f); // ### KDE 4.0: Merge
+              Qt::WindowFlags f); // ### KDE 4.0: Merge
 
   /**
    * Standard qt widget constructor. The initial date will be the
@@ -172,8 +170,6 @@ public:
     { return fontsize; }
 
 protected:
-  /// to catch move keyEvents when QLineEdit has keyFocus
-  virtual bool eventFilter(QObject *o, QEvent *e );
   /// the resize event
   virtual void resizeEvent(QResizeEvent*);
   /// the line edit to enter the date directly

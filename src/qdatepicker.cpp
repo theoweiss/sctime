@@ -22,7 +22,7 @@
 // This file has been ported from KDE to plain QT
 
 #include <qlayout.h>
-#include <q3frame.h>
+#include <QFrame>
 #include <qpainter.h>
 #include <qdialog.h>
 #include <qstyle.h>
@@ -31,20 +31,14 @@
 #include <qtooltip.h>
 #include <qfont.h>
 #include <qvalidator.h>
-#include <q3popupmenu.h>
 #include <QMenuItem>
 #include <QDesktopWidget>
-#include <iostream>
 
 #include "qdatepicker.h"
 
 #include <qapplication.h>
 
-//Added by qt3to4:
 #include <QBoxLayout>
-#include <QResizeEvent>
-#include <QKeyEvent>
-#include <QEvent>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPixmap>
@@ -158,19 +152,19 @@ void QDatePicker::fillWeeksCombo(const QDate &date)
 }
 
 QDatePicker::QDatePicker(QWidget *parent, QDate dt, const char *name)
-  : Q3Frame(parent,name)
+  : QFrame(parent)
 {
   init( dt );
 }
 
-QDatePicker::QDatePicker(QWidget *parent, QDate dt, const char *name, Qt::WFlags f)
-  : Q3Frame(parent,name, f)
+QDatePicker::QDatePicker(QWidget *parent, QDate dt, const char *name, Qt::WindowFlags f)
+  : QFrame(parent, f)
 {
   init( dt );
 }
 
 QDatePicker::QDatePicker( QWidget *parent, const char *name )
-  : Q3Frame(parent,name)
+  : QFrame(parent)
 {
   init( QDate::currentDate() );
 }
@@ -202,7 +196,6 @@ void QDatePicker::init( const QDate &dt )
   // -----
   setFontSize(fontsize);
   line->setValidator(val);
-  line->installEventFilter( this );
 
   setDate(dt); // set button texts
   connect(table, SIGNAL(selectionChanged()), SLOT(dateChangedSlot()));
@@ -224,25 +217,6 @@ void QDatePicker::init( const QDate &dt )
 QDatePicker::~QDatePicker()
 {
   delete d;
-}
-
-bool
-QDatePicker::eventFilter(QObject *o, QEvent *e )
-{
- /*  if ( e->type() == QEvent::KeyPress ) {
-      QKeyEvent *k = (QKeyEvent *)e;
-
-      if ( (k->key() == Qt::Key_Prior) ||
-           (k->key() == Qt::Key_Next)  ||
-           (k->key() == Qt::Key_Up)    ||
-           (k->key() == Qt::Key_Down) )
-       {
-          QApplication::sendEvent( table, e );
-          table->setFocus();
-          return true; // eat event
-       }
-   }*/
-   return Q3Frame::eventFilter( o, e );
 }
 
 void
