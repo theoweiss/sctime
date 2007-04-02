@@ -9,7 +9,7 @@
 
 #include <assert.h>
 
-#include <Q3ValueStack>
+#include <QLinkedList>
 
 /**
    \class GetOpt
@@ -183,13 +183,13 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
     // push all arguments as we got them on a stack
     // more pushes might following when parsing condensed arguments
     // like --key=value.
-    Q3ValueStack<QString> stack;
+    QLinkedList<QString> stack;
     {
         QStringList::const_iterator it = args.fromLast();
         const QStringList::const_iterator begin = args.begin();
         const QStringList::const_iterator end = args.end();
         while ( it!=end ) {
-            stack.push( *it );
+            stack.append( *it );
             if (it == begin)
                 break;
             --it;
@@ -207,7 +207,8 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
         QString origA;
         // identify argument type
         if ( !stack.isEmpty() ) {
-            a = stack.pop();
+            a = stack.last();
+            stack.removeLast();
             currArg++;
             origA = a;
             //      qDebug( "popped %s", a.ascii() );
@@ -222,7 +223,7 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
                 // split key=value style arguments
                 int equal = a.find( '=' );
                 if ( equal >= 0 ) {
-                    stack.push( a.mid( equal + 1 ) );
+                    stack.append( a.mid( equal + 1 ) );
                     currArg--;
                     a = a.left( equal );
                 }
@@ -249,7 +250,7 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
                 t = ShortOpt;
                 // followed by an argument ? push it for later processing.
                 if ( a.length() > 2 ) {
-                    stack.push( a.mid( 2 ) );
+                    stack.append( a.mid( 2 ) );
                     currArg--;
                 }
                 a = a[1];
@@ -372,7 +373,7 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
                     *currOpt.stringValue = currOpt.def;
                 if ( t != End ) {
                     // re-evaluate current argument
-                    stack.push( origA );
+                    stack.append( origA );
                     currArg--;
                 }
                 state = StartState;
