@@ -49,10 +49,6 @@
 #include <QHBoxLayout>
 #include <QPixmap>
 
-#include "../pics/cr16-action-1leftarrow.xpm"
-#include "../pics/cr16-action-1rightarrow.xpm"
-#include "../pics/cr16-action-2rightarrow.xpm"
-#include "../pics/cr16-action-2leftarrow.xpm"
 #include "../pics/cr16-action-bookmark.xpm"
 
 QDateValidator::QDateValidator(QWidget* parent, const char* name)
