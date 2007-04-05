@@ -195,23 +195,25 @@ int main( int argc, char **argv )
         configdirstring = envpointer;
     else {
         configdirstring = CONFIGSUBDIR; // default Configdir
-#ifndef WIN32
-        directory.cd(directory.homeDirPath());
-#else
-        if (!directory.cd("H:\\")) {
-           ErrorApp ea("Kann nicht auf H:\\ zugreifen.",argc, argv );
-           return false;
-        }
-#endif
     }
   }
-
-  // neues directory anlegen, hineinwechseln, und merken.
-  directory.mkdir(configdirstring);
   if (!directory.cd(configdirstring))
   {
+#ifndef WIN32
+    directory.cd(directory.homeDirPath());
+#else
+    if (!directory.cd("H:\\")) {
+           ErrorApp ea("Kann nicht auf H:\\ zugreifen.",argc, argv );
+           return false;
+    }
+#endif
+    // neues directory anlegen, hineinwechseln, und merken.
+    directory.mkdir(configdirstring);
+    if (!directory.cd(configdirstring))
+    {
       ErrorApp ea("Kann in Verzeichnis "+configdirstring+" nicht wechseln!",argc, argv );
       return false;
+    }
   }
   configDir=directory.path();
 
