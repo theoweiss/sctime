@@ -48,9 +48,9 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
   addColumn ("Typ");
   addColumn ("Aktiv");
   addColumn ("Zeit");
-  setColumnAlignment(2,Qt::AlignRight);
-  addColumn ("Abzur.");
   setColumnAlignment(3,Qt::AlignRight);
+  addColumn ("Abzur.");
+  setColumnAlignment(4,Qt::AlignRight);
   addColumn ("Kommentar");
 
   aktivPixmap=QPixmap((const char **)hi16_action_apply);
@@ -416,8 +416,8 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
                 newItem->setBgColor(abtList->getBgColor(abtPos->first,kontPos->first,ukontPos->first));
              // newItem->setBold((etPos->second.kommentar!="")||(etPos->second.sekunden!=0)||(etPos->second.sekundenAbzur!=0));
             }
-            // Sorgt dafuer, dass das Konto in Persoenliche Konten kommt
-            if ((etPos->second.flags&UK_PERSOENLICH)||(etPos!=eintragsliste->begin()))
+            // Sorgt dafuer, dass das Konto in Persoenliche Konten kommt, bzw die Parentzeiten aktualisiert werden
+            if ((etPos->second.flags&UK_PERSOENLICH)||(etPos!=eintragsliste->begin())||(etPos->second.sekunden)||(etPos->second.sekundenAbzur))
               refreshItem(abtPos->first,kontPos->first,ukontPos->first,etPos->first);
           }
         }
@@ -579,7 +579,8 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       }
     else
       eti->setPixmap(2,emptyPixmap);
-
+    refreshParentSumTime(ukoi,"+");
+    refreshParentSumTime(koi,"++");
     bool inPersKontenGefunden=sucheItem(PERSOENLICHE_KONTEN_STRING,abt,ko,uko,idx,topi,abti,koi,ukoi,eti);
 
     if ((inPersKontenGefunden)&&(!((etiter->second.flags)&UK_PERSOENLICH))) {
@@ -680,6 +681,32 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
   }
 }
 
+void KontoTreeView::getSumTime(Q3ListViewItem* item, TimeCounter& sum, TimeCounter& sumAbs)
+{
+  for (Q3ListViewItem* it=item->firstChild(); it!=NULL ; it=it->nextSibling())
+  {
+    QString s=it->text(3);
+    s=s.replace("+","");
+    if (s.isEmpty()) {
+      getSumTime(it, sum, sumAbs);
+    }
+    else {
+      sum.addTime(TimeCounter::fromString(s));
+      QString sabs=it->text(4);
+      sabs=sabs.replace("+","");
+      sumAbs.addTime(TimeCounter::fromString(sabs));
+    }
+  }
+}
+
+void KontoTreeView::refreshParentSumTime(Q3ListViewItem* item, QString prefix)
+{
+  Q3ListViewItem* p=item->parent();
+  TimeCounter sum, sumAbs;
+  getSumTime(p, sum, sumAbs);
+  p->setText(3,prefix+sum.toString());
+  p->setText(4,prefix+sumAbs.toString());
+}
 
 /*
  * Ruft refreshItem fuer alle Eintraege im uebergebenen Unterkonto auf

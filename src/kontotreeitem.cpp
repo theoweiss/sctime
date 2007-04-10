@@ -66,7 +66,7 @@ void KontoTreeItem::paintCell ( QPainter * p, const QColorGroup & cg, int column
   else
     if (isGray) newcg.setColor(QColorGroup::Text,Qt::gray);
   newcg.setColor(QColorGroup::Background,m_bgColor);
-  if (text(column).stripWhiteSpace()=="0:00") {
+  if ((text(column).stripWhiteSpace()=="0:00")||(text(column).startsWith("+"))) {
     newcg.setColor(QColorGroup::Text,Qt::gray);
   }
   Q3ListViewItem::paintCell(p,newcg,column,width,align);

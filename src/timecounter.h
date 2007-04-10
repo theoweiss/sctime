@@ -24,7 +24,8 @@
 #ifndef TIMECOUNTER_H
 #define  TIMECOUNTER_H
 
-#include "qstring.h"
+#include <QString>
+#include <QStringList>
 
 /**
  * Simple Klasse, die einen Sekundenzaehler, sowie eine formatierte Ausgabe dazu bietet.
@@ -50,6 +51,15 @@ class TimeCounter {
       QString qs;
 
       return qs.sprintf("%2i:%.2i ",seconds/3600, (seconds%3600)/60);
+    }
+
+    static TimeCounter fromString(QString str)
+    {
+      str=str.trimmed();
+      QStringList l=str.split(":");
+      if (l.size()<2) return TimeCounter(0);
+      int secs=60*(60*l[0].toInt()+l[1].toInt());
+      return TimeCounter(secs);
     }
 
   private:

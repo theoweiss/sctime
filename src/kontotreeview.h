@@ -32,6 +32,8 @@
 #include "kontotreeitem.h"
 #include <vector>
 
+class TimeCounter;
+
 #define PERSOENLICHE_KONTEN_STRING "Persönliche Konten"
 #define ALLE_KONTEN_STRING "Alle Konten"
 
@@ -67,13 +69,17 @@ class KontoTreeView: public Q3ListView
 
     void showAktivesProjekt();
 
-    void getColumnWidthList(std::vector<int>& columnwidth);           
+    void getColumnWidthList(std::vector<int>& columnwidth);
+
+    void refreshParentSumTime(Q3ListViewItem* item, QString prefix);
+
+    void getSumTime(Q3ListViewItem* item, TimeCounter& sum, TimeCounter& sumAbs);
 
   public slots:
 
     virtual void refreshItem(const QString& abt, const QString& ko,const QString& uko, int idx);
     void refreshAllItemsInUnterkonto(const QString& abt, const QString& ko,const QString& uko);
-    void refreshAllItemsInKonto(const QString& abt, const QString& ko);    
+    void refreshAllItemsInKonto(const QString& abt, const QString& ko);
 
   protected:
       virtual Q3DragObject* dragObject ();
