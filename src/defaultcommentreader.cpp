@@ -47,9 +47,12 @@ void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
       filename=configDir+"/"+xmlfilelist[i];
 
       QFile f( filename );
-      if ( !f.open( QIODevice::ReadOnly ) )
+      if ( !f.open( QIODevice::ReadOnly ) ) {
+          std::cerr<<"Kann "<<filename.toStdString()<<" nicht oeffnen."<<std::endl;
           return;
+      }
       if ( !doc.setContent( &f ) ) {
+          std::cerr<<"Ungueltiges Format von "<<filename.toStdString()<<std::endl;
           f.close();
           return;
       }
