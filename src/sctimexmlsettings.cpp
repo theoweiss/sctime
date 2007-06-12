@@ -31,6 +31,7 @@
 #include "timecounter.h"
 #include "qregexp.h"
 #include "qtextcodec.h"
+#include <langinfo.h>
 #ifndef NO_XML
 #include "qdom.h"
 #endif
@@ -60,8 +61,10 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
   TimeCounter tc(sek), tcAbzur(abzurSek);
 #ifdef WIN32
   stream.setCodec(QTextCodec::codecForName ( WIN_CODEC ));
+  QString codec=WIN_CODEC;
+#else
+  QString codec=nl_langinfo(CODESET);
 #endif
-  QString codec=stream.codec()->name();
   stream<<"#!/bin/sh\n\n";
   stream<<"# Zeit Aufrufe von sctime "<<QUOTEME(VERSIONSTR)<<" generiert \n"
     <<"# Gesamtzeit: "<<tc.toString()<<"/"<<tcAbzur.toString()<<"\n";
@@ -716,8 +719,10 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   QTextStream stream( & f);
 #ifdef WIN32
   stream.setCodec(QTextCodec::codecForName ( WIN_CODEC ));
+  QString codec=WIN_CODEC;
+#else
+  QString codec=nl_langinfo(CODESET);
 #endif
-  QString codec=stream.codec()->name();
   stream<<"<?xml version=\"1.0\" encoding=\""<<codec<<"\"?>"<<endl;
   stream<<doc.toString()<<endl;
 
