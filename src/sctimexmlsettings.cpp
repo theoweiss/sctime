@@ -31,7 +31,11 @@
 #include "timecounter.h"
 #include "qregexp.h"
 #include "qtextcodec.h"
+#ifndef WIN32
 #include <langinfo.h>
+#else
+#include <windows.h>
+#endif
 #ifndef NO_XML
 #include "qdom.h"
 #endif
@@ -59,12 +63,7 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
   QRegExp apostrophExp=QRegExp("'");
 
   TimeCounter tc(sek), tcAbzur(abzurSek);
-#ifdef WIN32
-  stream.setCodec(QTextCodec::codecForName ( WIN_CODEC ));
-  QString codec=WIN_CODEC;
-#else
-  QString codec=nl_langinfo(CODESET);
-#endif
+  QString codec=codecString(stream);
   stream<<"#!/bin/sh\n\n";
   stream<<"# Zeit Aufrufe von sctime "<<QUOTEME(VERSIONSTR)<<" generiert \n"
     <<"# Gesamtzeit: "<<tc.toString()<<"/"<<tcAbzur.toString()<<"\n";
@@ -135,6 +134,28 @@ bool SCTimeXMLSettings::moveToCheckedIn(AbteilungsListe* abtList)
   if (!qd.rename(configDir+"/"+filename, configDir+checkedinstr+"/"+filename))
     return false;
   return true;
+}
+
+/* returns the used codec for the stream
+   may modify the stream and set the codec to a known one.
+*/
+QString SCTimeXMLSettings::codecString(QTextStream& stream)
+{
+  QString codec;
+#ifdef WIN32
+  unsigned int cp=GetACP();
+  if (cp==1252) {
+    codec="iso-8859-15";
+  }
+  else
+  {
+    codec=WIN_CODEC;
+  }
+  stream.setCodec(QTextCodec::codecForName(codec));
+#else
+  codec=nl_langinfo(CODESET);
+#endif
+  return codec;
 }
 
 void SCTimeXMLSettings::readSettings(AbteilungsListe* abtList)
@@ -717,12 +738,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
       return;
   }
   QTextStream stream( & f);
-#ifdef WIN32
-  stream.setCodec(QTextCodec::codecForName ( WIN_CODEC ));
-  QString codec=WIN_CODEC;
-#else
-  QString codec=nl_langinfo(CODESET);
-#endif
+  QString codec=codecString(stream);
   stream<<"<?xml version=\"1.0\" encoding=\""<<codec<<"\"?>"<<endl;
   stream<<doc.toString()<<endl;
 

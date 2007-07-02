@@ -30,6 +30,8 @@
 #include <iostream>
 #include <vector>
 
+class QTextStream;
+
 class SCTimeXMLSettings
 {
   public:
@@ -200,6 +202,8 @@ class SCTimeXMLSettings
     {
         return m_zeitKontenKommando;
     }
+    
+    QString codecString(QTextStream& stream);
 
     void setZeitKontenKommando(const QString& command)
     {
