@@ -111,6 +111,7 @@ class TimeMainWindow: public QMainWindow
     void mouseButtonInKontoTreeClicked(int button, Q3ListViewItem * item, const QPoint & pos, int c );
     void copyNameToClipboard();
     void showContextMenu(Q3ListViewItem * item, const QPoint& pos, int col);
+    void showArbeitszeitwarning();
 
   signals:
     /** Wird ausgeloest, falls sich die Gesamtzeit geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden. */

@@ -432,6 +432,7 @@ void TimeMainWindow::minutenUhr()
   QString abt,ko,uko;
   int idx;
 
+  QDateTime currenttime=QDateTime::currentDateTime();
   if (!paused) {
     abtListToday->getAktiv(abt,ko,uko,idx);
     int delta=lastMinuteTick.secsTo(QDateTime::currentDateTime());    
@@ -443,14 +444,14 @@ void TimeMainWindow::minutenUhr()
 
       if (logFile.open(QIODevice::Append)) {
          QTextStream stream(&logFile);
-         stream<<"Zeitinkonsistenz am "<<QDateTime::currentDateTime().toString()<<" Dauer: "<<QString::number(delta/60-1)<<" Minuten.\n";
+         stream<<"Zeitinkonsistenz am "<<currenttime.toString()<<" Dauer: "<<QString::number(delta/60-1)<<" Minuten.\n";
       }
       logFile.close();
 
       QString extrawarnung="";
       if (delta<0)
         extrawarnung="\nACHTUNG: Die Zeit wird zurueckgestellt, wenn Sie mit Ja quittieren!!!";
-      lastMinuteTick=QDateTime::currentDateTime(); // we might spend some time in the dialog... set things back to normal
+      lastMinuteTick=currenttime; // we might spend some time in the dialog... set things back to normal
       int answer= QMessageBox::question(this, "Zeitinkonsistenz",
                                    QString("Das System schien fuer ")+QString::number(delta/60)+" Minuten zu haengen oder die Systemzeit wurde veraendert.\n"
                                    "Soll die entstandene Zeitdifferenz auf das aktive Unterkonto gebucht werden?"+extrawarnung, QMessageBox::Yes,QMessageBox::No);
@@ -462,7 +463,7 @@ void TimeMainWindow::minutenUhr()
     emit minuteTick();
     if (!pausedAbzur) emit minuteAbzurTick();
   }
-  lastMinuteTick=QDateTime::currentDateTime();
+  lastMinuteTick=currenttime;
 
   //fix-me: falls bis zu zwei Minuten nach Mitternacht das gestrige Datum
   //eingestellt ist, aufs neue Datum umstellen - Aergernis, falls jemand zw 0:00 und 0:02 tatsaechlich
@@ -586,13 +587,21 @@ void TimeMainWindow::zeitChanged()
     // dass (falls der user nicht sofort reagiert), jede Minute eine neue Box aufpoppt
     // => nix gut am naechsten morgen, wenn man das ausloggen vergisst :-)
     last=zeit;
-    QMessageBox::warning(0,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
-                       QMessageBox::Ok | QMessageBox::Default,0);
+    // OK, QTimer erwartet nun, dass der letzte aufruf zurueckgekehrt ist, bevor
+    // der nächste kommen kann. Da wir ueber einen QTimer aufgerufen wurden,
+    // und wir weiter Tick-Events bekommen muessen, muessen wir den Arbeitszeitdialog asynchron starten.
+    // Das tun wir ueber einen weiteren QTimer (das klappt, weil wir hier einen Wegwerftimer benutzen.
+    QTimer::singleShot(0, this, SLOT(showArbeitszeitwarning()));
   }
   else
     last=zeit;
 }
 
+void TimeMainWindow::showArbeitszeitwarning()
+{
+  QMessageBox::warning(0,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
+                       QMessageBox::Ok | QMessageBox::Default,0);
+}
 
 /** Ruft einen modalen Dialog auf, der eine Pause anzeigt, und setzt gleichzeitig
   *  paused auf true, um die Zeiten anzuhalten
