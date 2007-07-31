@@ -36,6 +36,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QPixmap>
+#include <QTextCharFormat>
 
 #include "../pics/cr16-action-bookmark.xpm"
 
@@ -186,6 +187,10 @@ void QDatePicker::init( const QDate &dt )
 
   QToolTip::add(d->selectWeek, "Woche wählen");
   QToolTip::add(d->todayButton, "Heutigen Tag wählen");
+  
+  QTextCharFormat format=table->dateTextFormat(QDate::currentDate());
+  format.setFontWeight(QFont::Bold);
+  table->setDateTextFormat(QDate::currentDate(),format);
 
   // -----
   setFontSize(fontsize);
