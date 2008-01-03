@@ -187,10 +187,10 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
     filename="/settings.xml";
   else {
     filename="/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
-    QFileInfo qf(configDir+"/checkedin"+filename);
+    QFileInfo qf(configDir+"/"+abtList->getDatum().toString("yyyy")+filename);
     if (abtList) {
         if (qf.exists()) {
-          filename="/checkedin"+filename;
+          filename="/"+abtList->getDatum().toString("yyyy")+filename;
           abtList->setCheckInState(true);
         }
         else
