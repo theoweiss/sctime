@@ -48,11 +48,15 @@ void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
 
       QFile f( filename );
       if ( !f.open( QIODevice::ReadOnly ) ) {
-          std::cerr<<"Kann "<<filename.toStdString()<<" nicht oeffnen."<<std::endl;
+          std::cerr<<"Hinweis: Kann "<<filename.toStdString()<<" nicht oeffnen."<<std::endl;
           return;
       }
-      if ( !doc.setContent( &f ) ) {
-          std::cerr<<"Ungueltiges Format von "<<filename.toStdString()<<std::endl;
+      QString domerror;
+      int domerrorline;
+      int domerrorcol;
+      if ( !doc.setContent( &f, false, &domerror,&domerrorline,&domerrorcol ) ) {
+          std::cerr<<"Fehler in "<<filename.toStdString()<<" in Zeile "<<domerrorline<<" Spalte "<<domerrorcol<<std::endl;
+          std::cerr<<domerror.toStdString()<<std::endl;
           f.close();
           return;
       }
@@ -93,7 +97,7 @@ void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
                                                           itUk->second.addDefaultComment(commentstr);
                                                       }
                                                       else
-                                                          std::cerr<<"Kann Unterkonto "<<unterkontostr.toStdString()<<" für Defaultkommentar nicht finden!"<<std::endl;
+                                                          std::cerr<<"Kann Unterkonto "<<unterkontostr.toStdString()<<" fuer Defaultkommentar nicht finden!"<<std::endl;
                                                   }
                                               }
                                           }

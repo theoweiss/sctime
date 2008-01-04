@@ -48,6 +48,7 @@ class SCTimeXMLSettings
       _singleClickActivation = false;
       _maxWorkingTime=MAX_WORKTIME_DEFAULT;
       defaultcommentfiles.clear();
+      defaultcommentfiles.push_back("defaultcomments.xml");
       columnwidth.clear();
       unterKontoWindowPosition = QPoint(0,0);
       unterKontoWindowSize = QSize(0,0);
