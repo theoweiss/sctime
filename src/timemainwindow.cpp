@@ -1019,7 +1019,7 @@ void TimeMainWindow::showContextMenu(Q3ListViewItem * item, const QPoint& mousep
  */
 void TimeMainWindow::callUnterKontoDialog(Q3ListViewItem * item)
 {
-  if ((!kontoTree->isEintragsItem(item))||(abtList->checkInState()))
+  if ((!kontoTree->isEintragsItem(item)))
     return;
 
   QString top,uko,ko,abt;
@@ -1028,7 +1028,7 @@ void TimeMainWindow::callUnterKontoDialog(Q3ListViewItem * item)
 
   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
 
-  unterKontoDialog=new UnterKontoDialog(abt,ko,uko,idx,abtList,&defaultTags, true ,this);
+  unterKontoDialog=new UnterKontoDialog(abt,ko,uko,idx,abtList,&defaultTags, true ,this, abtList->checkInState());
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int )), kontoTree,
   SLOT(refreshItem(const QString&, const QString&, const QString&,int )));
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int)), this, SLOT(zeitChanged()));

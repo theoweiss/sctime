@@ -157,6 +157,12 @@ class ZeitBox: public QGroupBox
       hourEdit->setValue(sekunden/3600);
       emit hourChangedBy(steps);
     }
+    
+    void setReadOnly(bool readonly)
+    {
+      hourEdit->setReadOnly(readonly);
+      minuteEdit->setReadOnly(readonly);
+    }
 
   signals:
     /**

@@ -47,7 +47,7 @@ class UnterKontoDialog: public QDialog
   public:
     UnterKontoDialog(const QString& abt,const  QString& ko, const  QString& uko, int idx,
                      AbteilungsListe* abtlist,  QStringList* taglist,
-                     bool connectZeiten, QWidget * parent=0);
+                     bool connectZeiten, QWidget * parent=0, bool readOnly=false);
     ZeitBox* getZeitAbzurBox();
     ZeitBox* getZeitBox();
 

@@ -615,7 +615,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       eti->setDropEnabled(true);
       topi->setOpen(true); abti->setOpen(true); koi->setOpen(true); ukoi->setOpen(true);
      // eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
-      eti->setGray(abtList->checkInState());
+      //eti->setGray(abtList->checkInState());
       if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
         eti->setPixmap(2,aktivPixmap);
       else
@@ -670,7 +670,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       eti->setText(1,dd.type());
       eti->setText(3,tc.toString());
       eti->setText(4,tcAbzur.toString());
-      eti->setGray(abtList->checkInState());
+      //eti->setGray(abtList->checkInState());
       eti->setDragEnabled(true);
       eti->setDropEnabled(true);
       eti->setBgColor(abtList->getBgColor(abt,ko,uko));

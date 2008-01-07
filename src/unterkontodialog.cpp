@@ -44,7 +44,7 @@
  */
 UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  QString& uko, int idx,
                                    AbteilungsListe* abtlist, QStringList* taglist,
-                                   bool connectZeiten, QWidget * parent)
+                                   bool connectZeiten, QWidget * parent, bool readOnly)
                                    :QDialog(parent,"Einstellungen für Unterkonto", true)
 {
   abtList=abtlist;
@@ -66,9 +66,15 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
 
   QVBoxLayout* layout=new QVBoxLayout(this,3);
 
-  QPushButton * okbutton=new QPushButton( "OK", this );
-  okbutton->setDefault(true);
   QPushButton * cancelbutton=new QPushButton( "Abbruch", this );
+  QPushButton * okbutton=NULL;
+  if (!readOnly) {
+    okbutton=new QPushButton( "OK", this );
+    okbutton->setDefault(true);
+  }
+  else {
+    cancelbutton->setDefault(true);
+  }
 
   QStringList* defaultcomments = m_unterkonto->getDefaultCommentList();
 
@@ -76,12 +82,14 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   if (defaultcomments->empty()) {
     commentedit = new QLineEdit(et.kommentar,this);
     commentcombo = NULL;
+    commentedit->setReadOnly(readOnly);
   } else {
     commentedit = NULL;
     commentcombo = new QComboBox(true,this);
     commentcombo->insertStringList(*defaultcomments);
     commentcombo->insertItem(0,et.kommentar);
     commentcombo->setCurrentIndex(0);
+    commentcombo->setEditable(!readOnly);
   }
 
   layout->addWidget(new QLabel("Kommentar",this));
@@ -109,11 +117,13 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   } else tagcombo=NULL;
 
   zeitBox=new ZeitBox("Zeit", et.sekunden, this );
+  zeitBox->setReadOnly(readOnly);
   layout->addWidget(zeitBox);
   layout->addSpacing(5);
   layout->addStretch(2);
 
   zeitAbzurBox=new ZeitBox("Abzurechnende Zeit", et.sekundenAbzur, this );
+  zeitAbzurBox->setReadOnly(readOnly);
   layout->addWidget(zeitAbzurBox);
   layout->addSpacing(5);
   layout->addStretch(2);
@@ -139,10 +149,12 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
 
   buttonlayout=new QHBoxLayout(layout,3);
   buttonlayout->addStretch(1);
-  buttonlayout->addWidget(okbutton);  
+  if (!readOnly)
+    buttonlayout->addWidget(okbutton);  
   buttonlayout->addWidget(cancelbutton);
 
-  connect (okbutton, SIGNAL(clicked()), this, SLOT(accept()));
+  if (!readOnly)
+    connect (okbutton, SIGNAL(clicked()), this, SLOT(accept()));
   connect (cancelbutton, SIGNAL(clicked()), this, SLOT(reject()));
   connect (projektAktivieren, SIGNAL(clicked()), this, SLOT(projektAktivierenButtonClicked()));  
 
