@@ -46,7 +46,11 @@ bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
 
   if ( defaultDB.open() ) {
       QSqlQuery query(
-              "SELECT kategorie, beschreibung FROM t_bereitschaft;",
+          "SELECT t_bereitschaft.kategorie, t_bereitschaft.beschreibung FROM FROM t_bereit_saetze "
+          "INNER JOIN t_bereitschaft ON t_bereit_saetze.kategorie_id = "
+          "t_bereitschaft.id "
+          "WHERE t_bereit_saetze.datum_seit < current_Date AND "
+          "t_bereit_saetze.gueltig_bis Is Null;",
             defaultDB);
       if ( query.isActive() ) {
         while ( query.next() ) {
