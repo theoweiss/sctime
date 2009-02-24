@@ -27,6 +27,7 @@
 #include "abteilungsliste.h"
 #include "qfile.h"
 #include "qdir.h"
+#include <QMessageBox>
 #ifndef NO_XML
 #include "qdom.h"
 #endif
@@ -40,7 +41,7 @@ void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
 #ifndef NO_XML
   QDomDocument doc("comments");
 
-  for (int i=0; i<xmlfilelist.size(); i++) {
+  for (int i=0; i<xmlfilelist.size(); i++) {      
 
       QString filename;
 
@@ -49,6 +50,11 @@ void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
       QFile f( filename );
       if ( !f.open( QIODevice::ReadOnly ) ) {
           std::cerr<<"Hinweis: Kann "<<filename.toStdString()<<" nicht oeffnen."<<std::endl;
+          QMessageBox::warning( 0,
+                QString::fromLatin1("Warnung"),
+                QString::fromLatin1("Hinweis: Kann ")+filename+" nicht oeffnen.",
+                "OK" );
+
           return;
       }
       QString domerror;
@@ -57,6 +63,10 @@ void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
       if ( !doc.setContent( &f, false, &domerror,&domerrorline,&domerrorcol ) ) {
           std::cerr<<"Fehler in "<<filename.toStdString()<<" in Zeile "<<domerrorline<<" Spalte "<<domerrorcol<<std::endl;
           std::cerr<<domerror.toStdString()<<std::endl;
+          QMessageBox::warning( 0,
+                QString::fromLatin1("Warnung"),
+                domerror,
+                "OK" );
           f.close();
           return;
       }

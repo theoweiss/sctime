@@ -29,6 +29,7 @@
 #include "utils.h"
 #include "qmessagebox.h"
 #include "abteilungsliste.h"
+#include "DBConnector.h"
 
 
 BereitschaftsDatenInfoZeit::BereitschaftsDatenInfoZeit()

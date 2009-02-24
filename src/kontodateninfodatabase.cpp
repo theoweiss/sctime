@@ -32,6 +32,12 @@
 #include <QSqlQuery>
 #include "globals.h"
 #include "descdata.h"
+#include "DBConnector.h"
+
+KontoDatenInfoDatabase::KontoDatenInfoDatabase(DBConnector* dbconnector)
+{
+	m_dbconnector=dbconnector;
+}
 
 /**
  * Liest aus einer ODBC-Datenbank nach abtList
@@ -43,7 +49,7 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
   QApplication::addLibraryPath(execDir+"/lib");
   abtList->clear();
   QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC3" );
-  defaultDB.setDatabaseName( "zeit" );
+  m_dbconnector->configureDB(defaultDB);
 
   if ( defaultDB.open() ) {
       QSqlQuery query(

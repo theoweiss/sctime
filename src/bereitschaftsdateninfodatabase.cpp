@@ -32,6 +32,12 @@
 #include <QSqlQuery>
 #include "globals.h"
 #include "descdata.h"
+#include "DBConnector.h"
+
+BereitschaftsDatenInfoDatabase::BereitschaftsDatenInfoDatabase(DBConnector* dbconnector)
+{
+	m_dbconnector=dbconnector;
+}
 
 /**
  * Liest aus einer ODBC-Datenbank nach abtList
@@ -42,15 +48,11 @@ bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
   // PluginDir setzen
   QApplication::addLibraryPath(execDir+"/lib");
   QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC3" );
-  defaultDB.setDatabaseName( "zeit" );
-
+  m_dbconnector->configureDB(defaultDB);
+	
   if ( defaultDB.open() ) {
       QSqlQuery query(
-          "SELECT t_bereitschaft.kategorie, t_bereitschaft.beschreibung FROM FROM t_bereit_saetze "
-          "INNER JOIN t_bereitschaft ON t_bereit_saetze.kategorie_id = "
-          "t_bereitschaft.id "
-          "WHERE t_bereit_saetze.datum_seit < current_Date AND "
-          "t_bereit_saetze.gueltig_bis Is Null;",
+          "SELECT kategorie, beschreibung FROM v_bereitschaft_sctime;",
             defaultDB);
       if ( query.isActive() ) {
         while ( query.next() ) {
@@ -59,7 +61,7 @@ bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
           QString beschreibung = query.value(1).toString().simplifyWhiteSpace();
 
           if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
-
+		
           berlist->insertEintrag(name, beschreibung, IS_IN_DATABASE);
         }
       }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;

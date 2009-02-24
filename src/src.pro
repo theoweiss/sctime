@@ -41,7 +41,8 @@ SOURCES += abteilungsliste.cpp \
            bereitschaftsliste.cpp \
            bereitschaftsview.cpp \
            bereitschaftsmodel.cpp \
-           colorchooser.cpp
+           colorchooser.cpp \
+	   DBConnector.cpp
 HEADERS += abteilungsliste.h \
            kontoliste.h \
            statusbar.h \
@@ -77,7 +78,8 @@ HEADERS += abteilungsliste.h \
            bereitschaftsliste.h \
            bereitschaftsview.h \
            bereitschaftsmodel.h \
-           colorchooser.h
+           colorchooser.h \
+	   DBConnector.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \

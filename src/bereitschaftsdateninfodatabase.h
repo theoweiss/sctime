@@ -26,13 +26,18 @@
 
 #include "bereitschaftsdateninfo.h"
 
+class DBConnector;
+
 /**
   * Liest die Bereitschaftsdaten ueber die Datenbank ein.
   */
 class BereitschaftsDatenInfoDatabase: public BereitschaftsDatenInfo
 {
   public:
+    BereitschaftsDatenInfoDatabase(DBConnector* dbconnector);
     virtual bool readInto(BereitschaftsListe * berlist);
+  private:
+    DBConnector* m_dbconnector;
 };
 
 #endif

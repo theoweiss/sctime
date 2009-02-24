@@ -33,6 +33,7 @@
 #include "timemainwindow.h"
 #include "sctimexmlsettings.h"
 #include "GetOpt.h"
+#include "DBConnector.h"
 #include <QFileInfo>
 #include <QDir>
 
@@ -48,6 +49,7 @@ class SCTimeApp: public QApplication
   private:
     KontoDatenInfo* zk;
     BereitschaftsDatenInfo* bereitschaftsdatenReader;
+    DBConnector* dbconnector;
 
   public:
 
@@ -55,12 +57,13 @@ class SCTimeApp: public QApplication
     {
 
 #ifndef WIN32
+      dbconnector = NULL;
       SCTimeXMLSettings settings;
       settings.readSettings();
       connect(this, SIGNAL(unixSignal(int)), this, SLOT(sighandler(int)));
       watchUnixSignal(SIGINT,true);
       watchUnixSignal(SIGTERM,true);
-      watchUnixSignal(SIGHUP,true);
+      watchUnixSignal(SIGHUP,true);      
       if (zeitkontenfile.isEmpty()) {
           zk = new KontoDatenInfoZeit();
           if (!settings.zeitKontenKommando().isEmpty())
@@ -76,12 +79,13 @@ class SCTimeApp: public QApplication
         bereitschaftsdatenReader=new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
       }
 #else
+      dbconnector = new DBConnector();
       if (zeitkontenfile.isEmpty())
-          zk = new KontoDatenInfoDatabase();
+          zk = new KontoDatenInfoDatabase(dbconnector);
       else
           zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
       if (zeitkontenfile.isEmpty())
-          bereitschaftsdatenReader=new BereitschaftsDatenInfoDatabase();
+          bereitschaftsdatenReader=new BereitschaftsDatenInfoDatabase(dbconnector);
       else
         bereitschaftsdatenReader=new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
 #endif

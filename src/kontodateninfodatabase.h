@@ -26,14 +26,19 @@
 
 #include "kontodateninfo.h"
 
+class DBConnector;
+
 /**
  * Implementierung von KontoDatenInfo zum Zugriff auf die Datenbank
  */
 class KontoDatenInfoDatabase: public KontoDatenInfo
 {
   public:
+     KontoDatenInfoDatabase(DBConnector* dbconnector);
     virtual bool readInto(AbteilungsListe * abtlist);
     virtual bool checkIn(AbteilungsListe* abtlist);
+  private:
+    DBConnector* m_dbconnector;
 };
 
 #endif
