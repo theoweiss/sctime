@@ -24,6 +24,7 @@
 #ifdef WIN32
 #include "kontodateninfodatabase.h"
 #include "bereitschaftsdateninfodatabase.h"
+#include "DBConnector.h"
 #else
 #include "signal.h"
 #endif
@@ -33,7 +34,6 @@
 #include "timemainwindow.h"
 #include "sctimexmlsettings.h"
 #include "GetOpt.h"
-#include "DBConnector.h"
 #include <QFileInfo>
 #include <QDir>
 
@@ -49,15 +49,16 @@ class SCTimeApp: public QApplication
   private:
     KontoDatenInfo* zk;
     BereitschaftsDatenInfo* bereitschaftsdatenReader;
+#ifdef WIN32
     DBConnector* dbconnector;
+#endif
 
   public:
 
     SCTimeApp( int &argc, char **argv, QString zeitkontenfile, QString bereitschaftsfile ): QApplication (argc,argv)
     {
 
-#ifndef WIN32
-      dbconnector = NULL;
+#ifndef WIN32 
       SCTimeXMLSettings settings;
       settings.readSettings();
       connect(this, SIGNAL(unixSignal(int)), this, SLOT(sighandler(int)));

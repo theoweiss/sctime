@@ -4,7 +4,7 @@
 # Target is an application:  ../bin/sctime
 
 TEMPLATE = app
-VERSIONSTR = '"0.56"'
+VERSIONSTR = '"0.57-pre"'
 CONFIG += warn_on qt
 CONFIG += uic
 OBJECTS_DIR = ../obj
@@ -41,8 +41,7 @@ SOURCES += abteilungsliste.cpp \
            bereitschaftsliste.cpp \
            bereitschaftsview.cpp \
            bereitschaftsmodel.cpp \
-           colorchooser.cpp \
-	   DBConnector.cpp
+           colorchooser.cpp
 HEADERS += abteilungsliste.h \
            kontoliste.h \
            statusbar.h \
@@ -78,8 +77,7 @@ HEADERS += abteilungsliste.h \
            bereitschaftsliste.h \
            bereitschaftsview.h \
            bereitschaftsmodel.h \
-           colorchooser.h \
-	   DBConnector.h
+           colorchooser.h
 IMAGES += ../pics/hi16_action_apply.xpm \
           ../pics/hi22_action_1downarrow.xpm \
           ../pics/hi22_action_1uparrow.xpm \
@@ -110,8 +108,8 @@ linux-g++{
 win32{
   DEFINES += WIN32
   QMAKE_CXXFLAGS += -GX
-  SOURCES += kontodateninfodatabase.cpp bereitschaftsdateninfodatabase.cpp
-  HEADERS += kontodateninfodatabase.h bereitschaftsdateninfodatabase.h
+  SOURCES += kontodateninfodatabase.cpp bereitschaftsdateninfodatabase.cpp DBConnector.cpp
+  HEADERS += kontodateninfodatabase.h bereitschaftsdateninfodatabase.h DBConnector.h
 }
 hpux-acc{
   DEFINES += HPUX
