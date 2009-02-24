@@ -249,7 +249,17 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
             abtList->insertEintrag(abt,konto,unterkonto);
             abtList->setDescription(abt,konto,unterkonto,DescData(beschreibung,verantwortlicher,typ));
             abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
-
+            
+            if (ql.size()>7) {
+              QString commentstr = ql[7].simplifyWhiteSpace();
+              if (!commentstr.isEmpty()) {
+                UnterKontoListe::iterator itUk;
+                UnterKontoListe* ukl;
+                if (abtList->findUnterKonto(itUk,ukl,abt,konto,unterkonto)) {
+                  itUk->second.addDefaultComment(commentstr);
+                }
+              }
+            }
         }
         fscanf(file,"\n");
     }
@@ -263,7 +273,7 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
   if (m_DatenFileName.isEmpty()) {
     QString command;
     if (m_Kommando.isEmpty())
-      command="zeitkonten --beschreibung --separator='|'";
+      command="zeitkonten --beschreibung --mikrokonten --separator='|'";
     else
       command=m_Kommando;
     file = popen(command, "r");
