@@ -53,9 +53,10 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
 
   if ( defaultDB.open() ) {
       QSqlQuery query(
-              "SELECT gb.name,konto.name,unterkonto.name,unterkonto.beschreibung,tuser.name,unterkonto.art "
+              "SELECT gb.name,konto.name,unterkonto.name,unterkonto.beschreibung,tuser.name,unterkonto.art,mikro.kommentar "
               "FROM konto,gb,unterkonto "
               "LEFT JOIN tuser ON (tuser.user_id = unterkonto.verantwortlich) "
+	      "LEFT JOIN unterkonto_kommentar mikro ON (mikro.unterkonto_id = unterkonto.unterkonto_id) "
               "WHERE konto.konto_id = unterkonto.konto_id AND gb.gb_id = konto.gb_id AND unterkonto.eintragbar=\'y\';",
             defaultDB);
       if ( query.isActive() ) {
@@ -66,6 +67,7 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
           QString beschreibung = query.value(3).toString();
           QString responsible = query.value(4).toString().simplifyWhiteSpace();;
           QString type = query.value(5).toString().simplifyWhiteSpace();;
+	  QString commentstr = query.value(6).toString().simplifyWhiteSpace();
           abtList->insertEintrag(abt,ko,uko);
           if (beschreibung.isEmpty())
               beschreibung="";
@@ -75,6 +77,13 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
               type="";
           abtList->setDescription(abt,ko,uko,DescData(beschreibung,responsible,type));
           abtList->setUnterKontoFlags(abt,ko,uko,IS_IN_DATABASE,FLAG_MODE_OR);
+	  if ((!commentstr.isNull())&&(!commentstr.isEmpty())) {
+                UnterKontoListe::iterator itUk;
+                UnterKontoListe* ukl;
+                if (abtList->findUnterKonto(itUk,ukl,abt,ko,uko)) {
+                  itUk->second.addDefaultComment(commentstr);
+                }
+          }
         }
       }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;
   } else {
