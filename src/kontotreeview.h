@@ -75,6 +75,8 @@ class KontoTreeView: public Q3ListView
 
     void getSumTime(Q3ListViewItem* item, TimeCounter& sum, TimeCounter& sumAbs);
 
+    void showPersoenlicheKontenSummenzeit(bool show);
+
   public slots:
 
     virtual void refreshItem(const QString& abt, const QString& ko,const QString& uko, int idx);
@@ -94,6 +96,7 @@ class KontoTreeView: public Q3ListView
       virtual void dragMoveEvent(QDragMoveEvent *event);
 
   private:
+    bool m_showPersoenlicheKontenSummenzeit;
     QPixmap aktivPixmap;
     QPixmap bereitPixmap;
     QPixmap emptyPixmap;

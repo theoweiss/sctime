@@ -392,10 +392,13 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             if (elem2.tagName()=="dragndrop") {
               setDragNDrop(elem2.attribute("on")=="yes");
             }
+            if (elem2.tagName()=="persoenliche_kontensumme") {
+              setPersoenlicheKontensumme(elem2.attribute("on")=="yes");
+            }
             if (elem2.tagName()=="max_working_time") {
               QString secondsstr=elem2.attribute("seconds");
               if (secondsstr.isNull()) continue;
-              _maxWorkingTime=secondsstr.toInt();
+              m_maxWorkingTime=secondsstr.toInt();
             }
             if (elem2.tagName()=="aktives_konto") {
               aktiveskontotag=elem2; // Aktives Konto merken und zum Schluss setzen, damit es vorher erzeugt wurde
@@ -514,9 +517,9 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
       generaltag.appendChild(zeitkontenkommandotag);
     }
 
-    if (MAX_WORKTIME_DEFAULT!=_maxWorkingTime) {
+    if (MAX_WORKTIME_DEFAULT!=m_maxWorkingTime) {
         QDomElement maxworktag = doc.createElement( "max_working_time" );
-        maxworktag.setAttribute("seconds",_maxWorkingTime);
+        maxworktag.setAttribute("seconds",m_maxWorkingTime);
         generaltag.appendChild(maxworktag);
     }
 
@@ -547,6 +550,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     if (powerUserView()) on="yes";
     powerusertag.setAttribute("on",on);
     generaltag.appendChild(powerusertag);
+
+    QDomElement persoenlichekontensummentag = doc.createElement("persoenliche_kontensumme");
+    on="no";
+    if (persoenlicheKontensumme()) on="yes";
+    persoenlichekontensummentag.setAttribute("on",on);
+    generaltag.appendChild(persoenlichekontensummentag);
     
     QDomElement typecolumntag = doc.createElement("typecolumn");
     on="no";
@@ -585,7 +594,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     kontodlgwindowsizetag.setAttribute("height",unterKontoWindowSize.height());
     generaltag.appendChild(kontodlgwindowsizetag);
 
-    for (int i=0; i<defaultcommentfiles.size(); i++) {
+    for (unsigned int i=0; i<defaultcommentfiles.size(); i++) {
         QDomElement defaultcommentfiletag = doc.createElement("defaultcommentsfile");
         defaultcommentfiletag.setAttribute("name",defaultcommentfiles[i]);
         generaltag.appendChild(defaultcommentfiletag);

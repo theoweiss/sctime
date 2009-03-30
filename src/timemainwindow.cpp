@@ -128,6 +128,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
  // setCaption("sctime "+abtList->getDatum().toString("dd.MM.yyyy"));
   kontoTree=new KontoTreeView( this, abtList, columnwidthlist );
   kontoTree->closeFlaggedPersoenlicheItems();  
+  kontoTree->showPersoenlicheKontenSummenzeit(settings->persoenlicheKontensumme());
 
   mimeSourceFactory=new Q3MimeSourceFactory();
   mimeSourceFactory->setPixmap("/images/scLogo_15Farben.png",QPixmap((const char **)scLogo_15Farben_xpm));
@@ -1084,6 +1085,7 @@ void TimeMainWindow::callPreferenceDialog()
   {
     QApplication::setFont(qtDefaultFont);
   }
+  kontoTree->showPersoenlicheKontenSummenzeit(settings->persoenlicheKontensumme());
   if (!settings->showTypeColumn()) {
   	kontoTree->hideColumn(1);
   	kontoTree->header()->setResizeEnabled(false, 1);
@@ -1092,7 +1094,7 @@ void TimeMainWindow::callPreferenceDialog()
   	if (!oldshowtypecolumn)
     	kontoTree->header()->setResizeEnabled(true, 1);
     	kontoTree->adjustColumn(1);
-  }
+  }  
 }
 
 /**

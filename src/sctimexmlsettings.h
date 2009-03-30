@@ -44,9 +44,10 @@ class SCTimeXMLSettings
       mainwindowPosition = QPoint(0,0);
       mainwindowSize = QSize(700,400);
       alwaysSaveEintrag = false;
-      _powerUserView = false;
-      _singleClickActivation = false;
-      _maxWorkingTime=MAX_WORKTIME_DEFAULT;
+      m_powerUserView = false;
+      m_singleClickActivation = false;
+      m_maxWorkingTime=MAX_WORKTIME_DEFAULT;
+      m_persoenlicheKontensumme=false;
       defaultcommentfiles.clear();
       defaultcommentfiles.push_back("defaultcomments.xml");
       columnwidth.clear();
@@ -95,43 +96,53 @@ class SCTimeXMLSettings
         size = unterKontoWindowSize;
     };
 
-    int timeIncrement() { return timeInc; };
+    int timeIncrement() { return timeInc; }
 
-    int fastTimeIncrement() { return fastTimeInc; };
+    int fastTimeIncrement() { return fastTimeInc; }
 
     void setAlwaysSaveEntry(bool newVal)
     {
         alwaysSaveEintrag = newVal;
-    }
+    }    
 
     bool alwaysSaveEntry()
     {
         return alwaysSaveEintrag;
     }
 
+    void setPersoenlicheKontensumme(bool newVal)
+    {
+        m_persoenlicheKontensumme=newVal;
+    }
+
+    bool persoenlicheKontensumme()
+    {
+        return m_persoenlicheKontensumme;
+    }
+
     void setPowerUserView(bool newVal)
     {
-       _powerUserView = newVal;
+       m_powerUserView = newVal;
     }
 
     bool powerUserView()
     {
-      return _powerUserView;
+      return m_powerUserView;
     }
 
     void setSingleClickActivation(bool activate)
     {
-        _singleClickActivation=activate;
+        m_singleClickActivation=activate;
     }
 
     bool singleClickActivation()
     {
-        return _singleClickActivation;
+        return m_singleClickActivation;
     }
 
     int maxWorkingTime()
     {
-       return _maxWorkingTime;
+       return m_maxWorkingTime;
     }
 
     void getDefaultCommentFiles(std::vector<QString>& list)
@@ -233,12 +244,13 @@ class SCTimeXMLSettings
     std::vector<int> columnwidth;
 
     bool alwaysSaveEintrag;
-    bool _powerUserView;
-    bool _singleClickActivation;
+    bool m_powerUserView;
+    bool m_singleClickActivation;
     bool m_dragNDrop;
     bool m_useCustomFont;
     bool m_showTypeColumn;
-    int _maxWorkingTime;
+    bool m_persoenlicheKontensumme;
+    int m_maxWorkingTime;
     QString m_customFont;
     int m_customFontSize;
 

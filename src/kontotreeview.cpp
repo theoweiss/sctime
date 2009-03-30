@@ -58,6 +58,7 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
 
   setRootIsDecorated(true);
   viewport()->installEventFilter(this);
+  m_showPersoenlicheKontenSummenzeit=false;
 
 #ifndef MACOS
   setSelectionMode(Q3ListView::NoSelection);
@@ -620,6 +621,10 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
         eti->setPixmap(2,aktivPixmap);
       else
         eti->setPixmap(2,emptyPixmap);
+      if (m_showPersoenlicheKontenSummenzeit) {
+        refreshParentSumTime(ukoi,"+");
+        refreshParentSumTime(koi,"++");
+      }
       QColor color=abtList->getBgColor(abt,ko,uko);
       eti->setBgColor(color);
       ukoi->setBgColor(color);
@@ -665,7 +670,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
         eti->setPixmap(2,aktivPixmap);
       else
-        eti->setPixmap(2,emptyPixmap);
+        eti->setPixmap(2,emptyPixmap);      
       eti->setText(5,etiter->second.kommentar);
       eti->setText(1,dd.type());
       eti->setText(3,tc.toString());
@@ -676,6 +681,10 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       eti->setBgColor(abtList->getBgColor(abt,ko,uko));
       koi->setBgColor(abtList->getBgColor(abt,ko));
       abti->setBgColor(abtList->getBgColor(abt));
+      if (m_showPersoenlicheKontenSummenzeit) {
+        refreshParentSumTime(ukoi,"+");
+        refreshParentSumTime(koi,"++");
+      }
      // eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
     }
   }
@@ -725,6 +734,14 @@ void KontoTreeView::refreshAllItemsInUnterkonto(const QString& abt, const QStrin
   }
 }
 
+void KontoTreeView::showPersoenlicheKontenSummenzeit(bool show)
+{
+    if (m_showPersoenlicheKontenSummenzeit!=show)
+    {
+      m_showPersoenlicheKontenSummenzeit=show;
+      load(abtList);
+    }
+}
 
 /*
  * Ruft refreshItem fuer alle Eintraege im uebergebenen Konto auf

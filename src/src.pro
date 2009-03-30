@@ -6,7 +6,7 @@
 TEMPLATE = app
 VERSIONSTR = '"0.57"'
 CONFIG += warn_on qt
-CONFIG += uic
+CONFIG += uic debug
 OBJECTS_DIR = ../obj
 QT += qt3support xml sql gui core
 TARGET = ../bin/sctime
@@ -139,4 +139,4 @@ mac {
   DEFINES+=MACOS
   CONFIG+=x86 ppc
 }
-
+#LIBS+=-L../../gdbmacros -lgdbmacros
