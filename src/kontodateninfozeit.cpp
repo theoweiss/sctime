@@ -235,14 +235,14 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
                 continue;
             }
 
-            QString abt = ql[2].simplifyWhiteSpace();
-            QString konto = ql[0].simplifyWhiteSpace();
-            QString unterkonto = ql[1].simplifyWhiteSpace();
+            QString abt = ql[0].simplifyWhiteSpace();
+            QString konto = ql[2].simplifyWhiteSpace();
+            QString unterkonto = ql[7].simplifyWhiteSpace();
 
-            QString verantwortlicher = ql[4].simplifyWhiteSpace();
-            QString typ = ql[5].simplifyWhiteSpace();
+            QString verantwortlicher = ql[9].simplifyWhiteSpace();
+            QString typ = ql[10].simplifyWhiteSpace();
 
-            QString beschreibung = ql[6].simplifyWhiteSpace();
+            QString beschreibung = ql[11].simplifyWhiteSpace();
 
             if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
 
@@ -250,8 +250,8 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
             abtList->setDescription(abt,konto,unterkonto,DescData(beschreibung,verantwortlicher,typ));
             abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
             
-            if (ql.size()>7) {
-              QString commentstr = ql[7].simplifyWhiteSpace();
+            if (ql.size()>12) {
+              QString commentstr = ql[12].simplifyWhiteSpace();
               if (!commentstr.isEmpty()) {
                 UnterKontoListe::iterator itUk;
                 UnterKontoListe* ukl;
@@ -273,7 +273,7 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
   if (m_DatenFileName.isEmpty()) {
     QString command;
     if (m_Kommando.isEmpty())
-      command="zeitkonten --beschreibung --mikrokonten --separator='|'";
+      command="zeitkonten --mikrokonten --separator='|'";
     else
       command=m_Kommando;
     file = popen(command, "r");
