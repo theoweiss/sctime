@@ -31,6 +31,8 @@
 #include "qcheckbox.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QTextCodec>
+#include <QMessageBox>
 #include "abteilungsliste.h"
 #include "timeedit.h"
 #include "unterkontodialog.h"
@@ -154,7 +156,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   buttonlayout->addWidget(cancelbutton);
 
   if (!readOnly)
-    connect (okbutton, SIGNAL(clicked()), this, SLOT(accept()));
+    connect (okbutton, SIGNAL(clicked()), this, SLOT(checkInput()));
   connect (cancelbutton, SIGNAL(clicked()), this, SLOT(reject()));
   connect (projektAktivieren, SIGNAL(clicked()), this, SLOT(projektAktivierenButtonClicked()));  
 
@@ -174,15 +176,8 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   }
 };
 
-
-/**
- * Wird aufgerufen, wenn der Benutzer auf OK clickt, speichert die Aenderungen in Abtlist
- * und loest die passenden entryChanged Signale aus.
- */
-void UnterKontoDialog::accept()
+QString UnterKontoDialog::getComment()
 {
-  int flags=0;
-
   QString comment;
 
   if (commentedit)
@@ -192,6 +187,18 @@ void UnterKontoDialog::accept()
 
   comment=comment.remove("\n");
   comment=comment.remove("\r");
+  return comment;
+}
+
+/**
+ * Wird aufgerufen, wenn der Benutzer auf OK clickt, speichert die Aenderungen in Abtlist
+ * und loest die passenden entryChanged Signale aus.
+ */
+void UnterKontoDialog::accept()
+{
+  int flags=0;
+
+  QString comment=getComment();
 
   abtList->setEintrag(abteilungsName,kontoName,unterKontoName,eintragIndex,
     UnterKontoEintrag(comment,zeitBox->getSekunden(),
@@ -239,4 +246,17 @@ void UnterKontoDialog::addTag()
            commentcombo->setCurrentText(tagcombo->currentText()+", "+commentcombo->currentText());
       }
   }
+}
+
+void UnterKontoDialog::checkInput()
+{
+  QTextCodec* codec=QTextCodec::codecForLocale();
+  if (!codec->canEncode(getComment())) {
+    QMessageBox::critical(0,"Fehler","Fehler: In dem von "
+        "Ihnen eingegebenen Kommentar kommt ein Zeichen vor, das in Ihrem Locale "
+            "nicht darstellbar ist. ",
+            QMessageBox::Ok | QMessageBox::Default,0);
+    reject();
+  } else
+    accept();
 }

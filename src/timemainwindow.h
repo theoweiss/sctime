@@ -112,6 +112,7 @@ class TimeMainWindow: public QMainWindow
     void copyNameToClipboard();
     void showContextMenu(Q3ListViewItem * item, const QPoint& pos, int col);
     void showArbeitszeitwarning();
+    void checkComment(const QString& abt, const QString& ko , const QString& uko,int idx);
 
   signals:
     /** Wird ausgeloest, falls sich die Gesamtzeit geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden. */

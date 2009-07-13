@@ -1032,6 +1032,8 @@ void TimeMainWindow::callUnterKontoDialog(Q3ListViewItem * item)
   unterKontoDialog=new UnterKontoDialog(abt,ko,uko,idx,abtList,&defaultTags, true ,this, abtList->checkInState());
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int )), kontoTree,
   SLOT(refreshItem(const QString&, const QString&, const QString&,int )));
+  connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int )), this,
+  SLOT(checkComment(const QString&, const QString&, const QString&,int )));
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int)), this, SLOT(zeitChanged()));
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int)),
            this, SLOT(flagsChanged(const QString&, const QString&, const QString&,int)));
@@ -1312,4 +1314,20 @@ void TimeMainWindow::jumpToAlleKonten()
       kontoTree->setCurrentItem(newitem);
       kontoTree->ensureItemVisible(newitem);
    }
+}
+
+void TimeMainWindow::checkComment(const QString& abt, const QString& ko , const QString& uko,int idx)
+{
+  UnterKontoEintrag eintrag;
+  if (abtList->getEintrag(eintrag, abt, ko, uko, idx))
+  {
+    QTextCodec *codec = QTextCodec::codecForName("ISO 8859-1");
+    if (!codec->canEncode(eintrag.kommentar)) {
+      QMessageBox::warning(0,"Warnung","Warnung: In dem von "
+        "Ihnen eingegebenen Kommentar kommt ein Zeichen vor, das ausserhalb von "
+        "ISO-8859-1 ist und somit auf manchen Plattformen nicht darstellbar ist. "
+        "Dies kann spaeter eventuell zu Problemen mit Auswerteskripten fuehren.",
+                         QMessageBox::Ok | QMessageBox::Default,0);
+    }
+  }
 }

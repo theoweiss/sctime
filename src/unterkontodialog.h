@@ -50,9 +50,11 @@ class UnterKontoDialog: public QDialog
                      bool connectZeiten, QWidget * parent=0, bool readOnly=false);
     ZeitBox* getZeitAbzurBox();
     ZeitBox* getZeitBox();
+    QString getComment();
 
   public slots:
     virtual void accept();
+    virtual void checkInput();
 
   signals:
     void entryChanged(const QString&, const QString&, const QString&, int idx);
