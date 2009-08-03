@@ -53,9 +53,9 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
 
   if ( defaultDB.open() ) {
       QSqlQuery query(
-              "SELECT gb.name,konto.name,unterkonto.name,unterkonto.beschreibung,tuser.name,unterkonto.art,mikro.kommentar "
+              "SELECT gb.name,konto.name,unterkonto.name,unterkonto.beschreibung,v_tuser.name,unterkonto.art,mikro.kommentar "
               "FROM konto,gb,unterkonto "
-              "LEFT JOIN tuser ON (tuser.user_id = unterkonto.verantwortlich) "
+              "LEFT JOIN v_tuser ON (v_tuser.user_id = unterkonto.verantwortlich) "
 	      "LEFT JOIN unterkonto_kommentar mikro ON (mikro.unterkonto_id = unterkonto.unterkonto_id) "
               "WHERE konto.konto_id = unterkonto.konto_id AND gb.gb_id = konto.gb_id AND unterkonto.eintragbar=\'y\';",
             defaultDB);
