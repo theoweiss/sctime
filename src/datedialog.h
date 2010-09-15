@@ -27,7 +27,7 @@
 #define DATEDIALOG_H
 
 #include "ui_datedialogbase.h"
-#include <qdatetime.h>
+#include <QDateTime>
 #include <QDialog>
 
 

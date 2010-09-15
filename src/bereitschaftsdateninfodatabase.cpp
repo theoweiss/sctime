@@ -25,10 +25,10 @@
 #include "bereitschaftsliste.h"
 #include "abteilungsliste.h"
 #include <iostream>
-#include "qsqldatabase.h"
-#include "qmessagebox.h"
-#include "qapplication.h"
-#include "qvariant.h"
+#include <QSqlDatabase>
+#include <QMessageBox>
+#include <QApplication>
+#include <QVariant>
 #include <QSqlQuery>
 #include "globals.h"
 #include "descdata.h"
@@ -47,7 +47,7 @@ bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
   bool ret = true;
   // PluginDir setzen
   QApplication::addLibraryPath(execDir+"/lib");
-  QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC3" );
+  QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC" );
   m_dbconnector->configureDB(defaultDB);
 	
   if ( defaultDB.open() ) {
@@ -56,9 +56,9 @@ bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
             defaultDB);
       if ( query.isActive() ) {
         while ( query.next() ) {
-          QString name = query.value(0).toString().simplifyWhiteSpace();
+          QString name = query.value(0).toString().simplified();
 
-          QString beschreibung = query.value(1).toString().simplifyWhiteSpace();
+          QString beschreibung = query.value(1).toString().simplified();
 
           if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
 		

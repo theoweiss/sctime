@@ -25,90 +25,116 @@
 #include "kontotreeitem.h"
 
 
-KontoTreeItem::KontoTreeItem ( Q3ListView * parent ): Q3ListViewItem(parent) 
+KontoTreeItem::KontoTreeItem ( QTreeWidget * parent ): QTreeWidgetItem(parent) 
+{ 
+	isBold=false;	
+	m_bgColor=Qt::white;	
+	setGray();	
+}
+
+KontoTreeItem::KontoTreeItem ( QTreeWidgetItem * parent ): QTreeWidgetItem(parent) 
 { 
 	isBold=false;
-	m_bgColor=Qt::white;
+	m_bgColor=Qt::white;	
+	setGray();
 }
-
-KontoTreeItem::KontoTreeItem ( Q3ListViewItem * parent ): Q3ListViewItem(parent) 
-{ 
-	isBold=false;
-	m_bgColor=Qt::white;
-}
-
-
-KontoTreeItem::KontoTreeItem ( Q3ListView * parent, QString label1, QString label2, QString label3, QString label4, QString label5, QString label6, QString label7, QString label8)
-     :Q3ListViewItem(parent,label1,label2,label3,label4,label5,label6,label7,label8)
-{
-   isBold=false;
-   isGray=false;
-   m_bgColor=Qt::white;
-}
-
-
-KontoTreeItem::KontoTreeItem ( Q3ListViewItem * parent, QString label1, QString label2, QString label3, QString label4, QString label5, QString label6, QString label7, QString label8 )
-    :Q3ListViewItem(parent,label1,label2,label3,label4,label5,label6,label7,label8)
-{
-   isBold=false;
-   isGray=false;
-   m_bgColor=Qt::white;
-}
-
-void KontoTreeItem::paintCell ( QPainter * p, const QColorGroup & cg, int column, int width, int align )
-{
-  QColorGroup newcg=cg;
-  if (column==0) {
-    QFont newfont=p->font();
-    if (isBold) newfont.setWeight(QFont::DemiBold);
-    p->setFont(newfont);
-  }
-  else
-    if (isGray) newcg.setColor(QColorGroup::Text,Qt::gray);
-  newcg.setColor(QColorGroup::Background,m_bgColor);
-  if ((text(column).stripWhiteSpace()=="0:00")||(text(column).startsWith("+"))) {
-    newcg.setColor(QColorGroup::Text,Qt::gray);
-  }
-  Q3ListViewItem::paintCell(p,newcg,column,width,align);
-}
-
-/*bool KontoTreeItem::acceptDrop ( const QMimeSource * mime )
-{
-	return mime->provides("application/sctime.seconds");
-}
-
-void KontoTreeItem::dropped (QDropEvent * e)
-{
 	
-	QString data;
-    data.fromLocal8Bit(e->encodedData("application/sctime.seconds"));
-    QStringList datlist=data.split("|");
-    KontoTreeView* kview=dynamic_cast<KontoTreeView *>(listView());
-    kview->addToItem(this,datlist[0].toInt(),datlist[1].toInt());
-	e->accept();
-}*/
+KontoTreeItem::KontoTreeItem ( QTreeWidget * parent, QString label1, QString label2, QString label3, QString label4, QString label5, QString label6, QString label7, QString label8)
+     :QTreeWidgetItem(parent,0)
+{
+  isBold=false;    
+	setGray();	
+  m_bgColor=Qt::white;
+  
+  this->setText(0, label1);
+  this->setText(1, label2);
+  this->setText(2, label3);
+  this->setText(3, label4);
+  this->setText(4, label5);
+  this->setText(5, label6);
+  this->setText(6, label7);
+  this->setText(7, label8);
+}
+
+
+KontoTreeItem::KontoTreeItem ( QTreeWidgetItem * parent, QString label1, QString label2, QString label3, QString label4, QString label5, QString label6, QString label7, QString label8 )
+    :QTreeWidgetItem(parent)
+{
+   isBold=false;   
+   setGray();
+   m_bgColor=Qt::white;
+      	 
+   this->setText(0, label1);
+   this->setText(1, label2);
+   this->setText(2, label3);
+   this->setText(3, label4);
+   this->setText(4, label5);
+   this->setText(5, label6);
+   this->setText(6, label7);
+   this->setText(7, label8);   
+}
 
 void KontoTreeItem::setBold(bool bold)
-{
-  if (bold!=isBold) {
-    isBold=bold;
-    repaint();
+{	  
+  isBold=bold;
+	QFont f = font(0);  
+  
+  if( bold )
+  {			
+		f.setWeight(QFont::Bold);
+	}
+	else
+	{
+		f.setWeight(QFont::Normal);
   }
+  
+  setFont(0, f);    
 }
 
-void KontoTreeItem::setGray(bool gray)
-{
-  if (gray!=isGray) {
-    isGray=gray;
-    repaint();
-  }
+void KontoTreeItem::setGray()
+{  
+	std::vector<int> columns;
+	columns.push_back(3);
+	columns.push_back(4);
+	QBrush brush;
+	for(int i=0; i<columns.size(); i++)
+	{
+		brush = foreground( columns.at(i) );	
+		if ((text(columns.at(i)).simplified()=="0:00")||(text(columns.at(i)).startsWith("+"))) {		
+			brush.setColor( Qt::gray );					
+			isGray=true;
+		}	
+		else
+		{		
+			brush.setColor(Qt::black);		
+			isGray=false;
+		}
+		setForeground(columns.at(i), brush);
+	}
 }
 
 void KontoTreeItem::setBgColor(const QColor bgColor)
 {
-  if (bgColor!=m_bgColor) {
-    m_bgColor=bgColor;
-    repaint();
+  if (bgColor!=m_bgColor) {		
+    m_bgColor = bgColor;
+    for( int i=0; i<6; i++ )
+    {
+			setBackgroundColor(i, bgColor);
+		}    
   }
 }
 
+
+KontoTreeItem* KontoTreeItem::nextSibling( )
+{	
+	KontoTreeItem *parent = (KontoTreeItem*)this->parent();
+	KontoTreeItem *nextSibling;
+	if(parent){
+		nextSibling = (KontoTreeItem*) this->parent()->child(parent->indexOfChild(this)+1);
+	}
+	else {
+		KontoTreeView *treeWidget = (KontoTreeView*)this->treeWidget();
+		nextSibling = (KontoTreeItem*) treeWidget->topLevelItem(treeWidget->indexOfTopLevelItem(this)+1);
+	}
+	return nextSibling;
+}

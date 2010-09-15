@@ -37,9 +37,9 @@
 #ifndef GETOPT_H
 #define GETOPT_H
 
-#include <qstring.h>
-#include <qstringlist.h>
-#include <qmap.h>
+#include <QString>
+#include <QStringList>
+#include <QMap>
 #include <QLinkedList>
 
 class GetOpt {

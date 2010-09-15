@@ -25,8 +25,8 @@
 #include "defaultcommentreader.h"
 #include "globals.h"
 #include "abteilungsliste.h"
-#include "qfile.h"
-#include "qdir.h"
+#include <QFile>
+#include <QDir>
 #include <QMessageBox>
 #ifndef NO_XML
 #include "qdom.h"
@@ -54,13 +54,14 @@ void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
 
       QFile f( filename );
       if ( !f.open( QIODevice::ReadOnly ) ) {
-          std::cerr<<"Hinweis: Kann "<<filename.toStdString()<<" nicht oeffnen."<<std::endl;
-#if 0
-          QMessageBox::warning( 0,
-                QString::fromLatin1("Warnung"),
-                QString::fromLatin1("Hinweis: Kann ")+filename+" nicht oeffnen.",
-                "OK" );
-#endif
+					//siZeit #88348
+          //std::cerr<<"Hinweis: Kann "<<filename.toStdString()<<" nicht oeffnen."<<std::endl;
+//#if 0
+          //QMessageBox::warning( 0,
+                //QString::fromLatin1("Warnung"),
+                //QString::fromLatin1("Hinweis: Kann ")+filename+" nicht oeffnen.",
+                //"OK" );
+//#endif
 
           return;
       }

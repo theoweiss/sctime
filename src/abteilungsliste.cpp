@@ -24,8 +24,8 @@
 #include "kontodateninfo.h"
 
 #include <iostream>
-#include "qtextstream.h"
-#include "qfile.h"
+#include <QTextStream>
+#include <QFile>
 #include <iomanip>
 
 
@@ -35,8 +35,8 @@
 
 #include <utility>
 #include "globals.h"
-#include "qdir.h"
-#include "qstring.h"
+#include <QDir>
+#include <QString>
 
 /** Erzeugt eine Abteilungsliste fuer das angegebene Datum.
  */

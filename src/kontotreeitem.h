@@ -24,38 +24,39 @@
 #ifndef KONTOTREE_ITEM_H
 #define KONTOTREE_ITEM_H
 
-#include "q3listview.h"
-#include "qpainter.h"
-#include <Q3DragObject>
+#include <QTreeWidgetItem>
 #include <QDropEvent>
+#include <QColor>
+#include <QPen>
+#include <QPainter>
 
-class KontoTreeView;
+#include <vector>
 
-
-
-class KontoTreeItem: public Q3ListViewItem
+class KontoTreeItem: public QTreeWidgetItem
 {
   public:
 
-    KontoTreeItem ( Q3ListView * parent );
-    KontoTreeItem ( Q3ListViewItem * parent );
+    KontoTreeItem ( QTreeWidget * parent );
+    KontoTreeItem ( QTreeWidgetItem * parent );
 
 
-    KontoTreeItem ( Q3ListView * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );
+    KontoTreeItem ( QTreeWidget * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );
 
-    KontoTreeItem ( Q3ListViewItem * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );
-
-    virtual void paintCell ( QPainter * p, const QColorGroup & cg, int column, int width, int align );
- /*   bool acceptDrop ( const QMimeSource * mime );
-    
-    void dropped (QDropEvent * e);*/
+    KontoTreeItem ( QTreeWidgetItem * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );		
        
     void setBold(bool bold);
-
-    void setGray(bool gray);
+    
+    void setGray();
 
     void setBgColor(const QColor bgColor);
 
+		QString getLabel1();
+		
+		KontoTreeItem* nextSibling( );		
+		
+	protected:		
+		void paintEvent(QPaintEvent *event);
+		
   private:
     bool isBold;
     bool isGray;

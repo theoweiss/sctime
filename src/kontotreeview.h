@@ -24,25 +24,29 @@
 #ifndef KONTOTREEVIEW_H
 #define KONTOTREEVIEW_H
 
-#include "q3listview.h"
+#include <QTreeWidget>
+#include <QMimeData>
 #include "abteilungsliste.h"
-#include "qstring.h"
-#include "qpixmap.h"
-#include "qtooltip.h"
+#include <QString>
+#include <QPixmap>
+#include <QToolTip>
 #include "kontotreeitem.h"
 #include <vector>
+#include <QTextStream>
 
 class TimeCounter;
 
 #define PERSOENLICHE_KONTEN_STRING "Persönliche Konten"
 #define ALLE_KONTEN_STRING "Alle Konten"
+#define MIMETYPE_ACCOUNT "application/sctime.account"
+#define MIMETYPE_SECONDS "application/sctime.seconds"
 
 /**
- * KontoTreeView ist ein von QListView abgeleitetes Widget, das sich um die Darstellung
+ * KontoTreeView ist ein von QTreeWidget abgeleitetes Widget, das sich um die Darstellung
  * des Kontobaumes kuemmert.
  */
 
-class KontoTreeView: public Q3ListView
+class KontoTreeView: public QTreeWidget
 {
 
   Q_OBJECT
@@ -54,14 +58,18 @@ class KontoTreeView: public Q3ListView
          KontoTreeItem* &topi, KontoTreeItem* &abti, KontoTreeItem* &koi, KontoTreeItem* &ukoi, KontoTreeItem* &eti);
 
     KontoTreeItem* sucheKontoItem(const QString& tops, const QString& abts, const QString& kos);
-
+    
+    KontoTreeItem* sucheUnterKontoItem(const QString& tops, const QString& abts, const QString& kos, const QString& ukos);
+     
+    KontoTreeItem* sucheKommentarItem(const QString& tops, const QString& abts, const QString& kos, const QString& ukos, const QString& koms);
+        
     void load(AbteilungsListe* abtlist);
 
-    void itemInfo(Q3ListViewItem* item,QString& tops, QString& abts, QString& kos, QString& ukos, int& idx);
+    void itemInfo(QTreeWidgetItem* item,QString& tops, QString& abts, QString& kos, QString& ukos, int& idx);
 
-    bool isEintragsItem(Q3ListViewItem* item);
+    bool isEintragsItem(QTreeWidgetItem* item);
 
-    bool isUnterkontoItem(Q3ListViewItem* item);
+    bool isUnterkontoItem(QTreeWidgetItem* item);
 
     void flagClosedPersoenlicheItems();
 
@@ -71,38 +79,39 @@ class KontoTreeView: public Q3ListView
 
     void getColumnWidthList(std::vector<int>& columnwidth);
 
-    void refreshParentSumTime(Q3ListViewItem* item, QString prefix);
+    void refreshParentSumTime(QTreeWidgetItem* item, QString prefix);
 
-    void getSumTime(Q3ListViewItem* item, TimeCounter& sum, TimeCounter& sumAbs);
+    void getSumTime(QTreeWidgetItem* item, TimeCounter& sum, TimeCounter& sumAbs);
 
     void showPersoenlicheKontenSummenzeit(bool show);
 
+		int getItemDepth( QTreeWidgetItem* );
+		
+		Qt::MouseButton getCurrentButton();
+		
+		void updateColumnWidth();
   public slots:
-
     virtual void refreshItem(const QString& abt, const QString& ko,const QString& uko, int idx);
     void refreshAllItemsInUnterkonto(const QString& abt, const QString& ko,const QString& uko);
     void refreshAllItemsInKonto(const QString& abt, const QString& ko);
 
-  protected:
-      virtual Q3DragObject* dragObject ();
-      virtual bool eventFilter ( QObject* obj, QEvent * e );
-#ifdef USE_QT4_DRAGNDROP
-      virtual void mouseMoveEvent(QMouseEvent *event);
-      virtual void mousePressEvent(QMouseEvent *event);      
-#endif
+  protected:        
+		virtual bool eventFilter ( QObject* obj, QEvent * e );
+    virtual void mouseMoveEvent(QMouseEvent *event);
+    virtual void mousePressEvent(QMouseEvent *event);        
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dropEvent(QDropEvent *event);  
+    virtual void dragMoveEvent(QDragMoveEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
+    virtual void keyReleaseEvent(QKeyEvent *event);
+		
 
-      virtual void dragEnterEvent(QDragEnterEvent *event);
-      virtual void dropEvent(QDropEvent *event);  
-      virtual void dragMoveEvent(QDragMoveEvent *event);
-
-  private:
-    bool m_showPersoenlicheKontenSummenzeit;
-    QPixmap aktivPixmap;
-    QPixmap bereitPixmap;
-    QPixmap emptyPixmap;
+  private:		
+    bool m_showPersoenlicheKontenSummenzeit;    
     AbteilungsListe* abtList;
     QPoint dragStartPosition;
-
+    Qt::MouseButton currentButton;
+    Qt::KeyboardModifiers keyboardModifier;
 };
 
 #endif

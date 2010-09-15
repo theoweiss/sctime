@@ -20,25 +20,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include "qdialog.h"
-#include "qpushbutton.h"
-#include "qlayout.h"
-#include "qlabel.h"
-#include "qlineedit.h"
-#include "qstringlist.h"
-#include "qcombobox.h"
-#include <QGroupBox>
-#include "qcheckbox.h"
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QTextCodec>
-#include <QMessageBox>
-#include "abteilungsliste.h"
-#include "timeedit.h"
 #include "unterkontodialog.h"
-#include <iostream>
-#include "globals.h"
-#include "sctimeapp.h"
 
 /**
  * Baut den Dialog zum Aendern der Eigenschaften eines Unterkontos auf.
@@ -46,15 +28,19 @@
  */
 UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  QString& uko, int idx,
                                    AbteilungsListe* abtlist, QStringList* taglist,
-                                   bool connectZeiten, QWidget * parent, bool readOnly)
-                                   :QDialog(parent,"Einstellungen für Unterkonto", true)
+                                   bool connectZeiten, QMainWindow * parent, bool readOnly)
+                                   :QDialog(parent, Qt::Dialog)                                   
 {
+	setModal(true);
+	setWindowTitle( "Einstellungen für Unterkonto" );
   abtList=abtlist;
   unterKontoName=uko;
   kontoName=ko;
   abteilungsName=abt;
   eintragIndex=idx;
-
+	settings=NULL;
+	
+	parent = parent;
   UnterKontoEintrag et;
   EintragsListe::iterator etiter;
 
@@ -64,9 +50,11 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   }
   et = etiter->second;
 
-  setCaption(uko);
+  //setCaption(uko);
+  setWindowTitle(uko);
 
-  QVBoxLayout* layout=new QVBoxLayout(this,3);
+  QVBoxLayout* layout=new QVBoxLayout(this);
+  layout->setContentsMargins(3,3,3,3);
 
   QPushButton * cancelbutton=new QPushButton( "Abbruch", this );
   QPushButton * okbutton=NULL;
@@ -87,8 +75,10 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
     commentedit->setReadOnly(readOnly);
   } else {
     commentedit = NULL;
-    commentcombo = new QComboBox(true,this);
-    commentcombo->insertStringList(*defaultcomments);
+    commentcombo = new QComboBox(this);
+    commentcombo->setEditable(true);
+    //commentcombo->insertStringList(*defaultcomments); //Qt3
+    commentcombo->insertItems(0, *defaultcomments);
     commentcombo->insertItem(0,et.kommentar);
     commentcombo->setCurrentIndex(0);
     commentcombo->setEditable(!readOnly);
@@ -109,7 +99,8 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
      QHBoxLayout *hboxLayout = new QHBoxLayout(taggroup);
      tagcombo = new QComboBox(taggroup);
      hboxLayout->addWidget(tagcombo);
-     tagcombo->insertStringList(*taglist);
+     //tagcombo->insertStringList(*taglist); //Qt3
+     tagcombo->insertItems(0, *taglist);
      QPushButton * addtagbutton = new QPushButton( "Hinzufügen", taggroup );;
      hboxLayout->addWidget(addtagbutton);
      layout->addWidget(taggroup);
@@ -135,7 +126,9 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   bereitschaftsView=new BereitschaftsView(this);
   bereitschaftsView->setSelectionList(m_bereitschaften);
   layout->addWidget(bereitschaftsView);*/
-  QHBoxLayout* buttonlayout=new QHBoxLayout(layout,3);
+  QHBoxLayout* buttonlayout=new QHBoxLayout();
+  //buttonlayout->setParent(layout);
+  buttonlayout->setContentsMargins(3,3,3,3);
 
   projektAktivieren=new QPushButton("Eintrag aktivieren",this);
   projektAktivieren->setDisabled(abtList->isAktiv(abt,ko,uko,idx));  
@@ -148,13 +141,17 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   buttonlayout->addStretch(1);
   layout->addSpacing(10);
   layout->addStretch(2);
+  layout->addLayout(buttonlayout);
 
-  buttonlayout=new QHBoxLayout(layout,3);
+  buttonlayout=new QHBoxLayout();
+  //buttonlayout->setParent(layout);
+  buttonlayout->setContentsMargins(3,3,3,3);
   buttonlayout->addStretch(1);
+  
   if (!readOnly)
     buttonlayout->addWidget(okbutton);  
   buttonlayout->addWidget(cancelbutton);
-
+	layout->addLayout(buttonlayout);
   if (!readOnly)
     connect (okbutton, SIGNAL(clicked()), this, SLOT(checkInput()));
   connect (cancelbutton, SIGNAL(clicked()), this, SLOT(reject()));
@@ -165,15 +162,6 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
     connect (zeitBox, SIGNAL(hourChangedBy(int)), zeitAbzurBox, SLOT(doStepHour(int)));
   }
 
-  // Dialog auf die richtige Größe und Position bringen
-  QPoint pos;
-  QSize size;
-  TimeMainWindow *timeMainWindow = static_cast<TimeMainWindow *>(qApp->mainWidget());
-  timeMainWindow->settings->getUnterKontoWindowGeometry(pos, size);
-  if (! size.isNull()) {
-    resize(size);
-    move(pos);
-  }
 };
 
 QString UnterKontoDialog::getComment()
@@ -199,27 +187,38 @@ void UnterKontoDialog::accept()
   int flags=0;
 
   QString comment=getComment();
+  
 
   abtList->setEintrag(abteilungsName,kontoName,unterKontoName,eintragIndex,
     UnterKontoEintrag(comment,zeitBox->getSekunden(),
     zeitAbzurBox->getSekunden(), flags));
+  
   abtList->moveEintragPersoenlich(abteilungsName,kontoName,unterKontoName,eintragIndex,
     (persoenlichesKonto->isChecked()));
+  
   /*QStringList bereitschaften = bereitschaftsView->getSelectionList();
   m_unterkonto->setBereitschaft(bereitschaften);*/
 
   emit entryChanged(abteilungsName,kontoName,unterKontoName,eintragIndex);
-
+		
   /*if (m_bereitschaften!=bereitschaften) {
      emit bereitschaftChanged(abteilungsName,kontoName,unterKontoName);
   }*/
 
-  // Größe des Dialogs festhalten
-  TimeMainWindow *timeMainWindow = static_cast<TimeMainWindow *>(qApp->mainWidget());
-  timeMainWindow->settings->setUnterKontoWindowGeometry(pos(), size());
+  // Größe/Position des Dialogs festhalten 
 
+	if( settings != NULL )
+	{
+		settings->setUnterKontoWindowGeometry(pos(), size());		
+	}
+	
   QDialog::accept();
 };
+
+void UnterKontoDialog::setSettings(SCTimeXMLSettings* s)
+{
+	settings = s;
+}
 
 void UnterKontoDialog::projektAktivierenButtonClicked()
 {
@@ -243,7 +242,8 @@ void UnterKontoDialog::addTag()
       if (commentedit) {
            commentedit->setText(tagcombo->currentText()+", "+commentedit->text());
       } else {
-           commentcombo->setCurrentText(tagcombo->currentText()+", "+commentcombo->currentText());
+           //commentcombo->setText(tagcombo->currentText()+", "+commentcombo->currentText());
+           commentcombo->insertItem(commentcombo->count()+1, tagcombo->currentText()+", "+commentcombo->currentText());
       }
   }
 }
@@ -260,3 +260,4 @@ void UnterKontoDialog::checkInput()
   } else
     accept();
 }
+

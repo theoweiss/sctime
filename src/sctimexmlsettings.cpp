@@ -22,16 +22,19 @@
 
 #include "sctimexmlsettings.h"
 #include "abteilungsliste.h"
-#include "qfile.h"
-#include "qdir.h"
+#include <QFile>
+#include <QDir>
 //Added by qt3to4:
 #include <QTextStream>
 #include "globals.h"
 #include "utils.h"
 #include "timecounter.h"
-#include "qregexp.h"
-#include "qtextcodec.h"
+#include <QRegExp>
+#include <QTextCodec>
+#include <stdio.h>
+#include <stdlib.h>
 #ifndef WIN32
+#include <locale.h>
 #include <langinfo.h>
 #else
 #include <windows.h>
@@ -102,7 +105,7 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
                      kontPos->first<<" "<<ukontPos->first<<"\t"<<
                      roundTo(1.0/3600*etPos->second.sekunden,0.01)<<"/"<<
                      roundTo(1.0/3600*etPos->second.sekundenAbzur,0.01)<<
-                     " \'"<<kommentar.simplifyWhiteSpace()<<"\'\n";
+                     " \'"<<kommentar.simplified()<<"\'\n";
           }
         }
       }
@@ -151,9 +154,9 @@ QString SCTimeXMLSettings::codecString(QTextStream& stream)
   {
     codec=WIN_CODEC;
   }
-  stream.setCodec(QTextCodec::codecForName(codec));
+  stream.setCodec(QTextCodec::codecForName(codec.toLatin1()));
 #else
-  codec=nl_langinfo(CODESET);
+  codec=nl_langinfo(CODESET);	
 #endif
   return codec;
 }
@@ -748,6 +751,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   }
   QTextStream stream( & f);
   QString codec=codecString(stream);
+  
   stream<<"<?xml version=\"1.0\" encoding=\""<<codec<<"\"?>"<<endl;
   stream<<doc.toString()<<endl;
 

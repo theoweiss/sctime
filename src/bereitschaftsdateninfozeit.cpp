@@ -24,10 +24,10 @@
 #include <iostream>
 #include <iomanip>
 #include <stdio.h>
-#include "qregexp.h"
+#include <QRegExp>
 #include "globals.h"
 #include "utils.h"
-#include "qmessagebox.h"
+#include <QMessageBox>
 #include "abteilungsliste.h"
 #include "DBConnector.h"
 
@@ -61,9 +61,9 @@ bool BereitschaftsDatenInfoZeit::readBereitschaftsFile(FILE* file, Bereitschafts
                 continue;
             }
 
-            QString name = ql[0].simplifyWhiteSpace();
+            QString name = ql[0].simplified();
 
-            QString beschreibung = ql[1].simplifyWhiteSpace();
+            QString beschreibung = ql[1].simplified();
 
             if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
 
@@ -86,7 +86,7 @@ bool BereitschaftsDatenInfoZeit::readInto(BereitschaftsListe * berList)
       return false;
     }
   } else {
-      file = fopen(m_DatenFileName, "r");
+      file = fopen(m_DatenFileName.toLatin1(), "r");
       if (!file) {
           std::cerr<<"Kann "<<m_DatenFileName.toLocal8Bit().constData()<<" nicht oeffnen."<<std::endl;
           return false;

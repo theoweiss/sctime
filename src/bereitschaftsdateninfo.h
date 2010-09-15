@@ -24,7 +24,7 @@
 #ifndef BEREITSCHAFTSDATENINFO_H
 #define  BEREITSCHAFTSDATENINFO_H
 
-#include "qobject.h"
+#include "QObject"
 #include "bereitschaftsliste.h"
 
 /**

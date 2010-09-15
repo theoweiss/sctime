@@ -24,7 +24,7 @@
 #ifndef UNTERKONTOEINTRAG_H
 #define UNTERKONTOEINTRAG_H
 
-#include <qstring.h>
+#include <QString>
 #include <iostream>
 
 #define UK_PERSOENLICH 1

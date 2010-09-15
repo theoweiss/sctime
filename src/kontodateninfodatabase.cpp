@@ -24,10 +24,10 @@
 #include "kontodateninfodatabase.h"
 #include "unterkontoeintrag.h"
 #include <iostream>
-#include "qsqldatabase.h"
-#include "qmessagebox.h"
-#include "qapplication.h"
-#include "qvariant.h"
+#include <QSqlDatabase>
+#include <QMessageBox>
+#include <QApplication>
+#include <QVariant>
 //Added by qt3to4:
 #include <QSqlQuery>
 #include "globals.h"
@@ -48,7 +48,7 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
   // PluginDir setzen
   QApplication::addLibraryPath(execDir+"/lib");
   abtList->clear();
-  QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC3" );
+  QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC" );
   m_dbconnector->configureDB(defaultDB);
 
   if ( defaultDB.open() ) {
@@ -61,13 +61,13 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
             defaultDB);
       if ( query.isActive() ) {
         while ( query.next() ) {
-          QString abt = query.value(0).toString().simplifyWhiteSpace();
-          QString ko = query.value(1).toString().simplifyWhiteSpace();
-          QString uko = query.value(2).toString().simplifyWhiteSpace();
+          QString abt = query.value(0).toString().simplified();
+          QString ko = query.value(1).toString().simplified();
+          QString uko = query.value(2).toString().simplified();
           QString beschreibung = query.value(3).toString();
-          QString responsible = query.value(4).toString().simplifyWhiteSpace();;
-          QString type = query.value(5).toString().simplifyWhiteSpace();;
-	  QString commentstr = query.value(6).toString().simplifyWhiteSpace();
+          QString responsible = query.value(4).toString().simplified();;
+          QString type = query.value(5).toString().simplified();;
+	  QString commentstr = query.value(6).toString().simplified();
           abtList->insertEintrag(abt,ko,uko);
           if (beschreibung.isEmpty())
               beschreibung="";
@@ -107,3 +107,65 @@ bool KontoDatenInfoDatabase::checkIn(AbteilungsListe* abtlist)
    return false;
 }
 
+
+/**
+ * Liest aus einer ODBC-Datenbank nach abtList aber NUR Default Comments 
+ */
+bool KontoDatenInfoDatabase::readDefaultCommentsInto(AbteilungsListe * abtList)
+{
+  bool ret = true;
+  // PluginDir setzen
+  //QApplication::addLibraryPath(execDir+"/lib");
+  //abtList->clear();
+  QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC" );
+  m_dbconnector->configureDB(defaultDB);
+
+  if ( defaultDB.open() ) {
+      QSqlQuery query(
+              "SELECT gb.name,konto.name,unterkonto.name,unterkonto.beschreibung,v_tuser.name,unterkonto.art,mikro.kommentar "
+              "FROM konto,gb,unterkonto "
+              "LEFT JOIN v_tuser ON (v_tuser.user_id = unterkonto.verantwortlich) "
+	      "LEFT JOIN unterkonto_kommentar mikro ON (mikro.unterkonto_id = unterkonto.unterkonto_id) "
+              "WHERE konto.konto_id = unterkonto.konto_id AND gb.gb_id = konto.gb_id AND unterkonto.eintragbar=\'y\';",
+            defaultDB);
+      if ( query.isActive() ) {
+        while ( query.next() ) {
+          QString abt = query.value(0).toString().simplified();
+          QString ko = query.value(1).toString().simplified();
+          QString uko = query.value(2).toString().simplified();
+          QString beschreibung = query.value(3).toString();
+          QString responsible = query.value(4).toString().simplified();;
+          QString type = query.value(5).toString().simplified();;
+					QString commentstr = query.value(6).toString().simplified();
+          //abtList->insertEintrag(abt,ko,uko);
+          if (beschreibung.isEmpty())
+              beschreibung="";
+          if (responsible.isEmpty())
+              responsible="";
+          if (type.isEmpty())
+              type="";
+          //abtList->setDescription(abt,ko,uko,DescData(beschreibung,responsible,type));
+          //abtList->setUnterKontoFlags(abt,ko,uko,IS_IN_DATABASE,FLAG_MODE_OR);
+	  if ((!commentstr.isNull())&&(!commentstr.isEmpty())) {
+                UnterKontoListe::iterator itUk;
+                UnterKontoListe* ukl;
+                if (abtList->findUnterKonto(itUk,ukl,abt,ko,uko)) {
+                  itUk->second.addDefaultComment(commentstr);
+                }
+          }
+        }
+      }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;
+  } else {
+        ret = false;
+#ifdef WIN32
+                QMessageBox::critical(NULL,"Error","Kann Datenbank nicht öffnen\n",
+                              QMessageBox::Ok, Qt::NoButton,
+                              Qt::NoButton);
+#else
+                std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
+#endif
+    }
+
+  defaultDB.close();
+  return ret;
+}

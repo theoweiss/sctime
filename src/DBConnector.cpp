@@ -11,7 +11,7 @@
 DBConnector::DBConnector()
 {
 #if defined(UNICODE)
-    if ( qWinVersion() & Qt::WV_NT_based )
+    if ( QSysInfo::windowsVersion() & QSysInfo::WV_NT_based )
     {
         TCHAR winUserName[UNLEN + 1]; 
         DWORD winUserNameSize = sizeof(winUserName);
@@ -27,12 +27,12 @@ DBConnector::DBConnector()
     }
     
     bool pwdfound=false;
-    QFile pwdfile(QDir::homeDirPath()+".Zeit"); 
-    if (!pwdfile.open(IO_ReadOnly)) 
+    QFile pwdfile(QDir::homePath()+".Zeit"); 
+    if (!pwdfile.open(QIODevice::ReadOnly)) 
     {
        pwdfile.setFileName("H:\\.Zeit");
 
-       if (!pwdfile.open(IO_ReadOnly)) 
+       if (!pwdfile.open(QIODevice::ReadOnly)) 
       {
 	  m_password=m_username;
       }

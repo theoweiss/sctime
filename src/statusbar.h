@@ -4,11 +4,11 @@
 #define  STATUSBAR_H
 
 #include <QWidget>
-#include <qstring.h>
-#include "qstatusbar.h"
-#include "qlabel.h"
+#include <QString>
+#include <QStatusBar>
+#include <QLabel>
 #include "timecounter.h"
-#include "qdatetime.h"
+#include <QDateTime>
 
 /** Die Statusbar des Hauptfensters */
 class StatusBar:public QStatusBar
@@ -60,7 +60,9 @@ class StatusBar:public QStatusBar
     {
       if (on) {
         datumsWarnung->setText("Warnung: Es wird der "+datum.toString("dd.MM.yyyy")+" editiert.");
-        datumsWarnung->setPaletteForegroundColor(Qt::darkRed);
+        datumsWarnung->setStyleSheet("color:#800000;");
+        
+        //datumsWarnung->setPaletteForegroundColor(Qt::darkRed);
       }
       else
       {
@@ -69,6 +71,19 @@ class StatusBar:public QStatusBar
 
 
     }
+    
+    void appendWarning(bool on, QString str)
+    {
+			if( on )
+			{
+				QString labelTxt = datumsWarnung->text();
+				datumsWarnung->setText(labelTxt + str);
+			}
+			else
+			{
+				datumsWarnung->setText("");
+			}
+		}
 
   private:
     QLabel* zeitLabel;

@@ -23,11 +23,11 @@
 #ifndef TIMEEDIT_H
 #define TIMEEDIT_H
 
-#include "qspinbox.h"
+#include <QSpinBox>
 #include <iostream>
 #include <QGroupBox>
 #include <QHBoxLayout>
-#include "qlabel.h"
+#include <QLabel>
 
 /**
   * TimeEdit ist ein QSpinBox-Objekt, das zusaetzlich Signale zum verschalten der "Scrollbuttons" mehrerer
@@ -44,7 +44,12 @@ class TimeEdit: public QSpinBox
   /**
    * Erzeugt ein TimeEdit-Objekt mit Wertebereich 0..maxVal.
    */
-  TimeEdit(int maxVal, QWidget* parent): QSpinBox(0,maxVal,1,parent) { }
+  TimeEdit(int maxVal, QWidget* parent): QSpinBox(parent) 
+  {
+		 setMinimum( 0 );
+		 setMaximum( maxVal );
+		 setSingleStep( 1 );
+	}
 
   /** Es wird statt dessen ein ein stepButtonPressed Signal ausgeloest.
    * (noetig zum gleichschalten mehrerer SpinBoxes).

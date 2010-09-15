@@ -1,0 +1,27 @@
+<!-- The Resource file for sctime, necessary since Qt4.1 --> 
+
+<!DOCTYPE RCC>
+<RCC version="1.0">
+	<qresource >
+		<file alias="hi22_action_player_pause">hi22_action_player_pause.xpm</file>		
+		<file alias="hi22_action_player_pause_half">hi22_action_player_pause_half.xpm</file>		
+		<file alias="hi22_action_filesave">hi22_action_filesave.xpm</file>		
+		<file alias="hi22_action_attach">hi22_action_attach.xpm</file>		
+		<file alias="hi22_action_edit">hi22_action_edit.xpm</file>		
+		<file alias="hi22_action_queue">hi22_action_queue.xpm</file>		
+		<file alias="hi22_action_1uparrow">hi22_action_1uparrow.xpm</file>		
+		<file alias="hi22_action_1downarrow">hi22_action_1downarrow.xpm</file>		
+		<file alias="hi22_action_2uparrow">hi22_action_2uparrow.xpm</file>		
+		<file alias="hi22_action_2downarrow">hi22_action_2downarrow.xpm</file>		
+		<file alias="sc_logo">sc_logo.xpm</file>		
+		<file alias="scLogo_15Farben">scLogo_15Farben.xpm</file>		
+		<file alias="hi22_action_1uparrow_half">hi22_action_1uparrow_half.xpm</file>		
+		<file alias="hi22_action_1downarrow_half">hi22_action_1downarrow_half.xpm</file>		
+		<file alias="hi22_action_2uparrow_half">hi22_action_2uparrow_half.xpm</file>		
+		<file alias="hi22_action_2downarrow_half">hi22_action_2downarrow_half.xpm</file>		
+		<file alias="hi16_action_stamp">hi16_action_stamp.xpm</file>		
+		<file alias="hi16_action_apply">hi16_action_apply.xpm</file>
+		<file alias="zero">zero.xpm</file>		
+		<file alias="cr16_action_bookmark">cr16-action-bookmark.xpm</file>		
+	</qresource>
+</RCC>

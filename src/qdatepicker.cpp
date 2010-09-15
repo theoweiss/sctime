@@ -22,13 +22,13 @@
 // This file has been ported from KDE to plain QT
 
 #include <QFrame>
-#include <qdialog.h>
-#include <qstyle.h>
-#include <qtoolbutton.h>
-#include <qcombobox.h>
-#include <qtooltip.h>
-#include <qfont.h>
-#include <qvalidator.h>
+#include <QDialog>
+#include <QStyle>
+#include <QToolButton>
+#include <QComboBox>
+#include <QToolTip>
+#include <QFont>
+#include <QValidator>
 
 #include "qdatepicker.h"
 
@@ -38,11 +38,11 @@
 #include <QPixmap>
 #include <QTextCharFormat>
 
-#include "../pics/cr16-action-bookmark.xpm"
 
 QDateValidator::QDateValidator(QWidget* parent, const char* name)
-    : QValidator(parent, name)
+    : QValidator(parent)
 {
+	setObjectName(name);
 }
 
 QValidator::State
@@ -73,7 +73,7 @@ QDateValidator::fixup( QString& ) const
 
 QDateInternalWeekSelector::QDateInternalWeekSelector
 (QWidget* parent, const char* name)
-  : QLineEdit(parent, name),
+  : QLineEdit(parent),
     val(new QIntValidator(this)),
     result(0)
 {
@@ -143,7 +143,7 @@ void QDatePicker::fillWeeksCombo(const QDate &date)
   d->selectWeek->clear();
 
   for (i = 1; i <= weeks; i++)
-    d->selectWeek->insertItem(QString("Woche %1").arg(i));
+    d->selectWeek->insertItem(i, QString("Woche %1").arg(i));
 }
 
 QDatePicker::QDatePicker(QWidget *parent, QDate dt, const char *name)
@@ -180,13 +180,16 @@ void QDatePicker::init( const QDate &dt )
 
   fontsize++; // Make a little bigger
 
-  d->selectWeek = new QComboBox(false, this);  // read only week selection
+  d->selectWeek = new QComboBox(this);  // read only week selection
+  d->selectWeek->setEditable(false);
   d->todayButton = new QToolButton(this);
-  d->todayButton->setIconSet(QIcon(QPixmap((const char **)cr16_action_bookmark)));
+  d->todayButton->setIcon(QIcon(":/cr16_action_bookmark"));
   table->setFirstDayOfWeek(Qt::Monday);
 
-  QToolTip::add(d->selectWeek, "Woche wählen");
-  QToolTip::add(d->todayButton, "Heutigen Tag wählen");
+  //QToolTip::add(d->selectWeek, "Woche wählen");
+  d->selectWeek->setToolTip("Woche wählen");
+  //QToolTip::add(d->todayButton, "Heutigen Tag wählen");
+  d->todayButton->setToolTip("Heutigen Tag wählen");
   
   QTextCharFormat format=table->dateTextFormat(QDate::currentDate());
   format.setFontWeight(QFont::Bold);
@@ -207,10 +210,12 @@ void QDatePicker::init( const QDate &dt )
 
   topLayout->addWidget(table);
 
-  QBoxLayout * bottomLayout = new QHBoxLayout(topLayout);
+  QBoxLayout * bottomLayout = new QHBoxLayout();
+  //bottomLayout->setParent(topLayout);
   bottomLayout->addWidget(d->todayButton);
   bottomLayout->addWidget(line);
   bottomLayout->addWidget(d->selectWeek);
+  topLayout->addLayout(bottomLayout);
 }
 
 QDatePicker::~QDatePicker()
@@ -228,7 +233,7 @@ void QDatePicker::currentPageChangedSlot (int year, int month)
 {
   QDate date=QDate(year,month,1);
   fillWeeksCombo(date);
-  d->selectWeek->setCurrentItem(date.weekNumber() - 1);
+  d->selectWeek->setCurrentIndex(date.weekNumber() - 1);
 }
 
 void
@@ -266,7 +271,7 @@ QDatePicker::setDate(const QDate& date)
     {
         table->setSelectedDate(date);
         fillWeeksCombo(date);
-        d->selectWeek->setCurrentItem(date.weekNumber() - 1);
+        d->selectWeek->setCurrentIndex(date.weekNumber() - 1);
         line->setText(date.toString(Qt::ISODate));
         return true;
     }

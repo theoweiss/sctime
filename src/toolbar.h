@@ -23,7 +23,7 @@
 #ifndef TOOLBAR_H
 #define TOOLBAR_H
 
-#include <qstring.h>
+#include <QString>
 #include <QToolBar>
 
 class ToolBar:public QToolBar

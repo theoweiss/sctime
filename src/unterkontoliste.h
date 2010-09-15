@@ -24,7 +24,7 @@
 #ifndef UNTERKONTOLISTE_H
 #define  UNTERKONTOLISTE_H
 
-#include <qstring.h>
+#include <QString>
 #include <map>
 #include "eintragsliste.h"
 

@@ -1,4 +1,4 @@
-/*
+/*f
     Copyright (C) 2003 Florian Schmitt, Science and Computing AG
                        f.schmitt@science-computing.de
 
@@ -22,31 +22,32 @@
 
 #include "utils.h"
 #include "timemainwindow.h"
-#include "qclipboard.h"
-#include "qapplication.h"
+#include <QClipboard>
+#include <QApplication>
 #include <QMenu>
 #include <QMenuBar>
 #include <QAction>
-//Added by qt3to4:
+#include <QHeaderView>
 #include <QPixmap>
+#include <QPicture>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QVBoxLayout>
 #include <QCustomEvent>
 #include <QFont>
-#include <Q3Header>
 #include <QTextStream>
 #include "colorchooser.h"
 #include "kontotreeview.h"
 #include "time.h"
-#include "qtimer.h"
+#include <QTimer>
 #include <iostream>
 #include "toolbar.h"
-#include "qmessagebox.h"
-#include "qstringlist.h"
+#include <QMessageBox>
+#include <QStringList>
 #include "statusbar.h"
-#include "qdatetime.h"
+#include <QDateTime>
+#include <QDir>
 #include "preferencedialog.h"
 #include "defaulttagreader.h"
 #ifndef HAS_NO_DATETIMEEDIT
@@ -55,36 +56,22 @@
 #include <QPoint>
 #include <QRect>
 #include "globals.h"
-#include "qinputdialog.h"
+#include <QInputDialog>
 #ifndef NO_TEXTEDIT
-#include "q3textedit.h"
+#include <QTextEdit>
 #endif
-#include "qfile.h"
+#include <QFile>
 #include "findkontodialog.h"
 #include "sctimehelp.h"
-#include "../pics/hi22_action_player_pause.xpm"
-#include "../pics/hi22_action_player_pause_half.xpm"
-#include "../pics/hi22_action_filesave.xpm"
-#include "../pics/hi22_action_attach.xpm"
-#include "../pics/hi22_action_edit.xpm"
-#include "../pics/hi22_action_queue.xpm"
-#include "../pics/hi22_action_1uparrow.xpm"
-#include "../pics/hi22_action_1downarrow.xpm"
-#include "../pics/hi22_action_2uparrow.xpm"
-#include "../pics/hi22_action_2downarrow.xpm"
-#include "../pics/sc_logo.xpm"
-#include "../pics/scLogo_15Farben.xpm"
-#include "../pics/hi22_action_1uparrow_half.xpm"
-#include "../pics/hi22_action_1downarrow_half.xpm"
-#include "../pics/hi22_action_2uparrow_half.xpm"
-#include "../pics/hi22_action_2downarrow_half.xpm"
-#include "../pics/hi16_action_stamp.xpm"
-#include "../pics/zero.xpm"
-
-
+#ifndef WIN32
+#include "kontodateninfozeit.h"
+#else
+#include "kontodateninfodatabase.h"
+#endif
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
 TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* bereitschaftsdatenReader):QMainWindow()
 {
+	
   std::vector<QString> xmlfilelist;
   QDate heute;
   abtListToday=new AbteilungsListe(heute.currentDate(),zk);
@@ -96,6 +83,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   settings=new SCTimeXMLSettings();
   settings->readSettings(abtList);
 
+  this->zk = zk;
   settings->getDefaultCommentFiles(xmlfilelist);
   qtDefaultFont=QApplication::font();
   if (settings->useCustomFont())
@@ -104,6 +92,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
     int custFontSize=settings->customFontSize();
     QApplication::setFont(QFont(custFont,custFontSize));
   }  
+  
   defaultCommentReader.read(abtList,xmlfilelist);
 
   bereitschaftsdatenReader->readInto(BereitschaftsListe::getInstance());
@@ -112,8 +101,8 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   defaulttagreader.read(&defaultTags);
 
   // restore size+position
-  QSize size;
-  QPoint pos;
+  QSize size = QSize(700,400);
+  QPoint pos = QPoint(0,0);
   settings->getMainWindowGeometry(pos,size);
   resize(size);
   move(pos);
@@ -124,24 +113,24 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   std::vector<int> columnwidthlist;
 
   settings->getColumnWidthList(columnwidthlist);
-
+	
  // setCaption("sctime "+abtList->getDatum().toString("dd.MM.yyyy"));
-  kontoTree=new KontoTreeView( this, abtList, columnwidthlist );
+  kontoTree=new KontoTreeView( this, abtList, columnwidthlist );  
   kontoTree->closeFlaggedPersoenlicheItems();  
-  kontoTree->showPersoenlicheKontenSummenzeit(settings->persoenlicheKontensumme());
+  kontoTree->showPersoenlicheKontenSummenzeit(settings->persoenlicheKontensumme());	
 
-  mimeSourceFactory=new Q3MimeSourceFactory();
-  mimeSourceFactory->setPixmap("/images/scLogo_15Farben.png",QPixmap((const char **)scLogo_15Farben_xpm));
+  //mimeSourceFactory=new QMimeSourceFactory();
+  //mimeSourceFactory->setPixmap("/images/scLogo_15Farben.png",QPixmap((const char **)scLogo_15Farben_xpm));
 #ifndef Q_WS_MAC
-  setIcon(QPixmap((const char **)sc_logo_xpm));
+  setWindowIcon(QIcon(":/sc_logo"));
 #endif
 
   setCentralWidget(kontoTree);
   
   if (!settings->showTypeColumn()) {  	
   	kontoTree->hideColumn(1);
-  	kontoTree->setColumnWidthMode(1,Q3ListView::Manual);
-  	kontoTree->header()->setResizeEnabled(false, 1);
+  	//kontoTree->setColumnWidthMode(1,QListView::Manual);
+  	//kontoTree->header()->setResizeEnabled(false, 1);
   }
 
   toolBar   = new ToolBar("Main ToolBar", this);
@@ -156,26 +145,28 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
 
   QTimer* timer = new QTimer(this);
   connect( timer,SIGNAL(timeout()), this, SLOT(minutenUhr()));
-  timer->start(60000); //Alle 60 Sekunden ticken
+  timer->setInterval(60000); //Alle 60 Sekunden ticken
+  timer->start(); 
   lastMinuteTick=QDateTime::currentDateTime();
 
   QTimer* autosavetimer=new QTimer(this);
   connect( autosavetimer,SIGNAL(timeout()), this, SLOT(save()));
-  autosavetimer->start(300000); //Alle 5 Minuten ticken.
-
-  QAction* pauseAction = new QAction( QPixmap((const char **)hi22_action_player_pause ),
-                                      "&Pause", this);
+  autosavetimer->setInterval(300000); //Alle 5 Minuten ticken.
+	autosavetimer->start(); 
+  //QAction* pauseAction = new QAction( QPixmap((const char **)hi22_action_player_pause ),
+                                      //"&Pause", this);
+	QAction* pauseAction = new QAction( QIcon(":/hi22_action_player_pause"), "&Pause", this);
   pauseAction->setShortcut(Qt::CTRL+Qt::Key_P);
   connect(pauseAction, SIGNAL(triggered()), this, SLOT(pause()));
 
-  QAction* pauseAbzurAction = new QAction( QPixmap((const char **)hi22_action_player_pause_half ),
+  QAction* pauseAbzurAction = new QAction( QIcon(":/hi22_action_player_pause_half"),
                                            "Pause der &abzur. Zeit", this);
   pauseAbzurAction->setShortcut(Qt::CTRL+Qt::Key_A);
   pauseAbzurAction->setStatusTip("Pausiert nur die abzurechnende Zeit");
   pauseAbzurAction->setCheckable(true);
   connect(pauseAbzurAction, SIGNAL(toggled(bool)), this, SLOT(pauseAbzur(bool)));
 
-  QAction* saveAction = new QAction( QPixmap((const char **)hi22_action_filesave ),"&Save", this);
+  QAction* saveAction = new QAction( QIcon(":/hi22_action_filesave" ),"&Save", this);
   saveAction->setShortcut(Qt::CTRL+Qt::Key_S);
   connect(saveAction, SIGNAL(triggered()), this, SLOT(save()));
 
@@ -199,7 +190,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   connect(checkInAction, SIGNAL(triggered()), this, SLOT(checkIn()));
 #endif
 
-  inPersKontAction = new QAction( QPixmap((const char **)hi22_action_attach),"In persönliche &Konten", this);
+  inPersKontAction = new QAction( QIcon(":/hi22_action_attach"),"In persönliche &Konten", this);
   inPersKontAction->setShortcut(Qt::CTRL+Qt::Key_K);
   inPersKontAction->setCheckable(true);
   connect(inPersKontAction, SIGNAL(toggled(bool)), this, SLOT(inPersoenlicheKonten(bool)));
@@ -234,7 +225,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   aboutAction->setStatusTip("About sctime");
   connect(aboutAction, SIGNAL(triggered()), this, SLOT(callAboutBox()));
 
-  editUnterKontoAction = new QAction(QPixmap((const char **)hi22_action_edit ), "&Editieren", this);
+  editUnterKontoAction = new QAction(QIcon(":/hi22_action_edit" ), "&Editieren", this);
   editUnterKontoAction->setStatusTip("Unterkonto editieren");
   connect(editUnterKontoAction, SIGNAL(triggered()), this, SLOT(editUnterKontoPressed()));
 
@@ -242,7 +233,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   eintragActivateAction->setShortcut(Qt::CTRL+Qt::Key_X);
   connect(eintragActivateAction, SIGNAL(triggered()), this, SLOT(eintragAktivieren()));
 
-  QAction* eintragAddAction = new QAction(QPixmap((const char **)hi22_action_queue ),
+  QAction* eintragAddAction = new QAction(QIcon(":/hi22_action_queue" ),
                                              "&Eintrag hinzufügen", this);
   connect(eintragAddAction, SIGNAL(triggered()), this, SLOT(eintragHinzufuegen()));
 
@@ -250,7 +241,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   eintragRemoveAction->setShortcut(Qt::Key_Delete);
   connect(eintragRemoveAction, SIGNAL(triggered()), this, SLOT(eintragEntfernen()));
 
-  QAction* bereitschaftsAction = new QAction(QPixmap((const char **)hi16_action_stamp ),
+  QAction* bereitschaftsAction = new QAction(QIcon(":/hi16_action_stamp" ),
                                              "&Bereitschaftszeiten setzen", this);
   bereitschaftsAction->setShortcut(Qt::CTRL+Qt::Key_B);
   connect(bereitschaftsAction, SIGNAL(triggered()), this, SLOT(editBereitschaftPressed()));
@@ -259,27 +250,27 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
 
   jumpAction = new QAction("&Zu selektiertem Konto in \"Alle Konten\" springen", this);
 
-  QAction* min5PlusAction = new QAction(QPixmap((const char **)hi22_action_1uparrow ),
+  QAction* min5PlusAction = new QAction(QIcon(":/hi22_action_1uparrow" ),
                                            "Zeit incrementieren", this);
-  QAction* min5MinusAction = new QAction(QPixmap((const char **)hi22_action_1downarrow ),
+  QAction* min5MinusAction = new QAction(QIcon(":/hi22_action_1downarrow" ),
                                             "Zeit decrementieren", this);
 
-  QAction* fastPlusAction = new QAction(QPixmap((const char **)hi22_action_2uparrow ),
+  QAction* fastPlusAction = new QAction(QIcon(":/hi22_action_2uparrow" ),
                                            "Zeit schnell incrementieren", this);
-  QAction* fastMinusAction = new QAction(QPixmap((const char **)hi22_action_2downarrow ),
+  QAction* fastMinusAction = new QAction(QIcon(":/hi22_action_2downarrow" ),
                                             "Zeit schnell decrementieren", this);
 
-  abzurMin5PlusAction = new QAction(QPixmap((const char **)hi22_action_1uparrow_half ),
+  abzurMin5PlusAction = new QAction(QIcon(":/hi22_action_1uparrow_half" ),
                                       "Abrechenbare Zeit incrementieren", this);
-  abzurMin5MinusAction = new QAction(QPixmap((const char **)hi22_action_1downarrow_half ),
+  abzurMin5MinusAction = new QAction(QIcon(":/hi22_action_1downarrow_half" ),
                                        "Abrechenbare Zeit decrementieren", this);
 
-  fastAbzurPlusAction = new QAction(QPixmap((const char **)hi22_action_2uparrow_half ),
+  fastAbzurPlusAction = new QAction(QIcon(":/hi22_action_2uparrow_half" ),
                                       "Abrechenbare Zeit schnell incrementieren", this);
-  fastAbzurMinusAction = new QAction(QPixmap((const char **)hi22_action_2downarrow_half ),
+  fastAbzurMinusAction = new QAction(QIcon(":/hi22_action_2downarrow_half" ),
                                        "Abrechenbare Zeit schnell decrementieren", this);
 
-  connect(kontoTree, SIGNAL(currentChanged(Q3ListViewItem * )), this, SLOT(changeShortCutSettings(Q3ListViewItem * ) ));
+  connect(kontoTree, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem * )), this, SLOT(changeShortCutSettings(QTreeWidgetItem * ) ));
 
   connect(min5PlusAction, SIGNAL(triggered()), this, SLOT(addTimeInc()));
   connect(min5MinusAction, SIGNAL(triggered()), this, SLOT(subTimeInc()));
@@ -297,7 +288,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   connect(this,SIGNAL(unterkontoSelected(bool)), bereitschaftsAction, SLOT(setEnabled(bool)));
 
   connect(this,SIGNAL(aktivierbarerEintragSelected(bool)), eintragActivateAction, SLOT(setEnabled(bool)));
-  connect(kontoTree,SIGNAL(contextMenuRequested(Q3ListViewItem *, const QPoint& ,int)), this, SLOT(showContextMenu(Q3ListViewItem *, const QPoint& ,int)));
+  connect(kontoTree,SIGNAL(customContextMenuRequested(const QPoint & )), this, SLOT(showContextMenu( const QPoint & )));
 
   toolBar->addAction(editUnterKontoAction);
   toolBar->addAction(saveAction);
@@ -321,7 +312,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   kontomenu->addAction(bereitschaftsAction);
   kontomenu->addAction(bgColorAction);
   kontomenu->addAction(jumpAction);
-  kontomenu->insertSeparator();
+  kontomenu->addSeparator();
   kontomenu->addAction(quitAction);
   zeitmenu->addAction(changeDateAction);
   zeitmenu->addAction(resetAction);
@@ -343,7 +334,8 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
 
   updateCaption();
   kontoTree->setAcceptDrops(settings->dragNDrop());
-  kontoTree->showAktivesProjekt();
+  kontoTree->showAktivesProjekt();  
+  kontoTree->updateColumnWidth();
   showAdditionalButtons(settings->powerUserView());
 }
 
@@ -389,26 +381,26 @@ void TimeMainWindow::showAdditionalButtons(bool show)
 
 void TimeMainWindow::configClickMode(bool singleClickActivation)
 {
-    disconnect(kontoTree, SIGNAL(mouseButtonClicked ( int, Q3ListViewItem * , const QPoint & , int )),
-               this, SLOT(mouseButtonInKontoTreeClicked(int, Q3ListViewItem * , const QPoint &, int )));
-    disconnect(kontoTree, SIGNAL(doubleClicked(Q3ListViewItem *)),
-               this, SLOT(callUnterKontoDialog(Q3ListViewItem *)) );
-    disconnect(kontoTree, SIGNAL(doubleClicked(Q3ListViewItem *)),
-               this, SLOT(setAktivesProjekt(Q3ListViewItem *)));
-    //disconnect(kontoTree, SIGNAL(contextMenuRequested(Q3ListViewItem *, const QPoint& ,int)),
-    //           this, SLOT(callUnterKontoDialog(Q3ListViewItem *)));
+    disconnect(kontoTree, SIGNAL(itemClicked ( QTreeWidgetItem * , int )),
+               this, SLOT(mouseButtonInKontoTreeClicked(QTreeWidgetItem * , int )));
+    disconnect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
+               this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)) );
+    disconnect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
+               this, SLOT(setAktivesProjekt(QTreeWidgetItem *)));
+    //disconnect(kontoTree, SIGNAL(contextMenuRequested(QTreeWidgetItem *, const QPoint& ,int)),
+    //           this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)));
 
     if (!singleClickActivation) {
-        //connect(kontoTree, SIGNAL(contextMenuRequested(Q3ListViewItem *, const QPoint& ,int)),
-        //        this, SLOT(callUnterKontoDialog(Q3ListViewItem *)) );
-        connect(kontoTree, SIGNAL(doubleClicked(Q3ListViewItem *)),
-                this, SLOT(setAktivesProjekt(Q3ListViewItem *)));
+        //connect(kontoTree, SIGNAL(contextMenuRequested(QTreeWidgetItem *, const QPoint& ,int)),
+        //        this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)) );
+        connect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
+                this, SLOT(setAktivesProjekt(QTreeWidgetItem *)));
         }
     else {
-        connect(kontoTree, SIGNAL(mouseButtonClicked ( int, Q3ListViewItem * , const QPoint & , int )),
-                   this, SLOT(mouseButtonInKontoTreeClicked(int, Q3ListViewItem * , const QPoint &, int )));
-        connect(kontoTree, SIGNAL(doubleClicked(Q3ListViewItem *)),
-                this, SLOT(callUnterKontoDialog(Q3ListViewItem *)) );
+        connect(kontoTree, SIGNAL(itemClicked ( QTreeWidgetItem * , int )),
+                   this, SLOT(mouseButtonInKontoTreeClicked(QTreeWidgetItem * , int )));        
+        connect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
+                this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)) );
     }
 }
 
@@ -418,11 +410,12 @@ void TimeMainWindow::copyNameToClipboard()
     cb->setText( kontoTree->currentItem()->text(0), QClipboard::Clipboard );
 }
 
-void TimeMainWindow::mouseButtonInKontoTreeClicked(int button, Q3ListViewItem * item, const QPoint & pos, int c)
-{
-    if ((button==1) && (item)) {
-        setAktivesProjekt(item);
-    }
+void TimeMainWindow::mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int column)
+{    
+		if ( (kontoTree->getCurrentButton() == Qt::LeftButton) &&(item)) {
+				
+        setAktivesProjekt(item);                    
+    }       
 }
 
 /** Wird durch einen Timer einmal pro Minute aufgerufen, und sorgt fuer die
@@ -436,7 +429,8 @@ void TimeMainWindow::minutenUhr()
   QDateTime currenttime=QDateTime::currentDateTime();
   if (!paused) {
     abtListToday->getAktiv(abt,ko,uko,idx);
-    int delta=lastMinuteTick.secsTo(QDateTime::currentDateTime());    
+    int delta=lastMinuteTick.secsTo(QDateTime::currentDateTime()); 
+       
     if ((delta<120)&&(delta>0)) // Check if we have won or lost a minute.
       abtListToday->minuteVergangen(!pausedAbzur);
     else
@@ -551,7 +545,7 @@ void TimeMainWindow::subFastAbzurTimeInc()
   */
 void TimeMainWindow::addDeltaToZeit(int delta, bool abzurOnly)
 {
-  Q3ListViewItem * item=kontoTree->currentItem();
+  QTreeWidgetItem * item=kontoTree->currentItem();
 
   if (!kontoTree->isEintragsItem(item)) return;
 
@@ -577,7 +571,7 @@ void TimeMainWindow::zeitChanged()
   int max_working_time=settings->maxWorkingTime();
   abtList->getGesamtZeit(zeit, zeitAbzur);
   TimeCounter tc(zeit);
-  setIconText(tc.toString());
+  //setIconText(tc.toString());
   statusBar->setDiff(abtList->getZeitDifferenz());
   emit gesamtZeitChanged(zeit);
   emit gesamtZeitAbzurChanged(zeitAbzur);
@@ -601,7 +595,7 @@ void TimeMainWindow::zeitChanged()
 void TimeMainWindow::showArbeitszeitwarning()
 {
   QMessageBox::warning(0,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
-                       QMessageBox::Ok | QMessageBox::Default,0);
+                       QMessageBox::Ok, QMessageBox::Ok);
 }
 
 /** Ruft einen modalen Dialog auf, der eine Pause anzeigt, und setzt gleichzeitig
@@ -611,7 +605,7 @@ void TimeMainWindow::pause()
 {
   paused=true;
   QMessageBox::warning(0,"Pause Dialog","Die Zeiterfassung wurde angehalten. Ende der Pause mit OK.",
-                       QMessageBox::Ok | QMessageBox::Default,0);
+                       QMessageBox::Ok, QMessageBox::Ok);
   paused=false;
 }
 
@@ -665,7 +659,7 @@ void TimeMainWindow::editBereitschaftPressed()
  */
 void TimeMainWindow::eintragAktivieren()
 {
-  Q3ListViewItem * item=kontoTree->currentItem();
+  QTreeWidgetItem * item=kontoTree->currentItem();
   setAktivesProjekt(item);
 }
 
@@ -675,7 +669,7 @@ void TimeMainWindow::eintragAktivieren()
  */
 void TimeMainWindow::eintragHinzufuegen()
 {
-  Q3ListViewItem * item=kontoTree->currentItem();
+  QTreeWidgetItem * item=kontoTree->currentItem();
 
   if ((!kontoTree->isEintragsItem(item))&&(!kontoTree->isUnterkontoItem(item))) return;
 
@@ -685,20 +679,21 @@ void TimeMainWindow::eintragHinzufuegen()
   kontoTree->itemInfo(item,top,abt,ko,uko,oldidx);
 
   int idx=abtList->insertEintrag(abt,ko,uko);
+  
   abtList->setEintragFlags(abt,ko,uko,idx,abtList->getEintragFlags(abt,ko,uko,oldidx));
+  
   kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
   changeShortCutSettings(item);
 }
-
 
 /**
  * Entfernt einen Eintrag.
  */
 void TimeMainWindow::eintragEntfernen()
 {
-  Q3ListViewItem * item=kontoTree->currentItem();
+  QTreeWidgetItem * item=kontoTree->currentItem();
 
-  if ((!item)||(item->depth()!=4)) return;
+  if ((!item)||(kontoTree->getItemDepth(item)!=4)) return;
 
   QString top,uko,ko,abt;
   int idx;
@@ -709,8 +704,7 @@ void TimeMainWindow::eintragEntfernen()
 
   if (abtList->isAktiv(abt,ko,uko,idx)) {
       QMessageBox::warning(NULL,"Warnung","Kann aktiven Eintrag nicht löschen\n",
-                              QMessageBox::Ok, QMessageBox::NoButton,
-                              QMessageBox::NoButton);
+                              QMessageBox::Ok, QMessageBox::NoButton);
       return;
   }
 
@@ -719,14 +713,17 @@ void TimeMainWindow::eintragEntfernen()
   abtList->deleteEintrag(abt,ko,uko,idx);
 
   kontoTree->sucheItem(PERSOENLICHE_KONTEN_STRING,abt,ko,uko,idx,topi,abti,koi,ukoi,eti);
-  delete ukoi;
+  delete ukoi; 
+  
   kontoTree->sucheItem(ALLE_KONTEN_STRING,abt,ko,uko,idx,topi,abti,koi,ukoi,eti);
   delete ukoi;
+  
   kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
+  int etiCurrent = 0;
   if (kontoTree->sucheItem(top,abt,ko,uko,idx,topi,abti,koi,ukoi,eti)) {
-      for (eti=(KontoTreeItem*)(ukoi->firstChild());
+      for (eti=(KontoTreeItem*)(ukoi->child(0));
            (eti!=NULL)&&(eti->text(0).toInt()<=idx);
-           eti=(KontoTreeItem*)(eti->nextSibling()));
+           eti=(KontoTreeItem*)(eti->child(etiCurrent+=1)));
       if (eti!=NULL)
           kontoTree->setCurrentItem(eti);
       else
@@ -779,6 +776,14 @@ void TimeMainWindow::changeDate(const QDate& datum)
   zeitChanged();
   emit (currentDateSelected(currentDateSel));
   statusBar->dateWarning(!currentDateSel, datum);
+  
+  //Append Warning if current file is checked in
+  if( !currentDateSel ){
+		if(abtList->checkInState())
+		{
+			statusBar->appendWarning(!currentDateSel, " -- Dieser Tag ist bereits eingecheckt!");
+		}
+	}
 }
 
 void TimeMainWindow::refreshKontoListe()
@@ -811,6 +816,35 @@ void TimeMainWindow::reloadDefaultComments()
   }
   abtList->clearDefaultComments();
   defaultCommentReader.read(abtList,xmlfilelist);
+  
+  
+	if( zk != NULL )
+	{
+		#ifdef WIN32
+	  KontoDatenInfoDatabase* kdib = (KontoDatenInfoDatabase*)zk;
+	  if( kdib != NULL )
+	  { 
+	    if(!kdib->readDefaultCommentsInto( abtList ))
+	    {
+				QMessageBox::warning(this,"Warnung", 
+					"Die Default Kommentare konnten nicht aus der Datenbank gelesen werden.", 
+					QMessageBox::Yes, QMessageBox::Yes);  
+	    }	    
+	  }
+	  #endif
+	  #ifndef WIN32
+	  KontoDatenInfoZeit* kdiz = (KontoDatenInfoZeit*)zk;
+	  if( kdiz != NULL )
+	  {
+			if(!kdiz->readDefaultComments(abtList))
+			{
+				QMessageBox::warning(this,"Warnung", 
+					"Die Default Kommentare konnten nicht neu gelesen werden.", 
+					QMessageBox::Yes, QMessageBox::Yes);
+			}
+		}	
+	  #endif	  
+	}	  
 }
 
 /**
@@ -822,7 +856,7 @@ void TimeMainWindow::inPersoenlicheKonten(bool hinzufuegen)
 
   if (!inPersoenlicheKontenAllowed) return;
 
-  Q3ListViewItem * item=kontoTree->currentItem();
+  QTreeWidgetItem * item=kontoTree->currentItem();
 
   if (!item) return;
 
@@ -831,13 +865,13 @@ void TimeMainWindow::inPersoenlicheKonten(bool hinzufuegen)
 
   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
 
-  if (item->depth()==2) {
+  if (kontoTree->getItemDepth(item)==2) {
     abtList->moveKontoPersoenlich(abt,ko,hinzufuegen);
     kontoTree->refreshAllItemsInKonto(abt,ko);
     return;
   }
   else {
-    if (item->depth()==3) {
+    if (kontoTree->getItemDepth(item)==3) {
       abtList->moveUnterKontoPersoenlich(abt,ko,uko,hinzufuegen);
       kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
       return;
@@ -852,7 +886,7 @@ void TimeMainWindow::inPersoenlicheKonten(bool hinzufuegen)
 /**
  * Aendert die Einstellungen fuer die Menueshortcuts entsprechend dem selektierten Item
  */
-void TimeMainWindow::changeShortCutSettings(Q3ListViewItem * item)
+void TimeMainWindow::changeShortCutSettings(QTreeWidgetItem * item)
 {
   bool iseintragsitem=kontoTree->isEintragsItem(item);
   bool isUnterkontoItem=kontoTree->isUnterkontoItem(item);
@@ -869,7 +903,7 @@ void TimeMainWindow::changeShortCutSettings(Q3ListViewItem * item)
 
   int depth=-1;
   if (item)
-    depth=item->depth();
+    depth=kontoTree->getItemDepth(item);
 
   if (iseintragsitem) {
 
@@ -890,8 +924,8 @@ void TimeMainWindow::changeShortCutSettings(Q3ListViewItem * item)
   }
   else {
     // Auch bei Konten und Unterkonten in Pers. Konten PersKontAction auf On stellen.
-    inPersKontAction->setOn((item&&(top==PERSOENLICHE_KONTEN_STRING)&&(item->depth()>=2)&&(item->depth()<=3)));
-    inPersKontAction->setEnabled((!abtList->checkInState())&&(item&&(item->depth()>=2)&&(item->depth()<=3)));
+    inPersKontAction->setChecked((item&&(top==PERSOENLICHE_KONTEN_STRING)&&(kontoTree->getItemDepth(item)>=2)&&(kontoTree->getItemDepth(item)<=3)));
+    inPersKontAction->setEnabled((!abtList->checkInState())&&(item&&(kontoTree->getItemDepth(item)>=2)&&(kontoTree->getItemDepth(item)<=3)));
     editUnterKontoAction->setEnabled(false);
     emit eintragSelected(false);
     emit augmentableItemSelected(!abtList->checkInState()&&isUnterkontoItem);
@@ -907,8 +941,8 @@ void TimeMainWindow::updateCaption()
 {
    QString abt, ko, uko;
    int idx;
-   abtList->getAktiv(abt,ko,uko,idx);
-   setCaption("sctime - "+ abt+"/"+ko+"/"+uko);
+   abtList->getAktiv(abt,ko,uko,idx);   
+   setWindowTitle("sctime - "+ abt+"/"+ko+"/"+uko);   
 }
 
 void TimeMainWindow::resetDiff()
@@ -924,7 +958,7 @@ void TimeMainWindow::resetDiff()
 void TimeMainWindow::flagsChanged(const QString& abt, const QString& ko, const QString& uko, int idx)
 {
 
-  Q3ListViewItem * item=kontoTree->currentItem();
+  QTreeWidgetItem * item=kontoTree->currentItem();
 
   if (!item) return;
 
@@ -933,9 +967,9 @@ void TimeMainWindow::flagsChanged(const QString& abt, const QString& ko, const Q
 
   kontoTree->itemInfo(item,selectedtop,selectedabt,selectedko,selecteduko,selectedidx);
   if ((selectedabt==abt)&&(selectedko==ko)&&(selecteduko==uko)&&(selectedidx==idx)) {
-    inPersKontAction->setOn((abtList->getEintragFlags(abt,ko,uko,idx)&UK_PERSOENLICH)&&(!abtList->checkInState()));
+    inPersKontAction->setChecked((abtList->getEintragFlags(abt,ko,uko,idx)&UK_PERSOENLICH)&&(!abtList->checkInState()));
   }
-
+	
   updateCaption();
 }
 
@@ -943,12 +977,12 @@ void TimeMainWindow::checkIn()
 {
   if (abtList->getDatum()>=QDate::currentDate()) {
     QMessageBox::critical(0,"Fehler","Heutiges Datum kann nicht über die GUI eingecheckt werden.\nZeiten nicht eingecheckt!",
-                       QMessageBox::Ok | QMessageBox::Default,0);
+                       QMessageBox::Ok, QMessageBox::Ok);
     return;
   }
   if (abtList->checkInState()) {
     QMessageBox::critical(0,"Fehler","Ausgewähltes Datum ist bereits eingecheckt.\nZeiten nicht eingecheckt!",
-                       QMessageBox::Ok | QMessageBox::Default,0);
+                       QMessageBox::Ok, QMessageBox::Ok);
     return;
   }
   settings->writeSettings(abtList);
@@ -957,7 +991,7 @@ void TimeMainWindow::checkIn()
   // do checkin
   if (!abtList->checkIn()) {
     QMessageBox::critical(0,"Fehler","Fehler beim einchecken.\nZeiten nicht eingecheckt!",
-                       QMessageBox::Ok | QMessageBox::Default,0);
+                       QMessageBox::Ok, QMessageBox::Ok);
     return;
   } else {
     // move zeit* files
@@ -969,67 +1003,30 @@ void TimeMainWindow::checkIn()
   kontoTree->showAktivesProjekt();
 }
 
-void TimeMainWindow::showContextMenu(Q3ListViewItem * item, const QPoint& mousepos, int col)
-{
-  /*if (kontoTree->isEintragsItem(item))
-    return;
-  QString top,uko,konto,abt;
-  int idx;
-  kontoTree->itemInfo(item,top,abt,konto,uko,idx);
-  int depth=item->depth();
-
-  QPoint pos=mousepos;
-  QMenu contextMenu(this);
-  QAction* editAction=NULL;
-  if (kontoTree->isEintragsItem(item)) {
-    editAction=contextMenu.addAction("Editieren");
-    QRect editRect=contextMenu.actionGeometry(editAction);
-    if (!settings->singleClickActivation()) {
-      contextMenu.setActiveAction (editAction);
-      pos-=QPoint(5,5);
-    }
-  }
-  QAction* openInAllAccountsAction=NULL;
-  if ((top!=ALLE_KONTEN_STRING)&&(depth>=1))
-    openInAllAccountsAction=contextMenu.addAction("Zu diesem Konto in \"Alle Konten\" springen");
-  QAction* bgColorAction=NULL;
-  if ((depth>=1)&&(depth<=3))
-    bgColorAction=contextMenu.addAction("Hintergrundfarbe setzen");
-  QAction* action=contextMenu.exec(pos);
-  if (action) {
-    if (action==openInAllAccountsAction) {
-      Q3ListViewItem *newitem = kontoTree->sucheKontoItem(ALLE_KONTEN_STRING,abt,konto);
-      if (item) {
-        kontoTree->setCurrentItem(newitem);
-        kontoTree->ensureItemVisible(newitem);
-      }
-    }
-    if (action==editAction) {
-      callUnterKontoDialog(item);
-    }
-    if (action==bgColorAction) {
-      callColorDialog(item);
-    }
-  }*/
+void TimeMainWindow::showContextMenu(const QPoint& pos)
+{	  
    if (!settings->singleClickActivation())
-     callUnterKontoDialog(item);
+   {
+		 callUnterKontoDialog(kontoTree->itemAt(pos));
+	 }
 }
 
 /**
  * Erzeugt einen UnterkontoDialog fuer item.
  */
-void TimeMainWindow::callUnterKontoDialog(Q3ListViewItem * item)
-{
+void TimeMainWindow::callUnterKontoDialog(QTreeWidgetItem * item)
+{	
   if ((!kontoTree->isEintragsItem(item)))
-    return;
-
+    return;	
+	
   QString top,uko,ko,abt;
 
   int idx;
 
   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
-
+	
   unterKontoDialog=new UnterKontoDialog(abt,ko,uko,idx,abtList,&defaultTags, true ,this, abtList->checkInState());
+  unterKontoDialog->setSettings(settings);
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int )), kontoTree,
   SLOT(refreshItem(const QString&, const QString&, const QString&,int )));
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int )), this,
@@ -1042,35 +1039,70 @@ void TimeMainWindow::callUnterKontoDialog(Q3ListViewItem * item)
           kontoTree, SLOT(refreshAllItemsInUnterkonto(const QString&, const QString&, const QString&)));
   if (abtList->isAktiv(abt,ko,uko,idx) && (abtList->getDatum()==QDate::currentDate()))
     connect(this, SIGNAL(minuteTick()),unterKontoDialog->getZeitBox(),SLOT(incrMin()));
-  unterKontoDialog->show();
+  
+  QPoint pos;
+  QSize size;
+  settings->getUnterKontoWindowGeometry(pos, size);   
+  if( !size.isNull() ){
+		unterKontoDialog->resize(size);
+		unterKontoDialog->move(pos);
+	}
+  unterKontoDialog->exec();  
 }
 
 /**
  * Baut den Kontosuchdialog auf, und zeigt das Such-Ergebnis an.
  */
 void TimeMainWindow::callFindKontoDialog()
-{
-
+{  
   QString konto;
-
-  FindKontoDialog findKontoDialog(abtList,&konto,this);
-  if (findKontoDialog.exec()!=QDialog::Accepted) return;
-
-
-  QString abt=abtList->findAbteilungOfKonto(konto);
-  if (abt=="") {
-    QMessageBox::warning(0,"Konto nicht gefunden","Das Konto "+konto+" konnte nicht gefunden werden.",
-                       QMessageBox::Ok | QMessageBox::Default,0);
-    return;
-  }
-
-  Q3ListViewItem *item = kontoTree->sucheKontoItem(ALLE_KONTEN_STRING,abt,konto);
-  if (item) {
-    kontoTree->setCurrentItem(item);
-    kontoTree->ensureItemVisible(item);
-  }
+  
+  FindKontoDialog findKontoDialog(abtList,this);
+  int rcFindDialog = findKontoDialog.exec();
+  if( rcFindDialog == QDialog::Rejected )
+  {
+		return;
+	}
+	else if( rcFindDialog == QDialog::Accepted )
+	{
+		QStringList items = findKontoDialog.getSelectedItems();
+		
+		if( items.size() > 0 )
+		{									
+			//Konto was searched
+			if( items.size() == 3 )
+			{
+				QTreeWidgetItem *item = kontoTree->sucheKontoItem(items.at(0), 
+							items.at(1), items.at(2));
+				openItem( item );
+			}
+			//Unterkonto was searched
+			if( items.size() == 4 )
+			{
+				QTreeWidgetItem *item = kontoTree->sucheUnterKontoItem(
+							items.at(0), items.at(1), items.at(2), items.at(3) );
+				openItem( item );
+			}
+			//Kommentar was searched
+			if( items.size() == 5 )
+			{
+				QTreeWidgetItem *item = kontoTree->sucheKommentarItem(
+							items.at(0), items.at(1), items.at(2), 
+							items.at(3), items.at(4));
+				openItem( item );
+			}
+		}
+	} 
 }
 
+void TimeMainWindow::openItem( QTreeWidgetItem *item )
+{
+	if (item) 
+	{
+		kontoTree->setCurrentItem(item);			
+	}
+}
+	
 void TimeMainWindow::callPreferenceDialog()
 {
   bool oldshowtypecolumn = settings->showTypeColumn();
@@ -1089,20 +1121,21 @@ void TimeMainWindow::callPreferenceDialog()
   }
   kontoTree->showPersoenlicheKontenSummenzeit(settings->persoenlicheKontensumme());
   if (!settings->showTypeColumn()) {
-  	kontoTree->hideColumn(1);
-  	kontoTree->header()->setResizeEnabled(false, 1);
+  	kontoTree->hideColumn(1);  	  	
   } else
   {
-  	if (!oldshowtypecolumn)
-    	kontoTree->header()->setResizeEnabled(true, 1);
-    	kontoTree->adjustColumn(1);
+  	if (!oldshowtypecolumn)			
+			kontoTree->showColumn( 1 );
+			kontoTree->resizeColumnToContents( 1 );    	
+			
   }  
+  //kontoTree->updateColumnWidth();
 }
 
 /**
  * Setzt das zu Item gehoerende Unterkonto als aktiv.
  */
-void TimeMainWindow::setAktivesProjekt(Q3ListViewItem * item)
+void TimeMainWindow::setAktivesProjekt(QTreeWidgetItem * item)
 {
   bool currentDateSel = (abtList->getDatum()==QDate::currentDate());
   if (!kontoTree->isEintragsItem(item)) return;
@@ -1122,6 +1155,7 @@ void TimeMainWindow::setAktivesProjekt(Q3ListViewItem * item)
   abtList->setAsAktiv(abt,ko,uko,idx);
   kontoTree->refreshItem(oldabt,oldko,olduk,oldidx);
   kontoTree->refreshItem(abt,ko,uko,idx);
+  kontoTree->setCurrentItem(item);  
   updateCaption();
 }
 
@@ -1144,10 +1178,11 @@ void TimeMainWindow::callHelpDialog()
 {
   QDialog * helpDialog = new QDialog(this);
   QVBoxLayout* layout = new QVBoxLayout(helpDialog);
-  Q3TextEdit * helpBrowser = new Q3TextEdit(helpDialog,"Anleitung");
+  QTextEdit * helpBrowser = new QTextEdit("Anleitung", helpDialog);
 
-  helpBrowser->setMimeSourceFactory(mimeSourceFactory);
-  helpBrowser->setTextFormat(Qt::RichText);
+  //helpBrowser->setMimeSourceFactory(mimeSourceFactory);
+  //helpBrowser->setTextFormat(Qt::RichText); //Qt3
+  helpBrowser->setAcceptRichText(true);
   helpBrowser->setText(sctimehelptext);
 
   helpBrowser->setReadOnly(true);
@@ -1155,12 +1190,14 @@ void TimeMainWindow::callHelpDialog()
 
   layout->addSpacing(7);
 
-  QHBoxLayout* buttonlayout=new QHBoxLayout(layout,3);
+  QHBoxLayout* buttonlayout=new QHBoxLayout();  
+  buttonlayout->setContentsMargins(3,3,3,3);
   QPushButton * okbutton=new QPushButton( "OK", helpDialog);
 
   buttonlayout->addStretch(1);
   buttonlayout->addWidget(okbutton);
   buttonlayout->addStretch(1);
+  layout->addLayout(buttonlayout);
   layout->addSpacing(4);
 
   helpDialog->resize(600,450);
@@ -1179,16 +1216,21 @@ void TimeMainWindow::callHelpDialog()
 void TimeMainWindow::callAboutBox()
 {
   QDialog * aboutBox=new QDialog(this);
-  aboutBox->setPaletteBackgroundColor(Qt::white);
-  QGridLayout* layout=new QGridLayout(aboutBox,7,3);
+  //aboutBox->setPaletteBackgroundColor(Qt::white);
+  aboutBox->setBackgroundRole(QPalette::Window);
+  aboutBox->setAutoFillBackground( true );
+  aboutBox->setStyleSheet("background-color:#FFFFFF;");
+  QGridLayout* layout=new QGridLayout(aboutBox);  
   QLabel* logo=new QLabel(aboutBox);
-  logo->setPixmap(QPixmap((const char **)scLogo_15Farben_xpm));
+  logo->setPixmap(QPixmap(":/scLogo_15Farben"));
+  
   // huh?!? why do we need these strange numbers? I guess its a bug in qt.
   layout->setRowMinimumHeight(0,logo->pixmap()->height()+69);
 
   layout->addWidget(logo,0,0);
-  QLabel versioninfo(QString("<h2>sctime</h2><nobr><b>Version:</b> ")+QUOTEME(VERSIONSTR)+
-                             "</nobr><br><nobr><b>Datum des Builds:</b> "+QUOTEME(BUILDDATESTR)+"</nobr>",aboutBox);
+  QLabel versioninfo(QString("<h2>sctime</h2><nobr><b>Version:</b> ")+QUOTEME(VERSIONSTR)+														 
+                             "</nobr><br><nobr><b>Qt Version:</b> "+ QUOTEME(QT_VERSION_STR) + "</nobr>" +
+                             "<br><nobr><b>Datum des Builds:</b> "+QUOTEME(BUILDDATESTR)+"</nobr>",aboutBox);
   versioninfo.setTextFormat(Qt::RichText);
   layout->addWidget(&versioninfo,0,1);
   layout->addItem(new QSpacerItem(0, 20), 1, 0);
@@ -1196,9 +1238,12 @@ void TimeMainWindow::callAboutBox()
   layout->addWidget(new QLabel("Florian Schmitt <f.schmitt@science-computing.de>",aboutBox),2,1);
   layout->addWidget(new QLabel("Patches:",aboutBox),3,0);
   layout->addWidget(new QLabel("Marcus Camen <m.camen@science-computing.de>",aboutBox),3,1);
-  layout->addItem(new QSpacerItem(0, 18), 4, 0);
-  layout->addMultiCellWidget(new QLabel("<center>This Program is licensed under the GNU Public License.</center>",aboutBox),5,5,0,1);
-  layout->addItem(new QSpacerItem(0, 18), 6, 0);
+  layout->addWidget(new QLabel("Core Developer:",aboutBox),4,0);
+  layout->addWidget(new QLabel("Alexander Wütz <a.wuetz@science-computing.de>",aboutBox),4,1);
+  layout->addItem(new QSpacerItem(0, 18), 5, 0);
+  //layout->addMultiCellWidget(new QLabel("<center>This Program is licensed under the GNU Public License.</center>",aboutBox),5,5,0,1);
+  layout->addWidget(new QLabel("<center>This Program is licensed under the GNU Public License.</center>",aboutBox),6,0,6,2);
+  layout->addItem(new QSpacerItem(0, 18), 7, 0);
 
   QHBoxLayout* buttonlayout=new QHBoxLayout();
   QPushButton * okbutton=new QPushButton( "OK", aboutBox);
@@ -1206,16 +1251,17 @@ void TimeMainWindow::callAboutBox()
   buttonlayout->addStretch(1);
   buttonlayout->addWidget(okbutton);
   buttonlayout->addStretch(1);
-  layout->addMultiCellLayout(buttonlayout,7,7,0,1);
+  //layout->addMultiCellLayout(buttonlayout,7,7,0,1);
+  layout->addLayout(buttonlayout,9,0,9,2);
   connect (okbutton, SIGNAL(clicked()), aboutBox, SLOT(close()));
-  layout->addRowSpacing(8,10);
-  layout->addItem(new QSpacerItem(0, 10), 8, 0);
-
+  //layout->addRowSpacing(8,10);
+  layout->addItem(new QSpacerItem(0, 10), 9, 0);
+	
   aboutBox->exec();
 
 }
 
-void TimeMainWindow::callBereitschaftsDialog(Q3ListViewItem * item)
+void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item)
 {
   if ((!kontoTree->isUnterkontoItem(item))||(abtList->checkInState()))
     return;
@@ -1259,11 +1305,14 @@ void TimeMainWindow::callBereitschaftsDialog(Q3ListViewItem * item)
   bereitschaftsView->setSelectionList(bereitschaften);
   layout->addWidget(bereitschaftsView);
 
-  QHBoxLayout* buttonlayout=new QHBoxLayout(layout,3);
+  QHBoxLayout* buttonlayout=new QHBoxLayout();
+  //buttonlayout->setParent(layout);
+  buttonlayout->setContentsMargins(3,3,3,3);
   buttonlayout->addStretch(1);
   buttonlayout->addWidget(okbutton);
   buttonlayout->addWidget(cancelbutton);
-
+	layout->addLayout(buttonlayout);
+	
   connect (okbutton, SIGNAL(clicked()), &dialog, SLOT(accept()));
   connect (cancelbutton, SIGNAL(clicked()), &dialog, SLOT(reject()));
 
@@ -1280,39 +1329,44 @@ void TimeMainWindow::callBereitschaftsDialog(Q3ListViewItem * item)
 
 void TimeMainWindow::callColorDialog()
 {
-   Q3ListViewItem * item=kontoTree->currentItem();
+   QTreeWidgetItem * item=kontoTree->currentItem();
    QString top,uko,ko,abt;
    int idx;
    kontoTree->itemInfo(item,top,abt,ko,uko,idx);
    
    ColorChooser cc(abtList->hasBgColor(abt,ko,uko),abtList->getBgColor(abt,ko,uko));
    cc.exec();
-   if (cc.result()) {
+   
+   if (cc.result()) {		
      QColor* color=cc.selectedColor();
      if (color)
+     {			 
        abtList->setBgColor(*color, abt,ko,uko);
+		 }
      else
        abtList->unsetBgColor(abt,ko,uko);
+     
      if (ko!="") {
        if(uko!="")
          kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
        else
          kontoTree->refreshAllItemsInKonto(abt,ko);
-     } else
+     } 
+     else
        kontoTree->load(abtList);
    }
 }
 
 void TimeMainWindow::jumpToAlleKonten()
 {
-   Q3ListViewItem * item=kontoTree->currentItem();
+   QTreeWidgetItem * item=kontoTree->currentItem();
    QString top,uko,konto,abt;
    int idx;
    kontoTree->itemInfo(item,top,abt,konto,uko,idx);
-   Q3ListViewItem *newitem = kontoTree->sucheKontoItem(ALLE_KONTEN_STRING,abt,konto);
+   QTreeWidgetItem *newitem = kontoTree->sucheKontoItem(ALLE_KONTEN_STRING,abt,konto);
    if (newitem) {
       kontoTree->setCurrentItem(newitem);
-      kontoTree->ensureItemVisible(newitem);
+      //kontoTree->currentItem(newitem);
    }
 }
 
@@ -1327,7 +1381,12 @@ void TimeMainWindow::checkComment(const QString& abt, const QString& ko , const 
         "Ihnen eingegebenen Kommentar kommt ein Zeichen vor, das ausserhalb von "
         "ISO-8859-1 ist und somit auf manchen Plattformen nicht darstellbar ist. "
         "Dies kann spaeter eventuell zu Problemen mit Auswerteskripten fuehren.",
-                         QMessageBox::Ok | QMessageBox::Default,0);
+                         QMessageBox::Ok, QMessageBox::Ok);
     }
   }
+}
+
+void TimeMainWindow::moveEvent(QMoveEvent *event)
+{	
+	settings->setMainWindowGeometry(pos(),size());
 }

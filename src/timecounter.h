@@ -22,7 +22,7 @@
 */
 
 #ifndef TIMECOUNTER_H
-#define  TIMECOUNTER_H
+#define TIMECOUNTER_H
 
 #include <QString>
 #include <QStringList>

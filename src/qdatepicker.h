@@ -23,7 +23,7 @@
 
 #ifndef QDATEPICKER_H
 #define QDATEPICKER_H
-#include <qdatetime.h>
+#include <QDateTime>
 #include <QFrame>
 #include <QValidator>
 #include <QCalendarWidget>

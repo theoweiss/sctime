@@ -3,14 +3,15 @@
 
 #include "GetOpt.h"
 
-#include <qapplication.h>
-#include <qfileinfo.h>
+#include <QApplication>
+#include <QFileInfo>
 #include <stdlib.h>
 
 #include <assert.h>
 
 #include <QLinkedList>
 
+#include <iostream>
 /**
    \class GetOpt
 
@@ -151,13 +152,13 @@ GetOpt::GetOpt( const QStringList &a )
 void GetOpt::init( int argc, char *argv[], int offset )
 {
     numReqArgs = numOptArgs = 0;
-    currArg = 1; // appname is not part of the arguments
+    currArg = 1; // appname is not part of the arguments    
     if ( argc ) {
         // application name
         aname = QFileInfo( QString::fromUtf8( argv[0] ) ).fileName();
-        // arguments
-        for ( int i = offset; i < argc; ++i )
-            args.append( QString::fromUtf8( argv[i] ) );
+        // arguments        
+        for ( int i = offset; i < argc; ++i )       				
+            args.append( QString::fromUtf8( argv[i] ) );				
     }
 }
 
@@ -185,7 +186,7 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
     // like --key=value.
     QLinkedList<QString> stack;
     {
-        QStringList::const_iterator it = args.fromLast();
+        QStringList::const_iterator it = args.begin();
         const QStringList::const_iterator begin = args.begin();
         const QStringList::const_iterator end = args.end();
         while ( it!=end ) {
@@ -220,8 +221,8 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
                     exit( 2 );
                 }
                 t = LongOpt;
-                // split key=value style arguments
-                int equal = a.find( '=' );
+                // split key=value style arguments                                
+                int equal = a.indexOf( '=' );
                 if ( equal >= 0 ) {
                     stack.append( a.mid( equal + 1 ) );
                     currArg--;
@@ -277,7 +278,7 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
             }
             if ( t == LongOpt && opt.type == OUnknown ) {
                 if ( currOpt.type != OVarLen ) {
-                    qWarning( "Unknown option --%s", a.ascii() );
+                    qWarning( "Unknown option --%s", a.toAscii() );
                     return false;
                 } else {
                     // VarLength options support arguments starting with '-'
@@ -352,7 +353,7 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
             } else {
                 QString n = currType == LongOpt ?
                             currOpt.lname : QString( QChar( currOpt.sname ) );
-                qWarning( "Expected an argument after '%s' option", n.ascii() );
+                qWarning( "Expected an argument after '%s' option", n.toAscii() );
                 return false;
             }
             break;
@@ -449,9 +450,9 @@ void GetOpt::setSwitch( const Option &o )
 void GetOpt::addOption( char s, const QString &l, QString *v )
 {
     Option opt( OArg1, s, l );
-    opt.stringValue = v;
-    addOption( opt );
-    *v = QString::null;
+    opt.stringValue = v;    
+    addOption( opt ); 
+    *v = QString::null;    
 }
 
 /**

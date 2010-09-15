@@ -20,7 +20,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 */
-#include <qapplication.h>
+#include <QApplication>
 #ifdef WIN32
 #include "kontodateninfodatabase.h"
 #include "bereitschaftsdateninfodatabase.h"
@@ -36,6 +36,7 @@
 #include "GetOpt.h"
 #include <QFileInfo>
 #include <QDir>
+
 
 /**
  *  In dieser Klasse wird hauptsaechlich ein TimeMainWindow erzeugt und mit Daten versorgt.
@@ -91,7 +92,7 @@ class SCTimeApp: public QApplication
         bereitschaftsdatenReader=new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
 #endif
       mainWindow=new TimeMainWindow(zk,bereitschaftsdatenReader);
-      setMainWidget(mainWindow);
+      //setMainWidget(mainWindow); //Qt3
       mainWindow->show();
     }
 

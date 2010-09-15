@@ -25,8 +25,8 @@
 #include "defaulttagreader.h"
 #include "globals.h"
 #include "abteilungsliste.h"
-#include "qfile.h"
-#include "qdir.h"
+#include <QFile>
+#include <QDir>
 #ifndef NO_XML
 #include "qdom.h"
 #endif

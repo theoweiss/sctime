@@ -26,8 +26,8 @@
 
 #include <map>
 #include "unterkontoeintrag.h"
-#include "qstring.h"
-#include "qstringlist.h"
+#include <QString>
+#include <QStringList>
 #include "descdata.h"
 #include <iostream>
 #include <QColor>

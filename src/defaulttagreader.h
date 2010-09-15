@@ -22,7 +22,7 @@
 #ifndef DEFAULTTAGREADER_H
 #define DEFAULTTAGREADER_H
 
-#include "qstringlist.h"
+#include <QStringList>
 
 class DefaultTagReader
 {

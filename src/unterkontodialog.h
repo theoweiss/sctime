@@ -24,18 +24,29 @@
 #ifndef UNTERKONTODIALOG_H
 #define UNTERKONTODIALOG_H
 
-#include "qdialog.h"
-#include "qpushbutton.h"
-#include "qcombobox.h"
-#include "qlayout.h"
-#include "qlabel.h"
-#include "qlineedit.h"
-#include "qcheckbox.h"
+#include <QDialog>
+#include <QPushButton>
+#include <QLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QStringList>
+#include <QComboBox>
+#include <QGroupBox>
+#include <QCheckBox>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QTextCodec>
+#include <QMessageBox>
+#include <iostream>
+
 #include "abteilungsliste.h"
 #include "timeedit.h"
+
 #include "bereitschaftsview.h"
-
-
+#include "globals.h"
+//#include "sctimeapp.h"
+#include "timemainwindow.h"
+#include "sctimexmlsettings.h"
 
 /**
  * Der Dialog zum Aendern der Eigenschaften eines Unterkontos.
@@ -47,11 +58,11 @@ class UnterKontoDialog: public QDialog
   public:
     UnterKontoDialog(const QString& abt,const  QString& ko, const  QString& uko, int idx,
                      AbteilungsListe* abtlist,  QStringList* taglist,
-                     bool connectZeiten, QWidget * parent=0, bool readOnly=false);
+                     bool connectZeiten, QMainWindow * parent=0, bool readOnly=false);
     ZeitBox* getZeitAbzurBox();
     ZeitBox* getZeitBox();
-    QString getComment();
-
+    QString getComment();		
+    void setSettings(SCTimeXMLSettings* s);
   public slots:
     virtual void accept();
     virtual void checkInput();
@@ -64,7 +75,7 @@ class UnterKontoDialog: public QDialog
   private slots:
     virtual void projektAktivierenButtonClicked();
     virtual void addTag();
-
+  
   private:
     QLineEdit* commentedit;
     QComboBox* commentcombo;
@@ -79,6 +90,8 @@ class UnterKontoDialog: public QDialog
     QCheckBox* persoenlichesKonto;
     QPushButton* projektAktivieren;
     EintragsListe* m_unterkonto;
+    QWidget* parent;
+    SCTimeXMLSettings* settings;
     //BereitschaftsView* bereitschaftsView;
     //QStringList m_bereitschaften;
 };

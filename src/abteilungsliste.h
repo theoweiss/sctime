@@ -23,7 +23,7 @@
 #define  ABTEILUNGSLISTE_H
 
 #include "kontoliste.h"
-#include "qdatetime.h"
+#include <QDateTime>
 #include <iostream>
 #include <QColor>
 

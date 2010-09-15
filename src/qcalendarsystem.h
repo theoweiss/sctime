@@ -24,8 +24,8 @@
 #ifndef QCALENDARSYSTEM_H
 #define QCALENDARSYSTEM_H
 
-#include <qdatetime.h>
-#include <qstring.h>
+#include <QDateTime>
+#include <QString>
 
 class QCalendarSystemPrivate;
 

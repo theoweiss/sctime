@@ -23,9 +23,9 @@
  */
 
 #include "qdatepicker.h"
-#include <qpushbutton.h>
-#include <qdir.h>
-#include <qstringlist.h>
+#include <QPushButton>
+#include <QDir>
+#include <QStringList>
 #include "datedialog.h"
 #include "globals.h"
 #include <iostream>
@@ -59,7 +59,11 @@ void DateDialog::dateChangedSlot(QDate date)
 {
   if ((date.month()!=currentMonth)||(date.year()!=currentYear)) {
     QDir qd(configDir+"/checkedin");
-    QStringList files=qd.entryList("zeit-"+date.toString("yyyy-MM")+"-*.xml");
+    std::cout << configDir.toStdString() << std::endl;
+    QStringList dateList;
+    dateList << "zeit-" << date.toString("yyyy-MM") << "-*.xml"; //Since Qt4
+    //QStringList files=qd.entryList("zeit-"+date.toString("yyyy-MM")+"-*.xml");
+    QStringList files=qd.entryList(dateList);
     for ( QStringList::Iterator it = files.begin(); it != files.end(); ++it ) {      
       bool ok;
       QDate filedate;

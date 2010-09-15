@@ -4,11 +4,11 @@
 # Target is an application:  ../bin/sctime
 
 TEMPLATE = app
-VERSIONSTR = '"0.58"'
+VERSIONSTR = '"0.60"'
 CONFIG += warn_on qt
 CONFIG += uic debug
 OBJECTS_DIR = ../obj
-QT += qt3support xml sql gui core
+QT += xml sql gui core
 TARGET = ../bin/sctime
 !win32{
   BUILDDATESTR = '"`date`"'
@@ -78,19 +78,20 @@ HEADERS += abteilungsliste.h \
            bereitschaftsview.h \
            bereitschaftsmodel.h \
            colorchooser.h
-IMAGES += ../pics/hi16_action_apply.xpm \
-          ../pics/hi22_action_1downarrow.xpm \
-          ../pics/hi22_action_1uparrow.xpm \
-          ../pics/hi22_action_2downarrow.xpm \
-          ../pics/hi22_action_2uparrow.xpm \
-          ../pics/hi22_action_attach.xpm \
-          ../pics/hi22_action_edit.xpm \
-          ../pics/hi22_action_filesave.xpm \
-          ../pics/hi22_action_player_pause_half.xpm \
-          ../pics/hi22_action_player_pause.xpm \
-          ../pics/hi22_action_queue.xpm \
-          ../pics/scLogo_15Farben.xpm \
-          ../pics/sc_logo.xpm
+RESOURCES= ../pics/sctimeImages.qrc					 
+#IMAGES += ../pics/hi16_action_apply.xpm \
+#          ../pics/hi22_action_1downarrow.xpm \
+#          ../pics/hi22_action_1uparrow.xpm \
+#          ../pics/hi22_action_2downarrow.xpm \
+#          ../pics/hi22_action_2uparrow.xpm \
+#          ../pics/hi22_action_attach.xpm \
+#          ../pics/hi22_action_edit.xpm \
+#          ../pics/hi22_action_filesave.xpm \
+#          ../pics/hi22_action_player_pause_half.xpm \
+#          ../pics/hi22_action_player_pause.xpm \
+#          ../pics/hi22_action_queue.xpm \
+#          ../pics/scLogo_15Farben.xpm \
+#          ../pics/sc_logo.xpm
 FORMS += datedialogbase.ui \
          preferencedialogbase.ui \
          colorchooserbase.ui
@@ -110,6 +111,7 @@ win32{
   QMAKE_CXXFLAGS += -GX
   SOURCES += kontodateninfodatabase.cpp bereitschaftsdateninfodatabase.cpp DBConnector.cpp
   HEADERS += kontodateninfodatabase.h bereitschaftsdateninfodatabase.h DBConnector.h
+  RC_FILE += sctime.rc
 }
 hpux-acc{
   DEFINES += HPUX

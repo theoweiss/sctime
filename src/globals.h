@@ -35,7 +35,7 @@
 #define VERSIONSTR "unknown"
 #endif
 
-#include "qstring.h"
+#include <QString>
 
 /** Enthaelt das Verzeichnis in dem das sctime-Executable liegt*/
 extern QString execDir;

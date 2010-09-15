@@ -20,12 +20,14 @@
 
 */
 
-#include <qapplication.h>
-#include <qfont.h>
+#include <QApplication>
+#include <QFont>
 #include <iostream>
 #include "sctimeapp.h"
-#include "qstring.h"
-#include <qmessagebox.h>
+#include <QString>
+#include <QTranslator>
+#include <QLibraryInfo>
+#include <QMessageBox>
 #include <sys/stat.h>
 #include <sys/types.h>
 
@@ -33,6 +35,7 @@
 #include <sys/file.h>
 #include <unistd.h>
 #include <errno.h>
+#include <locale.h>
 #define LOCK_FD int
 #else
 #include <windows.h>
@@ -55,8 +58,8 @@
 #endif
 
 #include "globals.h"
-#include "qdir.h"
-#include "qfileinfo.h"
+#include <QDir>
+#include <QFileInfo>
 #include "GetOpt.h"
 
 #ifndef CONFIGSUBDIR
@@ -82,7 +85,7 @@ static LOCK_FD openlock( const QString &name )
    LOCK_FD fd = new QFile( name );
 
    if (!fd->open(QIODevice::ReadWrite)) {
-     ErrorApp EA("Kann Lockfile "+fd->name()+" nicht öffnen",dummy,0);
+     ErrorApp EA("Kann Lockfile "+fd->fileName()+" nicht öffnen",dummy,0);
      exit(1); /* can not open */
    }
 
@@ -156,8 +159,9 @@ static void closelock(LOCK_FD fd , const QString &name)
   fd->close();
 #endif
 
-  unlink(name);
+  unlink(name.toLatin1());
 }
+
 
 SCTimeApp* sctimeApp;
 
@@ -172,35 +176,79 @@ int main( int argc, char **argv )
 
   if (executable.isSymLink()) //Wir wollen den echten Pfad, um unsere Icons zu finden.
     executable.setFile(executable.readLink());
+	
+	if( argc == 2 && (strcmp(argv[1], "-h")==0||strcmp(argv[1],"--help")==0))
+	{
+		std::cout << "Usage: sctime [OPTION] " << std::endl << std::endl << 
+		" Available Options: " << std::endl <<
+		"   --configdir= \t Location of the directory where your files will be placed." << std::endl <<
+		"                \t Default is /home/<USER>/.sctime" << std::endl <<
+		"   --zeitkontenfile= \t Location of zeitkontenfile" << std:: endl <<
+		"   --bereitschaftsfile=  Location of bereitschaftsfile" << std::endl;
+		exit(0);
+	}
+	
+	//Set the correct encoding for the locale if LC_ALL or LC_CTYPE == POSIX or C
+#ifndef WIN32
+	char * lc_ctype_pointer = getenv("LC_CTYPE");
+	char * lc_all_pointer = getenv("LC_ALL");
+	//std::cout <<"BEGIN LC_CTYPE>>"<< lc_ctype_pointer <<"<<"<< std::endl;
+	if( lc_all_pointer != NULL ){
+		//std::cout <<"BEGIN LC_ALL  >>"<< lc_all_pointer <<"<<"<< std::endl;
+		if((strcmp(lc_all_pointer, "POSIX")==0) ||
+				(strcmp(lc_all_pointer, "C")==0) )
+		{
+			//std::cout <<"LC_ALL >>"<< lc_all_pointer <<"<<"<< std::endl;
+			putenv("LC_ALL=de_DE.UTF-8");
+		}
+	} 
+	if( lc_ctype_pointer != NULL ){
+		if((strcmp(lc_ctype_pointer, "POSIX")==0) ||
+				(strcmp(lc_ctype_pointer, "C")==0)){		
+			//std::cout <<"LC_CTYPE >>"<< lc_ctype_pointer <<"<<"<< std::endl;
+			if(putenv("LC_CTYPE=de_DE.UTF-8")){
+				std::cerr << "Error cannot set LC_CTYPE to utf8!" << std::endl;
+			}
+		}	
+	}
+	
+#endif
 
-  execDir=executable.dirPath(true);
+  //execDir=executable.dirPath(true);
+  execDir=executable.absolutePath();  
   // Pruefen, ob das Configdir ueber das environment gesetzt wurde
   QString configdirstring;
   QString zeitkontenfile;
-  QString bereitschaftsfile;
+  QString bereitschaftsfile;  
   char *envpointer;
 
   GetOpt opts(argc, argv);
-  opts.addOption('f',"configdir", &configdirstring);
+  opts.addOption('f',"configdir", &configdirstring);  
   opts.addOption('f',"zeitkontenfile", &zeitkontenfile);
   opts.addOption('f',"bereitschaftsfile", &bereitschaftsfile);
+  
   opts.parse();
-
+	
   if (configdirstring.startsWith("~/"))
       configdirstring.replace(0,2,QDir::homePath()+"/");
-
+	
   if (configdirstring.isEmpty()) {
+    
     envpointer = getenv("SCTIME_CONFIG_DIR");
+    
     if (envpointer)
         configdirstring = envpointer;
     else {
-        configdirstring = CONFIGSUBDIR; // default Configdir
+        configdirstring = CONFIGSUBDIR; // default Configdir        
     }
   }
+
   if (!directory.cd(configdirstring))
   {
+		
+			  
 #ifndef WIN32
-    directory.cd(directory.homeDirPath());
+    directory.cd(directory.homePath());
 #else
     if (!directory.cd("H:\\")) {
            ErrorApp ea("Kann nicht auf H:\\ zugreifen.",argc, argv );
@@ -209,6 +257,7 @@ int main( int argc, char **argv )
 #endif
     // neues directory anlegen, hineinwechseln, und merken.
     directory.mkdir(configdirstring);
+    
     if (!directory.cd(configdirstring))
     {
       ErrorApp ea("Kann in Verzeichnis "+configdirstring+" nicht wechseln!",argc, argv );
@@ -227,9 +276,9 @@ int main( int argc, char **argv )
 #endif
 
   LOCK_FD lfp=openlock(configDir+"/LOCK");
-
+     
   sctimeApp= new SCTimeApp( argc, argv , zeitkontenfile, bereitschaftsfile);
-
+     
   sctimeApp->exec();
 
   closelock(lfp, configDir+"/LOCK");

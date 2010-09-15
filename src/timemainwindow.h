@@ -20,18 +20,20 @@
 #ifndef TIMEMAINWINDOW_H
 #define TIMEMAINWINDOW_H
 
-#include <q3listview.h>
+#include <QTreeWidget>
 #include <QMainWindow>
-#include <Q3MimeSourceFactory>
+#include <QToolBar>
+//#include <QMimeSourceFactory>
 #include <QAction>
 //Added by qt3to4:
 #include <QCustomEvent>
+
 #include "kontodateninfo.h"
 #include "bereitschaftsdateninfo.h"
 #include "unterkontodialog.h"
 #include "kontotreeview.h"
 #include "toolbar.h"
-#include <QToolBar>
+
 #include "sctimexmlsettings.h"
 #include "defaultcommentreader.h"
 
@@ -39,6 +41,7 @@
 
 
 class StatusBar;
+class UnterKontoDialog;
 
 /** Diese Klasse implementiert das Hauptfenster des Programms,
     und sorgt zudem fuer das Fortschreiten der Zeit.
@@ -49,13 +52,13 @@ class TimeMainWindow: public QMainWindow
 
   public:
     TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* bereitschaftsdatenReader);
-    Q3ListView* getKontoTree() { return kontoTree; };
+    QTreeWidget* getKontoTree() { return kontoTree; };
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;        
-
+		
   public slots:
 
-    void callUnterKontoDialog(Q3ListViewItem * item);
+    void callUnterKontoDialog(QTreeWidgetItem * item);
 
     void callDateDialog();
 
@@ -78,12 +81,12 @@ class TimeMainWindow: public QMainWindow
 
     void inPersoenlicheKonten(bool hinzufuegen);
     void flagsChanged(const QString& abt, const QString& ko, const QString& uko, int idx);
-    void changeShortCutSettings(Q3ListViewItem * item);
+    void changeShortCutSettings(QTreeWidgetItem * item);
 
     void editUnterKontoPressed();
     void editBereitschaftPressed();
     void changeDate(const QDate& datum);
-    void setAktivesProjekt(Q3ListViewItem * item);
+    void setAktivesProjekt(QTreeWidgetItem * item);
     void showAdditionalButtons(bool show);
     void eintragAktivieren();
     void eintragHinzufuegen();
@@ -101,16 +104,16 @@ class TimeMainWindow: public QMainWindow
     void callFindKontoDialog();
     void callHelpDialog();
     void callPreferenceDialog();
-    void callBereitschaftsDialog(Q3ListViewItem * item);
+    void callBereitschaftsDialog(QTreeWidgetItem * item);
     void callColorDialog();
     void jumpToAlleKonten();
 
     void refreshKontoListe();
     void reloadDefaultComments();
     void configClickMode(bool singleClickActivation);
-    void mouseButtonInKontoTreeClicked(int button, Q3ListViewItem * item, const QPoint & pos, int c );
+    void mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int column );
     void copyNameToClipboard();
-    void showContextMenu(Q3ListViewItem * item, const QPoint& pos, int col);
+    void showContextMenu(const QPoint& pos);
     void showArbeitszeitwarning();
     void checkComment(const QString& abt, const QString& ko , const QString& uko,int idx);
 
@@ -163,7 +166,9 @@ class TimeMainWindow: public QMainWindow
      * Unterkonto mit mehreren Eintraegen) mit false
      */
     void aktivierbarerEintragSelected(bool isActivable);
-
+	
+	protected:
+		virtual void moveEvent( QMoveEvent *event);
   private:
     void closeEvent(QCloseEvent * event);
     KontoTreeView* kontoTree;
@@ -183,17 +188,18 @@ class TimeMainWindow: public QMainWindow
     AbteilungsListe* abtList;
     AbteilungsListe* abtListToday;
     StatusBar* statusBar;
-    Q3MimeSourceFactory* mimeSourceFactory;
+    //QMimeSourceFactory* mimeSourceFactory;
     DefaultCommentReader defaultCommentReader;
     QToolBar* powerToolBar;
     ToolBar* toolBar;
     QStringList defaultTags;
+    KontoDatenInfo* zk;
     bool paused;
     bool pausedAbzur;
-
+		void openItem( QTreeWidgetItem *item );
     // Workaround, um beim Setzen der Voreinstellung fuer den inPersoenlicheKonten-Button nicht das zugehoerige
     // Event auzuloesen. Wenn inPersoenlicheKontenAllowed=false, tut inPersoenlicheKonten(bool) gar nichts.
-    bool inPersoenlicheKontenAllowed;
+    bool inPersoenlicheKontenAllowed;        
 };
 
 #endif

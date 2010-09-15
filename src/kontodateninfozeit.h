@@ -25,7 +25,7 @@
 #define  KONTODATENINFOZEIT_H
 
 #include "kontodateninfo.h"
-#include "qobject.h"
+#include <QObject>
 
 class Einchecker:QObject
 {
@@ -70,10 +70,13 @@ class KontoDatenInfoZeit: public KontoDatenInfo
     bool readZeitFile(FILE *file, AbteilungsListe * abtlist);
     void setKommando(const QString& command);
     virtual bool checkIn(AbteilungsListe* abtlist);
+    
+    bool readDefaultComments(AbteilungsListe * abtList);
   private:
     Einchecker* ec;
     QString m_DatenFileName;
     QString m_Kommando;
+    bool readCommentsFromZeitFile(FILE* file, AbteilungsListe * abtList);
 };
 
 #endif

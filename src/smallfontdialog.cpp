@@ -23,23 +23,23 @@
 
 #include "smallfontdialog.h"
 
-#include "qdialog.h"
+#include <QDialog>
 #include "qevent.h"
-#include "qlineedit.h"
-#include "qpushbutton.h"
-#include "qcheckbox.h"
-#include "qcombobox.h"
-#include "qlayout.h"
-#include "qgroupbox.h"
-#include "qlabel.h"
-#include "qapplication.h"
-#include "qfontdatabase.h"
-#include "qstyle.h"
-#include <qfont.h>
-#include <qvalidator.h>
-#include <qstringlistmodel.h>
-#include <qlistview.h>
-#include <qheaderview.h>
+#include <QLineEdit>
+#include <QPushButton>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QLayout>
+#include <QGroupBox>
+#include <QLabel>
+#include <QApplication>
+#include <QFontDatabase>
+#include <QStyle>
+#include <QFont>
+#include <QValidator>
+#include <QStringListModel>
+#include <QListView>
+#include <QHeaderView>
 
 class QFontListView : public QListView
 {

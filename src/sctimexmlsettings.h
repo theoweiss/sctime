@@ -24,9 +24,9 @@
 #define MAX_WORKTIME_DEFAULT 10*60*60 // Warn if more time is spent
 
 #include "abteilungsliste.h"
-#include "qdatetime.h"
-#include "qpoint.h"
-#include "qsize.h"
+#include <QDateTime>
+#include <QPoint>
+#include <QSize>
 #include <iostream>
 #include <vector>
 
@@ -52,7 +52,7 @@ class SCTimeXMLSettings
       defaultcommentfiles.push_back("defaultcomments.xml");
       columnwidth.clear();
       unterKontoWindowPosition = QPoint(0,0);
-      unterKontoWindowSize = QSize(0,0);
+      unterKontoWindowSize = QSize(10,10);
       m_showTypeColumn=false;
       m_useCustomFont=false;
       m_dragNDrop=true;

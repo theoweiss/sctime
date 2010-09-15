@@ -24,10 +24,10 @@
 #include <iostream>
 #include <iomanip>
 #include <stdio.h>
-#include "qregexp.h"
+#include <QRegExp>
 #include "globals.h"
 #include "utils.h"
-#include "qmessagebox.h"
+#include <QMessageBox>
 
 
 Einchecker::Einchecker(AbteilungsListe * abtlist)
@@ -130,7 +130,7 @@ bool Einchecker::checkin(QDate date, const QString& konto, const QString& uko, i
             this, SLOT(onExit()) );*/
 
     QString command="zeit "+date.toString("dd.MM.yyyy")+" "+konto+" "+uko+" "+QString("").arg(roundTo(1.0/3600*sek,0.01))
-                    +" "+QString("").arg(roundTo(1.0/3600*sekabzur,0.01))+" "+kommentar.simplifyWhiteSpace();
+                    +" "+QString("").arg(roundTo(1.0/3600*sekabzur,0.01))+" "+kommentar.simplified();
 
     std::cout<<"uko"<<uko.toLocal8Bit().constData()<<std::endl;
     /*
@@ -144,7 +144,7 @@ bool Einchecker::checkin(QDate date, const QString& konto, const QString& uko, i
     }*/
     FILE* file;
 
-    if ((file = popen("echo -e n\\n|"+command+" 2>&1", "r")) == NULL) {
+    if ((file = popen("echo -e n\\n|"+command.toLatin1()+" 2>&1", "r")) == NULL) {
       QMessageBox::critical( 0,
                 "Fataler Fehler",
                 "Kann Zeitkommando nicht starten.",
@@ -165,7 +165,7 @@ bool Einchecker::checkin(QDate date, const QString& konto, const QString& uko, i
     std::cout<<qs.toLocal8Bit().constData()<<std::endl;
 
     QRegExp errorExp=QRegExp("\\* STOP \\*.*\\*{10,100}([^\\*].*)");
-    int pos = errorExp.search(qs);
+    int pos = errorExp.indexIn(qs);
     if (pos > -1) {
           std::cout<<"Fehler aufgetreten"<<std::endl;
           QString error = errorExp.cap(1);
@@ -216,6 +216,56 @@ KontoDatenInfoZeit::KontoDatenInfoZeit(QString sourcefile)
     m_DatenFileName=sourcefile;
 }
 
+bool KontoDatenInfoZeit::readCommentsFromZeitFile(FILE* file, AbteilungsListe * abtList)
+{
+	    char zeile[800];
+    int unterkontoCounter=0;
+
+    while (!feof(file)) {
+      // Konto, unterkonto sind eindeutig durch leerzeichen getrennt,
+      // der Rest muss gesondert behandelt werden.
+        if (fscanf(file,"%[^\n]",zeile)==1) {
+        // Falls alle drei Strings korrekt eingelesen wurden...
+
+            unterkontoCounter++;
+            QString qstringzeile=QString::fromLocal8Bit(zeile);
+            QStringList ql = qstringzeile.split("|");
+
+            if (ql.size()<7) {
+                continue;
+            }
+
+            QString abt = ql[0].simplified();
+            QString konto = ql[2].simplified();
+            QString unterkonto = ql[7].simplified();
+
+            QString verantwortlicher = ql[9].simplified();
+            QString typ = ql[10].simplified();
+
+            QString beschreibung = ql[11].simplified();
+
+            if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
+
+            //abtList->insertEintrag(abt,konto,unterkonto);
+            //abtList->setDescription(abt,konto,unterkonto,DescData(beschreibung,verantwortlicher,typ));
+            //abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
+            
+            if (ql.size()>12) {
+              QString commentstr = ql[12].simplified();
+              if (!commentstr.isEmpty()) {
+                UnterKontoListe::iterator itUk;
+                UnterKontoListe* ukl;
+                if (abtList->findUnterKonto(itUk,ukl,abt,konto,unterkonto)) {
+                  itUk->second.addDefaultComment(commentstr);
+                }
+              }
+            }
+        }
+        fscanf(file,"\n");
+    }
+    return (unterkontoCounter>0);
+}
+
 bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
 {
     char zeile[800];
@@ -235,14 +285,14 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
                 continue;
             }
 
-            QString abt = ql[0].simplifyWhiteSpace();
-            QString konto = ql[2].simplifyWhiteSpace();
-            QString unterkonto = ql[7].simplifyWhiteSpace();
+            QString abt = ql[0].simplified();
+            QString konto = ql[2].simplified();
+            QString unterkonto = ql[7].simplified();
 
-            QString verantwortlicher = ql[9].simplifyWhiteSpace();
-            QString typ = ql[10].simplifyWhiteSpace();
+            QString verantwortlicher = ql[9].simplified();
+            QString typ = ql[10].simplified();
 
-            QString beschreibung = ql[11].simplifyWhiteSpace();
+            QString beschreibung = ql[11].simplified();
 
             if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
 
@@ -251,7 +301,7 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
             abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
             
             if (ql.size()>12) {
-              QString commentstr = ql[12].simplifyWhiteSpace();
+              QString commentstr = ql[12].simplified();
               if (!commentstr.isEmpty()) {
                 UnterKontoListe::iterator itUk;
                 UnterKontoListe* ukl;
@@ -276,19 +326,53 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
       command="zeitkonten --mikrokonten --separator='|'";
     else
       command=m_Kommando;
-    file = popen(command, "r");
+    file = popen(command.toLatin1(), "r");
     if (!file) {
       std::cerr<<"Kann Kommando \""<<command.toStdString()<<"\" nicht ausfuehren."<<std::endl;
       return false;
     }
   } else {
-      file = fopen(m_DatenFileName, "r");
+      file = fopen(m_DatenFileName.toLatin1(), "r");
       if (!file) {
           std::cerr<<"Kann "<<m_DatenFileName.toLocal8Bit().constData()<<" nicht oeffnen."<<std::endl;
           return false;
       }
   }
-  bool result=readZeitFile(file,abtList);
+  
+	bool result=readZeitFile(file,abtList);
+		
+  if (m_DatenFileName.isEmpty())
+      pclose(file);
+  else
+      fclose(file);
+  return result;
+}
+
+bool KontoDatenInfoZeit::readDefaultComments(AbteilungsListe * abtList)
+{
+	//abtList->clear();
+  FILE* file;
+  if (m_DatenFileName.isEmpty()) {
+    QString command;
+    if (m_Kommando.isEmpty())
+      command="zeitkonten --mikrokonten --separator='|'";
+    else
+      command=m_Kommando;
+    file = popen(command.toLatin1(), "r");
+    if (!file) {
+      std::cerr<<"Kann Kommando \""<<command.toStdString()<<"\" nicht ausfuehren."<<std::endl;
+      return false;
+    }
+  } else {
+      file = fopen(m_DatenFileName.toLatin1(), "r");
+      if (!file) {
+          std::cerr<<"Kann "<<m_DatenFileName.toLocal8Bit().constData()<<" nicht oeffnen."<<std::endl;
+          return false;
+      }
+  }
+  
+	bool result=readCommentsFromZeitFile(file,abtList);
+		
   if (m_DatenFileName.isEmpty())
       pclose(file);
   else

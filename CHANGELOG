@@ -32,4 +32,15 @@
 * Ueber die Environmentvariable SCTIME_CONFIG_DIR kann das
   Konfigurationsverzeichnis angegeben werden. Wenn die Variable nicht
   gesetzt ist, wird wie bisher $HOME/.sctime angenommen.
- 
+  
+--------- Version 0.60 -----------
+* Komplette Umstellung auf Qt4 ohne Q3Support
+* Eine erweiterte Suche, mit der Option in Konten, Unterkonten und Kommentaren 
+  zu suchen.
+* Erweiterte Drag 'n' Drop Funktionalität: Wird beim D'n'D die Shift Taste
+  gedrückt, können zusätzlich die Kommentare verschoben werden.
+* Wird ein Tag editiert, der bereits eingecheckt wurde, ist eine erweiterte
+  Meldung in der Statusleiste zu sehen.
+* Neue Aufrufparameter "--help" und "-h" eingeführt.
+* Diverse BugFixes für Tickets #75443, # 88043, #88653, #87883, #83476, #88348, #88214, #80140, #94812, #77230
+
