@@ -191,9 +191,10 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
         const QStringList::const_iterator end = args.end();
         while ( it!=end ) {
             stack.append( *it );
-            if (it == begin)
-                break;
-            --it;
+            //BugFix: Not all the args were read
+            //if (it == begin)
+            //    break;
+            it++;
         }
     }
 
