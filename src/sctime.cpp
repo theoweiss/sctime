@@ -176,18 +176,32 @@ int main( int argc, char **argv )
 
   if (executable.isSymLink()) //Wir wollen den echten Pfad, um unsere Icons zu finden.
     executable.setFile(executable.readLink());
-	
+
+#ifndef WIN32	
 	if( argc == 2 && (strcmp(argv[1], "-h")==0||strcmp(argv[1],"--help")==0))
 	{
 		std::cout << "Usage: sctime [OPTION] " << std::endl << std::endl << 
 		" Available Options: " << std::endl <<
 		"   --configdir= \t Location of the directory where your files will be placed." << std::endl <<
 		"                \t Default is /home/<USER>/.sctime" << std::endl <<
-		"   --zeitkontenfile= \t Location of zeitkontenfile" << std:: endl <<
-		"   --bereitschaftsfile=  Location of bereitschaftsfile" << std::endl;
+		"   --zeitkontenfile= \t Location of zeitkontenfile, not necessary if you want to connect to the Database." << std:: endl <<
+		"   --bereitschaftsfile=  Location of bereitschaftsfile, not necessary if you want to connect to the Database." << std::endl;
 		exit(0);
 	}
-	
+
+#else
+	if( argc == 2 && (strcmp(argv[1], "/h")==0 || strcmp(argv[1],"/?")==0))
+	{	
+		std::cout << "Usage: sctime [OPTION] " << std::endl << std::endl <<
+		" Available Options: " << std::endl <<
+		"   --configdir= \t Location of the directory where your files will be placed." << std::endl <<
+		"                \t Default is /home/<USER>/.sctime" << std::endl <<
+		"   --zeitkontenfile= \t Location of zeitkontenfile, not necessary if you want to connect to the Database." << std:: endl <<
+		"   --bereitschaftsfile=  Location of bereitschaftsfile, not necessary if you want to connect to the Database." << std::endl;
+		exit(0);
+	}
+#endif	
+
 	//Set the correct encoding for the locale if LC_ALL or LC_CTYPE == POSIX or C
 #ifndef WIN32
 	char * lc_ctype_pointer = getenv("LC_CTYPE");
