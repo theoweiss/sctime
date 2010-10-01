@@ -1,6 +1,6 @@
 sctime
-Version 0.41b
-5.8.2003
+Version 0.61
+01.10.2010
 
 sctime provides a graphical interface which allows users to record the times used for
 specific projects.
@@ -17,10 +17,13 @@ cvs -z3 -d:pserver:anonymous@cvs.sourceforge.net:/cvsroot/sctime co sctime
 
 REQUIREMENTS:
 The zeittools are required to access the database.
+A qt4 Library is required.
 
 BUILDING:
-A qt3 Library is required. Please check the paths in the apropriate
-Makefile before running make.
+Go to the src folder and run "qmake".
+Please check the paths in the apropriate
+Makefile before running make. Then run make.
+
 
 INSTALL:
 All you need is the executable sctime, which you may copy
