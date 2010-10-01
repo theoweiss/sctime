@@ -36,7 +36,7 @@
  * Liest alle Einstellungen.
  */
 
-void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QString>& xmlfilelist)
+bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QString>& xmlfilelist)
 {
 #ifndef NO_XML
   QDomDocument doc("comments");
@@ -63,7 +63,7 @@ void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
                 //"OK" );
 //#endif
 
-          return;
+          return false;
       }
       QString domerror;
       int domerrorline;
@@ -76,7 +76,7 @@ void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
                 domerror,
                 "OK" );
           f.close();
-          return;
+          return false;
       }
       f.close();
 
@@ -130,6 +130,7 @@ void DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
       }
   }
 #endif
+	return true;
 }
 
 

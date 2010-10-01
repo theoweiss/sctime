@@ -334,8 +334,10 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
 
   updateCaption();
   kontoTree->setAcceptDrops(settings->dragNDrop());
+  
   kontoTree->showAktivesProjekt();  
   kontoTree->updateColumnWidth();
+  
   showAdditionalButtons(settings->powerUserView());
 }
 
@@ -815,7 +817,7 @@ void TimeMainWindow::reloadDefaultComments()
     defaultCommentReader.read(abtListToday,xmlfilelist);
   }
   abtList->clearDefaultComments();
-  defaultCommentReader.read(abtList,xmlfilelist);
+  bool rc = defaultCommentReader.read(abtList,xmlfilelist);
   
   
 	if( zk != NULL )
@@ -824,11 +826,11 @@ void TimeMainWindow::reloadDefaultComments()
 	  KontoDatenInfoDatabase* kdib = (KontoDatenInfoDatabase*)zk;
 	  if( kdib != NULL )
 	  { 
-	    if(!kdib->readDefaultCommentsInto( abtList ))
+	    if(!kdib->readDefaultCommentsInto( abtList ) && !rc)
 	    {
-				QMessageBox::warning(this,"Warnung", 
-					"Die Default Kommentare konnten nicht aus der Datenbank gelesen werden.", 
-					QMessageBox::Yes, QMessageBox::Yes);  
+				QString msg = "Defaultkommentare konnten nicht aus der Datenbank oder der Kommentardatei geladen werden.";				
+				QMessageBox::warning(this,"Warnung", 	msg, 
+					QMessageBox::Ok, QMessageBox::Ok);  
 	    }	    
 	  }
 	  #endif
@@ -840,7 +842,7 @@ void TimeMainWindow::reloadDefaultComments()
 			{
 				QMessageBox::warning(this,"Warnung", 
 					"Die Default Kommentare konnten nicht neu gelesen werden.", 
-					QMessageBox::Yes, QMessageBox::Yes);
+					QMessageBox::Ok, QMessageBox::Ok);
 			}
 		}	
 	  #endif	  
@@ -1235,11 +1237,12 @@ void TimeMainWindow::callAboutBox()
   layout->addWidget(&versioninfo,0,1);
   layout->addItem(new QSpacerItem(0, 20), 1, 0);
   layout->addWidget(new QLabel("Core Developer:",aboutBox),2,0);
-  layout->addWidget(new QLabel("Florian Schmitt <f.schmitt@science-computing.de>",aboutBox),2,1);
-  layout->addWidget(new QLabel("Patches:",aboutBox),3,0);
-  layout->addWidget(new QLabel("Marcus Camen <m.camen@science-computing.de>",aboutBox),3,1);
-  layout->addWidget(new QLabel("Core Developer:",aboutBox),4,0);
-  layout->addWidget(new QLabel("Alexander Wütz <a.wuetz@science-computing.de>",aboutBox),4,1);
+  layout->addWidget(new QLabel("Alexander Wütz <a.wuetz@science-computing.de>",aboutBox),2,1);
+  layout->addWidget(new QLabel("Core Developer:",aboutBox),3,0);
+  layout->addWidget(new QLabel("Florian Schmitt <f.schmitt@science-computing.de>",aboutBox),3,1);
+  layout->addWidget(new QLabel("Patches:",aboutBox),4,0);
+  layout->addWidget(new QLabel("Marcus Camen <m.camen@science-computing.de>",aboutBox),4,1);
+  
   layout->addItem(new QSpacerItem(0, 18), 5, 0);
   //layout->addMultiCellWidget(new QLabel("<center>This Program is licensed under the GNU Public License.</center>",aboutBox),5,5,0,1);
   layout->addWidget(new QLabel("<center>This Program is licensed under the GNU Public License.</center>",aboutBox),6,0,6,2);

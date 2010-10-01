@@ -33,7 +33,7 @@ class DefaultCommentReader
     {
     }
 
-    void read(AbteilungsListe* abtList, const std::vector<QString>& xmlfilelist);
+    bool read(AbteilungsListe* abtList, const std::vector<QString>& xmlfilelist);
 };
 
 #endif

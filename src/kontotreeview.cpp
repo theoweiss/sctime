@@ -53,7 +53,11 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
 	header->setText(5,"Kommentar");		
 	this->setHeaderItem(header);
 	//this->header()->setResizeMode(QHeaderView::Interactive);  
-	
+	for (int i=0; i<columnwidth.size(); i++) {		
+		if( !isColumnHidden(i) ){	
+			header->setSizeHint(i, QSize(columnwidth.at(i), 20));
+		}
+  }
   setRootIsDecorated(true);
   viewport()->installEventFilter(this);
   m_showPersoenlicheKontenSummenzeit=false;
@@ -73,12 +77,8 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
 	
   load(abtlist);
 	  
-  for (int i=0; i<columnwidth.size(); i++) {		
-		if( !isColumnHidden(i) ){	
-			header->setSizeHint(i, QSize(columnwidth.at(i), 20));
-		}
-  }
   
+  this->topLevelItem(0)->setExpanded(false);
 
 }
 
@@ -391,15 +391,15 @@ void KontoTreeView::flagClosedPersoenlicheItems()
 
   int fm;
   for (abti=(KontoTreeItem*)topi->child(0); (abti!=NULL); abti=(KontoTreeItem*)abti->nextSibling()) {
-    if (!abti->isHidden()) fm=FLAG_MODE_NAND; else fm=FLAG_MODE_OR;
+    if (abti->isExpanded()) fm=FLAG_MODE_NAND; else fm=FLAG_MODE_OR;
     abtList->setAbteilungFlags(abti->text(0),IS_CLOSED,fm);
 
     for (koi=(KontoTreeItem*)abti->child(0); (koi!=NULL); koi=(KontoTreeItem*)koi->nextSibling()) {
-      if (!koi->isHidden()) fm=FLAG_MODE_NAND; else fm=FLAG_MODE_OR;
+      if (koi->isExpanded()) fm=FLAG_MODE_NAND; else fm=FLAG_MODE_OR;
       abtList->setKontoFlags(abti->text(0),koi->text(0),IS_CLOSED,fm);
 
       for (ukoi=(KontoTreeItem*)koi->child(0); (ukoi!=NULL); ukoi=(KontoTreeItem*)ukoi->nextSibling()) {
-        if (!ukoi->isHidden()) fm=FLAG_MODE_NAND; else fm=FLAG_MODE_OR;
+        if (ukoi->isExpanded()) fm=FLAG_MODE_NAND; else fm=FLAG_MODE_OR;
           abtList->setUnterKontoFlags(abti->text(0),koi->text(0),ukoi->text(0),IS_CLOSED,fm);
       }
     }
@@ -413,7 +413,13 @@ void KontoTreeView::closeFlaggedPersoenlicheItems()
   
 	
 	for (topi=(KontoTreeItem*)topLevelItem(0); (topi!=NULL)&&(topi->text(0)!=PERSOENLICHE_KONTEN_STRING); topi=(KontoTreeItem*)topi->nextSibling());
-  if (topi==NULL) return;
+  if (topi==NULL) {
+		return;
+  }
+  else
+  {
+    topi->setExpanded(true);
+  }
   for (abti=(KontoTreeItem*)topi->child(0); (abti!=NULL); abti=(KontoTreeItem*)abti->nextSibling()) {
     if (abtList->getAbteilungFlags(abti->text(0))&IS_CLOSED) {
       abti->setExpanded(false);
@@ -468,12 +474,14 @@ void KontoTreeView::showAktivesProjekt()
   else
     top = ALLE_KONTEN_STRING;
   KontoTreeItem *topi,*abti,*koi,*ukoi,*eti;
+  
   bool itemFound=(sucheItem(top,abt,ko,uko,idx,topi,abti,koi,ukoi,eti));
   if (itemFound) {
      topi->setExpanded(true);
      abti->setExpanded(true);
      koi->setExpanded(true);
      ukoi->setExpanded(true);
+     this->setCurrentItem(ukoi);
   }
 }
 
@@ -484,7 +492,7 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
   abtList=abtlist;
 
   KontoTreeItem *next, *topi;
-
+	
 	topi=(KontoTreeItem*)topLevelItem(0);	
   while (topi!=NULL) {    
     next=(KontoTreeItem*)topi->nextSibling();    
@@ -632,6 +640,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
 
   KontoTreeItem *topi,*abti,*koi,*ukoi,*eti;
   bool isExpandedAlleKonten, isExpandedPersonKonten;
+  
   for(int i=0; i<topLevelItemCount(); i++)
   {
 		if(topLevelItem(i)->text(0)==ALLE_KONTEN_STRING)
@@ -668,8 +677,9 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
     {
       if (ukoi->child(0))
       {
-        //delete ukoi->child(0); 
+        
         ukoi->removeChild( ukoi->child(0) );
+        //delete ukoi->child(0); 
 			}
       eti=ukoi;
     }
@@ -699,7 +709,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
         QString qs;
         qs.setNum(idx);
         eti=new KontoTreeItem(ukoi,qs);
-        ukoi->setExpanded(true);
+        //ukoi->setExpanded(true);
       }
       ukoi->setText(1,"");
       ukoi->setText(3,"");
@@ -732,7 +742,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
     if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
       {
         eti->setIcon(2,QIcon(":/hi16_action_apply"));
-        setCurrentItem(eti);
+        //setCurrentItem(eti);
       }
     else{
       eti->setIcon(2,QIcon());
@@ -746,17 +756,21 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       {
 					//delete eti; //Qt3
 					ukoi->removeChild( eti );
+					//delete eti;
 			}
       if (sucheItem(PERSOENLICHE_KONTEN_STRING,abt,ko,uko,idx,topi,abti,koi,ukoi,eti)) { // Wegen moeglichen Seiteneffekten von delete
         if (!ukoi->child(0)) {
           //delete ukoi;
           koi->removeChild( ukoi );
+          
           if (!koi->child(0)) {
             //delete koi;
             abti->removeChild( koi );
+            
             if (!abti->child(0)) {
               //delete abti;
               topi->removeChild( abti );
+              
 						}
           }
         }
@@ -868,11 +882,11 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
   {
 		if(topLevelItem(i)->text(0)==ALLE_KONTEN_STRING)
 		{		
-			topLevelItem(i)->setExpanded(isExpandedAlleKonten);
+			topLevelItem(i)->setExpanded(isExpandedAlleKonten);						
 		}
 		else
 		{
-			topLevelItem(i)->setExpanded(isExpandedPersonKonten);
+			topLevelItem(i)->setExpanded(isExpandedPersonKonten);			
 		}
 	}
   

@@ -67,7 +67,11 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
 
   TimeCounter tc(sek), tcAbzur(abzurSek);
   QString codec=codecString(stream);
-  stream<<"#!/bin/sh\n\n";
+  stream<<"#!/bin/sh\n";
+  stream<<"# -*- coding: "<<codec.toLower()<<" -*-\n\n";
+  stream<<"set -e\n";
+  stream<<"trap '[ $? -gt 0 ] && echo ABBRUCH in $0[$LINENO] >&2 && exit 1' 0";
+  stream<<"\n\n";
   stream<<"# Zeit Aufrufe von sctime "<<QUOTEME(VERSIONSTR)<<" generiert \n"
     <<"# Gesamtzeit: "<<tc.toString()<<"/"<<tcAbzur.toString()<<"\n";
   stream<<"ZEIT_ENCODING="<<codec<<"\n";
