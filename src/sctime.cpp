@@ -192,17 +192,20 @@ int main( int argc, char **argv )
 #else
 	if( argc == 2 && (strcmp(argv[1], "/h")==0 || strcmp(argv[1],"/?")==0))
 	{	
-		std::cout << "Usage: sctime [OPTION] " << std::endl << std::endl <<
-		" Available Options: " << std::endl <<
-		"   --configdir= \t Location of the directory where your files will be placed." << std::endl <<
-		"                \t Default is /home/<USER>/.sctime" << std::endl <<
-		"   --zeitkontenfile= \t Location of zeitkontenfile, not necessary if you want to connect to the Database." << std:: endl <<
-		"   --bereitschaftsfile=  Location of bereitschaftsfile, not necessary if you want to connect to the Database." << std::endl;
+		char * text = "Usage: sctime [OPTION] \n\n" ;
+    text = strcat(text, " Available Options: \n");
+		text = strcat(text, " --configdir=  Location of the directory where your files will be placed.\n");
+		text = strcat(text, "               Default is /home/<USER>/.sctime \n");
+		text = strcat(text, " --zeitkontenfile=  Location of zeitkontenfile, not necessary if you want to connect to the Database.\n");
+		text = strcat(text, " --bereitschaftsfile=  Location of bereitschaftsfile, not necessary if you want to connect to the Database.");
+
+		ErrorApp ea(text, argc, argv, true);
+		
 		exit(0);
 	}
 #endif	
 
-	//Set the correct encoding for the locale if LC_ALL or LC_CTYPE == POSIX or C
+	//Set the correct encoding for the locale if LC_ALL or LC_CTYPE == POSIX or C 
 #ifndef WIN32
 	char * lc_ctype_pointer = getenv("LC_CTYPE");
 	char * lc_all_pointer = getenv("LC_ALL");
@@ -215,6 +218,7 @@ int main( int argc, char **argv )
 			//std::cout <<"LC_ALL >>"<< lc_all_pointer <<"<<"<< std::endl;
 			putenv("LC_ALL=de_DE.UTF-8");
 		}
+		
 	} 
 	if( lc_ctype_pointer != NULL ){
 		if((strcmp(lc_ctype_pointer, "POSIX")==0) ||
@@ -223,7 +227,7 @@ int main( int argc, char **argv )
 			if(putenv("LC_CTYPE=de_DE.UTF-8")){
 				std::cerr << "Error cannot set LC_CTYPE to utf8!" << std::endl;
 			}
-		}	
+		}				
 	}
 	
 #endif
