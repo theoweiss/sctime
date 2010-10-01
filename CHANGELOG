@@ -44,3 +44,14 @@
 * Neue Aufrufparameter "--help" und "-h" eingeführt.
 * Diverse BugFixes für Tickets #75443, # 88043, #88653, #87883, #83476, #88348, #88214, #80140, #94812, #77230
 
+--------- Version 0.61 -----------
+* BugFix bei der externen Benutzung unter Windows und dem Laden von
+  Zeitkonten und Bereitschaftsfiles, sowie den defaultcomments
+* BugFix "Alle Konten" Knoten bleibt geschlossen
+* Neue Windows Aufrufparameter "/?" und "/h"
+* BugFix des ungewollten "Springens" auf eine andere Ansicht
+  sobald Scrollbars vorhanden sind.
+* BugFix: Der Zustand ob ein Knoten der persönlichen Konten auf oder zugeklappt ist wird 
+  wieder hergestellt.
+* In den .sh files wird "set -e", emacs coding und "trap [...]" angefügt.
+* Die Zeittools "zeitkonten" und "zeitbereitls" werden mit UTF-8 Encoding aufgerufen.
