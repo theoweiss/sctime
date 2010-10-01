@@ -118,6 +118,7 @@ bool KontoDatenInfoDatabase::readDefaultCommentsInto(AbteilungsListe * abtList)
   //QApplication::addLibraryPath(execDir+"/lib");
   //abtList->clear();
   QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC" );
+  m_dbconnector = new DBConnector();
   m_dbconnector->configureDB(defaultDB);
 
   if ( defaultDB.open() ) {
@@ -157,13 +158,13 @@ bool KontoDatenInfoDatabase::readDefaultCommentsInto(AbteilungsListe * abtList)
       }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;
   } else {
         ret = false;
-#ifdef WIN32
-                QMessageBox::critical(NULL,"Error","Kann Datenbank nicht öffnen\n",
-                              QMessageBox::Ok, Qt::NoButton,
-                              Qt::NoButton);
-#else
-                std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
-#endif
+//#ifdef WIN32
+                //QMessageBox::critical(NULL,"Error","Kann Datenbank nicht öffnen\n",
+                              //QMessageBox::Ok, Qt::NoButton,
+                              //Qt::NoButton);
+//#else
+                //std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
+//#endif
     }
 
   defaultDB.close();
