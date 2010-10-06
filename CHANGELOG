@@ -55,3 +55,6 @@
   wieder hergestellt.
 * In den .sh files wird "set -e", emacs coding und "trap [...]" angefügt.
 * Die Zeittools "zeitkonten" und "zeitbereitls" werden mit UTF-8 Encoding aufgerufen.
+
+--------- Version 0.62 -----------
+* Bugfix, bei klick auf "Hinzufügen" im Unterkontodialog wird der Tagtext als aktuelle Element gewählt.
