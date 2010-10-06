@@ -242,8 +242,8 @@ void UnterKontoDialog::addTag()
       if (commentedit) {
            commentedit->setText(tagcombo->currentText()+", "+commentedit->text());
       } else {
-           //commentcombo->setText(tagcombo->currentText()+", "+commentcombo->currentText());
-           commentcombo->insertItem(commentcombo->count()+1, tagcombo->currentText()+", "+commentcombo->currentText());
+           commentcombo->setEditText(tagcombo->currentText()+", "+commentcombo->currentText());
+           //commentcombo->insertItem(commentcombo->count()+1, tagcombo->currentText()+", "+commentcombo->currentText());           
       }
   }
 }
