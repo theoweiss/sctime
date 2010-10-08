@@ -251,7 +251,8 @@ bool KontoDatenInfoZeit::readCommentsFromZeitFile(FILE* file, AbteilungsListe * 
             //abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
             
             if (ql.size()>12) {
-              QString commentstr = ql[12].simplified();
+              // Do not simplify comment to preserve intentional whitespace.
+              QString commentstr = ql[12];
               if (!commentstr.isEmpty()) {
                 UnterKontoListe::iterator itUk;
                 UnterKontoListe* ukl;
@@ -301,7 +302,8 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
             abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
             
             if (ql.size()>12) {
-              QString commentstr = ql[12].simplified();
+              // Do not simplify comment to preserve intentional whitespace.
+              QString commentstr = ql[12];
               if (!commentstr.isEmpty()) {
                 UnterKontoListe::iterator itUk;
                 UnterKontoListe* ukl;

@@ -58,3 +58,5 @@
 
 --------- Version 0.62 -----------
 * Bugfix, bei klick auf "Hinzufügen" im Unterkontodialog wird der Tagtext als aktuelle Element gewählt.
+* Leerzeichen in Mikrokonten-Kommentaren nicht vereinfachen - erhaelt
+  insbesondere absichtliche Leerzeichen am Ende

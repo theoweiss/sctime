@@ -67,7 +67,8 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
           QString beschreibung = query.value(3).toString();
           QString responsible = query.value(4).toString().simplified();;
           QString type = query.value(5).toString().simplified();;
-	  QString commentstr = query.value(6).toString().simplified();
+          // Do not simplify comment to preserve intentional whitespace.
+	  QString commentstr = query.value(6).toString();
           abtList->insertEintrag(abt,ko,uko);
           if (beschreibung.isEmpty())
               beschreibung="";
@@ -137,7 +138,8 @@ bool KontoDatenInfoDatabase::readDefaultCommentsInto(AbteilungsListe * abtList)
           QString beschreibung = query.value(3).toString();
           QString responsible = query.value(4).toString().simplified();;
           QString type = query.value(5).toString().simplified();;
-					QString commentstr = query.value(6).toString().simplified();
+          // Do not simplify comment to preserve intentional whitespace.
+					QString commentstr = query.value(6).toString();
           //abtList->insertEintrag(abt,ko,uko);
           if (beschreibung.isEmpty())
               beschreibung="";
