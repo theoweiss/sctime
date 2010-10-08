@@ -128,9 +128,9 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   setCentralWidget(kontoTree);
 
   if (!settings->showTypeColumn()) {
-  	kontoTree->hideColumn(1);
-  	//kontoTree->setColumnWidthMode(1,QListView::Manual);
-  	//kontoTree->header()->setResizeEnabled(false, 1);
+    kontoTree->hideColumn(1);
+    //kontoTree->setColumnWidthMode(1,QListView::Manual);
+    //kontoTree->header()->setResizeEnabled(false, 1);
   }
 
   toolBar   = new ToolBar("Main ToolBar", this);
@@ -152,10 +152,10 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   QTimer* autosavetimer=new QTimer(this);
   connect( autosavetimer,SIGNAL(timeout()), this, SLOT(save()));
   autosavetimer->setInterval(300000); //Alle 5 Minuten ticken.
-	autosavetimer->start();
+  autosavetimer->start();
   //QAction* pauseAction = new QAction( QPixmap((const char **)hi22_action_player_pause ),
                                       //"&Pause", this);
-	QAction* pauseAction = new QAction( QIcon(":/hi22_action_player_pause"), "&Pause", this);
+  QAction* pauseAction = new QAction( QIcon(":/hi22_action_player_pause"), "&Pause", this);
   pauseAction->setShortcut(Qt::CTRL+Qt::Key_P);
   connect(pauseAction, SIGNAL(triggered()), this, SLOT(pause()));
 
@@ -414,7 +414,7 @@ void TimeMainWindow::copyNameToClipboard()
 
 void TimeMainWindow::mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int column)
 {
-		if ( (kontoTree->getCurrentButton() == Qt::LeftButton) &&(item)) {
+    if ( (kontoTree->getCurrentButton() == Qt::LeftButton) &&(item)) {
 
         setAktivesProjekt(item);
     }
@@ -757,7 +757,7 @@ void TimeMainWindow::changeDate(const QDate& datum)
       abtList=NULL;
     //}
   } else {
-  	settings->writeSettings(abtList);
+    settings->writeSettings(abtList);
     settings->writeShellSkript(abtList);
   }
   if (currentDateSel) {
@@ -781,11 +781,11 @@ void TimeMainWindow::changeDate(const QDate& datum)
 
   //Append Warning if current file is checked in
   if( !currentDateSel ){
-		if(abtList->checkInState())
-		{
-			statusBar->appendWarning(!currentDateSel, " -- Dieser Tag ist bereits eingecheckt!");
-		}
-	}
+    if(abtList->checkInState())
+    {
+      statusBar->appendWarning(!currentDateSel, " -- Dieser Tag ist bereits eingecheckt!");
+    }
+  }
 }
 
 void TimeMainWindow::refreshKontoListe()
@@ -820,33 +820,33 @@ void TimeMainWindow::reloadDefaultComments()
   bool rc = defaultCommentReader.read(abtList,xmlfilelist);
 
 
-	if( zk != NULL )
-	{
-		#ifdef WIN32
-	  KontoDatenInfoDatabase* kdib = (KontoDatenInfoDatabase*)zk;
-	  if( kdib != NULL )
-	  {
-	    if(!kdib->readDefaultCommentsInto( abtList ) && !rc)
-	    {
-				QString msg = "Defaultkommentare konnten nicht aus der Datenbank oder der Kommentardatei geladen werden.";
-				QMessageBox::warning(this,"Warnung", 	msg,
-					QMessageBox::Ok, QMessageBox::Ok);
-	    }
-	  }
-	  #endif
-	  #ifndef WIN32
-	  KontoDatenInfoZeit* kdiz = (KontoDatenInfoZeit*)zk;
-	  if( kdiz != NULL )
-	  {
-			if(!kdiz->readDefaultComments(abtList))
-			{
-				QMessageBox::warning(this,"Warnung",
-					"Die Default Kommentare konnten nicht neu gelesen werden.",
-					QMessageBox::Ok, QMessageBox::Ok);
-			}
-		}
-	  #endif
-	}
+  if( zk != NULL )
+  {
+    #ifdef WIN32
+    KontoDatenInfoDatabase* kdib = (KontoDatenInfoDatabase*)zk;
+    if( kdib != NULL )
+    {
+      if(!kdib->readDefaultCommentsInto( abtList ) && !rc)
+      {
+        QString msg = "Defaultkommentare konnten nicht aus der Datenbank oder der Kommentardatei geladen werden.";
+        QMessageBox::warning(this,"Warnung",   msg,
+          QMessageBox::Ok, QMessageBox::Ok);
+      }
+    }
+    #endif
+    #ifndef WIN32
+    KontoDatenInfoZeit* kdiz = (KontoDatenInfoZeit*)zk;
+    if( kdiz != NULL )
+    {
+      if(!kdiz->readDefaultComments(abtList))
+      {
+        QMessageBox::warning(this,"Warnung",
+          "Die Default Kommentare konnten nicht neu gelesen werden.",
+          QMessageBox::Ok, QMessageBox::Ok);
+      }
+    }
+    #endif
+  }
 }
 
 /**
@@ -1009,8 +1009,8 @@ void TimeMainWindow::showContextMenu(const QPoint& pos)
 {
    if (!settings->singleClickActivation())
    {
-		 callUnterKontoDialog(kontoTree->itemAt(pos));
-	 }
+     callUnterKontoDialog(kontoTree->itemAt(pos));
+   }
 }
 
 /**
@@ -1046,9 +1046,9 @@ void TimeMainWindow::callUnterKontoDialog(QTreeWidgetItem * item)
   QSize size;
   settings->getUnterKontoWindowGeometry(pos, size);
   if( !size.isNull() ){
-		unterKontoDialog->resize(size);
-		unterKontoDialog->move(pos);
-	}
+    unterKontoDialog->resize(size);
+    unterKontoDialog->move(pos);
+  }
   unterKontoDialog->exec();
 }
 
@@ -1063,46 +1063,46 @@ void TimeMainWindow::callFindKontoDialog()
   int rcFindDialog = findKontoDialog.exec();
   if( rcFindDialog == QDialog::Rejected )
   {
-		return;
-	}
-	else if( rcFindDialog == QDialog::Accepted )
-	{
-		QStringList items = findKontoDialog.getSelectedItems();
+    return;
+  }
+  else if( rcFindDialog == QDialog::Accepted )
+  {
+    QStringList items = findKontoDialog.getSelectedItems();
 
-		if( items.size() > 0 )
-		{
-			//Konto was searched
-			if( items.size() == 3 )
-			{
-				QTreeWidgetItem *item = kontoTree->sucheKontoItem(items.at(0),
-							items.at(1), items.at(2));
-				openItem( item );
-			}
-			//Unterkonto was searched
-			if( items.size() == 4 )
-			{
-				QTreeWidgetItem *item = kontoTree->sucheUnterKontoItem(
-							items.at(0), items.at(1), items.at(2), items.at(3) );
-				openItem( item );
-			}
-			//Kommentar was searched
-			if( items.size() == 5 )
-			{
-				QTreeWidgetItem *item = kontoTree->sucheKommentarItem(
-							items.at(0), items.at(1), items.at(2),
-							items.at(3), items.at(4));
-				openItem( item );
-			}
-		}
-	}
+    if( items.size() > 0 )
+    {
+      //Konto was searched
+      if( items.size() == 3 )
+      {
+        QTreeWidgetItem *item = kontoTree->sucheKontoItem(items.at(0),
+              items.at(1), items.at(2));
+        openItem( item );
+      }
+      //Unterkonto was searched
+      if( items.size() == 4 )
+      {
+        QTreeWidgetItem *item = kontoTree->sucheUnterKontoItem(
+              items.at(0), items.at(1), items.at(2), items.at(3) );
+        openItem( item );
+      }
+      //Kommentar was searched
+      if( items.size() == 5 )
+      {
+        QTreeWidgetItem *item = kontoTree->sucheKommentarItem(
+              items.at(0), items.at(1), items.at(2),
+              items.at(3), items.at(4));
+        openItem( item );
+      }
+    }
+  }
 }
 
 void TimeMainWindow::openItem( QTreeWidgetItem *item )
 {
-	if (item)
-	{
-		kontoTree->setCurrentItem(item);
-	}
+  if (item)
+  {
+    kontoTree->setCurrentItem(item);
+  }
 }
 
 void TimeMainWindow::callPreferenceDialog()
@@ -1115,7 +1115,7 @@ void TimeMainWindow::callPreferenceDialog()
   configClickMode(settings->singleClickActivation());
   kontoTree->setAcceptDrops(settings->dragNDrop());
   if (settings->useCustomFont()) {
-  	QApplication::setFont(QFont(settings->customFont(),settings->customFontSize()));
+    QApplication::setFont(QFont(settings->customFont(),settings->customFontSize()));
   }
   else
   {
@@ -1123,12 +1123,12 @@ void TimeMainWindow::callPreferenceDialog()
   }
   kontoTree->showPersoenlicheKontenSummenzeit(settings->persoenlicheKontensumme());
   if (!settings->showTypeColumn()) {
-  	kontoTree->hideColumn(1);
+    kontoTree->hideColumn(1);
   } else
   {
-  	if (!oldshowtypecolumn)
-			kontoTree->showColumn( 1 );
-			kontoTree->resizeColumnToContents( 1 );
+    if (!oldshowtypecolumn)
+      kontoTree->showColumn( 1 );
+      kontoTree->resizeColumnToContents( 1 );
 
   }
   //kontoTree->updateColumnWidth();
@@ -1314,7 +1314,7 @@ void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item)
   buttonlayout->addStretch(1);
   buttonlayout->addWidget(okbutton);
   buttonlayout->addWidget(cancelbutton);
-	layout->addLayout(buttonlayout);
+  layout->addLayout(buttonlayout);
 
   connect (okbutton, SIGNAL(clicked()), &dialog, SLOT(accept()));
   connect (cancelbutton, SIGNAL(clicked()), &dialog, SLOT(reject()));
@@ -1345,7 +1345,7 @@ void TimeMainWindow::callColorDialog()
      if (color)
      {
        abtList->setBgColor(*color, abt,ko,uko);
-		 }
+     }
      else
        abtList->unsetBgColor(abt,ko,uko);
 
@@ -1391,5 +1391,5 @@ void TimeMainWindow::checkComment(const QString& abt, const QString& ko , const 
 
 void TimeMainWindow::moveEvent(QMoveEvent *event)
 {
-	settings->setMainWindowGeometry(pos(),size());
+  settings->setMainWindowGeometry(pos(),size());
 }

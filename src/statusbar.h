@@ -74,16 +74,16 @@ class StatusBar:public QStatusBar
 
     void appendWarning(bool on, QString str)
     {
-			if( on )
-			{
-				QString labelTxt = datumsWarnung->text();
-				datumsWarnung->setText(labelTxt + str);
-			}
-			else
-			{
-				datumsWarnung->setText("");
-			}
-		}
+      if( on )
+      {
+        QString labelTxt = datumsWarnung->text();
+        datumsWarnung->setText(labelTxt + str);
+      }
+      else
+      {
+        datumsWarnung->setText("");
+      }
+    }
 
   private:
     QLabel* zeitLabel;

@@ -36,7 +36,7 @@
 
 KontoDatenInfoDatabase::KontoDatenInfoDatabase(DBConnector* dbconnector)
 {
-	m_dbconnector=dbconnector;
+  m_dbconnector=dbconnector;
 }
 
 /**
@@ -56,7 +56,7 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
               "SELECT gb.name,konto.name,unterkonto.name,unterkonto.beschreibung,v_tuser.name,unterkonto.art,mikro.kommentar "
               "FROM konto,gb,unterkonto "
               "LEFT JOIN v_tuser ON (v_tuser.user_id = unterkonto.verantwortlich) "
-	      "LEFT JOIN unterkonto_kommentar mikro ON (mikro.unterkonto_id = unterkonto.unterkonto_id) "
+              "LEFT JOIN unterkonto_kommentar mikro ON (mikro.unterkonto_id = unterkonto.unterkonto_id) "
               "WHERE konto.konto_id = unterkonto.konto_id AND gb.gb_id = konto.gb_id AND unterkonto.eintragbar=\'y\';",
             defaultDB);
       if ( query.isActive() ) {
@@ -68,7 +68,7 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
           QString responsible = query.value(4).toString().simplified();;
           QString type = query.value(5).toString().simplified();;
           // Do not simplify comment to preserve intentional whitespace.
-	  QString commentstr = query.value(6).toString();
+          QString commentstr = query.value(6).toString();
           abtList->insertEintrag(abt,ko,uko);
           if (beschreibung.isEmpty())
               beschreibung="";
@@ -78,7 +78,7 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
               type="";
           abtList->setDescription(abt,ko,uko,DescData(beschreibung,responsible,type));
           abtList->setUnterKontoFlags(abt,ko,uko,IS_IN_DATABASE,FLAG_MODE_OR);
-	  if ((!commentstr.isNull())&&(!commentstr.isEmpty())) {
+          if ((!commentstr.isNull())&&(!commentstr.isEmpty())) {
                 UnterKontoListe::iterator itUk;
                 UnterKontoListe* ukl;
                 if (abtList->findUnterKonto(itUk,ukl,abt,ko,uko)) {
@@ -127,7 +127,7 @@ bool KontoDatenInfoDatabase::readDefaultCommentsInto(AbteilungsListe * abtList)
               "SELECT gb.name,konto.name,unterkonto.name,unterkonto.beschreibung,v_tuser.name,unterkonto.art,mikro.kommentar "
               "FROM konto,gb,unterkonto "
               "LEFT JOIN v_tuser ON (v_tuser.user_id = unterkonto.verantwortlich) "
-	      "LEFT JOIN unterkonto_kommentar mikro ON (mikro.unterkonto_id = unterkonto.unterkonto_id) "
+              "LEFT JOIN unterkonto_kommentar mikro ON (mikro.unterkonto_id = unterkonto.unterkonto_id) "
               "WHERE konto.konto_id = unterkonto.konto_id AND gb.gb_id = konto.gb_id AND unterkonto.eintragbar=\'y\';",
             defaultDB);
       if ( query.isActive() ) {
@@ -139,7 +139,7 @@ bool KontoDatenInfoDatabase::readDefaultCommentsInto(AbteilungsListe * abtList)
           QString responsible = query.value(4).toString().simplified();;
           QString type = query.value(5).toString().simplified();;
           // Do not simplify comment to preserve intentional whitespace.
-					QString commentstr = query.value(6).toString();
+          QString commentstr = query.value(6).toString();
           //abtList->insertEintrag(abt,ko,uko);
           if (beschreibung.isEmpty())
               beschreibung="";
@@ -149,7 +149,7 @@ bool KontoDatenInfoDatabase::readDefaultCommentsInto(AbteilungsListe * abtList)
               type="";
           //abtList->setDescription(abt,ko,uko,DescData(beschreibung,responsible,type));
           //abtList->setUnterKontoFlags(abt,ko,uko,IS_IN_DATABASE,FLAG_MODE_OR);
-	  if ((!commentstr.isNull())&&(!commentstr.isEmpty())) {
+          if ((!commentstr.isNull())&&(!commentstr.isEmpty())) {
                 UnterKontoListe::iterator itUk;
                 UnterKontoListe* ukl;
                 if (abtList->findUnterKonto(itUk,ukl,abt,ko,uko)) {

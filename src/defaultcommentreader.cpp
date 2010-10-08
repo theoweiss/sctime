@@ -54,7 +54,7 @@ bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
 
       QFile f( filename );
       if ( !f.open( QIODevice::ReadOnly ) ) {
-					//siZeit #88348
+          //siZeit #88348
           //std::cerr<<"Hinweis: Kann "<<filename.toStdString()<<" nicht oeffnen."<<std::endl;
 //#if 0
           //QMessageBox::warning( 0,
@@ -130,7 +130,7 @@ bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
       }
   }
 #endif
-	return true;
+  return true;
 }
 
 

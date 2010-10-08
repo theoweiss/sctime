@@ -218,7 +218,7 @@ KontoDatenInfoZeit::KontoDatenInfoZeit(QString sourcefile)
 
 bool KontoDatenInfoZeit::readCommentsFromZeitFile(FILE* file, AbteilungsListe * abtList)
 {
-	    char zeile[800];
+      char zeile[800];
     int unterkontoCounter=0;
 
     while (!feof(file)) {
@@ -346,15 +346,15 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
       }
   }
 
-	bool result=readZeitFile(file,abtList);
+  bool result=readZeitFile(file,abtList);
 
   if (m_DatenFileName.isEmpty()){
       rc = pclose(file);
       if(rc!=0)
       {
-				std::cerr << "Kann Kommando \"zeitkonten --mikrokonten --separator='|'\" nicht ausfuehren. Kontoliste konnte nicht geladen werden."<<std::endl;
-			}
-	}
+        std::cerr << "Kann Kommando \"zeitkonten --mikrokonten --separator='|'\" nicht ausfuehren. Kontoliste konnte nicht geladen werden."<<std::endl;
+      }
+  }
   else
       fclose(file);
   return result;
@@ -362,7 +362,7 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
 
 bool KontoDatenInfoZeit::readDefaultComments(AbteilungsListe * abtList)
 {
-	//abtList->clear();
+  //abtList->clear();
   FILE* file;
   int rc;
 
@@ -373,7 +373,7 @@ bool KontoDatenInfoZeit::readDefaultComments(AbteilungsListe * abtList)
     else
       command=m_Kommando;
 
-		putenv("LC_CTYPE=de_DE.UTF-8");
+    putenv("LC_CTYPE=de_DE.UTF-8");
 
     file = popen(command.toLatin1(), "r");
     if (!file || file ==NULL) {
@@ -390,15 +390,15 @@ bool KontoDatenInfoZeit::readDefaultComments(AbteilungsListe * abtList)
       }
   }
 
-	bool result=readCommentsFromZeitFile(file,abtList);
+  bool result=readCommentsFromZeitFile(file,abtList);
 
   if (m_DatenFileName.isEmpty()){
       rc=pclose(file);
       if(rc!=0)
       {
-				std::cerr << "Kann Kommando \"zeitkonten --mikrokonten --separator='|'\" nicht ausfuehren. Defaultkommentare konnten nicht geladen werden."<<std::endl;
-			}
-		}
+        std::cerr << "Kann Kommando \"zeitkonten --mikrokonten --separator='|'\" nicht ausfuehren. Defaultkommentare konnten nicht geladen werden."<<std::endl;
+      }
+    }
   else
       fclose(file);
   return result;

@@ -31,16 +31,16 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
                                    bool connectZeiten, QMainWindow * parent, bool readOnly)
                                    :QDialog(parent, Qt::Dialog)
 {
-	setModal(true);
-	setWindowTitle( "Einstellungen für Unterkonto" );
+  setModal(true);
+  setWindowTitle( "Einstellungen für Unterkonto" );
   abtList=abtlist;
   unterKontoName=uko;
   kontoName=ko;
   abteilungsName=abt;
   eintragIndex=idx;
-	settings=NULL;
+  settings=NULL;
 
-	parent = parent;
+  parent = parent;
   UnterKontoEintrag et;
   EintragsListe::iterator etiter;
 
@@ -151,7 +151,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   if (!readOnly)
     buttonlayout->addWidget(okbutton);
   buttonlayout->addWidget(cancelbutton);
-	layout->addLayout(buttonlayout);
+  layout->addLayout(buttonlayout);
   if (!readOnly)
     connect (okbutton, SIGNAL(clicked()), this, SLOT(checkInput()));
   connect (cancelbutton, SIGNAL(clicked()), this, SLOT(reject()));
@@ -207,17 +207,17 @@ void UnterKontoDialog::accept()
 
   // Größe/Position des Dialogs festhalten
 
-	if( settings != NULL )
-	{
-		settings->setUnterKontoWindowGeometry(pos(), size());
-	}
+  if( settings != NULL )
+  {
+    settings->setUnterKontoWindowGeometry(pos(), size());
+  }
 
   QDialog::accept();
 };
 
 void UnterKontoDialog::setSettings(SCTimeXMLSettings* s)
 {
-	settings = s;
+  settings = s;
 }
 
 void UnterKontoDialog::projektAktivierenButtonClicked()

@@ -36,7 +36,7 @@
 
 BereitschaftsDatenInfoDatabase::BereitschaftsDatenInfoDatabase(DBConnector* dbconnector)
 {
-	m_dbconnector=dbconnector;
+  m_dbconnector=dbconnector;
 }
 
 /**

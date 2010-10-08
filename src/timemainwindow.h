@@ -167,8 +167,8 @@ class TimeMainWindow: public QMainWindow
      */
     void aktivierbarerEintragSelected(bool isActivable);
 
-	protected:
-		virtual void moveEvent( QMoveEvent *event);
+  protected:
+    virtual void moveEvent( QMoveEvent *event);
   private:
     void closeEvent(QCloseEvent * event);
     KontoTreeView* kontoTree;
@@ -196,7 +196,7 @@ class TimeMainWindow: public QMainWindow
     KontoDatenInfo* zk;
     bool paused;
     bool pausedAbzur;
-		void openItem( QTreeWidgetItem *item );
+    void openItem( QTreeWidgetItem *item );
     // Workaround, um beim Setzen der Voreinstellung fuer den inPersoenlicheKonten-Button nicht das zugehoerige
     // Event auzuloesen. Wenn inPersoenlicheKontenAllowed=false, tut inPersoenlicheKonten(bool) gar nichts.
     bool inPersoenlicheKontenAllowed;

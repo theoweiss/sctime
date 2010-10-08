@@ -50,12 +50,12 @@ class KontoTreeItem: public QTreeWidgetItem
 
     void setBgColor(const QColor bgColor);
 
-		QString getLabel1();
+    QString getLabel1();
 
-		KontoTreeItem* nextSibling( );
+    KontoTreeItem* nextSibling( );
 
-	protected:
-		void paintEvent(QPaintEvent *event);
+  protected:
+    void paintEvent(QPaintEvent *event);
 
   private:
     bool isBold;

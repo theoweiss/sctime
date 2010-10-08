@@ -104,8 +104,8 @@ class SCTimeApp: public QApplication
 
   void commitData ( QSessionManager & manager )
   {
-  	mainWindow->save();
-  	QApplication::commitData(manager);
+    mainWindow->save();
+    QApplication::commitData(manager);
   }
 
   public slots:

@@ -42,7 +42,7 @@
 QDateValidator::QDateValidator(QWidget* parent, const char* name)
     : QValidator(parent)
 {
-	setObjectName(name);
+  setObjectName(name);
 }
 
 QValidator::State

@@ -162,17 +162,17 @@ class SCTimeXMLSettings
 
     bool useCustomFont()
     {
-    	return m_useCustomFont;
+      return m_useCustomFont;
     }
 
     void setUseCustomFont(bool useCustomFont)
     {
-    	m_useCustomFont=useCustomFont;
+      m_useCustomFont=useCustomFont;
     }
 
     QString customFont()
     {
-    	return m_customFont;
+      return m_customFont;
     }
 
     void setCustomFont(QString customFont)
@@ -182,7 +182,7 @@ class SCTimeXMLSettings
 
     int customFontSize()
     {
-    	return m_customFontSize;
+      return m_customFontSize;
     }
 
     void setCustomFontSize(int customFontSize)
@@ -192,12 +192,12 @@ class SCTimeXMLSettings
 
     bool showTypeColumn()
     {
-    	return m_showTypeColumn;
+      return m_showTypeColumn;
     }
 
     void setShowTypeColumn(bool showTypeColumn)
     {
-    	m_showTypeColumn=showTypeColumn;
+      m_showTypeColumn=showTypeColumn;
     }
 
     bool dragNDrop()

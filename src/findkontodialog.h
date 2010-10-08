@@ -51,60 +51,60 @@ class FindKontoDialog: public QDialog
 
   public:
     FindKontoDialog(AbteilungsListe* abtlist, QWidget * parent = 0);
-		QStringList getSelectedItems();
+    QStringList getSelectedItems();
 
   protected slots:
-			void reloadValueChoose();
-			void doSearch();
-			void toggleButton(QTreeWidgetItem*, QTreeWidgetItem*);
-			void setSearchFocus();
+    void reloadValueChoose();
+    void doSearch();
+    void toggleButton(QTreeWidgetItem*, QTreeWidgetItem*);
+    void setSearchFocus();
 
   private:
-			void createLayout();
-			void createConnects();
-			void createWidgets();
-			void getKontoListe();
-			void getUnterKontoListe();
-			void getKommentarListe();
-			void searchKonto();
-			void searchUnterKonto();
-			void searchKommentar();
-			void setFoundItem(QTreeWidgetItem* item);
-			QStringList getNamesFromTreeItems();
+    void createLayout();
+    void createConnects();
+    void createWidgets();
+    void getKontoListe();
+    void getUnterKontoListe();
+    void getKommentarListe();
+    void searchKonto();
+    void searchUnterKonto();
+    void searchKommentar();
+    void setFoundItem(QTreeWidgetItem* item);
+    QStringList getNamesFromTreeItems();
 
-			QGridLayout *mainLayout;
-			QVBoxLayout *leftLayout;
-			QVBoxLayout *rightLayout;
-			QHBoxLayout *buttonLayout;
+    QGridLayout *mainLayout;
+    QVBoxLayout *leftLayout;
+    QVBoxLayout *rightLayout;
+    QHBoxLayout *buttonLayout;
 
-      QComboBox *kontoChoose;
-      QComboBox *valueChoose;
-      QComboBox *typeChoose;
+    QComboBox *kontoChoose;
+    QComboBox *valueChoose;
+    QComboBox *typeChoose;
 
-      QStringList valueStringList, typeStringList;
-      QStringList resultList;
+    QStringList valueStringList, typeStringList;
+    QStringList resultList;
 
 
-      QPushButton *okButton;
-      QPushButton *cancelButton;
-      QPushButton *searchButton;
+    QPushButton *okButton;
+    QPushButton *cancelButton;
+    QPushButton *searchButton;
 
-      QTreeWidget *resultTree;
+    QTreeWidget *resultTree;
 
-      QTreeWidgetItem* allekonten;
-      QTreeWidgetItem* abteilungsitem;
-			QTreeWidgetItem* kontoitem;
-			QTreeWidgetItem* unterkontoitem;
-			QTreeWidgetItem* kommentaritem;
+    QTreeWidgetItem* allekonten;
+    QTreeWidgetItem* abteilungsitem;
+    QTreeWidgetItem* kontoitem;
+    QTreeWidgetItem* unterkontoitem;
+    QTreeWidgetItem* kommentaritem;
 
-      AbteilungsListe* abtlist;
+    AbteilungsListe* abtlist;
 
-      QString currentAbteilung;
-			QString currentKonto;
-			QString currentUnterKonto;
-			QString chosenValueString;
+    QString currentAbteilung;
+    QString currentKonto;
+    QString currentUnterKonto;
+    QString chosenValueString;
 
-			QColor foundItemColor;
+    QColor foundItemColor;
 };
 
 #endif

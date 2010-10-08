@@ -46,10 +46,10 @@ class TimeEdit: public QSpinBox
    */
   TimeEdit(int maxVal, QWidget* parent): QSpinBox(parent)
   {
-		 setMinimum( 0 );
-		 setMaximum( maxVal );
-		 setSingleStep( 1 );
-	}
+     setMinimum( 0 );
+     setMaximum( maxVal );
+     setSingleStep( 1 );
+  }
 
   /** Es wird statt dessen ein ein stepButtonPressed Signal ausgeloest.
    * (noetig zum gleichschalten mehrerer SpinBoxes).
