@@ -49,7 +49,7 @@ bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
   QApplication::addLibraryPath(execDir+"/lib");
   QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC" );
   m_dbconnector->configureDB(defaultDB);
-	
+
   if ( defaultDB.open() ) {
       QSqlQuery query(
           "SELECT kategorie, beschreibung FROM v_bereitschaft_sctime;",
@@ -61,7 +61,7 @@ bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
           QString beschreibung = query.value(1).toString().simplified();
 
           if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
-		
+
           berlist->insertEintrag(name, beschreibung, IS_IN_DATABASE);
         }
       }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;

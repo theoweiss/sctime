@@ -61,7 +61,7 @@ class UnterKontoDialog: public QDialog
                      bool connectZeiten, QMainWindow * parent=0, bool readOnly=false);
     ZeitBox* getZeitAbzurBox();
     ZeitBox* getZeitBox();
-    QString getComment();		
+    QString getComment();
     void setSettings(SCTimeXMLSettings* s);
   public slots:
     virtual void accept();
@@ -75,7 +75,7 @@ class UnterKontoDialog: public QDialog
   private slots:
     virtual void projektAktivierenButtonClicked();
     virtual void addTag();
-  
+
   private:
     QLineEdit* commentedit;
     QComboBox* commentcombo;

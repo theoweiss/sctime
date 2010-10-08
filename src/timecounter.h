@@ -35,7 +35,7 @@ class TimeCounter {
     TimeCounter() { seconds=0; }
     TimeCounter(const int& sec) {seconds=sec;}
     TimeCounter(const TimeCounter& tc) {seconds=tc.seconds; }
-    
+
     void addTime(const int& sec)
     {
       seconds+=sec;
@@ -45,7 +45,7 @@ class TimeCounter {
     {
       seconds+=tc.seconds;
     }
-    
+
     QString toString()
     {
       QString qs;

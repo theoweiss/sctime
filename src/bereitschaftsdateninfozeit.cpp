@@ -80,16 +80,16 @@ bool BereitschaftsDatenInfoZeit::readInto(BereitschaftsListe * berList)
   berList->clear();
   FILE* file;
   int rc;
-  
-  if (m_DatenFileName.isEmpty()) {	
-		
-		putenv("LC_CTYPE=de_DE.UTF-8");	
+
+  if (m_DatenFileName.isEmpty()) {
+
+		putenv("LC_CTYPE=de_DE.UTF-8");
     file = popen("zeitbereitls --separator='|'", "r");
     if (!file) {
       std::cerr<<"Kann \"zeitbereitls\" nicht ausfuehren."<<std::endl;
       return false;
     }
-    
+
   } else {
       file = fopen(m_DatenFileName.toLatin1(), "r");
       if (!file) {
@@ -108,8 +108,8 @@ bool BereitschaftsDatenInfoZeit::readInto(BereitschaftsListe * berList)
 	}
   else
       fclose(file);
-      
-  
+
+
   return result;
 }
 

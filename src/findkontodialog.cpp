@@ -38,64 +38,64 @@
 FindKontoDialog::FindKontoDialog(AbteilungsListe* abtlist, QWidget * parent):QDialog(parent)
 {
 	this->abtlist = abtlist;
-	
+
 	createLayout();
 	createWidgets();
 	createConnects();
-	
+
 	typeStringList.append(ALLE);
 	typeStringList.append(KONTO);
 	typeStringList.append(UNTERKONTO);
 	typeStringList.append(KOMMENTAR);
-	
+
 	typeChoose->insertItems(0,typeStringList);
-	
+
 	foundItemColor = QColor(0,191,255);
 }
 
 void FindKontoDialog::createLayout()
 {
-	mainLayout = new QGridLayout(this);	
-	
+	mainLayout = new QGridLayout(this);
+
   leftLayout=new QVBoxLayout();
   rightLayout=new QVBoxLayout();
   buttonLayout=new QHBoxLayout();
-  
+
 	mainLayout->addLayout(leftLayout, 0, 0, Qt::AlignLeft | Qt::AlignTop);
 	mainLayout->addLayout(rightLayout, 0, 1, Qt::AlignLeft | Qt::AlignTop);
 	mainLayout->addLayout(buttonLayout, 1, 1, Qt::AlignRight | Qt::AlignBottom);
 }
-   
+
 void FindKontoDialog::createWidgets()
 {
 	this->setMinimumHeight( 300 );
 	this->setWindowTitle("sctime - Suche");
-	
+
 	typeChoose = new QComboBox(this);
-  typeChoose->setEditable(false);  
+  typeChoose->setEditable(false);
 
 	valueChoose = new QComboBox(this);
 	valueChoose->setEditable(true);
-	valueChoose->setAutoCompletion(false);	
+	valueChoose->setAutoCompletion(false);
 	valueChoose->setFocus();
-	
-  leftLayout->addWidget(new QLabel("Bitte wählen Sie den gesuchten Typ:",this));  
+
+  leftLayout->addWidget(new QLabel("Bitte wählen Sie den gesuchten Typ:",this));
   leftLayout->addWidget(typeChoose);
   leftLayout->addWidget(new QLabel("Bitte wählen Sie den gesuchten Namen:", this));
   leftLayout->addWidget(valueChoose);
 
 	resultTree = new QTreeWidget(this);
-	resultTree->setHeaderLabel( "Suchergebnis" );	
+	resultTree->setHeaderLabel( "Suchergebnis" );
 	resultTree->setColumnCount( 1 ) ;
-	resultTree->setSelectionMode(QAbstractItemView::SingleSelection);	
-  rightLayout->addWidget(resultTree);	
-  
+	resultTree->setSelectionMode(QAbstractItemView::SingleSelection);
+  rightLayout->addWidget(resultTree);
+
   okButton=new QPushButton( "OK", this );
   okButton->setEnabled(false);
   cancelButton=new QPushButton( "Cancel", this );
 	searchButton=new QPushButton( "Search", this );
 	searchButton->setDefault( true );
-	
+
   buttonLayout->setAlignment(Qt::AlignRight);
   buttonLayout->addWidget(searchButton);
   buttonLayout->addWidget(okButton);
@@ -105,17 +105,17 @@ void FindKontoDialog::createWidgets()
 void FindKontoDialog::createConnects()
 {
 	connect (okButton, 		 SIGNAL(clicked()), this, SLOT(accept()));
-	connect (cancelButton, SIGNAL(clicked()), this, SLOT(reject()));	
+	connect (cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
 	connect (searchButton, SIGNAL(clicked()), this, SLOT(doSearch()));
 	connect (typeChoose,   SIGNAL(currentIndexChanged(QString)), this, SLOT(reloadValueChoose()));
 	connect (resultTree,   SIGNAL(itemDoubleClicked(QTreeWidgetItem*, int)), this, SLOT(accept()));
-	connect (resultTree,   SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)), 
+	connect (resultTree,   SIGNAL(currentItemChanged(QTreeWidgetItem*, QTreeWidgetItem*)),
 		this, SLOT(toggleButton(QTreeWidgetItem*, QTreeWidgetItem*)));
 	connect (valueChoose,  SIGNAL(editTextChanged ( const QString & )), this, SLOT(setSearchFocus()));
-}	
+}
 
 void FindKontoDialog::toggleButton(QTreeWidgetItem* current, QTreeWidgetItem* previous)
-{ 	
+{
 	if( !current ) return;
 	if( current->childCount() == 0 )
 	{
@@ -133,23 +133,23 @@ void FindKontoDialog::reloadValueChoose()
 	QString chosenString = typeChoose->currentText();
 	valueStringList.clear();
 	valueChoose->clear();
-	
+
 	if( chosenString == ALLE )
-	{		
+	{
 		getKontoListe();
 		getUnterKontoListe();
 		getKommentarListe();
 	} else if( chosenString == KONTO )
 	{
-		getKontoListe();		
+		getKontoListe();
 	} else if( chosenString == UNTERKONTO )
 	{
 		getUnterKontoListe();
 	} else if( chosenString == KOMMENTAR )
-	{		
+	{
 		getKommentarListe();
 	}
-	
+
 	#if QT_VERSION >= 0x040500
 		//Method only available at Qt4.5 or greater
 		valueStringList.removeDuplicates();
@@ -162,7 +162,7 @@ void FindKontoDialog::reloadValueChoose()
 //Get Value list for konto
 void FindKontoDialog::getKontoListe()
 {
-	for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt) 
+	for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt)
 	{
     KontoListe* kontoliste=&(posAbt->second);
     for (KontoListe::iterator itKo=kontoliste->begin(); itKo!=kontoliste->end(); ++itKo)
@@ -178,17 +178,17 @@ void FindKontoDialog::getKontoListe()
 //Get Value list for Unterkonto
 void FindKontoDialog::getUnterKontoListe()
 {
-	for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt) 
+	for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt)
 	{
     KontoListe* kontoliste=&(posAbt->second);
     for (KontoListe::iterator itKo=kontoliste->begin(); itKo!=kontoliste->end(); ++itKo)
-    {			
+    {
 			UnterKontoListe* unterkontoliste =&(itKo->second);
 			for(UnterKontoListe::iterator itUko=unterkontoliste->begin(); itUko!=unterkontoliste->end(); ++itUko)
 			{
 				if( !valueStringList.contains(itUko->first) )
 				{
-					valueStringList.append (itUko->first);				
+					valueStringList.append (itUko->first);
 				}
 			}
     }
@@ -198,11 +198,11 @@ void FindKontoDialog::getUnterKontoListe()
 //Get Value list for Kommentar
 void FindKontoDialog::getKommentarListe()
 {
-	for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt) 
+	for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt)
 	{
     KontoListe* kontoliste=&(posAbt->second);
     for (KontoListe::iterator itKo=kontoliste->begin(); itKo!=kontoliste->end(); ++itKo)
-    {			
+    {
 			UnterKontoListe* unterkontoliste =&(itKo->second);
 			for(UnterKontoListe::iterator itUko=unterkontoliste->begin(); itUko!=unterkontoliste->end(); ++itUko)
 			{
@@ -211,9 +211,9 @@ void FindKontoDialog::getKommentarListe()
 				{
 					QString kommentar = itEt->second.kommentar;
 					if( kommentar != "" && (!valueStringList.contains(kommentar)))
-					{						
+					{
 						valueStringList.append (kommentar);
-					}					
+					}
 				}
 			}
     }
@@ -222,27 +222,27 @@ void FindKontoDialog::getKommentarListe()
 
 //Get the selected item path as qstringlist
 QStringList FindKontoDialog::getSelectedItems()
-{	
+{
 	return getNamesFromTreeItems();
 }
 
 //Get the TreeItem Names from the result tree
 QStringList FindKontoDialog::getNamesFromTreeItems()
-{	
+{
 	QTreeWidgetItem *currentItem = resultTree->currentItem();
 	QStringList itemNames;
 	if(currentItem)
-	{		
+	{
 		itemNames.push_front(currentItem->text(0));
 		//Find TopItem
 		while( currentItem->parent() != 0 )
 		{
-			QTreeWidgetItem *parentItem = currentItem->parent();			
+			QTreeWidgetItem *parentItem = currentItem->parent();
 			//Add text to return list
 			itemNames.push_front(parentItem->text(0));
 			currentItem = parentItem;
-		}		
-	}	
+		}
+	}
 	return itemNames;
 }
 
@@ -252,32 +252,32 @@ void FindKontoDialog::doSearch()
 	currentAbteilung = "";
 	currentKonto = "";
 	currentUnterKonto = "";
-	
+
 	QString chosenTypeString = typeChoose->currentText();
 	chosenValueString = valueChoose->currentText();
 	resultTree->clear();
 	resultList.clear();
-	
-	allekonten=new QTreeWidgetItem(resultTree, 0);	
-	allekonten->setText(0, ALLE_KONTEN_STRING);	
-	
+
+	allekonten=new QTreeWidgetItem(resultTree, 0);
+	allekonten->setText(0, ALLE_KONTEN_STRING);
+
 	if( chosenValueString == "" ) return;
 	if( chosenTypeString == ALLE )
-	{		
+	{
 		searchKonto();
 		searchUnterKonto();
-		searchKommentar();		
+		searchKommentar();
 	} else if( chosenTypeString == KONTO || chosenTypeString == ALLE )
-	{								
+	{
 		searchKonto();
 	} else if( chosenTypeString == UNTERKONTO )
 	{
 		searchUnterKonto();
 	} else if( chosenTypeString == KOMMENTAR )
-	{		
+	{
 		searchKommentar();
 	}
-		
+
 	resultTree->expandAll();
 	resultTree->resizeColumnToContents( 0 );
 	resultTree->setFocus();
@@ -286,8 +286,8 @@ void FindKontoDialog::doSearch()
 
 void FindKontoDialog::searchKonto()
 {
-	for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt) 
-	{			
+	for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt)
+	{
 		KontoListe* kontoliste=&(posAbt->second);
 		for (KontoListe::iterator itKo=kontoliste->begin(); itKo!=kontoliste->end(); ++itKo)
 		{
@@ -297,23 +297,23 @@ void FindKontoDialog::searchKonto()
 				{
 					currentAbteilung = posAbt->first;
 					abteilungsitem = new QTreeWidgetItem( allekonten, 0);
-					abteilungsitem->setText(0, posAbt->first );														
+					abteilungsitem->setText(0, posAbt->first );
 				}
 				kontoitem= new QTreeWidgetItem( abteilungsitem, 0);
 				kontoitem->setText(0, itKo->first );
 				setFoundItem(kontoitem);
-			}				
+			}
 		}
-	}	
+	}
 }
 
 void FindKontoDialog::searchUnterKonto()
 {
-	for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt) 
-	{						 
+	for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt)
+	{
 		KontoListe* kontoliste=&(posAbt->second);
 		for (KontoListe::iterator itKo=kontoliste->begin(); itKo!=kontoliste->end(); ++itKo)
-		{					 
+		{
 			UnterKontoListe* unterkontoliste =&(itKo->second);
 			for(UnterKontoListe::iterator itUko=unterkontoliste->begin(); itUko!=unterkontoliste->end(); ++itUko)
 			{
@@ -323,30 +323,30 @@ void FindKontoDialog::searchUnterKonto()
 					{
 						currentAbteilung = posAbt->first;
 						abteilungsitem = new QTreeWidgetItem( allekonten, 0);
-						abteilungsitem->setText(0, posAbt->first );						
+						abteilungsitem->setText(0, posAbt->first );
 					}
 					if( itKo->first != currentKonto  )
 					{
 						currentKonto = itKo->first;
 						kontoitem= new QTreeWidgetItem( abteilungsitem, 0);
-						kontoitem->setText(0, itKo->first);				
+						kontoitem->setText(0, itKo->first);
 					}
 					unterkontoitem= new QTreeWidgetItem( kontoitem, 0);
 					unterkontoitem->setText(0, itUko->first);
 					setFoundItem(unterkontoitem);
-				}				
-			}				
-		}			
+				}
+			}
+		}
 	}
 }
 
 void FindKontoDialog::searchKommentar()
 {
-	for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt) 
+	for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt)
 	{
 		KontoListe* kontoliste=&(posAbt->second);
 		for (KontoListe::iterator itKo=kontoliste->begin(); itKo!=kontoliste->end(); ++itKo)
-		{			
+		{
 			UnterKontoListe* unterkontoliste =&(itKo->second);
 			for(UnterKontoListe::iterator itUko=unterkontoliste->begin(); itUko!=unterkontoliste->end(); ++itUko)
 			{
@@ -357,30 +357,30 @@ void FindKontoDialog::searchKommentar()
 					if( kommentar != "" )
 					{
 						if( kommentar.contains(chosenValueString, Qt::CaseInsensitive) )
-						{		
+						{
 							if( posAbt->first != currentAbteilung )
 							{
 								currentAbteilung = posAbt->first;
 								abteilungsitem = new QTreeWidgetItem( allekonten, 0);
-								abteilungsitem->setText(0, posAbt->first );											
+								abteilungsitem->setText(0, posAbt->first );
 							}
 							if( itKo->first != currentKonto  )
 							{
 								currentKonto = itKo->first;
 								kontoitem= new QTreeWidgetItem( abteilungsitem, 0);
-								kontoitem->setText(0, itKo->first);														
-							}	
+								kontoitem->setText(0, itKo->first);
+							}
 							if( itUko->first != currentUnterKonto )
 							{
 								currentUnterKonto = itUko->first;
 								unterkontoitem = new QTreeWidgetItem( kontoitem, 0);
-								unterkontoitem->setText(0, itUko->first);																
-							}					
+								unterkontoitem->setText(0, itUko->first);
+							}
 							kommentaritem= new QTreeWidgetItem( unterkontoitem, 0);
-							kommentaritem->setText(0,itEt->second.kommentar);								
-							setFoundItem( kommentaritem );							
+							kommentaritem->setText(0,itEt->second.kommentar);
+							setFoundItem( kommentaritem );
 						}
-					}					
+					}
 				}
 			}
 		}
@@ -389,11 +389,11 @@ void FindKontoDialog::searchKommentar()
 
 void FindKontoDialog::setFoundItem(QTreeWidgetItem* item)
 {
-	resultTree->setCurrentItem( item );	
-	item->setExpanded(true);							
-	item->setSelected(true);							
+	resultTree->setCurrentItem( item );
+	item->setExpanded(true);
+	item->setSelected(true);
 	//item->setBackgroundColor(0, foundItemColor);
-	toggleButton( item, 0);						
+	toggleButton( item, 0);
 }
 
 void FindKontoDialog::setSearchFocus()

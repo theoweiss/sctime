@@ -59,13 +59,13 @@ class SCTimeApp: public QApplication
     SCTimeApp( int &argc, char **argv, QString zeitkontenfile, QString bereitschaftsfile ): QApplication (argc,argv)
     {
 
-#ifndef WIN32 
+#ifndef WIN32
       SCTimeXMLSettings settings;
       settings.readSettings();
       connect(this, SIGNAL(unixSignal(int)), this, SLOT(sighandler(int)));
       watchUnixSignal(SIGINT,true);
       watchUnixSignal(SIGTERM,true);
-      watchUnixSignal(SIGHUP,true);      
+      watchUnixSignal(SIGHUP,true);
       if (zeitkontenfile.isEmpty()) {
           zk = new KontoDatenInfoZeit();
           if (!settings.zeitKontenKommando().isEmpty())
@@ -102,7 +102,7 @@ class SCTimeApp: public QApplication
       delete zk;
     }
 
-  void commitData ( QSessionManager & manager ) 
+  void commitData ( QSessionManager & manager )
   {
   	mainWindow->save();
   	QApplication::commitData(manager);

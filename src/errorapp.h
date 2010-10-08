@@ -42,7 +42,7 @@ class ErrorApp: public QApplication
       QMessageBox::critical(NULL,"Error",message, QMessageBox::Ok, QMessageBox::NoButton,
                              QMessageBox::NoButton);
     }
-    
+
     ErrorApp( const QString& message, int &argc, char **argv, bool isInfo ): QApplication (argc,argv)
     {
       QMessageBox::information(NULL,"Information",message, QMessageBox::Ok, QMessageBox::Ok);

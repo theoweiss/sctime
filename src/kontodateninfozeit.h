@@ -70,7 +70,7 @@ class KontoDatenInfoZeit: public KontoDatenInfo
     bool readZeitFile(FILE *file, AbteilungsListe * abtlist);
     void setKommando(const QString& command);
     virtual bool checkIn(AbteilungsListe* abtlist);
-    
+
     bool readDefaultComments(AbteilungsListe * abtList);
   private:
     Einchecker* ec;

@@ -32,10 +32,10 @@
 * Ueber die Environmentvariable SCTIME_CONFIG_DIR kann das
   Konfigurationsverzeichnis angegeben werden. Wenn die Variable nicht
   gesetzt ist, wird wie bisher $HOME/.sctime angenommen.
-  
+
 --------- Version 0.60 -----------
 * Komplette Umstellung auf Qt4 ohne Q3Support
-* Eine erweiterte Suche, mit der Option in Konten, Unterkonten und Kommentaren 
+* Eine erweiterte Suche, mit der Option in Konten, Unterkonten und Kommentaren
   zu suchen.
 * Erweiterte Drag 'n' Drop Funktionalität: Wird beim D'n'D die Shift Taste
   gedrückt, können zusätzlich die Kommentare verschoben werden.
@@ -51,7 +51,7 @@
 * Neue Windows Aufrufparameter "/?" und "/h"
 * BugFix des ungewollten "Springens" auf eine andere Ansicht
   sobald Scrollbars vorhanden sind.
-* BugFix: Der Zustand ob ein Knoten der persönlichen Konten auf oder zugeklappt ist wird 
+* BugFix: Der Zustand ob ein Knoten der persönlichen Konten auf oder zugeklappt ist wird
   wieder hergestellt.
 * In den .sh files wird "set -e", emacs coding und "trap [...]" angefügt.
 * Die Zeittools "zeitkonten" und "zeitbereitls" werden mit UTF-8 Encoding aufgerufen.

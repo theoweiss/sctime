@@ -54,8 +54,8 @@ class TimeMainWindow: public QMainWindow
     TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* bereitschaftsdatenReader);
     QTreeWidget* getKontoTree() { return kontoTree; };
     virtual ~TimeMainWindow();
-    SCTimeXMLSettings* settings;        
-		
+    SCTimeXMLSettings* settings;
+
   public slots:
 
     void callUnterKontoDialog(QTreeWidgetItem * item);
@@ -166,7 +166,7 @@ class TimeMainWindow: public QMainWindow
      * Unterkonto mit mehreren Eintraegen) mit false
      */
     void aktivierbarerEintragSelected(bool isActivable);
-	
+
 	protected:
 		virtual void moveEvent( QMoveEvent *event);
   private:
@@ -199,7 +199,7 @@ class TimeMainWindow: public QMainWindow
 		void openItem( QTreeWidgetItem *item );
     // Workaround, um beim Setzen der Voreinstellung fuer den inPersoenlicheKonten-Button nicht das zugehoerige
     // Event auzuloesen. Wenn inPersoenlicheKontenAllowed=false, tut inPersoenlicheKonten(bool) gar nichts.
-    bool inPersoenlicheKontenAllowed;        
+    bool inPersoenlicheKontenAllowed;
 };
 
 #endif

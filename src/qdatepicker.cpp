@@ -190,7 +190,7 @@ void QDatePicker::init( const QDate &dt )
   d->selectWeek->setToolTip("Woche wählen");
   //QToolTip::add(d->todayButton, "Heutigen Tag wählen");
   d->todayButton->setToolTip("Heutigen Tag wählen");
-  
+
   QTextCharFormat format=table->dateTextFormat(QDate::currentDate());
   format.setFontWeight(QFont::Bold);
   table->setDateTextFormat(QDate::currentDate(),format);

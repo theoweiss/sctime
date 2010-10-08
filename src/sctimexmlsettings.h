@@ -103,7 +103,7 @@ class SCTimeXMLSettings
     void setAlwaysSaveEntry(bool newVal)
     {
         alwaysSaveEintrag = newVal;
-    }    
+    }
 
     bool alwaysSaveEntry()
     {
@@ -164,27 +164,27 @@ class SCTimeXMLSettings
     {
     	return m_useCustomFont;
     }
-    
+
     void setUseCustomFont(bool useCustomFont)
     {
     	m_useCustomFont=useCustomFont;
     }
-    
+
     QString customFont()
     {
     	return m_customFont;
     }
-    
+
     void setCustomFont(QString customFont)
     {
         m_customFont=customFont;
     }
-    
+
     int customFontSize()
     {
     	return m_customFontSize;
     }
-    
+
     void setCustomFontSize(int customFontSize)
     {
         m_customFontSize=customFontSize;
@@ -194,7 +194,7 @@ class SCTimeXMLSettings
     {
     	return m_showTypeColumn;
     }
-    
+
     void setShowTypeColumn(bool showTypeColumn)
     {
     	m_showTypeColumn=showTypeColumn;
@@ -214,7 +214,7 @@ class SCTimeXMLSettings
     {
         return m_zeitKontenKommando;
     }
-    
+
     QString codecString(QTextStream& stream);
 
     void setZeitKontenKommando(const QString& command)

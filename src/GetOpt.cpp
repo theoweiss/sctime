@@ -152,13 +152,13 @@ GetOpt::GetOpt( const QStringList &a )
 void GetOpt::init( int argc, char *argv[], int offset )
 {
     numReqArgs = numOptArgs = 0;
-    currArg = 1; // appname is not part of the arguments    
+    currArg = 1; // appname is not part of the arguments
     if ( argc ) {
         // application name
         aname = QFileInfo( QString::fromUtf8( argv[0] ) ).fileName();
-        // arguments        
-        for ( int i = offset; i < argc; ++i )       				
-            args.append( QString::fromUtf8( argv[i] ) );				
+        // arguments
+        for ( int i = offset; i < argc; ++i )
+            args.append( QString::fromUtf8( argv[i] ) );
     }
 }
 
@@ -222,7 +222,7 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
                     exit( 2 );
                 }
                 t = LongOpt;
-                // split key=value style arguments                                
+                // split key=value style arguments
                 int equal = a.indexOf( '=' );
                 if ( equal >= 0 ) {
                     stack.append( a.mid( equal + 1 ) );
@@ -451,9 +451,9 @@ void GetOpt::setSwitch( const Option &o )
 void GetOpt::addOption( char s, const QString &l, QString *v )
 {
     Option opt( OArg1, s, l );
-    opt.stringValue = v;    
-    addOption( opt ); 
-    *v = QString::null;    
+    opt.stringValue = v;
+    addOption( opt );
+    *v = QString::null;
 }
 
 /**

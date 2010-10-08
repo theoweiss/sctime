@@ -38,8 +38,8 @@ class UnterKontoEintrag
     /** Erzeugt ein Unterkonto mit Namen _name, Kommenatr _kommentar, usw */
     UnterKontoEintrag(const QString& _kommentar="", int _sekunden=0, int _sekundenabzur=0, int _flags=0)
     {
-      kommentar=_kommentar; 
-      sekunden=_sekunden; 
+      kommentar=_kommentar;
+      sekunden=_sekunden;
       sekundenAbzur=_sekundenabzur;
       flags=_flags;
     }

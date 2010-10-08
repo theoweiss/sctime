@@ -61,7 +61,7 @@ class StatusBar:public QStatusBar
       if (on) {
         datumsWarnung->setText("Warnung: Es wird der "+datum.toString("dd.MM.yyyy")+" editiert.");
         datumsWarnung->setStyleSheet("color:#800000;");
-        
+
         //datumsWarnung->setPaletteForegroundColor(Qt::darkRed);
       }
       else
@@ -71,7 +71,7 @@ class StatusBar:public QStatusBar
 
 
     }
-    
+
     void appendWarning(bool on, QString str)
     {
 			if( on )

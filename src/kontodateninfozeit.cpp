@@ -249,7 +249,7 @@ bool KontoDatenInfoZeit::readCommentsFromZeitFile(FILE* file, AbteilungsListe * 
             //abtList->insertEintrag(abt,konto,unterkonto);
             //abtList->setDescription(abt,konto,unterkonto,DescData(beschreibung,verantwortlicher,typ));
             //abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
-            
+
             if (ql.size()>12) {
               // Do not simplify comment to preserve intentional whitespace.
               QString commentstr = ql[12];
@@ -300,7 +300,7 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
             abtList->insertEintrag(abt,konto,unterkonto);
             abtList->setDescription(abt,konto,unterkonto,DescData(beschreibung,verantwortlicher,typ));
             abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
-            
+
             if (ql.size()>12) {
               // Do not simplify comment to preserve intentional whitespace.
               QString commentstr = ql[12];
@@ -323,21 +323,21 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
   abtList->clear();
   FILE* file;
   int rc;
-    
+
   if (m_DatenFileName.isEmpty()) {
     QString command;
-    if (m_Kommando.isEmpty()){							
+    if (m_Kommando.isEmpty()){
       command="zeitkonten --mikrokonten --separator='|'";
     }else
       command=m_Kommando;
-      putenv("LC_CTYPE=de_DE.UTF-8");		
-			
-    file = popen(command.toLatin1(), "r");    
+      putenv("LC_CTYPE=de_DE.UTF-8");
+
+    file = popen(command.toLatin1(), "r");
     if (!file) {
       std::cerr<<"Kann Kommando \""<<command.toStdString()<<"\" nicht ausfuehren."<<std::endl;
       return false;
-    }    
-    
+    }
+
   } else {
       file = fopen(m_DatenFileName.toLatin1(), "r");
       if (!file) {
@@ -345,10 +345,10 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
           return false;
       }
   }
-  
+
 	bool result=readZeitFile(file,abtList);
-		
-  if (m_DatenFileName.isEmpty()){		
+
+  if (m_DatenFileName.isEmpty()){
       rc = pclose(file);
       if(rc!=0)
       {
@@ -365,23 +365,23 @@ bool KontoDatenInfoZeit::readDefaultComments(AbteilungsListe * abtList)
 	//abtList->clear();
   FILE* file;
   int rc;
-  
+
   if (m_DatenFileName.isEmpty()) {
     QString command;
-    if (m_Kommando.isEmpty()){			
+    if (m_Kommando.isEmpty()){
       command="zeitkonten --mikrokonten --separator='|'";}
     else
-      command=m_Kommando;      
-    
-		putenv("LC_CTYPE=de_DE.UTF-8");		  
-		
-    file = popen(command.toLatin1(), "r");           
+      command=m_Kommando;
+
+		putenv("LC_CTYPE=de_DE.UTF-8");
+
+    file = popen(command.toLatin1(), "r");
     if (!file || file ==NULL) {
       std::cerr<<"Kann Kommando \""<<command.toStdString()<<"\" nicht ausfuehren."<<std::endl;
       return false;
     }
-    
-    
+
+
   } else {
       file = fopen(m_DatenFileName.toLatin1(), "r");
       if (!file) {
@@ -389,11 +389,11 @@ bool KontoDatenInfoZeit::readDefaultComments(AbteilungsListe * abtList)
           return false;
       }
   }
-  
+
 	bool result=readCommentsFromZeitFile(file,abtList);
-		
+
   if (m_DatenFileName.isEmpty()){
-      rc=pclose(file);      
+      rc=pclose(file);
       if(rc!=0)
       {
 				std::cerr << "Kann Kommando \"zeitkonten --mikrokonten --separator='|'\" nicht ausfuehren. Defaultkommentare konnten nicht geladen werden."<<std::endl;

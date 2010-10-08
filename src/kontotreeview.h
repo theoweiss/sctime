@@ -58,11 +58,11 @@ class KontoTreeView: public QTreeWidget
          KontoTreeItem* &topi, KontoTreeItem* &abti, KontoTreeItem* &koi, KontoTreeItem* &ukoi, KontoTreeItem* &eti);
 
     KontoTreeItem* sucheKontoItem(const QString& tops, const QString& abts, const QString& kos);
-    
+
     KontoTreeItem* sucheUnterKontoItem(const QString& tops, const QString& abts, const QString& kos, const QString& ukos);
-     
+
     KontoTreeItem* sucheKommentarItem(const QString& tops, const QString& abts, const QString& kos, const QString& ukos, const QString& koms);
-        
+
     void load(AbteilungsListe* abtlist);
 
     void itemInfo(QTreeWidgetItem* item,QString& tops, QString& abts, QString& kos, QString& ukos, int& idx);
@@ -86,28 +86,28 @@ class KontoTreeView: public QTreeWidget
     void showPersoenlicheKontenSummenzeit(bool show);
 
 		int getItemDepth( QTreeWidgetItem* );
-		
+
 		Qt::MouseButton getCurrentButton();
-		
+
 		void updateColumnWidth();
   public slots:
     virtual void refreshItem(const QString& abt, const QString& ko,const QString& uko, int idx);
     void refreshAllItemsInUnterkonto(const QString& abt, const QString& ko,const QString& uko);
     void refreshAllItemsInKonto(const QString& abt, const QString& ko);
 
-  protected:        
+  protected:
 		virtual bool eventFilter ( QObject* obj, QEvent * e );
     virtual void mouseMoveEvent(QMouseEvent *event);
-    virtual void mousePressEvent(QMouseEvent *event);        
+    virtual void mousePressEvent(QMouseEvent *event);
     virtual void dragEnterEvent(QDragEnterEvent *event);
-    virtual void dropEvent(QDropEvent *event);  
+    virtual void dropEvent(QDropEvent *event);
     virtual void dragMoveEvent(QDragMoveEvent *event);
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void keyReleaseEvent(QKeyEvent *event);
-		
 
-  private:		
-    bool m_showPersoenlicheKontenSummenzeit;    
+
+  private:
+    bool m_showPersoenlicheKontenSummenzeit;
     AbteilungsListe* abtList;
     QPoint dragStartPosition;
     Qt::MouseButton currentButton;

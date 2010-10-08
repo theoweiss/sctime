@@ -6,7 +6,7 @@ installiert werden.
 Anschliessend muss die ODBC-Datenquelle hinzugefuegt
 werden.
 Unter Windows XP funktioniert das folgendermassen:
-In der Systemsteuerung Verwaltung auswaehlen. Dort 
+In der Systemsteuerung Verwaltung auswaehlen. Dort
 Datenquellen(ODBC) oeffnen.
 Hier eine neue Benutzer-DSN fuer den PostgreSQL-Treiber
 hinzufuegen, mit den folgenden Eigenschaften:
@@ -19,6 +19,6 @@ Port: 5432
 Als Username ist der Loginname, und als Passwort der
 Inhalt der Datei "H:\.Zeit" einzutragen.
 
-Bei den Optionen sollte man unter DataSource 
+Bei den Optionen sollte man unter DataSource
 sicherheitshalber noch "ReadOnly" aktivieren.
 

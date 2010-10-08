@@ -48,62 +48,62 @@
 class FindKontoDialog: public QDialog
 {
   Q_OBJECT
- 
+
   public:
     FindKontoDialog(AbteilungsListe* abtlist, QWidget * parent = 0);
 		QStringList getSelectedItems();
-		
-  protected slots:         
+
+  protected slots:
 			void reloadValueChoose();
 			void doSearch();
 			void toggleButton(QTreeWidgetItem*, QTreeWidgetItem*);
 			void setSearchFocus();
-			
+
   private:
 			void createLayout();
 			void createConnects();
 			void createWidgets();
 			void getKontoListe();
 			void getUnterKontoListe();
-			void getKommentarListe();			
+			void getKommentarListe();
 			void searchKonto();
 			void searchUnterKonto();
 			void searchKommentar();
 			void setFoundItem(QTreeWidgetItem* item);
 			QStringList getNamesFromTreeItems();
-			
+
 			QGridLayout *mainLayout;
 			QVBoxLayout *leftLayout;
 			QVBoxLayout *rightLayout;
 			QHBoxLayout *buttonLayout;
-						
+
       QComboBox *kontoChoose;
       QComboBox *valueChoose;
       QComboBox *typeChoose;
-      
+
       QStringList valueStringList, typeStringList;
       QStringList resultList;
-                  
-      
+
+
       QPushButton *okButton;
       QPushButton *cancelButton;
       QPushButton *searchButton;
-      
+
       QTreeWidget *resultTree;
-      
+
       QTreeWidgetItem* allekonten;
       QTreeWidgetItem* abteilungsitem;
 			QTreeWidgetItem* kontoitem;
 			QTreeWidgetItem* unterkontoitem;
-			QTreeWidgetItem* kommentaritem;      
-      
+			QTreeWidgetItem* kommentaritem;
+
       AbteilungsListe* abtlist;
-      
+
       QString currentAbteilung;
 			QString currentKonto;
 			QString currentUnterKonto;
 			QString chosenValueString;
-			
+
 			QColor foundItemColor;
 };
 

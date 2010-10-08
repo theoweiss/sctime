@@ -36,7 +36,7 @@ class QFontListView;
 
 class SmallFontDialog: public QDialog
 {
-    Q_OBJECT    
+    Q_OBJECT
 
 public:
     static QFont getFont(bool *ok, const QFont &def, QWidget* parent=0);
@@ -59,10 +59,10 @@ private:
 
 private slots:
     void sizeChanged(const QString &);
-    void familyHighlighted(int);        
+    void familyHighlighted(int);
     void sizeHighlighted(int);
     void updateSample();
-    
+
 private:
     QLabel * familyAccel;
     QLineEdit * familyEdit;
@@ -74,7 +74,7 @@ private:
 
     QGroupBox * sample;
     QLineEdit * sampleEdit;
-    
+
     QPushButton * ok;
     QPushButton * cancel;
 
@@ -84,12 +84,12 @@ private:
 
     QFontDatabase fdb;
 
-    QString       family;    
+    QString       family;
     QString       style;
     int           size;
 
     bool smoothScalable;
-    
+
 };
 
 #endif // QT_NO_FONTDIALOG

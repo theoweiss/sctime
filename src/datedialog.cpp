@@ -64,7 +64,7 @@ void DateDialog::dateChangedSlot(QDate date)
     dateList << "zeit-" << date.toString("yyyy-MM") << "-*.xml"; //Since Qt4
     //QStringList files=qd.entryList("zeit-"+date.toString("yyyy-MM")+"-*.xml");
     QStringList files=qd.entryList(dateList);
-    for ( QStringList::Iterator it = files.begin(); it != files.end(); ++it ) {      
+    for ( QStringList::Iterator it = files.begin(); it != files.end(); ++it ) {
       bool ok;
       QDate filedate;
       int day=QString(*it).section('-',3,3).section('.',0,0).toInt(&ok);

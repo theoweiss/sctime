@@ -44,7 +44,7 @@ class TimeEdit: public QSpinBox
   /**
    * Erzeugt ein TimeEdit-Objekt mit Wertebereich 0..maxVal.
    */
-  TimeEdit(int maxVal, QWidget* parent): QSpinBox(parent) 
+  TimeEdit(int maxVal, QWidget* parent): QSpinBox(parent)
   {
 		 setMinimum( 0 );
 		 setMaximum( maxVal );
@@ -162,7 +162,7 @@ class ZeitBox: public QGroupBox
       hourEdit->setValue(sekunden/3600);
       emit hourChangedBy(steps);
     }
-    
+
     void setReadOnly(bool readonly)
     {
       hourEdit->setReadOnly(readonly);

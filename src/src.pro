@@ -78,7 +78,7 @@ HEADERS += abteilungsliste.h \
            bereitschaftsview.h \
            bereitschaftsmodel.h \
            colorchooser.h
-RESOURCES= ../pics/sctimeImages.qrc					 
+RESOURCES= ../pics/sctimeImages.qrc
 #IMAGES += ../pics/hi16_action_apply.xpm \
 #          ../pics/hi22_action_1downarrow.xpm \
 #          ../pics/hi22_action_1uparrow.xpm \

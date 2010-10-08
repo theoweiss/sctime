@@ -160,7 +160,7 @@ QString SCTimeXMLSettings::codecString(QTextStream& stream)
   }
   stream.setCodec(QTextCodec::codecForName(codec.toLatin1()));
 #else
-  codec=nl_langinfo(CODESET);	
+  codec=nl_langinfo(CODESET);
 #endif
   return codec;
 }
@@ -432,7 +432,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             }
             if (elem2.tagName()=="poweruserview") {
               setPowerUserView((elem2.attribute("on")=="yes"));
-            }            
+            }
             if (elem2.tagName()=="customfont") {
               setUseCustomFont(true);
               setCustomFont(elem2.attribute("family"));
@@ -563,15 +563,15 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     if (persoenlicheKontensumme()) on="yes";
     persoenlichekontensummentag.setAttribute("on",on);
     generaltag.appendChild(persoenlichekontensummentag);
-    
+
     QDomElement typecolumntag = doc.createElement("typecolumn");
     on="no";
     if (showTypeColumn()) on="yes";
     typecolumntag.setAttribute("show",on);
     generaltag.appendChild(typecolumntag);
-    
+
     if (useCustomFont()) {
-        QDomElement customfonttag = doc.createElement("customfont");    
+        QDomElement customfonttag = doc.createElement("customfont");
         QString size="";
         size=size.setNum(customFontSize());
         customfonttag.setAttribute("family",customFont());
@@ -755,7 +755,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   }
   QTextStream stream( & f);
   QString codec=codecString(stream);
-  
+
   stream<<"<?xml version=\"1.0\" encoding=\""<<codec<<"\"?>"<<endl;
   stream<<doc.toString()<<endl;
 

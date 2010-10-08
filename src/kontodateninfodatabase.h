@@ -36,7 +36,7 @@ class KontoDatenInfoDatabase: public KontoDatenInfo
   public:
      KontoDatenInfoDatabase(DBConnector* dbconnector);
     virtual bool readInto(AbteilungsListe * abtlist);
-    virtual bool checkIn(AbteilungsListe* abtlist);  
+    virtual bool checkIn(AbteilungsListe* abtlist);
     bool readDefaultCommentsInto (AbteilungsListe * abtList);
   private:
     DBConnector* m_dbconnector;

@@ -42,21 +42,21 @@ class KontoTreeItem: public QTreeWidgetItem
 
     KontoTreeItem ( QTreeWidget * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );
 
-    KontoTreeItem ( QTreeWidgetItem * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );		
-       
+    KontoTreeItem ( QTreeWidgetItem * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );
+
     void setBold(bool bold);
-    
+
     void setGray();
 
     void setBgColor(const QColor bgColor);
 
 		QString getLabel1();
-		
-		KontoTreeItem* nextSibling( );		
-		
-	protected:		
+
+		KontoTreeItem* nextSibling( );
+
+	protected:
 		void paintEvent(QPaintEvent *event);
-		
+
   private:
     bool isBold;
     bool isGray;

@@ -165,7 +165,7 @@ SmallFontDialog::SmallFontDialog(QWidget *parent, bool modal, Qt::WFlags f)
     sampleEdit->setAlignment(Qt::AlignCenter);
     // Note that the sample text is *not* translated with tr(), as the
     // characters used depend on the charset encoding.
-    sampleEdit->setText("AaBbYyZz");    
+    sampleEdit->setText("AaBbYyZz");
     hbox->addWidget(sampleEdit);
 
     size = 0;
@@ -199,10 +199,10 @@ SmallFontDialog::SmallFontDialog(QWidget *parent, bool modal, Qt::WFlags f)
     mainGrid->setColumnStretch(0, 38);
     mainGrid->setColumnStretch(2, 10);
 
-    mainGrid->setColumnMinimumWidth(1, spacing);   
-    
+    mainGrid->setColumnMinimumWidth(1, spacing);
+
     mainGrid->addWidget(sample, 4, 0, 1, 2);
-    
+
     mainGrid->setRowMinimumHeight(4, 8*margin);
 
     mainGrid->setRowMinimumHeight(5, margin);

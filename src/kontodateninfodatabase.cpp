@@ -110,7 +110,7 @@ bool KontoDatenInfoDatabase::checkIn(AbteilungsListe* abtlist)
 
 
 /**
- * Liest aus einer ODBC-Datenbank nach abtList aber NUR Default Comments 
+ * Liest aus einer ODBC-Datenbank nach abtList aber NUR Default Comments
  */
 bool KontoDatenInfoDatabase::readDefaultCommentsInto(AbteilungsListe * abtList)
 {
