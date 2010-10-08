@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# On Mac OS X we build nicely without all the cruft below
+if uname | grep Darwin >/dev/null 2>&1 ; then
+	qmake -makefile $* sctime.pro || echo "qmake failed!"
+	exit 0
+fi
+
 arch=$1
 
 if [[ -z $arch ]] ; then

@@ -72,7 +72,10 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
 #ifndef MACOS
   setSelectionMode(QTreeWidget::NoSelection);
 #else
-  setSelectionMode(QTreeWidget::Single);
+  /* On Mac OS X with NoSelection the TreeView gives no visual feedback, what
+   * the currently selected item is. So we have to switch on SingleSelection to
+   * avoid user confusion. */
+  setSelectionMode(QTreeWidget::SingleSelection);
 #endif
 	
   load(abtlist);

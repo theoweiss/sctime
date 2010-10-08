@@ -1,0 +1,69 @@
+#!/bin/sh
+
+mydir=`dirname $0`
+srcdir="$mydir"/../..
+[ -z "$1" ] || srcdir="$1"
+approot="$srcdir"/bin/sctime.app
+sctime="$approot"/Contents/MacOS/scTime
+
+patchqmake="$mydir"/patchqmake
+
+# patch qt library paths in binary itself (not known to exist, but might)
+"$patchqmake" "$sctime" /dev/null
+
+otool -L "$sctime" | grep "/Qt" | sed "s, (compatibility .*$,," | \
+	while read lib ; do
+
+	libbase=`echo "$lib" | sed "s,^.*/lib/,,"`
+	privatelib="$approot"/Contents/Frameworks/"$libbase"
+
+	# path path to library in main binary
+	install_name_tool -change "$lib" @executable_path/../Frameworks/"$libbase" "$sctime"
+
+	# done already
+	[ -f "$privatelib" ] && continue
+
+	tdir=`dirname "$privatelib"`
+	mkdir -p "$tdir"
+	cp "$lib" "$privatelib"
+
+	# path qt library paths in this library
+	"$patchqmake" "$privatelib" /dev/null
+
+	# newer QtGui needs some resources :-(
+	dir=`dirname "$lib"`
+	if [ -d "$dir"/Resources -a ! -d "$tdir"/Resources ] ; then
+		cp -R "$dir"/Resources "$tdir"/Resources
+		#ln -s 4 "$tdir"/../Current
+		ln -s Versions/4/Resources "$tdir"/../..
+	fi
+
+	# change install name of this library
+	install_name_tool -id @executable_path/../Frameworks/"$libbase" "$privatelib"
+
+	otool -L $privatelib | grep "/Qt" | sed "s, (compatibility .*$,," | \
+		while read sublib ; do
+
+		sublibbase=`echo "$sublib" | sed "s,^.*/lib/,,"`
+
+		# patch path to dependency library in this library
+		install_name_tool \
+			-change "$sublib" @executable_path/../Frameworks/"$sublibbase" \
+			"$privatelib"
+	done
+done
+
+# replace binary by a wrapper script that conditionally adds --zeitkontenfile
+mv "$sctime" "$sctime".bin
+cp $mydir/sctime.sh "$sctime"
+
+# adjust version number and build date in Info.plist
+version=`grep ^VERSIONSTR $srcdir/src/src.pro | cut -d\" -f2`
+date=`date +"%Y%m%d"`
+sed -i .bak -e "s,@VERSION@,$version,g" -e "s,@DATE@,$date,g" \
+	"$approot"/Contents/Info.plist
+
+# clean up
+chmod -R go+r $approot
+chmod 755 $approot/Contents/MacOS/*
+find $approot -name "*.bak" -exec rm -f {} \;
