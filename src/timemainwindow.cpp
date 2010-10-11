@@ -337,7 +337,9 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
 
   kontoTree->showAktivesProjekt();
   kontoTree->updateColumnWidth();
-
+  //close the flagged items, needed if "Summe in pers. Konten" is 
+  //selected
+  kontoTree->closeFlaggedPersoenlicheItems();
   showAdditionalButtons(settings->powerUserView());
 }
 
@@ -1131,7 +1133,9 @@ void TimeMainWindow::callPreferenceDialog()
       kontoTree->resizeColumnToContents( 1 );
 
   }
-  //kontoTree->updateColumnWidth();
+  //Needed if "Summe in pers. Konten" is (de-)selected
+  kontoTree->closeFlaggedPersoenlicheItems();
+  
 }
 
 /**
