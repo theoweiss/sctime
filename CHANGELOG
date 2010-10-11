@@ -60,3 +60,5 @@
 * Bugfix, bei klick auf "Hinzufügen" im Unterkontodialog wird der Tagtext als aktuelle Element gewählt.
 * Leerzeichen in Mikrokonten-Kommentaren nicht vereinfachen - erhaelt
   insbesondere absichtliche Leerzeichen am Ende
+* Bugfix, ist die Einstellung "Summe in persoenliche Konten" aktiviert wird der Ausklappzustand nicht
+  mehr korrekt dargestellt
