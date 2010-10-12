@@ -53,6 +53,12 @@ Unix werden die Daten in ~/.sctime gesichert. Wichtig sind vor allem \
 die zeit*.sh Dateien. \
 Das sind Shellskripte, mit denen die Zeiten in die Zeitdatenbank \
 &uuml;bernommen werden k&ouml;nnen.</p> \
+<p>\
+Mittels Drag 'n' Drop lassen sich die Zeiten zwischen Konten, Unterkonten und \
+Mikrokonten verschieben. \
+Wird dabei die &bdquo;Shift&ldquo;-Taste gedr&uuml;ckt k&ouml;nnen auch \
+die gesetzten Kommentare verschoben werden. \
+</p>\
 \
 </body> \
 </html>\n";
