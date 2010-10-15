@@ -88,11 +88,13 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
 void KontoTreeView::keyReleaseEvent(QKeyEvent *event)
 {
   keyboardModifier = Qt::NoModifier;
+  QTreeWidget::keyReleaseEvent(event);
 }
 
 void KontoTreeView::keyPressEvent(QKeyEvent *event)
 {
-  keyboardModifier = event->modifiers();
+  keyboardModifier = event->modifiers();  
+	QTreeWidget::keyPressEvent(event);
 }
 
 void KontoTreeView::mousePressEvent(QMouseEvent * event)
@@ -512,6 +514,7 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
   this->addTopLevelItem(perskonten);
 
   allekonten->setExpanded(false);
+  
   perskonten->setTextAlignment(0, Qt::AlignLeft);
   if (abtList) {
     AbteilungsListe::iterator abtPos;
@@ -524,7 +527,7 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
       for (KontoListe::iterator kontPos=kontoliste->begin(); kontPos!=kontoliste->end(); ++kontPos) {
         KontoTreeItem* kontoitem= new KontoTreeItem( abteilungsitem);
         kontoitem->setText(0, kontPos->first);
-        kontoitem->setBgColor(abtList->getBgColor(abtPos->first,kontPos->first));
+        kontoitem->setBgColor(abtList->getBgColor(abtPos->first,kontPos->first));        
         UnterKontoListe* unterkontoliste=&(kontPos->second);
         for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {
           if ((ukontPos->second.getFlags()&IS_DISABLED)!=0) {
@@ -813,6 +816,8 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       ukoi->setGray();
       koi->setBgColor(abtList->getBgColor(abt,ko));
       abti->setBgColor(abtList->getBgColor(abt));
+      koi->setGray();
+      abti->setGray();
     }
     if ((inPersKontenGefunden)&&((etiter->second.flags)&UK_PERSOENLICH)) {
       int firstEintrag=firstEintragWithFlags(etl,UK_PERSOENLICH);
