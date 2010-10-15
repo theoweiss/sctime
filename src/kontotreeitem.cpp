@@ -100,9 +100,9 @@ void KontoTreeItem::setGray()
   for(int i=0; i<columns.size(); i++)
   {
     brush = foreground( columns.at(i) );
-    if ((text(columns.at(i)).simplified()=="0:00")||(text(columns.at(i)).startsWith("+"))) {
+    if ((text(columns.at(i)).simplified()=="0:00")||(text(columns.at(i)).simplified().startsWith("+"))) {
       brush.setColor( Qt::gray );
-      isGray=true;
+      isGray=true;      
     }
     else
     {
