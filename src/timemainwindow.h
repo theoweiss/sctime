@@ -170,6 +170,7 @@ class TimeMainWindow: public QMainWindow
   protected:
     virtual void moveEvent( QMoveEvent *event);
   private:
+    void updateTaskbarTitle(int zeit);
     void closeEvent(QCloseEvent * event);
     KontoTreeView* kontoTree;
     UnterKontoDialog* unterKontoDialog;

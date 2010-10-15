@@ -47,6 +47,7 @@
 #include <QStringList>
 #include "statusbar.h"
 #include <QDateTime>
+#include <QSystemTrayIcon>
 #include <QDir>
 #include "preferencedialog.h"
 #include "defaulttagreader.h"
@@ -122,7 +123,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   //mimeSourceFactory=new QMimeSourceFactory();
   //mimeSourceFactory->setPixmap("/images/scLogo_15Farben.png",QPixmap((const char **)scLogo_15Farben_xpm));
 #ifndef Q_WS_MAC
-  setWindowIcon(QIcon(":/sc_logo"));
+  setWindowIcon(QIcon(":/sc_logo"));  
 #endif
 
   setCentralWidget(kontoTree);
@@ -594,7 +595,25 @@ void TimeMainWindow::zeitChanged()
   }
   else
     last=zeit;
+    
+#ifdef WIN32
+	updateTaskbarTitle(zeit);
+#endif
 }
+
+#ifdef WIN32
+/**
+ * On OS Windows the taskbartitle will show the amount of workingtime
+ * if sctime is minimized.
+ * */
+void TimeMainWindow::updateTaskbarTitle(int zeit)
+{
+	TimeCounter tc(zeit);
+  QString text;
+  text=tc.toString();
+	setWindowIconText("sctime - " + text);
+}
+#endif
 
 void TimeMainWindow::showArbeitszeitwarning()
 {
@@ -1134,6 +1153,7 @@ void TimeMainWindow::callPreferenceDialog()
 
   }
   //Needed if "Summe in pers. Konten" is (de-)selected
+  kontoTree->flagClosedPersoenlicheItems();
   kontoTree->closeFlaggedPersoenlicheItems();
   
 }
