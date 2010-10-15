@@ -62,3 +62,5 @@
   insbesondere absichtliche Leerzeichen am Ende
 * Bugfix, ist die Einstellung "Summe in persoenliche Konten" aktiviert wird der Ausklappzustand nicht
   mehr korrekt dargestellt
+* Navigation ueber Cursortasten ermoeglicht.
+* Wird sctime unter Windows minimiert, wird in der Taskleiste die geleistete Zeit angezeigt.
