@@ -213,7 +213,8 @@ int main( int argc, char **argv )
   if( lc_all_pointer != NULL ){
     //std::cout <<"BEGIN LC_ALL  >>"<< lc_all_pointer <<"<<"<< std::endl;
     if((strcmp(lc_all_pointer, "POSIX")==0) ||
-        (strcmp(lc_all_pointer, "C")==0) )
+        (strcmp(lc_all_pointer, "C")==0)  ||
+        (strchr(lc_all_pointer, '.')==NULL))
     {
       //std::cout <<"LC_ALL >>"<< lc_all_pointer <<"<<"<< std::endl;
       putenv("LC_ALL=de_DE.UTF-8");
@@ -222,7 +223,9 @@ int main( int argc, char **argv )
   }
   if( lc_ctype_pointer != NULL ){
     if((strcmp(lc_ctype_pointer, "POSIX")==0) ||
-        (strcmp(lc_ctype_pointer, "C")==0)){
+        (strcmp(lc_ctype_pointer, "C")==0) ||
+       (strchr(lc_ctype_pointer, '.')==NULL))
+    {
       //std::cout <<"LC_CTYPE >>"<< lc_ctype_pointer <<"<<"<< std::endl;
       if(putenv("LC_CTYPE=de_DE.UTF-8")){
         std::cerr << "Error cannot set LC_CTYPE to utf8!" << std::endl;
