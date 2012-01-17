@@ -38,7 +38,6 @@
 
 #ifdef WIN32
 #include <Windows.h>
-#include <Winbase.h>
 #include "kontodateninfodatabase.h"
 #include "bereitschaftsdateninfodatabase.h"
 #include "DBConnector.h"
@@ -100,14 +99,13 @@ static void setlocale() {
     fatal("sctime: Konfigurationsproblem", "Die 'locale'-Einstellungen sind nicht zulaessig (siehe 'locale -a')");
   const char *encoding = setlocale(LC_CTYPE, NULL); //query
   if (!encoding && !encoding[0])  fatal("sctime: Konfigurationsfehler", "Konnte die locale-Bibliothek nicht initialisieren.");
-  if (strcmp(encoding, "POSIX") == 0 && strcmp(encoding, "C"))
-    if (setenv("LC_CTYPE", "UTF-8", 1)) fatal("sctime: Konfigurationsfehler", "Konnte LC_CTYPE nicht setzen.");
+  if (setenv("LC_CTYPE", "UTF-8", 1)) fatal("sctime: Konfigurationsfehler", "Konnte LC_CTYPE nicht setzen.");
 }
 
 static QString canonicalPath(QString path) {
     return path.startsWith("~/") ? path.replace(0,2,QDir::homePath()+"/") : QFileInfo(path).canonicalFilePath(); }
 
-static bool local_exclusion(const QString& path) { return false; }
+#define local_exclusion(name) false
 #endif
 
 class SctimeApp: public QApplication {

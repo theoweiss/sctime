@@ -116,7 +116,6 @@ void Einchecker::nextEintrag()
 
 bool Einchecker::checkin(QDate date, const QString& konto, const QString& uko, int sek, int sekabzur, QString kommentar)
 {
-    char cstr[800];
     QRegExp apostrophExp=QRegExp("'");
     kommentar=kommentar.replace(apostrophExp,"");
    /* proc.clearArguments();
@@ -335,7 +334,6 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
       command="zeitkonten --mikrokonten --separator='|'";
     }else
       command=m_Kommando;
-      putenv("LC_CTYPE=de_DE.UTF-8");
 
     file = popen(command.toLatin1(), "r");
     if (!file) {
@@ -377,8 +375,6 @@ bool KontoDatenInfoZeit::readDefaultComments(AbteilungsListe * abtList)
       command="zeitkonten --mikrokonten --separator='|'";}
     else
       command=m_Kommando;
-
-    putenv("LC_CTYPE=de_DE.UTF-8");
 
     file = popen(command.toLatin1(), "r");
     if (!file || file ==NULL) {

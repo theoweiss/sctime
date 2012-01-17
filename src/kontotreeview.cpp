@@ -147,8 +147,7 @@ void KontoTreeView::mouseMoveEvent(QMouseEvent *  event )
 
       QDrag *drag = new QDrag(this);
       drag->setMimeData( mime ) ;
-
-      Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
+      drag->exec(Qt::MoveAction);
   }
 }
 
@@ -331,10 +330,7 @@ KontoTreeItem* KontoTreeView::sucheKommentarItem(const QString& tops, const QStr
   if (koi==NULL) return NULL;
 
   for (ukoi=(KontoTreeItem*)koi->child(0); (ukoi!=NULL)&&(ukoi->text(0)!=ukos); ukoi=(KontoTreeItem*)ukoi->nextSibling()) ;
-  if( ukoi != NULL )
-  {
-    return ukoi;
-  }
+  return ukoi;
 }
 
 int KontoTreeView::getItemDepth( QTreeWidgetItem* item )
@@ -820,7 +816,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       abti->setGray();
     }
     if ((inPersKontenGefunden)&&((etiter->second.flags)&UK_PERSOENLICH)) {
-      int firstEintrag=firstEintragWithFlags(etl,UK_PERSOENLICH);
+      firstEintragWithFlags(etl,UK_PERSOENLICH);
       if (!ukHasSubTree) {
         eti=ukoi;
         if (ukoi->child(0))
@@ -966,8 +962,6 @@ void KontoTreeView::refreshAllItemsInKonto(const QString& abt, const QString& ko
   KontoListe* kontoliste;
 
   if (!abtList->findKonto(itKo,kontoliste,abt,ko)) return;
-
-  KontoTreeItem *koi;
   UnterKontoListe* unterkontoliste=&(itKo->second);
   for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {
     EintragsListe* eintragsliste=&(ukontPos->second);

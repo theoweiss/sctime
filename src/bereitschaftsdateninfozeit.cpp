@@ -86,7 +86,6 @@ bool BereitschaftsDatenInfoZeit::readInto(BereitschaftsListe * berList)
   int rc;
 
   if (m_DatenFileName.isEmpty()) {
-    putenv("LC_CTYPE=de_DE.UTF-8");
     file = popen("zeitbereitls --separator='|'", "r");
     if (!file) {
       std::cerr<<"Kann \"zeitbereitls\" nicht ausfuehren."<<std::endl;
