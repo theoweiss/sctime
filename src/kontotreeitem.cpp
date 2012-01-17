@@ -97,7 +97,7 @@ void KontoTreeItem::setGray()
   columns.push_back(3);
   columns.push_back(4);
   QBrush brush;
-  for(int i=0; i<columns.size(); i++)
+  for(unsigned int i=0; i<columns.size(); i++)
   {
     brush = foreground( columns.at(i) );
     if ((text(columns.at(i)).simplified()=="0:00")||(text(columns.at(i)).simplified().startsWith("+"))) {

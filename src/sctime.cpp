@@ -42,6 +42,7 @@
 #include "kontodateninfodatabase.h"
 #include "bereitschaftsdateninfodatabase.h"
 #include "DBConnector.h"
+static void fatal(const QString& title, const QString& body);
 
 #else
 #include <assert.h>
@@ -56,14 +57,20 @@
 #include "timemainwindow.h"
 #include "sctimexmlsettings.h"
 
+
 #ifndef CONFIGSUBDIR 
 #define CONFIGSUBDIR ".sctime"
+#endif
+
+#ifdef __GNUC__
+static void fatal(const QString& title, const QString& body) __attribute__ ((noreturn));
+#else
+static void fatal(const QString& title, const QString& body);
 #endif
 
 QString configDir;
 QString lockfilePath;
 
-static void fatal(const QString& title, const QString& body) __attribute__ ((noreturn));
 
 static void fatal(const QString& title, const QString& body) {
   QMessageBox::critical(NULL, title, body, QMessageBox::Ok);
@@ -81,11 +88,11 @@ static const char help[] =
 static void setlocale() {}
 
 static bool local_exclusion(const char* name) { // true: die Funktion garantiert, dass lokal keine weitere Instanz läuft
-  Qt::HANDLE hEvent = CreateEventA(NULL, FALSE, TRUE, name);
-  return  GetLastError () != ERROR_ALREADY_EXISTS);
+  CreateEventA(NULL, false, true, name);
+  return  GetLastError () != ERROR_ALREADY_EXISTS;
 }
 
-static QString canonicalPath(const QString& path) { return QFileInfo(path).canonicalFilePath()); }
+static QString canonicalPath(const QString& path) { return QFileInfo(path).canonicalFilePath(); }
 
 #else
 static void setlocale() {
@@ -171,13 +178,14 @@ int main( int argc, char **argv ) {
   BereitschaftsDatenInfo* bereitschaftsdatenReader;
 
 #ifdef WIN32
-    DBConnector dbconnector;
+    DBConnector*  dbconnector = new DBConnector();
     zk = zeitkontenfile.isEmpty()
-        ? new KontoDatenInfoDatabase(dbconnector)
-        zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
-    bereitschaftsdatenREader = bereitschaftsfile.isEmpty()
-      ? BereitschaftsDatenInfoDatabase(dbconnector)
-      : bereitschaftsdatenReader=new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
+        ? (KontoDatenInfo*) new KontoDatenInfoDatabase(dbconnector) 
+	: new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
+     zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
+    bereitschaftsdatenReader = bereitschaftsfile.isEmpty()
+      ? (BereitschaftsDatenInfo*) new BereitschaftsDatenInfoDatabase(dbconnector)
+      : new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
 #else
   SCTimeXMLSettings settings;
   settings.readSettings();

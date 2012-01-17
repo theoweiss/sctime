@@ -3,6 +3,7 @@
 
 /** Rundet f auf das naechste Vielfache von step*/
 float roundTo(float f, float step);
+double roundTo(double f, double step);
 
 // Quotes the given argument
 #define QUOTEME(x) QUOTEME_HELPER(x)

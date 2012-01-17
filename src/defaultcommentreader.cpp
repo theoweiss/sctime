@@ -41,7 +41,7 @@ bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
 #ifndef NO_XML
   QDomDocument doc("comments");
 
-  for (int i=0; i<xmlfilelist.size(); i++) {
+  for (unsigned int i=0; i<xmlfilelist.size(); i++) {
 
       QString filename;
 

@@ -51,7 +51,7 @@
 void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
 {
   if (abtList->checkInState()) {
-      std::cout<<"Shell Skript nicht geschrieben, da bereits eingecheckt"<<std::endl;
+      std::cout<<"Shell-Skript nicht geschrieben, da bereits eingecheckt"<<std::endl;
       return;
   }
   QString filename="/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".sh";

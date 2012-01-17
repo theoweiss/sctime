@@ -48,7 +48,7 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
 {
   bool ret = true;
   // PluginDir setzen
-  QApplication::addLibraryPath(execDir+"/lib");
+  QApplication::addLibraryPath(QApplication::applicationDirPath() +"/lib");
   abtList->clear();
   QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC" );
   m_dbconnector->configureDB(defaultDB);
@@ -117,9 +117,6 @@ bool KontoDatenInfoDatabase::checkIn(AbteilungsListe* abtlist)
 bool KontoDatenInfoDatabase::readDefaultCommentsInto(AbteilungsListe * abtList)
 {
   bool ret = true;
-  // PluginDir setzen
-  //QApplication::addLibraryPath(execDir+"/lib");
-  //abtList->clear();
   QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC" );
   m_dbconnector = new DBConnector();
   m_dbconnector->configureDB(defaultDB);

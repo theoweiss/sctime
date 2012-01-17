@@ -47,7 +47,7 @@ bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
 {
   bool ret = true;
   // PluginDir setzen
-  QApplication::addLibraryPath(execDir+"/lib");
+  QApplication::addLibraryPath(QApplication::applicationDirPath() + "/lib");
   QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC" );
   m_dbconnector->configureDB(defaultDB);
 
