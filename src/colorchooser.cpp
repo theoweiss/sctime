@@ -1,5 +1,5 @@
 #include "colorchooser.h"
-#ifdef Q_OS_MAC
+#if (defined Q_OS_MAC || defined WIN32)
 #include <QStyleFactory>
 #endif
 
@@ -10,7 +10,7 @@ ColorChooser::ColorChooser(bool enableOwnColor, const QColor& color, QWidget* pa
   useOwnColorCheckBox->setChecked(enableOwnColor);
   activateOwnColor(enableOwnColor);
 
-#ifdef Q_OS_MAC
+#if (defined Q_OS_MAC || defined WIN32)
   /* Actual native Mac OS X Buttons can not have a background color. So switch
    * the color chooser buttons to motif style as a workaround. The proper fix
    * would be to change the dialog to use some other widget that supports
