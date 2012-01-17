@@ -27,42 +27,15 @@
 #include <QObject>
 #include "kontodateninfo.h"
 
-class Einchecker:QObject
-{
-Q_OBJECT
-
-public:
-    Einchecker(AbteilungsListe*);
-    bool checkin (QDate date, const QString& konto, const QString& uko, int sek, int sekabzur, QString kommentar);
-
-public slots:
-    void onExit();
-    void firstAbteilung();
-    void firstKonto();
-    void firstUnterkonto();
-    void firstEintrag();
-    void nextAbteilung();
-    void nextKonto();
-    void nextUnterkonto();
-    void nextEintrag();
-
-signals:
-    void criticalError();
-    void finishedEintrag();
-
-private:
-    AbteilungsListe* abtList;
-    AbteilungsListe::iterator abtPos;
-    KontoListe::iterator kontPos;
-    UnterKontoListe::iterator ukontPos;
-    EintragsListe::iterator etPos;
-};
-
 /**
   * Liest die Kontodaten ueber die Zeittools ein.
   */
 class KontoDatenInfoZeit: public KontoDatenInfo
 {
+  Q_OBJECT
+signals:
+  void kontoListeGeladen();
+
   public:
     KontoDatenInfoZeit();
     KontoDatenInfoZeit(QString sourcefile);
@@ -74,10 +47,11 @@ class KontoDatenInfoZeit: public KontoDatenInfo
 
     bool readDefaultComments(AbteilungsListe * abtList);
   private:
-    Einchecker* ec;
     QString m_DatenFileName;
     QString m_Kommando;
     bool readCommentsFromZeitFile(FILE* file, AbteilungsListe * abtList);
+
+
 };
 
 #endif

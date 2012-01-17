@@ -72,7 +72,8 @@
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
 TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* bereitschaftsdatenReader):QMainWindow()
 {
-  setObjectName("sctime");  
+  setObjectName("sctime");
+  connect(zk, SIGNAL(kontoListeGeladen()), this, SLOT(aktivesKontoPruefen()), Qt::QueuedConnection);
   std::vector<QString> xmlfilelist;
   QDate heute;
   abtListToday=new AbteilungsListe(heute.currentDate(),zk);
@@ -342,6 +343,17 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   //selected
   kontoTree->closeFlaggedPersoenlicheItems();
   showAdditionalButtons(settings->powerUserView());
+}
+
+void TimeMainWindow::aktivesKontoPruefen(){
+  QString a,k, u;
+  int i;
+  abtList->getAktiv(a, k, u, i);
+  EintragsListe::iterator dummy;
+  EintragsListe *dummy2;
+  if (!abtList->findEintrag(dummy, dummy2, a, k, u, i))
+    QMessageBox::warning(NULL, QObject::tr("sctime: Zeiterfassung gestoppt"),
+                         QObject::tr("Ihr zuletzt aktives Konto war %1/%2. Wahrscheinlich wurde es geschlossen oder umbenannt. Bitte wählen Sie nun ein neues Konto aus, damit die Zeiterfassung beginnt!").arg(k,u));
 }
 
 void TimeMainWindow::closeEvent(QCloseEvent * event)
@@ -1260,8 +1272,8 @@ void TimeMainWindow::callAboutBox()
   versioninfo.setTextFormat(Qt::RichText);
   layout->addWidget(&versioninfo,0,1);
   layout->addItem(new QSpacerItem(0, 20), 1, 0);
-  layout->addWidget(new QLabel("Core Developer:",aboutBox),2,0);
-  layout->addWidget(new QLabel("Alexander Wütz <a.wuetz@science-computing.de>",aboutBox),2,1);
+  layout->addWidget(new QLabel("Core Developers:",aboutBox),2,0);
+  layout->addWidget(new QLabel(tr("Alexander Wütz <a.wuetz@science-computing.de>"),aboutBox),2,1);
   layout->addWidget(new QLabel("Core Developer:",aboutBox),3,0);
   layout->addWidget(new QLabel("Florian Schmitt <f.schmitt@science-computing.de>",aboutBox),3,1);
   layout->addWidget(new QLabel("Patches:",aboutBox),4,0);
@@ -1269,7 +1281,7 @@ void TimeMainWindow::callAboutBox()
 
   layout->addItem(new QSpacerItem(0, 18), 5, 0);
   //layout->addMultiCellWidget(new QLabel("<center>This Program is licensed under the GNU Public License.</center>",aboutBox),5,5,0,1);
-  layout->addWidget(new QLabel("<center>This Program is licensed under the GNU Public License.</center>",aboutBox),6,0,6,2);
+  layout->addWidget(new QLabel("<center>This Program is licensed under the GNU Public License.</center>", aboutBox),6,0,6,2);
   layout->addItem(new QSpacerItem(0, 18), 7, 0);
 
   QHBoxLayout* buttonlayout=new QHBoxLayout();

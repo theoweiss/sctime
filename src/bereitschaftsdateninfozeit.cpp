@@ -33,11 +33,6 @@
 #include "DBConnector.h"
 #include "bereitschaftsdateninfozeit.h"
 
-#ifdef WIN32
-#define popen _popen
-#define pclose _pclose
-#endif
-
 BereitschaftsDatenInfoZeit::BereitschaftsDatenInfoZeit()
 {
     m_DatenFileName="";
@@ -88,25 +83,30 @@ bool BereitschaftsDatenInfoZeit::readInto(BereitschaftsListe * berList)
   bool result;
 
   if (m_DatenFileName.isEmpty()) {    
+#ifdef WIN32
+    return false;
+#else
     QString command = "zeitbereitls --separator='|'";
     file = popen(command.toLocal8Bit(), "r");
     if (!file) {
-      QMessageBox::critical(NULL, "sctime: Bereitschaftsarten laden",
-                            QString("Kann Kommando '%1' nicht ausfuehren: %s").arg(command), strerror(errno));
+      QMessageBox::critical(NULL, QObject::tr("sctime: Bereitschaftsarten laden"),
+                            QObject::tr("Kann Kommando '%1' nicht ausfuehren: %s").arg(command), strerror(errno));
       return false;
     }
     result=readBereitschaftsFile(file,berList);
     int rc = pclose(file);
     if(rc == -1 || !WIFEXITED(rc) || WEXITSTATUS(rc)) {
-      QMessageBox::critical(NULL, "sctime: Bereitschaftsarten laden",
-                            QString("Fehler bei '%1': %2").arg(command).arg(rc == -1 ? strerror(errno) : "nicht normal beendet"));
+      QMessageBox::critical(NULL, QObject::tr("sctime: Bereitschaftsarten laden"),
+                            QObject::tr("Fehler bei '%1': %2").arg(command).arg(rc == -1 ? strerror(errno) : "nicht normal beendet"));
       result = false;
     }
+#endif
   } else { // aus Datei lesen
       file = fopen(m_DatenFileName.toLocal8Bit(), "r");
       if (!file) {
-          std::cerr<<"Kann "<<m_DatenFileName.toLocal8Bit().constData()<<" nicht oeffnen."<<std::endl;
-          return false;
+        QMessageBox::critical(NULL, QObject::tr("sctime: Bereitschaftsarten laden"),
+                              QObject::tr("Kann Datei '%1' nicht öffnen: %2").arg(m_DatenFileName).arg(strerror(errno)));
+        return false;
       }
       fclose(file);
   }

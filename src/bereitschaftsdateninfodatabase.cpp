@@ -45,32 +45,30 @@ BereitschaftsDatenInfoDatabase::BereitschaftsDatenInfoDatabase(DBConnector* dbco
  */
 bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
 {
-  bool ret = true;
-  // PluginDir setzen
+  bool ret = false;
   QApplication::addLibraryPath(QApplication::applicationDirPath() + "/lib");
   QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC" );
   m_dbconnector->configureDB(defaultDB);
-
-  if ( defaultDB.open() ) {
+  QString step = QObject::tr("Datenbank öffnen");
+    if ( defaultDB.open() ) {
+      step = QObject::tr("Bereitschaftsarten anfordern");
       QSqlQuery query(
           "SELECT kategorie, beschreibung FROM v_bereitschaft_sctime;",
             defaultDB);
       if ( query.isActive() ) {
+	step = QObject::tr("Bereitschaftsarten einlesen");
         while ( query.next() ) {
+	  ret = true;
           QString name = query.value(0).toString().simplified();
-
           QString beschreibung = query.value(1).toString().simplified();
-
           if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
-
           berlist->insertEintrag(name, beschreibung, IS_IN_DATABASE);
         }
-      }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;
-  } else {
-        ret = false;
-	QMessageBox::warning(NULL, QObject::tr("Kann Datenbank nicht öffnen"),
-			     defaultDB.lastError().driverText(),
-			     QMessageBox::Ok, QMessageBox::Ok);
+      }
+    }
+    if (!ret){
+      QMessageBox::warning(NULL, QObject::tr("sctime: Bereitschaftsarten laden"),
+	step + ": " + defaultDB.lastError().driverText());			     
     }
   defaultDB.close();
   return ret;

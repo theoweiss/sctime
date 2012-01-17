@@ -24,8 +24,11 @@
 
 #include "abteilungsliste.h"
 
-class KontoDatenInfo
+class KontoDatenInfo:public QObject
 {
+  Q_OBJECT
+signals:
+  void kontoListeGeladen();
   public:
     virtual bool readInto(AbteilungsListe* abtlist)=0;
     virtual bool checkIn(AbteilungsListe* abtlist)=0;

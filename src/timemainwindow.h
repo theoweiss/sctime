@@ -59,25 +59,17 @@ class TimeMainWindow: public QMainWindow
   public slots:
 
     void callUnterKontoDialog(QTreeWidgetItem * item);
-
     void callDateDialog();
-
     void callAboutBox();
-
     void minutenUhr();
-
     void pause();
-
     void pauseAbzur(bool on);
-
     void zeitChanged();
-
     void updateCaption();
-
     void save();
-
     void resetDiff();
     void checkIn();
+    void aktivesKontoPruefen();
 
     void inPersoenlicheKonten(bool hinzufuegen);
     void flagsChanged(const QString& abt, const QString& ko, const QString& uko, int idx);
@@ -117,7 +109,7 @@ class TimeMainWindow: public QMainWindow
     void showArbeitszeitwarning();
     void checkComment(const QString& abt, const QString& ko , const QString& uko,int idx);
 
-  signals:
+  signals:        
     /** Wird ausgeloest, falls sich die Gesamtzeit geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden. */
     void gesamtZeitChanged(int) ;
 

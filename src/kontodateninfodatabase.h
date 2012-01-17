@@ -33,9 +33,13 @@ class DBConnector;
  */
 class KontoDatenInfoDatabase: public KontoDatenInfo
 {
+  Q_OBJECT
+signals:
+  void kontoListeGeladen();
   public:
      KontoDatenInfoDatabase(DBConnector* dbconnector);
     virtual bool readInto(AbteilungsListe * abtlist);
+    bool readInto2(AbteilungsListe *abtList, bool comments_only);
     virtual bool checkIn(AbteilungsListe* abtlist);
     bool readDefaultCommentsInto (AbteilungsListe * abtList);
   private:
