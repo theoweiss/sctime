@@ -46,19 +46,19 @@ class QFontListView : public QListView
     Q_OBJECT
 public:
     QFontListView(QWidget *parent);
-    inline QStringListModel *model() const {
+    QStringListModel *model() const {
         return static_cast<QStringListModel *>(QListView::model());
     }
-    inline void setCurrentItem(int item) {
+    void setCurrentItem(int item) {
         QListView::setCurrentIndex(static_cast<QAbstractListModel*>(model())->index(item));
     }
-    inline int currentItem() const {
+    int currentItem() const {
         return QListView::currentIndex().row();
     }
-    inline int count() const {
+    int count() const {
         return model()->rowCount();
     }
-    inline QString currentText() const {
+    QString currentText() const {
         int row = QListView::currentIndex().row();
         return row < 0 ? QString() : model()->stringList().at(row);
     }

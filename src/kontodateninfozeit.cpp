@@ -30,6 +30,11 @@
 #include <QMessageBox>
 #include <string>
 
+#ifdef WIN32
+#define popen _popen
+#define pclose _pclose
+#endif
+
 Einchecker::Einchecker(AbteilungsListe * abtlist)
 {
   abtList=abtlist;

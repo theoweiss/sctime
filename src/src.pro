@@ -107,11 +107,13 @@ linux-g++{
   LIBS += -ldl
 }
 win32{
+  CONFIG += embed_manifest_exe
   DEFINES += WIN32
-  QMAKE_CXXFLAGS += -GX
+  QMAKE_CXXFLAGS += -EHsc # exceptions?
   SOURCES += kontodateninfodatabase.cpp bereitschaftsdateninfodatabase.cpp DBConnector.cpp
   HEADERS += kontodateninfodatabase.h bereitschaftsdateninfodatabase.h DBConnector.h
   RC_FILE += sctime.rc
+  LIBS += Advapi32.lib
 }
 hpux-acc{
   DEFINES += HPUX

@@ -31,6 +31,10 @@
 #include "abteilungsliste.h"
 #include "DBConnector.h"
 
+#ifdef WIN32
+#define popen _popen
+#define pclose _pclose
+#endif
 
 BereitschaftsDatenInfoZeit::BereitschaftsDatenInfoZeit()
 {
