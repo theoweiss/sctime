@@ -7,7 +7,7 @@ TEMPLATE = app
 VERSIONSTR = '"0.62"'
 CONFIG += warn_on qt
 CONFIG += uic debug
-OBJECTS_DIR = ../obj
+#OBJECTS_DIR = ../obj
 QT += xml sql gui core
 TARGET = ../bin/sctime
 !win32{
@@ -107,7 +107,7 @@ linux-g++{
   LIBS += -ldl
 }
 win32{
-  CONFIG += embed_manifest_exe
+  CONFIG += embed_manifest_exe release
   DEFINES += WIN32
   QMAKE_CXXFLAGS += -EHsc # exceptions?
   SOURCES += kontodateninfodatabase.cpp bereitschaftsdateninfodatabase.cpp DBConnector.cpp
