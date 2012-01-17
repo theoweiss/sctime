@@ -30,6 +30,7 @@
 #include <QApplication>
 #include <QVariant>
 #include <QSqlQuery>
+#include <QSqlError>
 #include "globals.h"
 #include "descdata.h"
 #include "DBConnector.h"
@@ -68,11 +69,11 @@ bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
   } else {
         ret = false;
 #ifdef WIN32
-                QMessageBox::critical(NULL,"Error","Kann Datenbank nicht öffnen\n",
-                              QMessageBox::Ok, Qt::NoButton,
-                              Qt::NoButton);
+	QMessageBox::warning(NULL, QObject::tr("Kann Datenbank nicht öffnen"),
+			     defaultDB.lastError().driverText(),
+			     QMessageBox::Ok, QMessageBox::Ok);
 #else
-                std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
+	std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
 #endif
     }
 

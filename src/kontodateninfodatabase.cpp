@@ -24,10 +24,12 @@
 #include "kontodateninfodatabase.h"
 #include "unterkontoeintrag.h"
 #include <iostream>
+#include <QObject>
 #include <QSqlDatabase>
 #include <QMessageBox>
 #include <QApplication>
 #include <QVariant>
+#include <QSqlError>
 //Added by qt3to4:
 #include <QSqlQuery>
 #include "globals.h"
@@ -88,15 +90,15 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList)
         }
       }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;
   } else {
-        ret = false;
+    ret = false;
 #ifdef WIN32
-                QMessageBox::critical(NULL,"Error","Kann Datenbank nicht öffnen\n",
-                              QMessageBox::Ok, Qt::NoButton,
-                              Qt::NoButton);
+    QMessageBox::warning(NULL, QObject::tr("Kann Datenbank nicht öffnen"),
+			 defaultDB.lastError().driverText(),
+			 QMessageBox::Ok, QMessageBox::Ok);
 #else
-                std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
+    std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
 #endif
-    }
+  }
 
   defaultDB.close();
   return ret;
