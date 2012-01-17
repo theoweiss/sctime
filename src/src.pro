@@ -5,11 +5,9 @@
 
 TEMPLATE = app
 VERSIONSTR = '"0.62"'
-CONFIG += warn_on qt
-CONFIG += uic debug
-#OBJECTS_DIR = ../obj
+CONFIG += warn_on qt uic
 QT += xml sql gui core
-TARGET = ../bin/sctime
+TARGET = sctime
 !win32{
   BUILDDATESTR = '"`date`"'
 }
@@ -95,7 +93,7 @@ RESOURCES= ../pics/sctimeImages.qrc
 FORMS += datedialogbase.ui \
          preferencedialogbase.ui \
          colorchooserbase.ui
-target.path = /$(prefix)/bin
+#target.path = /$(prefix)/bin
 INSTALLS += target
 linux-g++-static{
   LIBS += -ldl
@@ -108,8 +106,9 @@ linux-g++{
 }
 win32{
   CONFIG += embed_manifest_exe release
-  DEFINES += WIN32
-  QMAKE_CXXFLAGS += -EHsc # exceptions?
+#CONFIG +=debug
+#DEFINES += WIN32
+  QMAKE_CXXFLAGS += -EHsc # C++-Ausnahmen
   SOURCES += kontodateninfodatabase.cpp bereitschaftsdateninfodatabase.cpp DBConnector.cpp
   HEADERS += kontodateninfodatabase.h bereitschaftsdateninfodatabase.h DBConnector.h
   RC_FILE += sctime.rc
@@ -138,7 +137,7 @@ irix-g++{
 mac {
   ICON = ../pics/scTime.icns
   QMAKE_INFO_PLIST = ../extra/mac/Info.plist
-  TARGET = ../bin/scTime
+  #TARGET = ../bin/scTime
   QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.5.sdk
   DEFINES += MACOS
   CONFIG += x86 ppc
