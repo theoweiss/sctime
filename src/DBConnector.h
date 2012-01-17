@@ -1,12 +1,10 @@
 #ifndef DBCONNECTOR_H
 #define DBCONNECTOR_H
 
+#include <QSqlDatabase>
 #include <QString>
 
-class QSqlDatabase;
-
-class DBConnector
-{
+class DBConnector {
   public:
     DBConnector();
     void configureDB(QSqlDatabase& db);
