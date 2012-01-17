@@ -20,9 +20,10 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <errno.h>
+#include <stdio.h>
 #include <iostream>
 #include <iomanip>
-#include <stdio.h>
 #include <string>
 
 #ifdef WIN32
@@ -335,41 +336,35 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
 bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
 {
   abtList->clear();
-  FILE* file;
-  int rc;
+  bool result;
 
   if (m_DatenFileName.isEmpty()) {
-    QString command;
-    if (m_Kommando.isEmpty()){
-      command="zeitkonten --mikrokonten --separator='|'";
-    }else
-      command=m_Kommando;
-
-    file = popen(command.toLatin1(), "r");
+    QString command(m_Kommando.isEmpty()
+                    ?  "zeitkonten --mikrokonten --separator='|'"
+                    : m_Kommando);
+    FILE* file = popen(command.toLocal8Bit(), "r");
     if (!file) {
-      std::cerr<<"Kann Kommando \""<<command.toStdString()<<"\" nicht ausfuehren."<<std::endl;
+      QMessageBox::critical(NULL, "sctime: Kontenliste laden",
+                            QString("Kann Kommando '%1' nicht ausfuehren: %s").arg(command), strerror(errno));
       return false;
     }
-
-  } else {
-      file = fopen(m_DatenFileName.toLatin1(), "r");
-      if (!file) {
-          std::cerr<<"Kann "<<m_DatenFileName.toLocal8Bit().constData()<<" nicht oeffnen."<<std::endl;
+    result = readZeitFile(file,abtList);
+    int rc = pclose(file);
+    if(rc == -1 || !WIFEXITED(rc) || WEXITSTATUS(rc)) {
+      QMessageBox::critical(NULL, "sctime: Kontenliste laden",
+                            QString("Fehler bei '%1': %2").arg(command).arg(rc == 1 ? strerror(errno) : "nicht normal beendet"));
+      result = false;
+    }
+  } else { // aus Datei lesen
+    FILE* file = fopen(m_DatenFileName.toLatin1(), "r");
+    if (!file) {
+      QMessageBox::critical(NULL, "sctime: Kontenliste lesen",
+                            QString("Kann  '%1' nicht oeffnen: %2").arg(m_DatenFileName).arg(strerror(errno)));
           return false;
       }
+    result = readZeitFile(file,abtList);
+    fclose(file);
   }
-
-  bool result=readZeitFile(file,abtList);
-
-  if (m_DatenFileName.isEmpty()){
-      rc = pclose(file);
-      if(rc!=0)
-      {
-        std::cerr << "Kann Kommando \"zeitkonten --mikrokonten --separator='|'\" nicht ausfuehren. Kontoliste konnte nicht geladen werden."<<std::endl;
-      }
-  }
-  else
-      fclose(file);
   return result;
 }
 

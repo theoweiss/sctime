@@ -20,16 +20,18 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include "bereitschaftsdateninfozeit.h"
+#include <stdio.h>
+#include <errno.h>
 #include <iostream>
 #include <iomanip>
-#include <stdio.h>
 #include <QRegExp>
+#include <QDebug>
+#include <QMessageBox>
 #include "globals.h"
 #include "utils.h"
-#include <QMessageBox>
 #include "abteilungsliste.h"
 #include "DBConnector.h"
+#include "bereitschaftsdateninfozeit.h"
 
 #ifdef WIN32
 #define popen _popen
@@ -83,38 +85,33 @@ bool BereitschaftsDatenInfoZeit::readInto(BereitschaftsListe * berList)
 {
   berList->clear();
   FILE* file;
-  int rc;
+  bool result;
 
-  if (m_DatenFileName.isEmpty()) {
-    file = popen("zeitbereitls --separator='|'", "r");
+  if (m_DatenFileName.isEmpty()) {    
+    QString command = "zeitbereitls --separator='|'";
+    file = popen(command.toLocal8Bit(), "r");
     if (!file) {
-      std::cerr<<"Kann \"zeitbereitls\" nicht ausfuehren."<<std::endl;
+      QMessageBox::critical(NULL, "sctime: Bereitschaftsarten laden",
+                            QString("Kann Kommando '%1' nicht ausfuehren: %s").arg(command), strerror(errno));
       return false;
     }
-
-  } else {
-      file = fopen(m_DatenFileName.toLatin1(), "r");
+    result=readBereitschaftsFile(file,berList);
+    int rc = pclose(file);
+    if(rc == -1 || !WIFEXITED(rc) || WEXITSTATUS(rc)) {
+      QMessageBox::critical(NULL, "sctime: Bereitschaftsarten laden",
+                            QString("Fehler bei '%1': %2").arg(command).arg(rc == 1 ? strerror(errno) : "nicht normal beendet"));
+      result = false;
+    }
+  } else { // aus Datei lesen
+      file = fopen(m_DatenFileName.toLocal8Bit(), "r");
       if (!file) {
           std::cerr<<"Kann "<<m_DatenFileName.toLocal8Bit().constData()<<" nicht oeffnen."<<std::endl;
           return false;
       }
-  }
-  bool result=readBereitschaftsFile(file,berList);
-  if (m_DatenFileName.isEmpty())
-  {
-      rc= pclose(file);
-      if(rc!=0)
-      {
-        std::cerr << "Kann Kommando \"zeitbereitls\" nicht ausfuehren. Bereitschaftsliste konnte nicht neu geladen werden."<<std::endl;
-      }
-  }
-  else
       fclose(file);
-
-
+  }
   return result;
 }
-
 
 
 
