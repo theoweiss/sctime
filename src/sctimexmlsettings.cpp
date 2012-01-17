@@ -420,7 +420,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
 		int y = QString(elem2.attribute("y")).toInt(&ok);
 		if (ok) {
 		    QPoint pos(x, y);		    
-		    QRect rootwinsize = QApplication::desktop()->availableGeometry();
+		    QRect rootwinsize = QApplication::desktop()->screenGeometry();
 		    if (rootwinsize.contains(pos))  // Position nicht setzen, wenn Fenster sonst ausserhalb
 			mainwindowPosition = pos;
 		}

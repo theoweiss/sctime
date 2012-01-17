@@ -50,7 +50,7 @@ static QString lock_host_pid() {
 // Der Inhalt der ersten Zeile wird dann Teil der Fehlermeldung.
 // Der Rueckgabewert ist die Fehlermeldung. "isNull()" gilt, wenn alles OK ist.
 // "content" wird in die Datei geschrieben.
-QString lock_acquire(const QString &name, bool reliable_local_exclusion) {
+QString lock_acquire(const QString &name, bool local_exclusion_already_provided) {
   QString status;
 #ifdef WIN32
   int fd = _open(name.toLocal8Bit(), _O_WRONLY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
@@ -70,11 +70,10 @@ QString lock_acquire(const QString &name, bool reliable_local_exclusion) {
     QString host(lock_hostname());
     QStringList words = line.split(" ");
     if (words.size() >= 2 && words[0].compare(host) == 0) {
-      if (reliable_local_exclusion)
+      if (local_exclusion_already_provided)
 	return status; // Das Lockfile ist von einer Instanz auf dem gleichen Rechner liegen geblieben.
 #ifndef WIN32
       int pid = words[1].toInt();
-      qWarning() << "PID " << pid << "\n";
       if (pid > 2 &&kill(pid, 0) == -1 && errno == ESRCH)
 	return status; // Den (lokalen) Prozess, der das Lock hatte, gibt's nicht mehr.
 #endif

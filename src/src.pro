@@ -50,13 +50,11 @@ HEADERS += abteilungsliste.h \
            timecounter.h \
            eintragsliste.h \
            timeedit.h \
-           errorapp.h \
            kontotreeview.h \
            findkontodialog.h \
            timemainwindow.h \
            globals.h \
            toolbar.h \
-           sctimeapp.h \
            unterkontodialog.h \
            kontodateninfo.h \
            sctimehelp.h \
@@ -79,19 +77,6 @@ HEADERS += abteilungsliste.h \
            bereitschaftsmodel.h \
            colorchooser.h
 RESOURCES= ../pics/sctimeImages.qrc
-#IMAGES += ../pics/hi16_action_apply.xpm \
-#          ../pics/hi22_action_1downarrow.xpm \
-#          ../pics/hi22_action_1uparrow.xpm \
-#          ../pics/hi22_action_2downarrow.xpm \
-#          ../pics/hi22_action_2uparrow.xpm \
-#          ../pics/hi22_action_attach.xpm \
-#          ../pics/hi22_action_edit.xpm \
-#          ../pics/hi22_action_filesave.xpm \
-#          ../pics/hi22_action_player_pause_half.xpm \
-#          ../pics/hi22_action_player_pause.xpm \
-#          ../pics/hi22_action_queue.xpm \
-#          ../pics/scLogo_15Farben.xpm \
-#          ../pics/sc_logo.xpm
 FORMS += datedialogbase.ui \
          preferencedialogbase.ui \
          colorchooserbase.ui
@@ -107,9 +92,8 @@ linux-g++{
   LIBS += -ldl
 }
 win32{
+  # CONFIG -=debug # Ich haette gerne, dass er unter Windows _nur_ Release baut.
   CONFIG += embed_manifest_exe release
-#CONFIG +=debug
-#DEFINES += WIN32
   QMAKE_CXXFLAGS += -EHsc # C++-Ausnahmen
   SOURCES += kontodateninfodatabase.cpp bereitschaftsdateninfodatabase.cpp DBConnector.cpp
   HEADERS += kontodateninfodatabase.h bereitschaftsdateninfodatabase.h DBConnector.h

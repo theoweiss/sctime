@@ -21,163 +21,184 @@
 */
 
 #include <QApplication>
+#include <QDir>
+#include <QFileInfo>
 #include <QFont>
-#include <iostream>
-#include "sctimeapp.h"
-#include <QString>
-#include <QTranslator>
 #include <QLibraryInfo>
 #include <QMessageBox>
+#include <QPixmap>
+#include <QSplashScreen>
+#include <QString>
+#include <QTranslator>
+#include <iostream>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #ifdef WIN32
 #include <Windows.h>
 #include <Winbase.h>
+#include "kontodateninfodatabase.h"
+#include "bereitschaftsdateninfodatabase.h"
+#include "DBConnector.h"
 
 #else
-#include "assert.h"
+#include <assert.h>
 #include <locale.h>
+#include <signal.h>
 #endif
 
-#include "errorapp.h"
-#include <stdio.h>
-#include <stdlib.h>
-
-#include <QDir>
-#include <QFileInfo>
 #include "GetOpt.h"
 #include "lock.h"
+#include "kontodateninfozeit.h"
+#include "bereitschaftsdateninfozeit.h"
+#include "timemainwindow.h"
+#include "sctimexmlsettings.h"
 
-#ifndef CONFIGSUBDIR
+#ifndef CONFIGSUBDIR 
 #define CONFIGSUBDIR ".sctime"
 #endif
 
-QString execDir;
 QString configDir;
 QString lockfilePath;
 
+static void fatal(const QString& title, const QString& body) __attribute__ ((noreturn));
 
-SCTimeApp* sctimeApp;
+static void fatal(const QString& title, const QString& body) {
+  QMessageBox::critical(NULL, title, body, QMessageBox::Ok);
+  exit(1);
+}
+
+static const char help[] =
+      " Available Options: \n"
+      " --configdir=  location of the directory where your files will be placed (default: ~/.sctime)\n"
+      " --zeitkontenfile=  location of zeitkontenfile (default: output of 'zeitkonten --mikrokonten --sep=\\|')\n"
+      " --bereitschaftsfile=  location of bereitschaftsfile (default: output of 'zeitbereitls'.\n\n"
+     "Without these options, sctime reads the necessary data from the database ('zeitdabaserv')";
+
+#ifdef WIN32
+static void setlocale() {}
+
+static bool local_exclusion(const char* name) { // true: die Funktion garantiert, dass lokal keine weitere Instanz läuft
+  Qt::HANDLE hEvent = CreateEventA(NULL, FALSE, TRUE, name);
+  return  GetLastError () != ERROR_ALREADY_EXISTS);
+}
+
+static QString canonicalPath(const QString& path) { return QFileInfo(path).canonicalFilePath()); }
+
+#else
+static void setlocale() {
+  if (!setlocale(LC_ALL, ""))
+    fatal("sctime: Konfigurationsproblem", "Die 'locale'-Einstellungen sind nicht zulaessig (siehe 'locale -a')");
+  const char *encoding = setlocale(LC_CTYPE, NULL); //query
+  if (!encoding && !encoding[0])  fatal("sctime: Konfigurationsfehler", "Konnte die locale-Bibliothek nicht initialisieren.");
+  if (strcmp(encoding, "POSIX") == 0 && strcmp(encoding, "C"))
+    if (setenv("LC_CTYPE", "UTF-8", 1)) fatal("sctime: Konfigurationsfehler", "Konnte LC_CTYPE nicht setzen.");
+}
+
+static QString canonicalPath(QString path) {
+    return path.startsWith("~/") ? path.replace(0,2,QDir::homePath()+"/") : QFileInfo(path).canonicalFilePath(); }
+
+static bool local_exclusion(const QString& path) { return false; }
+#endif
+
+class SctimeApp: public QApplication {
+public:
+  SctimeApp(int &argc, char **argv):QApplication(argc, argv) {}
+  void commitData ( QSessionManager & manager ) {
+    QApplication::commitData(manager);
+  }
+};
 
 /** main: hier wird ueberprueft, ob die Applikation ueberhaupt starten soll
  * (Lockfiles,...), und falls ja, wird SCTimeApp initialisiert und
  ausgefuehrt */
 int main( int argc, char **argv ) {
-  QDir directory;
-  QFileInfo executable(argv[0]);
-
-  if (executable.isSymLink()) //Wir wollen den echten Pfad, um unsere Icons zu finden.
-    executable.setFile(executable.readLink());
-
-#ifndef WIN32
-  if( argc == 2 && (strcmp(argv[1], "-h")==0||strcmp(argv[1],"--help")==0))
-  {
-    std::cout << "Usage: sctime [OPTION] " << std::endl << std::endl <<
-    " Available Options: " << std::endl <<
-    "   --configdir= \t Location of the directory where your files will be placed." << std::endl <<
-    "                \t Default is /home/<USER>/.sctime" << std::endl <<
-    "   --zeitkontenfile= \t Location of zeitkontenfile, not necessary if you want to connect to the Database." << std:: endl <<
-    "   --bereitschaftsfile=  Location of bereitschaftsfile, not necessary if you want to connect to the Database." << std::endl;
+  SctimeApp app(argc, argv);
+  app.setObjectName("Sctime");
+  
+  if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1],"--help") == 0 || strcmp(argv[1], "-h") == 0||strcmp(argv[1],"--help") == 0)) {
+    QMessageBox::information(NULL,"sctime", help, QMessageBox::Ok);
     exit(0);
   }
-
-#else
-  if( argc == 2 && (strcmp(argv[1], "/h")==0 || strcmp(argv[1],"/?")==0))
-  {
-    char * text = "Usage: sctime [OPTION] \n\n" ;
-    text = strcat(text, " Available Options: \n");
-    text = strcat(text, " --configdir=  Location of the directory where your files will be placed.\n");
-    text = strcat(text, "               Default is /home/<USER>/.sctime \n");
-    text = strcat(text, " --zeitkontenfile=  Location of zeitkontenfile, not necessary if you want to connect to the Database.\n");
-    text = strcat(text, " --bereitschaftsfile=  Location of bereitschaftsfile, not necessary if you want to connect to the Database.");
-    ErrorApp ea(text, argc, argv, true);
-    exit(0);
-  }
-#endif
-
-#ifndef WIN32
-  if (!setlocale(LC_ALL, "")) {
-    ErrorApp("FEHLER! Die 'locale'-Einstellungen sind nicht zulaessig (siehe 'locale -a')", argc, argv);
-    exit(1);
-  }
-  char *ctype = setlocale(LC_CTYPE, NULL); //query
-  assert (ctype);
-  if (strcmp(ctype, "POSIX") == 0 && strcmp(ctype, "C"))
-    if (setenv("LC_CTYPE", "UTF-8", 1)) {
-      ErrorApp("Konnte LC_CTYPE nicht setzen.", argc, argv);
-      exit(1);
-    }
-#endif
-  //execDir=executable.dirPath(true);
-  execDir=executable.absolutePath();
-  // Pruefen, ob das Configdir ueber das environment gesetzt wurde
-  QString configdirstring;
-  QString zeitkontenfile;
-  QString bereitschaftsfile;
+  QString configdirstring, zeitkontenfile, bereitschaftsfile;
   char *envpointer;
 
   GetOpt opts(argc, argv);
   opts.addOption('f',"configdir", &configdirstring);
   opts.addOption('f',"zeitkontenfile", &zeitkontenfile);
   opts.addOption('f',"bereitschaftsfile", &bereitschaftsfile);
-
   opts.parse();
 
   if (configdirstring.startsWith("~/"))
       configdirstring.replace(0,2,QDir::homePath()+"/");
 
   if (configdirstring.isEmpty()) {
-
     envpointer = getenv("SCTIME_CONFIG_DIR");
-
-    if (envpointer)
-        configdirstring = envpointer;
-    else {
-        configdirstring = CONFIGSUBDIR; // default Configdir
-    }
+    configdirstring = envpointer ? envpointer : CONFIGSUBDIR; // default Configdir
   }
+  setlocale();
 
-  if (!directory.cd(configdirstring))
-  {
-#ifndef WIN32
-    directory.cd(directory.homePath());
+  QSplashScreen splash(QPixmap(":/splash.png"));
+  splash.showMessage("Konfigurationsdateien suchen");
+  splash.show(); // später: app.processEvents();
+
+  QDir directory;
+  if (!directory.cd(configdirstring)) {
+#ifdef WIN32
+    QString home("h:\\");
 #else
-    if (!directory.cd("H:\\")) {
-           ErrorApp ea("Kann nicht auf H:\\ zugreifen.",argc, argv );
-           return 1;
-    }
+    QString home(directory.homePath());
 #endif
-    // neues directory anlegen, hineinwechseln, und merken.
+    if (!directory.cd(home)) fatal("sctime: Konfigurationsproblem", QString("Kann nicht auf %1 zugreifen.").arg(home));
     directory.mkdir(configdirstring);
-
-    if (!directory.cd(configdirstring))
-    {
-      ErrorApp ea("Kann in Verzeichnis "+configdirstring+" nicht wechseln!",argc, argv );
-      return 1;
-    }
+    if (!directory.cd(configdirstring)) fatal("sctime: Konfigurationsproblem", QString("Kann nicht auf %1 zugreifen.").arg(configdirstring));
   }
   configDir=directory.path();
 
+  splash.showMessage("Sperrdatei anlegen");
+  app.processEvents();
+
+  lockfilePath = configDir + "/LOCK";
+  QString err = lock_acquire(lockfilePath, local_exclusion("sctime"));
+  if (!err.isNull()) fatal("sctime: Sperrdatei", err);
+
+  splash.showMessage("Kontenliste einlesen");
+  app.processEvents();
+
+  KontoDatenInfo* zk;
+  BereitschaftsDatenInfo* bereitschaftsdatenReader;
+
 #ifdef WIN32
-  Qt::HANDLE hEvent = CreateEventA(NULL, FALSE, TRUE, "sctimeGuardEvent");
-  if ( GetLastError () == ERROR_ALREADY_EXISTS ) {
-    ErrorApp ea("Eine andere Instanz von sctime läuft bereits auf diesem Rechner.", argc, argv );
-    return 1;
-  }
-  const bool local_excluded = true;
+    DBConnector dbconnector;
+    zk = zeitkontenfile.isEmpty()
+        ? new KontoDatenInfoDatabase(dbconnector)
+        zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
+    bereitschaftsdatenREader = bereitschaftsfile.isEmpty()
+      ? BereitschaftsDatenInfoDatabase(dbconnector)
+      : bereitschaftsdatenReader=new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
 #else
-  const bool local_excluded = false;
-#endif
-  lockfilePath = configDir+"/LOCK";
-  QString err = lock_acquire(lockfilePath, local_excluded);
-  if (!err.isNull()) {
-    ErrorApp ea(err, argc, argv);
-    return 1;
+  SCTimeXMLSettings settings;
+  settings.readSettings();
+  if (zeitkontenfile.isEmpty()) {
+    zk = new KontoDatenInfoZeit();
+    if (!settings.zeitKontenKommando().isEmpty())
+      static_cast<KontoDatenInfoZeit*>(zk)->setKommando(settings.zeitKontenKommando());
+  } else {
+    zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
   }
-  sctimeApp= new SCTimeApp( argc, argv , zeitkontenfile, bereitschaftsfile);
-  sctimeApp->exec();
-  lock_release(lockfilePath);
-  delete sctimeApp;
+  bereitschaftsdatenReader = bereitschaftsfile.isEmpty()
+      ? new BereitschaftsDatenInfoZeit()
+      :  new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
+  app.watchUnixSignal(SIGINT, true);
+  app.watchUnixSignal(SIGTERM, true);
+  app.watchUnixSignal(SIGHUP, true);
+#endif
+  TimeMainWindow mainWindow(zk, bereitschaftsdatenReader);
+  splash.finish(&mainWindow);
+  mainWindow.show();
+  app.exec();
+  mainWindow.save();
   return 0;
 }
