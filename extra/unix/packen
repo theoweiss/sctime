@@ -1,0 +1,30 @@
+#!/bin/bash -eEu
+# -*- coding: utf-8 -*-
+
+# Das Skript will in einem Verzeichnis aufgerufen werden, in dem
+# ein fertig kompiliertes "sctime" liegt.
+
+# Im gleichen Verzeichnis wie das Skript selbst müssen noch "sctime.f4"
+# und "sc-sctime.desktop" liegen.
+
+[ -z "${DEBUG:-}" ] || set -x
+# bei einer Pipe kommt's nicht nur auf den Rueckgabewert des letzten Kommandos an
+set -o pipefail
+trap 'echo "FEHLER [$?]: $BASH_COMMAND
+$LINENO - $BASH_SOURCE" >&2
+caller 0' ERR INT
+
+cd $(dirname $0)
+bindir="$PWD"
+cd - >/dev/null
+
+die () {
+    echo -e "\\nFEHLER: $@" >&2
+    exit 1
+}
+
+[ -f sctime ] || die "$0 im Build-Verzeichnis aufrufen!"
+[ -h sc-sctime.desktop ] || ln -s "$bindir/sc-sctime.desktop" .
+scpm -c -f "$bindir/sctime.f4" -n sctime -p sctime-0.70.p4 -v 0.70 
+
+

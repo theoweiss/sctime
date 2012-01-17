@@ -1,0 +1,11 @@
+[Desktop Entry]
+X-SuSE-translate=true
+Name=Sctime
+Comment=s+c Arbeitszeiterfassung
+GenericName=sctime
+Exec=/usr/local/bin/sctime
+Icon=/usr/local/sccal/icons/CS32icon.png
+StartupNotify=true
+Terminal=false
+Type=Application
+Categories=sc;
