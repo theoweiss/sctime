@@ -67,6 +67,7 @@ class KontoDatenInfoZeit: public KontoDatenInfo
     KontoDatenInfoZeit();
     KontoDatenInfoZeit(QString sourcefile);
     virtual bool readInto(AbteilungsListe * abtlist);
+    bool readInto2(AbteilungsListe * abtList, bool re);
     bool readZeitFile(FILE *file, AbteilungsListe * abtlist);
     void setKommando(const QString& command);
     virtual bool checkIn(AbteilungsListe* abtlist);

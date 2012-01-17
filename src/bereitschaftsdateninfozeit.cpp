@@ -99,7 +99,7 @@ bool BereitschaftsDatenInfoZeit::readInto(BereitschaftsListe * berList)
     int rc = pclose(file);
     if(rc == -1 || !WIFEXITED(rc) || WEXITSTATUS(rc)) {
       QMessageBox::critical(NULL, "sctime: Bereitschaftsarten laden",
-                            QString("Fehler bei '%1': %2").arg(command).arg(rc == 1 ? strerror(errno) : "nicht normal beendet"));
+                            QString("Fehler bei '%1': %2").arg(command).arg(rc == -1 ? strerror(errno) : "nicht normal beendet"));
       result = false;
     }
   } else { // aus Datei lesen

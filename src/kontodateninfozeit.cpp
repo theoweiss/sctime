@@ -333,7 +333,11 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
     return (unterkontoCounter>0);
 }
 
-bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
+bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList) {
+  return readInto2(abtList, false);
+}
+
+bool KontoDatenInfoZeit::readInto2(AbteilungsListe * abtList, bool comments_only)
 {
   abtList->clear();
   bool result;
@@ -348,11 +352,11 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
                             QString("Kann Kommando '%1' nicht ausfuehren: %s").arg(command), strerror(errno));
       return false;
     }
-    result = readZeitFile(file,abtList);
+    result = comments_only ? readCommentsFromZeitFile(file,abtList) : readZeitFile(file,abtList);
     int rc = pclose(file);
     if(rc == -1 || !WIFEXITED(rc) || WEXITSTATUS(rc)) {
       QMessageBox::critical(NULL, "sctime: Kontenliste laden",
-                            QString("Fehler bei '%1': %2").arg(command).arg(rc == 1 ? strerror(errno) : "nicht normal beendet"));
+                            QString("Fehler bei '%1': %2").arg(command).arg(rc == -1 ? strerror(errno) : "nicht normal beendet"));
       result = false;
     }
   } else { // aus Datei lesen
@@ -368,46 +372,8 @@ bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList)
   return result;
 }
 
-bool KontoDatenInfoZeit::readDefaultComments(AbteilungsListe * abtList)
-{
-  //abtList->clear();
-  FILE* file;
-  int rc;
-
-  if (m_DatenFileName.isEmpty()) {
-    QString command;
-    if (m_Kommando.isEmpty()){
-      command="zeitkonten --mikrokonten --separator='|'";}
-    else
-      command=m_Kommando;
-
-    file = popen(command.toLatin1(), "r");
-    if (!file || file ==NULL) {
-      std::cerr<<"Kann Kommando \""<<command.toStdString()<<"\" nicht ausfuehren."<<std::endl;
-      return false;
-    }
-
-
-  } else {
-      file = fopen(m_DatenFileName.toLatin1(), "r");
-      if (!file) {
-          std::cerr<<"Kann "<<m_DatenFileName.toLocal8Bit().constData()<<" nicht oeffnen."<<std::endl;
-          return false;
-      }
-  }
-
-  bool result=readCommentsFromZeitFile(file,abtList);
-
-  if (m_DatenFileName.isEmpty()){
-      rc=pclose(file);
-      if(rc!=0)
-      {
-        std::cerr << "Kann Kommando \"zeitkonten --mikrokonten --separator='|'\" nicht ausfuehren. Defaultkommentare konnten nicht geladen werden."<<std::endl;
-      }
-    }
-  else
-      fclose(file);
-  return result;
+bool KontoDatenInfoZeit::readDefaultComments(AbteilungsListe * abtList) {
+  return readInto2(abtList, true);
 }
 
 void KontoDatenInfoZeit::setKommando(const QString& command)
