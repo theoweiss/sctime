@@ -47,6 +47,7 @@ static void fatal(const QString& title, const QString& body);
 #include <assert.h>
 #include <locale.h>
 #include <signal.h>
+#define LOCALE "de_DE.UTF-8"
 #endif
 
 #include "GetOpt.h"
@@ -93,7 +94,7 @@ static void setlocale() {
     fatal("sctime: Konfigurationsproblem", "Die 'locale'-Einstellungen sind nicht zulaessig (siehe 'locale -a')");
   const char *encoding = setlocale(LC_CTYPE, NULL); //query
   if (!encoding && !encoding[0])  fatal("sctime: Konfigurationsfehler", "Konnte die locale-Bibliothek nicht initialisieren.");
-  if (setenv("LC_CTYPE", "UTF-8", 1)) fatal("sctime: Konfigurationsfehler", "Konnte LC_CTYPE nicht setzen.");
+  if (setenv("LC_ALL", LOCALE, 1)) fatal("sctime: Konfigurationsfehler", "Konnte Umgebungsvariable ZEIT_ENCODING nicht setzen.");
 }
 
 static QString canonicalPath(QString path) {
