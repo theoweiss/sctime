@@ -13,12 +13,9 @@ hinzufuegen, mit den folgenden Eigenschaften:
 
 Data Source: zeit
 Database: zeit
-Server: dabaserv
 Port: 5432
 
-Als Username ist der Loginname, und als Passwort der
-Inhalt der Datei "H:\.Zeit" einzutragen.
-
-Bei den Optionen sollte man unter DataSource
-sicherheitshalber noch "ReadOnly" aktivieren.
-
+sctime übergibt folgende Werte:
+Username: angemeldeter Benutzer
+Passwort: Inhalt von H:\\.sctime
+Hostname: "zeitdabaserv"
