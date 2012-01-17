@@ -4,18 +4,10 @@
 # Target is an application:  ../bin/sctime
 
 TEMPLATE = app
-VERSIONSTR = '"0.62"'
+VERSIONSTR = '"0.70"'
 CONFIG += warn_on qt uic
-QT += xml sql gui core
+QT += xml gui core
 TARGET = sctime
-!win32{
-  BUILDDATESTR = '"`date`"'
-}
-isEmpty(BUILDDATESTR){
-  BUILDDATESTR = '"unknown"'
-}
-#VERSIONSTR="\"0.54-pre\""
-#BUILDDATESTR="\"unknown\""
 DEFINES += BUILDDATESTR=$$BUILDDATESTR VERSIONSTR=$$VERSIONSTR
 SOURCES += abteilungsliste.cpp \
            datedialog.cpp \
@@ -92,6 +84,7 @@ linux-g++{
   LIBS += -ldl
 }
 win32{
+   QT += sql
   # CONFIG -=debug # Ich haette gerne, dass er unter Windows _nur_ Release baut.
   CONFIG += embed_manifest_exe release
   QMAKE_CXXFLAGS += -EHsc # C++-Ausnahmen
@@ -129,3 +122,10 @@ mac {
   CONFIG += x86 ppc
 }
 #LIBS+=-L../../gdbmacros -lgdbmacros
+
+!win32{
+  BUILDDATESTR = '"`date`"'
+}
+isEmpty(BUILDDATESTR){
+  BUILDDATESTR = '"unknown"'
+}

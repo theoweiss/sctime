@@ -115,7 +115,7 @@ QString Lock::acquire() {
   if (acquired) return QString();
     local_lock = CreateEventA(NULL, false, true, name.toLocal8Bit());
     if (GetLastError () == ERROR_ALREADY_EXISTS)
-	return QString::fromLatin1("%1 läuft bereits auf dieser Maschine").arg(name);
+	return QString::fromUtf8("%1 läuft bereits auf dieser Maschine").arg(name);
     QString err = lock_acquire(path, true);
     acquired = err.isNull();
     if (!acquired && !CloseHandle(local_lock)) 

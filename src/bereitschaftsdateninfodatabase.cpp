@@ -68,15 +68,10 @@ bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
       }  else std::cout<<"Kann Abfrage nicht durchfuehren"<<std::endl;
   } else {
         ret = false;
-#ifdef WIN32
 	QMessageBox::warning(NULL, QObject::tr("Kann Datenbank nicht öffnen"),
 			     defaultDB.lastError().driverText(),
 			     QMessageBox::Ok, QMessageBox::Ok);
-#else
-	std::cout<<"Kann Datenbank nicht öffnen"<<std::endl;
-#endif
     }
-
   defaultDB.close();
   return ret;
 }

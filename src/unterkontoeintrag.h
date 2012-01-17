@@ -66,6 +66,6 @@ class UnterKontoEintrag
       return ((kommentar==uk.kommentar)&&(sekunden==uk.sekunden)&&
               (sekundenAbzur==uk.sekundenAbzur)&&(flags==uk.flags));
     }
-} ;
+};
 
 #endif
