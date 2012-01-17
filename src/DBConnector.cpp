@@ -26,15 +26,20 @@ DBConnector::DBConnector() {
     pwd_done:;
 }
 
-QSqlDatabase DBConnector::open() {
-  QSqlDatabase db(QSqlDatabase::addDatabase("QPSQL")); // statt QODBC
+QSqlDatabase DBConnector::connect(const char* driver, const char* dbname) {
+  QSqlDatabase db = QSqlDatabase::addDatabase(driver);
   if (db.isValid()) {
-    db.setDatabaseName("zeit");
-    // für ODBC: db.setDatabaseName("DSN=Postgres_Zeit;SERVER=zeitdabaserv;");
+    db.setDatabaseName(dbname);
     db.setHostName("zeitdabaserv");
-    if (!m_username.isNull()) db.setUserName(m_username);
-    db.setPassword(m_password);
-    db.open();
+    db.open(m_username, m_password);
+  }
+  return db;
+}
+
+QSqlDatabase DBConnector::open() {
+  QSqlDatabase db(connect("QODBC", "DSN=Postgres_Zeit"));
+  if (!db.isOpen()) {
+    db = connect("QPSQL", "zeit");
   }
   return db;
 }

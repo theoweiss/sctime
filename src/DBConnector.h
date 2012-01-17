@@ -9,6 +9,7 @@ class DBConnector {
     DBConnector();
     QSqlDatabase open();
   private:
+    QSqlDatabase connect(const char* driver, const char* dbname);
     QString m_username;
     QString m_password;
 };
