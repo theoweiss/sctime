@@ -1,0 +1,49 @@
+#include <errno.h>
+#include <string.h>
+#include <unistd.h>
+
+#include "signalhandler.h"
+
+static int fds[2];
+
+static void unixSignalHandler(int sig) {
+  char a = sig & 255;
+  ::write(fds[1], &a, 1);
+}
+
+static QSocketNotifier *notifier;
+static SignalHandler *singleton = 0;
+
+SignalHandler::SignalHandler(int sig, QObject *parent):QObject(parent),signum(sig) {
+  if (!singleton) {
+    if (::pipe(fds))
+      qFatal("Couldn't create a socketpair: %s", strerror(errno));
+    notifier = new QSocketNotifier(fds[0], QSocketNotifier::Read);
+    connect(notifier, SIGNAL(activated(int)), this, SLOT(handleAll()));
+    singleton = this;
+  }
+  connect(singleton, SIGNAL(received(int)), this, SLOT(handle(int)));
+
+  struct sigaction sa;
+  sa.sa_handler = unixSignalHandler;
+  sigemptyset(&sa.sa_mask);
+  sa.sa_flags = SA_RESTART;
+
+  if (sigaction(sig, &sa, 0) > 0)
+    qFatal("Could not install signal handler for signal %d: %s", sig, strerror(errno));
+}
+
+void SignalHandler::handleAll() {
+  notifier->setEnabled(false);
+  char tmp;
+  ::read(fds[0], &tmp, sizeof(tmp));
+  emit received((int) tmp);
+  notifier->setEnabled(true);
+}
+
+void SignalHandler::handle(int sig) {
+  if (signum == sig) {
+    emit received();
+  }
+}
+

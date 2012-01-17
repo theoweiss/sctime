@@ -30,14 +30,9 @@
 #include <QSplashScreen>
 #include <QString>
 #include <QTranslator>
-#include <iostream>
-#include <sys/stat.h>
-#include <sys/types.h>
-#include <stdio.h>
-#include <stdlib.h>
+#include <QSocketNotifier>
 
 #ifdef WIN32
-#include <Windows.h>
 #include "kontodateninfodatabase.h"
 #include "bereitschaftsdateninfodatabase.h"
 #include "DBConnector.h"
@@ -47,6 +42,7 @@ static void fatal(const QString& title, const QString& body);
 #include <assert.h>
 #include <locale.h>
 #include <signal.h>
+#include "signalhandler.h"
 #define LOCALE "de_DE.UTF-8"
 #endif
 
@@ -99,15 +95,13 @@ static void setlocale() {
 
 static QString canonicalPath(QString path) {
     return path.startsWith("~/") ? path.replace(0,2,QDir::homePath()+"/") : QFileInfo(path).canonicalFilePath(); }
-
 #endif
 
 class SctimeApp: public QApplication {
 public:
-  SctimeApp(int &argc, char **argv):QApplication(argc, argv) {}
-  void commitData ( QSessionManager & manager ) {
-    QApplication::commitData(manager);
-  }
+  SctimeApp(int &argc, char **argv):QApplication(argc, argv) { }
+
+  void commitData ( QSessionManager & manager ) {QApplication::commitData(manager); }
 };
 
 /** main: hier wird ueberprueft, ob die Applikation ueberhaupt starten soll
@@ -170,14 +164,14 @@ int main( int argc, char **argv ) {
   BereitschaftsDatenInfo* bereitschaftsdatenReader;
 
 #ifdef WIN32
-    DBConnector  dbconnector = new DBConnector();
+    DBConnector  dbconnector;
     zk = zeitkontenfile.isEmpty()
         ? (KontoDatenInfo*) new KontoDatenInfoDatabase(&dbconnector) 
-	: new KontoDatenInfoZeit(canonicalPath(zeitkontenfile)); // FIXME: Speicherleck
+	: new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
      zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
     bereitschaftsdatenReader = bereitschaftsfile.isEmpty()
       ? (BereitschaftsDatenInfo*) new BereitschaftsDatenInfoDatabase(&dbconnector)
-      : new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile)); // FIXME: Speicherleck
+      : new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
 #else
   SCTimeXMLSettings settings;
   settings.readSettings();
@@ -191,12 +185,19 @@ int main( int argc, char **argv ) {
   bereitschaftsdatenReader = bereitschaftsfile.isEmpty()
       ? new BereitschaftsDatenInfoZeit() // FIXME: Speicherlecks
       :  new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
-  app.watchUnixSignal(SIGINT, true);
-  app.watchUnixSignal(SIGTERM, true);
-  app.watchUnixSignal(SIGHUP, true);
+
 #endif
   TimeMainWindow mainWindow(zk, bereitschaftsdatenReader);
   splash.finish(&mainWindow);
+#ifndef WIN32
+  SignalHandler term(SIGTERM);
+  app.connect(&term, SIGNAL(received()), &app, SLOT(closeAllWindows()));
+  SignalHandler hup(SIGHUP);
+  app.connect(&hup, SIGNAL(received()), &app, SLOT(closeAllWindows()));
+  SignalHandler int_(SIGINT);
+  app.connect(&int_, SIGNAL(received()), &app, SLOT(closeAllWindows()));
+#endif
+
   mainWindow.show();
   app.exec();
   mainWindow.save();

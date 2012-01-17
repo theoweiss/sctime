@@ -91,7 +91,7 @@ win32{
   SOURCES += kontodateninfodatabase.cpp bereitschaftsdateninfodatabase.cpp DBConnector.cpp
   HEADERS += kontodateninfodatabase.h bereitschaftsdateninfodatabase.h DBConnector.h
   RC_FILE += sctime.rc
-  LIBS += Advapi32.lib ws2_32.lib
+  LIBS += ws2_32.lib
 }
 hpux-acc{
   DEFINES += HPUX
@@ -125,6 +125,8 @@ mac {
 
 !win32{
   BUILDDATESTR = '"`date`"'
+  SOURCES += signalhandler.cpp
+  HEADERS += signalhandler.h
 }
 isEmpty(BUILDDATESTR){
   BUILDDATESTR = '"unknown"'
