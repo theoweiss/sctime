@@ -32,6 +32,7 @@
 #include <sys/types.h>
 
 #ifndef WIN32
+#include "assert.h"
 #include <sys/file.h>
 #include <unistd.h>
 #include <errno.h>
@@ -49,12 +50,10 @@
 
 #ifdef IRIX
 #include <fcntl.h>
-#include <errno.h>
 #endif
 
 #ifdef SUN
 #include <fcntl.h>
-#include <errno.h>
 #endif
 
 #include "globals.h"
@@ -205,36 +204,17 @@ int main( int argc, char **argv )
   }
 #endif
 
-  //Set the correct encoding for the locale if LC_ALL or LC_CTYPE == POSIX or C
 #ifndef WIN32
-  char * lc_ctype_pointer = getenv("LC_CTYPE");
-  char * lc_all_pointer = getenv("LC_ALL");
-  //std::cout <<"BEGIN LC_CTYPE>>"<< lc_ctype_pointer <<"<<"<< std::endl;
-  if( lc_all_pointer != NULL ){
-    //std::cout <<"BEGIN LC_ALL  >>"<< lc_all_pointer <<"<<"<< std::endl;
-    if((strcmp(lc_all_pointer, "POSIX")==0) ||
-        (strcmp(lc_all_pointer, "C")==0)  ||
-        (strchr(lc_all_pointer, '.')==NULL))
-    {
-      //std::cout <<"LC_ALL >>"<< lc_all_pointer <<"<<"<< std::endl;
-      putenv("LC_ALL=de_DE.UTF-8");
-    }
-
+  if (!setlocale(LC_ALL, "")) {
+    perror("FEHLER! Die 'locale'-Einstellungen sind nicht zulaessig (siehe 'locale -a')");
+    exit(1);
   }
-  if( lc_ctype_pointer != NULL ){
-    if((strcmp(lc_ctype_pointer, "POSIX")==0) ||
-        (strcmp(lc_ctype_pointer, "C")==0) ||
-       (strchr(lc_ctype_pointer, '.')==NULL))
-    {
-      //std::cout <<"LC_CTYPE >>"<< lc_ctype_pointer <<"<<"<< std::endl;
-      if(putenv("LC_CTYPE=de_DE.UTF-8")){
-        std::cerr << "Error cannot set LC_CTYPE to utf8!" << std::endl;
-      }
-    }
-  }
-
+  char *ctype = setlocale(LC_CTYPE, NULL); //query
+  assert (ctype);
+  if (strcmp(ctype, "POSIX") == 0 && strcmp(ctype, "C")) 
+    if (setenv("LC_CTYPE", "UTF-8", 1))
+	perror("Konnte LC_CTYPE nicht setzen.");
 #endif
-
   //execDir=executable.dirPath(true);
   execDir=executable.absolutePath();
   // Pruefen, ob das Configdir ueber das environment gesetzt wurde
