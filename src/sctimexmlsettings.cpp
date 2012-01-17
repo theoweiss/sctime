@@ -31,6 +31,9 @@
 #include "timecounter.h"
 #include <QRegExp>
 #include <QTextCodec>
+#include <QRect>
+#include <QApplication>
+#include <QDesktopWidget>
 #include <stdio.h>
 #include <stdlib.h>
 #ifndef WIN32
@@ -411,11 +414,15 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
               aktiveskontotag=elem2; // Aktives Konto merken und zum Schluss setzen, damit es vorher erzeugt wurde
             }
             if (elem2.tagName()=="windowposition") {
-              QString xstr=elem2.attribute("x");
-              if (xstr.isNull()) continue;
-              QString ystr=elem2.attribute("y");
-              if (ystr.isNull()) continue;
-              mainwindowPosition=QPoint(xstr.toInt(),ystr.toInt());
+		bool ok;
+		int x = QString(elem2.attribute("x")).toInt(&ok);
+		int y = QString(elem2.attribute("y")).toInt(&ok);
+		if (ok) {
+		    QPoint pos(x, y);		    
+		    QRect rootwinsize = QApplication::desktop()->availableGeometry();
+		    if (rootwinsize.contains(pos))  // Position nicht setzen, wenn Fenster sonst ausserhalb
+			mainwindowPosition = pos;
+		}
             }
             if (elem2.tagName()=="windowsize") {
               QString xstr=elem2.attribute("width");
