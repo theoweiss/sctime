@@ -169,14 +169,14 @@ int main( int argc, char **argv ) {
   BereitschaftsDatenInfo* bereitschaftsdatenReader;
 
 #ifdef WIN32
-    DBConnector*  dbconnector = new DBConnector();
+    DBConnector  dbconnector = new DBConnector();
     zk = zeitkontenfile.isEmpty()
-        ? (KontoDatenInfo*) new KontoDatenInfoDatabase(dbconnector) 
-	: new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
+        ? (KontoDatenInfo*) new KontoDatenInfoDatabase(&dbconnector) 
+	: new KontoDatenInfoZeit(canonicalPath(zeitkontenfile)); // FIXME: Speicherleck
      zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
     bereitschaftsdatenReader = bereitschaftsfile.isEmpty()
-      ? (BereitschaftsDatenInfo*) new BereitschaftsDatenInfoDatabase(dbconnector)
-      : new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
+      ? (BereitschaftsDatenInfo*) new BereitschaftsDatenInfoDatabase(&dbconnector)
+      : new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile)); // FIXME: Speicherleck
 #else
   SCTimeXMLSettings settings;
   settings.readSettings();
@@ -185,10 +185,10 @@ int main( int argc, char **argv ) {
     if (!settings.zeitKontenKommando().isEmpty())
       static_cast<KontoDatenInfoZeit*>(zk)->setKommando(settings.zeitKontenKommando());
   } else {
-    zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
+      zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile)); // FIXME: Speicherleck
   }
   bereitschaftsdatenReader = bereitschaftsfile.isEmpty()
-      ? new BereitschaftsDatenInfoZeit()
+      ? new BereitschaftsDatenInfoZeit() // FIXME: Speicherlecks
       :  new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
   app.watchUnixSignal(SIGINT, true);
   app.watchUnixSignal(SIGTERM, true);
