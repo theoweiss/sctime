@@ -49,7 +49,7 @@ DBConnector::DBConnector()
 
 void DBConnector::configureDB(QSqlDatabase& db)
 {
-  db.setDatabaseName("DSN=Postgres_Zeit;SERVER=zeitdabaserv;PORT=5432;DATABASE=zeit;");
+  db.setDatabaseName("DSN=Postgres_Zeit;SERVER=zeitdabaserv;");
   db.setUserName(m_username);
   db.setPassword(m_password);
 }
