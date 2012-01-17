@@ -6,7 +6,7 @@
 #include <QApplication>
 #include <QFileInfo>
 #include <stdlib.h>
-
+#include <QtDebug>
 #include <assert.h>
 
 #include <QLinkedList>
@@ -279,7 +279,7 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
             }
             if ( t == LongOpt && opt.type == OUnknown ) {
                 if ( currOpt.type != OVarLen ) {
-                    qWarning( "Unknown option --%s", a.toAscii() );
+		    qWarning() << "Unknown option:" << a;
                     return false;
                 } else {
                     // VarLength options support arguments starting with '-'
@@ -354,7 +354,7 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
             } else {
                 QString n = currType == LongOpt ?
                             currOpt.lname : QString( QChar( currOpt.sname ) );
-                qWarning( "Expected an argument after '%s' option", n.toAscii() );
+                qWarning() << "Expected an argument after option" <<  n;
                 return false;
             }
             break;

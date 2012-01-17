@@ -53,7 +53,7 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
   header->setText(5,"Kommentar");
   this->setHeaderItem(header);
   //this->header()->setResizeMode(QHeaderView::Interactive);
-  for (int i=0; i<columnwidth.size(); i++) {
+  for (std::vector<int>::size_type i=0; i<columnwidth.size(); i++) {
     if( !isColumnHidden(i) ){
       header->setSizeHint(i, QSize(columnwidth.at(i), 20));
     }
