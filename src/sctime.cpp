@@ -30,18 +30,23 @@
 #include <QMessageBox>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <errno.h>
 
-#ifndef WIN32
+#ifdef WIN32
+#define LOCK_FD QFile*
+#include <share.h>
+#include <windows.h>
+#include <io.h>
+
+#else
+#define LOCK_FD int
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #include "assert.h"
 #include <sys/file.h>
 #include <unistd.h>
-#include <errno.h>
 #include <locale.h>
-#define LOCK_FD int
-#else
-#include <windows.h>
-#include <io.h>
-#define LOCK_FD QFile*
 #endif
 
 #include "errorapp.h"
@@ -279,7 +284,6 @@ int main( int argc, char **argv )
   LOCK_FD lfp=openlock(configDir+"/LOCK");
 
   sctimeApp= new SCTimeApp( argc, argv , zeitkontenfile, bereitschaftsfile);
-
   sctimeApp->exec();
 
   closelock(lfp, configDir+"/LOCK");
