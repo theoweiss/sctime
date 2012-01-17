@@ -4,9 +4,8 @@
 #include <sys/stat.h> // (_)S_IWRITE
 #include <fcntl.h> // (_)O_RDWR
 
-#ifdef WIN32
-#define HOST_NAME_MAX 300
 //#define getpid _getpid
+#ifdef WIN32
 #include <Windows.h>
 #include <WinBase.h> // _open
 #include <io.h>
@@ -24,13 +23,16 @@
 
 #include "lock.h"
 
-
 /* Ich arbeite mit Lockfiles, weil ich mit "byte range locks"
    und -- unter Windows -- "sharing modes" (_sopen_s) -- nichts gefunden habe,
    das gleichzeitig auf Windows und Linux funktioniert.
 
    Das Lockfile soll Hostnamen und PID durch Leerzeichen getrennt enthalten.
 */
+
+#ifndef HOST_NAME_MAX
+#define HOST_NAME_MAX 300
+#endif
 
 static char _hostname[HOST_NAME_MAX + 1] = "";
 
@@ -50,23 +52,23 @@ static QString lock_host_pid() {
 // Der Inhalt der ersten Zeile wird dann Teil der Fehlermeldung.
 // Der Rueckgabewert ist die Fehlermeldung. "isNull()" gilt, wenn alles OK ist.
 // "content" wird in die Datei geschrieben.
-QString lock_acquire(const QString &name, bool local_exclusion_already_provided) {
+QString lock_acquire(const QString &path, bool local_exclusion_already_provided) {
   QString status;
 #ifdef WIN32
-  int fd = _open(name.toLocal8Bit(), _O_WRONLY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
+  int fd = _open(path.toLocal8Bit(), _O_WRONLY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
 #else
-  int fd = open(name.toLocal8Bit(), O_WRONLY | O_CREAT | O_EXCL, 0600);
+  int fd = open(path.toLocal8Bit(), O_WRONLY | O_CREAT | O_EXCL, 0600);
 #endif
   if (fd == -1) {
     if (errno != EEXIST) 
-      return QString("%1 konnte nicht angelegt werden (%2)").arg(name, strerror(errno));
-    QFile f(name);
+      return QString("%1 konnte nicht angelegt werden (%2)").arg(path, strerror(errno));
+    QFile f(path);
     if (!f.open(QIODevice::ReadOnly))
-      return QString("%1 existiert, kann aber nicht gelesen werden (%1).").arg(name, f.errorString());
+      return QString("%1 existiert, kann aber nicht gelesen werden (%1).").arg(path, f.errorString());
     QTextStream in(&f);
     QString line = in.readLine();
     if (line.isEmpty())
-      return QString("%1 existiert bereits.").arg(name);
+      return QString("%1 existiert bereits.").arg(path);
     QString host(lock_hostname());
     QStringList words = line.split(" ");
     if (words.size() >= 2 && words[0].compare(host) == 0) {
@@ -78,13 +80,13 @@ QString lock_acquire(const QString &name, bool local_exclusion_already_provided)
 	return status; // Den (lokalen) Prozess, der das Lock hatte, gibt's nicht mehr.
 #endif
     }
-    return QString::fromUtf8("%1 gehört einem anderen Prozess (%2)").arg(name, line);
+    return QString::fromUtf8("%1 gehört einem anderen Prozess (%2)").arg(path, line);
   }
 
   // fd == 0: Es hat geklappt.
-  QFile f(name);
+  QFile f(path);
   if (!f.open(fd, QFile::WriteOnly)) {
-      status = QString::fromUtf8("Konnte das Lockfile nicht öffnen (%1)").arg(f.errorString());
+      status = QString::fromUtf8("Konnte das Lockfile %1 nicht öffnen (%1)").arg(path, f.errorString());
   } else {
     QTextStream out(&f);
     out << lock_host_pid();
@@ -98,10 +100,48 @@ QString lock_acquire(const QString &name, bool local_exclusion_already_provided)
   return status;
 }
 
-void lock_release(const QString &name) {
-  if (!QFile::remove(name.toUtf8())) {
-    // TODO: Grund abfragen
-    qWarning() << "Konnte" << name << "nicht löschen.";
-  }
+QString lock_release(const QString &path) {
+  return QFile::remove(path.toUtf8())
+    ? QString() // TODO: Grund abfragen
+    : QString("Konnte %1 nicht entfernen").arg(path);
 }
+
+
+Lock::Lock(const QString& path, const QString &name)
+  : path(path), name(name), acquired(false) {}
+
+#ifdef WIN32
+QString Lock::acquire() {
+  if (acquired) return QString();
+    local_lock = CreateEventA(NULL, false, true, name.toLocal8Bit());
+    if (GetLastError () == ERROR_ALREADY_EXISTS)
+	return QString::fromLatin1("%1 läuft bereits auf dieser Maschine").arg(name);
+    QString err = lock_acquire(path, true);
+    acquired = err.isNull();
+    if (!acquired && !CloseHandle(local_lock)) 
+	err += QString("; Konnte Sperre '%1' nicht aufgeben").arg(name);
+    return err;
+}
+
+#else
+QString Lock::acquire() {
+  if (acquired) return QString();
+    QString err = lock_acquire(path, false);
+    acquired = err.isNull();
+    return err;
+}
+#endif
+
+QString Lock::release() { 
+    if (!acquired) return QString();
+    QString err = lock_release(path);
+    acquired = false;
+#ifdef WIN32
+    if (!acquired && !CloseHandle(local_lock)) 
+	return (err.isNull() ? "" : err + "; ") + QString("Konnte Sperre '%1' nicht aufgeben").arg(name);
+#endif
+    return err;
+}
+
+Lock::~Lock() { release(); }
 

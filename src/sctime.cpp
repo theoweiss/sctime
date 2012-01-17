@@ -85,12 +85,6 @@ static const char help[] =
 
 #ifdef WIN32
 static void setlocale() {}
-
-static bool local_exclusion(const char* name) { // true: die Funktion garantiert, dass lokal keine weitere Instanz läuft
-  CreateEventA(NULL, false, true, name);
-  return  GetLastError () != ERROR_ALREADY_EXISTS;
-}
-
 static QString canonicalPath(const QString& path) { return QFileInfo(path).canonicalFilePath(); }
 
 #else
@@ -105,7 +99,6 @@ static void setlocale() {
 static QString canonicalPath(QString path) {
     return path.startsWith("~/") ? path.replace(0,2,QDir::homePath()+"/") : QFileInfo(path).canonicalFilePath(); }
 
-#define local_exclusion(name) false
 #endif
 
 class SctimeApp: public QApplication {
@@ -165,9 +158,9 @@ int main( int argc, char **argv ) {
   splash.showMessage("Sperrdatei anlegen");
   app.processEvents();
 
-  lockfilePath = configDir + "/LOCK";
-  QString err = lock_acquire(lockfilePath, local_exclusion("sctime"));
-  if (!err.isNull()) fatal("sctime: Sperrdatei", err);
+  Lock lock(configDir + "/LOCK", "sctime");
+  QString err = lock.acquire();
+  if (!err.isNull()) fatal("sctime: Sperre", err);
 
   splash.showMessage("Kontenliste einlesen");
   app.processEvents();
