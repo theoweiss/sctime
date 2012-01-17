@@ -37,11 +37,12 @@
 
 #include <QString>
 
-/** Enthaelt das Verzeichnis in dem das sctime-Executable liegt*/
+/** Enthaelt das Verzeichnis, in dem das sctime-Executable liegt*/
 extern QString execDir;
 
 /** Enthaelt das Config-Verzeichnis */
 extern QString configDir;
 
+extern QString lockfilePath;
 
 #endif

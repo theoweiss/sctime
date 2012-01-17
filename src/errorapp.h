@@ -37,13 +37,14 @@ class ErrorApp: public QApplication
 
   public:
 
-    ErrorApp( const QString& message, int &argc, char **argv ): QApplication (argc,argv)
+    ErrorApp( const QString& message, int argc, char **argv ): QApplication (argc,argv)
     {
       QMessageBox::critical(NULL,"Error",message, QMessageBox::Ok, QMessageBox::NoButton,
                              QMessageBox::NoButton);
     }
 
-    ErrorApp( const QString& message, int &argc, char **argv, bool isInfo ): QApplication (argc,argv)
+
+ ErrorApp( const QString& message, int argc, char **argv, bool isInfo ): QApplication (argc,argv)
     {
       QMessageBox::information(NULL,"Information",message, QMessageBox::Ok, QMessageBox::Ok);
     }

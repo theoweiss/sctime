@@ -39,8 +39,10 @@ SOURCES += abteilungsliste.cpp \
            bereitschaftsliste.cpp \
            bereitschaftsview.cpp \
            bereitschaftsmodel.cpp \
+           lock.cpp \
            colorchooser.cpp
 HEADERS += abteilungsliste.h \
+           lock.h \
            kontoliste.h \
            statusbar.h \
            datedialog.h \
@@ -112,7 +114,7 @@ win32{
   SOURCES += kontodateninfodatabase.cpp bereitschaftsdateninfodatabase.cpp DBConnector.cpp
   HEADERS += kontodateninfodatabase.h bereitschaftsdateninfodatabase.h DBConnector.h
   RC_FILE += sctime.rc
-  LIBS += Advapi32.lib
+  LIBS += Advapi32.lib ws2_32.lib
 }
 hpux-acc{
   DEFINES += HPUX
