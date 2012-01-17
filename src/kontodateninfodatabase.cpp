@@ -34,10 +34,7 @@
 #include "kontodateninfodatabase.h"
 #include "unterkontoeintrag.h"
 
-KontoDatenInfoDatabase::KontoDatenInfoDatabase(DBConnector* dbconnector)
-{
-  m_dbconnector=dbconnector;
-}
+KontoDatenInfoDatabase::KontoDatenInfoDatabase(DBConnector* dbconnector){ m_dbconnector=dbconnector; }
 
 /**
  * Liest aus einer ODBC-Datenbank nach abtList
@@ -48,66 +45,85 @@ bool KontoDatenInfoDatabase::readInto(AbteilungsListe * abtList) {
 }
 
 bool KontoDatenInfoDatabase::readInto2(AbteilungsListe *abtList, bool comments_only) {
-  QMessageBox::information(NULL, QObject::tr("sctime: Kontenliste laden"), "Beginn");
-  bool ret = false;
-  QApplication::addLibraryPath(QApplication::applicationDirPath() +"/lib");
   abtList->clear();
-  QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC" );
-  m_dbconnector->configureDB(defaultDB);
-  QString step = tr("Datenbank öffnen");
-
-  if (defaultDB.open()) {
-    step = tr("Kontenliste anfordern");
-    QSqlQuery query(
-          "SELECT gb.name,konto.name,unterkonto.name,unterkonto.beschreibung,v_tuser.name,unterkonto.art,mikro.kommentar "
-          "FROM konto,gb,unterkonto "
-          "LEFT JOIN v_tuser ON (v_tuser.user_id = unterkonto.verantwortlich) "
-          "LEFT JOIN unterkonto_kommentar mikro ON (mikro.unterkonto_id = unterkonto.unterkonto_id) "
-          "WHERE konto.konto_id = unterkonto.konto_id AND gb.gb_id = konto.gb_id AND unterkonto.eintragbar;",
-          defaultDB);
-    if (query.isActive() ) {
-      step = tr("Konten einlesen");
-      while (query.next() ) {
-        ret = true;
-        QString abt = query.value(0).toString().simplified();
-        QString ko = query.value(1).toString().simplified();
-        QString uko = query.value(2).toString().simplified();
-        QString beschreibung = query.value(3).toString();
-        QString responsible = query.value(4).toString().simplified();;
-        QString type = query.value(5).toString().simplified();;
-        // Do not simplify comment to preserve intentional whitespace.
-        QString commentstr = query.value(6).toString();
-        if (beschreibung.isEmpty())
-          beschreibung="";
-        if (responsible.isEmpty())
-          responsible="";
-        if (type.isEmpty())
-          type="";
-        if (comments_only) {
-          if (!commentstr.isEmpty()) {
-            UnterKontoListe::iterator itUk;
-            UnterKontoListe* ukl;
-            if (abtList->findUnterKonto(itUk,ukl,abt,ko,uko)) {
-              itUk->second.addDefaultComment(commentstr);
-            }
-         }
-        } else {
-          abtList->setDescription(abt,ko,uko,DescData(beschreibung,responsible,type));
-          abtList->setUnterKontoFlags(abt,ko,uko,IS_IN_DATABASE,FLAG_MODE_OR);
-          if ((!commentstr.isNull())&&(!commentstr.isEmpty())) {
-            UnterKontoListe::iterator itUk;
-            UnterKontoListe* ukl;
-            if (abtList->findUnterKonto(itUk,ukl,abt,ko,uko))
-              itUk->second.addDefaultComment(commentstr);
-          }
-        }
+  QSqlDatabase db = m_dbconnector->open();
+  if (!db.isOpen()) {
+    QMessageBox::warning(NULL, QObject::tr("sctime: Kontenliste laden"),
+      tr("Fehler beim Aufbau der Verbindung zur Datenbank: %1").arg(db.lastError().driverText()));
+    return false;
+  }
+  bool ret = false;
+  QString step = tr("Kontenliste anfordern");
+  // zeitkonten  --sql --mikrokonten | sed -E -e 's/(.*)/"\1 "/' 
+  QSqlQuery query(
+//"set client_encoding to 'utf-8'; "
+"Select  "
+"   gb.name, " // 0
+"   team.kostenstelle, "
+"   konto.name,  " 
+"   f_username(konto.verantwortlich), " // 3
+"   f_username(coalesce(konto.stellvertreter, konto.verantwortlich)), " 
+"   konto.abgerechnet_bis, "
+"   konto.zeitlimit, "  // 6
+"   u.name, "
+"   f_username(coalesce(u.verantwortlich, konto.verantwortlich)), "
+"   f_username(coalesce(u.stellvertreter, u.verantwortlich, konto.verantwortlich)), " // 9
+"   coalesce(unterkonto_art.name || ' (' || u.art || ')', u.art), "
+"   coalesce(u.beschreibung, '') || coalesce('; noch nicht abgerechnet: ' || (get_budget_saldo(u.unterkonto_id)::numeric(8,2)), ''), "
+"   coalesce(uk.kommentar, '') " // 12
+"From "
+"  gb "
+"  join konto on (gb.gb_id = konto.gb_id) "
+"  join team on (team.team_id = konto.team_id)  "
+"  join unterkonto u on (u.konto_id = konto.konto_id) "
+"  join unterkonto_art on (u.art = unterkonto_art.art) "
+"  left join unterkonto_kommentar uk on (u.unterkonto_id = uk.unterkonto_id) "
+"Where "
+" u.eintragbar "
+"Order By gb.name, konto.name, u.name, uk.kommentar "
+   , db);
+  QString aalt;
+  step = tr("Befehlsstatus prüfen");
+  if (query.isActive() ) {
+    step = tr("ersten Datensatz holen");
+    while (query.next() ) {
+      ret = true;
+      QString abt = query.value(0).toString().simplified(), ko = query.value(2).toString().simplified();
+      QString uko = query.value(7).toString().simplified(), beschreibung = query.value(11).toString();
+      QString responsible = query.value(3).toString().simplified(); // TODO: es gibt nicht nur einen...
+      QString type = query.value(10).toString().simplified();
+      // Do not simplify comment to preserve intentional whitespace.
+      QString commentstr = query.value(12).toString();
+      if (beschreibung.isNull())
+	beschreibung="";
+      if (responsible.isNull())
+	responsible="";
+      if (type.isNull())
+	type="";
+      if (comments_only) {
+	if (!commentstr.isEmpty()) {
+	  UnterKontoListe::iterator itUk;
+	  UnterKontoListe* ukl;
+	  if (abtList->findUnterKonto(itUk,ukl,abt,ko,uko)) {
+	    itUk->second.addDefaultComment(commentstr);
+	  }
+	}
+      } else {
+	abtList->insertEintrag(abt,ko,uko);
+	abtList->setDescription(abt,ko,uko,DescData(beschreibung,responsible,type));
+	abtList->setUnterKontoFlags(abt,ko,uko,IS_IN_DATABASE,FLAG_MODE_OR);
+	if (!commentstr.isEmpty()) {
+	  UnterKontoListe::iterator itUk;
+	  UnterKontoListe* ukl;
+	  if (abtList->findUnterKonto(itUk,ukl,abt,ko,uko))
+	    itUk->second.addDefaultComment(commentstr);
+	}
       }
     }
   }
   if (!ret)
     QMessageBox::warning(NULL, QObject::tr("sctime: Kontenliste laden"),
-                         step + ": "+ defaultDB.lastError().driverText());
-  emit kontoListeGeladen();
+    tr("Fehler bei: %1 (%2)").arg(step, query.lastError().databaseText()));
   return ret;
 }
 

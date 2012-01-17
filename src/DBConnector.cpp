@@ -18,7 +18,7 @@ DBConnector::DBConnector() {
     if (!pwdfile.open(QIODevice::ReadOnly)) {
       pwdfile.setFileName("H:\\.Zeit");
       if (!pwdfile.open(QIODevice::ReadOnly)) {
-	m_password = m_username; // the default password is the username
+	m_password = m_username; // the username is the default password
 	goto pwd_done;
       }
     }
@@ -26,9 +26,15 @@ DBConnector::DBConnector() {
     pwd_done:;
 }
 
-void DBConnector::configureDB(QSqlDatabase& db)
-{
-  db.setDatabaseName("DSN=Postgres_Zeit;SERVER=zeitdabaserv;");
-  if (!m_username.isNull()) db.setUserName(m_username);
-  db.setPassword(m_password);
+QSqlDatabase DBConnector::open() {
+  QSqlDatabase db(QSqlDatabase::addDatabase("QPSQL")); // statt QODBC
+  if (db.isValid()) {
+    db.setDatabaseName("zeit");
+    // für ODBC: db.setDatabaseName("DSN=Postgres_Zeit;SERVER=zeitdabaserv;");
+    db.setHostName("zeitdabaserv");
+    if (!m_username.isNull()) db.setUserName(m_username);
+    db.setPassword(m_password);
+    db.open();
+  }
+  return db;
 }

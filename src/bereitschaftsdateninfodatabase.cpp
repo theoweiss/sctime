@@ -21,19 +21,17 @@
 
 */
 
-#include "bereitschaftsdateninfodatabase.h"
-#include "bereitschaftsliste.h"
-#include "abteilungsliste.h"
-#include <iostream>
 #include <QSqlDatabase>
 #include <QMessageBox>
-#include <QApplication>
-#include <QVariant>
 #include <QSqlQuery>
 #include <QSqlError>
+
+#include "bereitschaftsliste.h"
+#include "abteilungsliste.h"
 #include "globals.h"
 #include "descdata.h"
-#include "DBConnector.h"
+
+#include "bereitschaftsdateninfodatabase.h"
 
 BereitschaftsDatenInfoDatabase::BereitschaftsDatenInfoDatabase(DBConnector* dbconnector)
 {
@@ -46,31 +44,28 @@ BereitschaftsDatenInfoDatabase::BereitschaftsDatenInfoDatabase(DBConnector* dbco
 bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
 {
   bool ret = false;
-  QApplication::addLibraryPath(QApplication::applicationDirPath() + "/lib");
-  QSqlDatabase defaultDB = QSqlDatabase::addDatabase( "QODBC" );
-  m_dbconnector->configureDB(defaultDB);
-  QString step = QObject::tr("Datenbank öffnen");
-    if ( defaultDB.open() ) {
-      step = QObject::tr("Bereitschaftsarten anfordern");
-      QSqlQuery query(
-          "SELECT kategorie, beschreibung FROM v_bereitschaft_sctime;",
-            defaultDB);
-      if ( query.isActive() ) {
-	step = QObject::tr("Bereitschaftsarten einlesen");
-        while ( query.next() ) {
-	  ret = true;
-          QString name = query.value(0).toString().simplified();
-          QString beschreibung = query.value(1).toString().simplified();
-          if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
-          berlist->insertEintrag(name, beschreibung, IS_IN_DATABASE);
-        }
-      }
+  QSqlDatabase defaultDB = m_dbconnector->open();
+   if (!defaultDB.isOpen()) {
+    QMessageBox::warning(NULL, QObject::tr("sctime: Bereitschaftsarten laden"),
+      QObject::tr("Fehler beim Verbindungsaufbau: ") + defaultDB.lastError().driverText());		     
     }
-    if (!ret){
-      QMessageBox::warning(NULL, QObject::tr("sctime: Bereitschaftsarten laden"),
-	step + ": " + defaultDB.lastError().driverText());			     
-    }
-  defaultDB.close();
+   QString step = QObject::tr("Bereitschaftsarten anfordern");
+   QSqlQuery query(
+     "SELECT kategorie, beschreibung FROM v_bereitschaft_sctime;",
+     defaultDB);
+   if (query.isActive()) {
+     step = QObject::tr("Bereitschaftsarten einlesen");
+     while ( query.next() ) {
+       ret = true;
+       QString name = query.value(0).toString().simplified();
+       QString beschreibung = query.value(1).toString().simplified();
+       if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
+       berlist->insertEintrag(name, beschreibung, IS_IN_DATABASE);
+     }
+  }
+  if (!ret)
+    QMessageBox::warning(NULL, QObject::tr("sctime: Bereitschaftsarten laden"),
+      QObject::tr("Fehler bei %1: %2").arg(step, query.lastError().databaseText()));
   return ret;
 }
 

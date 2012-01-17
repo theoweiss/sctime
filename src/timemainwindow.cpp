@@ -76,7 +76,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   connect(zk, SIGNAL(kontoListeGeladen()), this, SLOT(aktivesKontoPruefen()), Qt::QueuedConnection);
   std::vector<QString> xmlfilelist;
   QDate heute;
-  abtListToday=new AbteilungsListe(heute.currentDate(),zk);
+  abtListToday=new AbteilungsListe(heute.currentDate(), zk);
   abtList=abtListToday;
   paused=false;
   pausedAbzur=false;

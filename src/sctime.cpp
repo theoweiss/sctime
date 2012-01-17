@@ -168,7 +168,6 @@ int main( int argc, char **argv ) {
     zk = zeitkontenfile.isEmpty()
         ? (KontoDatenInfo*) new KontoDatenInfoDatabase(&dbconnector) 
 	: new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
-     zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile));
     bereitschaftsdatenReader = bereitschaftsfile.isEmpty()
       ? (BereitschaftsDatenInfo*) new BereitschaftsDatenInfoDatabase(&dbconnector)
       : new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));

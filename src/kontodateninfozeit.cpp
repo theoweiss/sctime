@@ -21,8 +21,6 @@
 */
 
 #include <errno.h>
-#include <iostream>
-#include <iomanip>
 #include <string>
 
 #ifdef WIN32
@@ -33,209 +31,118 @@
 #include <unistd.h>
 #endif
 
-#include <QApplication>
-#include <QDebug>
-#include <QRegExp>
 #include <QMessageBox>
+#include <QFile>
 #include "globals.h"
 #include "utils.h"
 #include "kontodateninfozeit.h"
 
-KontoDatenInfoZeit::KontoDatenInfoZeit()
-{
+KontoDatenInfoZeit::KontoDatenInfoZeit() {
     m_DatenFileName="";
 }
 
-KontoDatenInfoZeit::KontoDatenInfoZeit(QString sourcefile)
-{
+KontoDatenInfoZeit::KontoDatenInfoZeit(QString sourcefile) {
     m_DatenFileName=sourcefile;
 }
 
-bool KontoDatenInfoZeit::readCommentsFromZeitFile(FILE* file, AbteilungsListe * abtList)
-{
-      char zeile[800];
-    int unterkontoCounter=0;
-
-    while (!feof(file)) {
-      // Konto, unterkonto sind eindeutig durch leerzeichen getrennt,
-      // der Rest muss gesondert behandelt werden.
-        if (fscanf(file,"%[^\n]",zeile)==1) {
-        // Falls alle drei Strings korrekt eingelesen wurden...
-
-            unterkontoCounter++;
-            QString qstringzeile=QString::fromLocal8Bit(zeile);
-            QStringList ql = qstringzeile.split("|");
-
-	    if (ql.size() < 12) {
-		QMessageBox::critical(NULL, "sctime: Konfigurationsproblem",
-		    QString("Die Kontenliste muss mindestens 12 Spalten haben, Zeile %1 hat aber nur %2").arg(unterkontoCounter).arg(ql.size()));
-                exit(1);
-            }
-
-            QString abt = ql[0].simplified();
-            QString konto = ql[2].simplified();
-            QString unterkonto = ql[7].simplified();
-            QString typ = ql[10].simplified();
-
-            QString beschreibung = ql[11].simplified();
-
-            if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
-
-            //abtList->insertEintrag(abt,konto,unterkonto);
-            //abtList->setDescription(abt,konto,unterkonto,DescData(beschreibung,verantwortlicher,typ));
-            //abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
-
-            if (ql.size()>12) {
-              // Do not simplify comment to preserve intentional whitespace.
-              QString commentstr = ql[12];
-              if (!commentstr.isEmpty()) {
-                UnterKontoListe::iterator itUk;
-                UnterKontoListe* ukl;
-                if (abtList->findUnterKonto(itUk,ukl,abt,konto,unterkonto)) {
-                  itUk->second.addDefaultComment(commentstr);
-                }
-              }
-            }
-        }
-        fscanf(file,"\n");
-    }
-    return (unterkontoCounter>0);
+bool KontoDatenInfoZeit::readCommentsFromZeitFile(QTextStream& ts, AbteilungsListe* abtList) {
+  return readFile(ts, abtList, true);
 }
 
-bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
-{
-    char zeile[800];
-    int unterkontoCounter=0;
-    while (!feof(file)) {
-      // Konto, unterkonto sind eindeutig durch leerzeichen getrennt,
-      // der Rest muss gesondert behandelt werden.
-        if (fscanf(file,"%[^\n]",zeile)==1) {
-        // Falls alle drei Strings korrekt eingelesen wurden...
-            unterkontoCounter++;
-            QString qstringzeile = QString::fromLocal8Bit(zeile);
-            QStringList ql = qstringzeile.split("|");
-
-            if (ql.size() < 12) {
-		QMessageBox::critical(NULL, "sctime: Konfigurationsproblem", 
-		    QString("Die Kontenliste muss mindestens 12 Spalten haben, Zeile %1 hat aber %2. Abbruch.").arg(unterkontoCounter).arg(ql.size()));
-		exit(1);
-            }
-
-            QString abt = ql[0].simplified();
-            QString konto = ql[2].simplified();
-            QString unterkonto = ql[7].simplified();
-
-            QString verantwortlicher = ql[9].simplified();
-            QString typ = ql[10].simplified();
-
-            QString beschreibung = ql[11].simplified();
-
-            if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
-
-            abtList->insertEintrag(abt,konto,unterkonto);
-            abtList->setDescription(abt,konto,unterkonto,DescData(beschreibung,verantwortlicher,typ));
-            abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
-
-            if (ql.size()>12) {
-              // Do not simplify comment to preserve intentional whitespace.
-              QString commentstr = ql[12];
-              if (!commentstr.isEmpty()) {
-                UnterKontoListe::iterator itUk;
-                UnterKontoListe* ukl;
-                if (abtList->findUnterKonto(itUk,ukl,abt,konto,unterkonto)) {
-                  itUk->second.addDefaultComment(commentstr);
-                }
-              }
-            }
-        }
-        fscanf(file,"\n");
+bool KontoDatenInfoZeit::readFile(QTextStream& ts, AbteilungsListe * abtList, bool comments_only) {
+  int zeilen = 0;
+  for (QString l; !(l = ts.readLine()).isNull();) {
+    zeilen++;
+    if (l.isEmpty()) continue;
+    QStringList ql = l.split("|");
+    if (ql.size() < 12) {
+      QMessageBox::critical(NULL, "sctime: Konfigurationsproblem.",
+                            QString("Die Kontenliste muss mindestens 12 Spalten haben, Zeile %1 hat aber nur %2. Abbruch.").arg(zeilen).arg(ql.size()));
+      exit(1);
     }
-    emit kontoListeGeladen();
-    return (unterkontoCounter>0);
+    QString abt = ql[0].simplified(), konto = ql[2].simplified(), unterkonto = ql[7].simplified();
+    if (!comments_only) {
+      QString typ = ql[10].simplified(), beschreibung = ql[11].simplified();
+      QString verantwortlicher = ql[9].simplified();
+      if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
+      abtList->insertEintrag(abt,konto,unterkonto);
+      abtList->setDescription(abt,konto,unterkonto,DescData(beschreibung ,verantwortlicher, typ));
+      abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
+    }
+    if (ql.size()>12) {
+      // Do not simplify comment to preserve intentional whitespace.
+      QString commentstr = ql[12];
+      if (!commentstr.isEmpty()) {
+        UnterKontoListe::iterator itUk;
+        UnterKontoListe* ukl;
+        if (abtList->findUnterKonto(itUk,ukl,abt,konto,unterkonto)) {
+          itUk->second.addDefaultComment(commentstr);
+        }
+      }
+    }
+  }
+  if (!zeilen) QMessageBox::critical(NULL, "sctime", "Die Kontenliste ist leer.");
+  return zeilen > 0;
+}
+
+bool KontoDatenInfoZeit::readZeitFile(QTextStream& ts, AbteilungsListe * abtList) {
+  emit kontoListeGeladen();
+  return readFile(ts, abtList, false);
 }
 
 bool KontoDatenInfoZeit::readInto(AbteilungsListe * abtList) {
-  emit
   return readInto2(abtList, false);
 }
 
-bool KontoDatenInfoZeit::readInto2(AbteilungsListe * abtList, bool comments_only)
-{
+bool KontoDatenInfoZeit::readInto2(AbteilungsListe * abtList, bool comments_only) {
   abtList->clear();
-  bool result;
-
   if (m_DatenFileName.isEmpty()) {
 #ifdef WIN32
     return false;
 #else
+    bool result;
     QString command(m_Kommando.isEmpty()
                     ?  "zeitkonten --mikrokonten --separator='|'"
                     : m_Kommando);
-    FILE* file = popen(command.toLocal8Bit(), "r");
+    FILE *file = popen(command.toLocal8Bit(), "r");
     if (!file) {
       QMessageBox::critical(NULL, "sctime: Kontenliste laden",
                             QString("Kann Kommando '%1' nicht ausfuehren: %s").arg(command), strerror(errno));
       return false;
     }
-    result = comments_only ? readCommentsFromZeitFile(file,abtList) : readZeitFile(file,abtList);
+    QTextStream ts(file, QIODevice::ReadOnly);
+    ts.setCodec("UTF-8");
+    result = comments_only ? readCommentsFromZeitFile(ts,abtList) : readZeitFile(ts, abtList);
     int rc = pclose(file);
-    if(rc == -1 || !WIFEXITED(rc) || WEXITSTATUS(rc)) {
+    if (rc == -1 || !WIFEXITED(rc) || WEXITSTATUS(rc)) {
       QMessageBox::critical(NULL, "sctime: Kontenliste laden",
                             QString("Fehler bei '%1': %2").arg(command).arg(rc == -1 ? strerror(errno) : "nicht normal beendet"));
       result = false;
     }
+    return result;
 #endif
   } else { // aus Datei lesen
-    FILE* file = fopen(m_DatenFileName.toLatin1(), "r");
-    if (!file) {
+    QFile qfile(m_DatenFileName);
+    if (!qfile.open(QIODevice::ReadOnly)) {
       QMessageBox::critical(NULL, "sctime: Kontenliste lesen",
-                            QString("Kann  '%1' nicht oeffnen: %2").arg(m_DatenFileName).arg(strerror(errno)));
-          return false;
-      }
-    result = readZeitFile(file,abtList);
-    fclose(file);
+                            QString("Kann  '%1' nicht oeffnen: %2").arg(m_DatenFileName, qfile.errorString()));
+      return false;
+    }
+    QTextStream ts(&qfile);
+    return comments_only ? readCommentsFromZeitFile(ts, abtList) : readZeitFile(ts, abtList);
   }
-  return result;
 }
 
 bool KontoDatenInfoZeit::readDefaultComments(AbteilungsListe * abtList) {
   return readInto2(abtList, true);
 }
 
-void KontoDatenInfoZeit::setKommando(const QString& command)
-{
+void KontoDatenInfoZeit::setKommando(const QString& command) {
   m_Kommando=command;
 }
 
-bool KontoDatenInfoZeit::checkIn(AbteilungsListe* abtlist)
-{
-#if 0
-  /*QString filename="/checkedin/zeit-"+abtlist->getDatum().toString("yyyy-MM-dd")+".sh";
-  system("xterm -hold -e sh "+configDir+filename+" &");*/
-  AbteilungsListe::iterator abtPos;
-  Einchecker ec(abtlist);
-  bool ret=true;
-  for (abtPos=abtlist->begin(); abtPos!=abtlist->end(); ++abtPos) {
-    QString abt=abtPos->first;
-    KontoListe* kontoliste=&(abtPos->second);
-    for (KontoListe::iterator kontPos=kontoliste->begin(); kontPos!=kontoliste->end(); ++kontPos) {
-      UnterKontoListe* unterkontoliste=&(kontPos->second);
-      for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {
-        EintragsListe* eintragsliste=&(ukontPos->second);
-        for (EintragsListe::iterator etPos=eintragsliste->begin(); etPos!=eintragsliste->end(); ++etPos) {
-          if (etPos->second.sekunden!=0) {
-
-             ret=ec.checkin(abtlist->getDatum(), kontPos->first, ukontPos->first, etPos->second.sekunden,
-                        etPos->second.sekundenAbzur, etPos->second.kommentar);
-
-
-          }
-        }
-      }
-    }
-  }
-  return ret;
-#endif
+bool KontoDatenInfoZeit::checkIn(AbteilungsListe* abtlist) {
+  QMessageBox::critical(NULL, "sctime: interner Fehler", "checkin ist nicht implementiert");
   return false;
 }
 

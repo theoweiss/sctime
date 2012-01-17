@@ -24,6 +24,7 @@
 #ifndef BEREITSCHAFTSDATENINFOZEIT_H
 #define  BEREITSCHAFTSDATENINFOZEIT_H
 
+#include <QTextStream>
 #include "bereitschaftsdateninfo.h"
 
 /**
@@ -35,7 +36,7 @@ class BereitschaftsDatenInfoZeit: public BereitschaftsDatenInfo
     BereitschaftsDatenInfoZeit();
     BereitschaftsDatenInfoZeit(QString sourcefile);
     virtual bool readInto(BereitschaftsListe * berlist);
-    bool readBereitschaftsFile(FILE *file, BereitschaftsListe * berlist);
+    bool readBereitschaftsFile(QTextStream &ts, BereitschaftsListe * berlist);
     virtual ~BereitschaftsDatenInfoZeit() {};
   private:
     QString m_DatenFileName;

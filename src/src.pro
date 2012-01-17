@@ -92,6 +92,7 @@ win32{
   HEADERS += kontodateninfodatabase.h bereitschaftsdateninfodatabase.h DBConnector.h
   RC_FILE += sctime.rc
   LIBS += ws2_32.lib
+  DEFINES += _CRT_SECURE_NO_WARNINGS
 }
 hpux-acc{
   DEFINES += HPUX
@@ -131,3 +132,5 @@ mac {
 isEmpty(BUILDDATESTR){
   BUILDDATESTR = '"unknown"'
 }
+
+OTHER_FILES +=

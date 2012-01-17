@@ -25,6 +25,7 @@
 #define  KONTODATENINFOZEIT_H
 
 #include <QObject>
+#include <QTextStream>
 #include "kontodateninfo.h"
 
 /**
@@ -41,7 +42,6 @@ signals:
     KontoDatenInfoZeit(QString sourcefile);
     virtual bool readInto(AbteilungsListe * abtlist);
     bool readInto2(AbteilungsListe * abtList, bool re);
-    bool readZeitFile(FILE *file, AbteilungsListe * abtlist);
     void setKommando(const QString& command);
     virtual bool checkIn(AbteilungsListe* abtlist);
 
@@ -49,9 +49,9 @@ signals:
   private:
     QString m_DatenFileName;
     QString m_Kommando;
-    bool readCommentsFromZeitFile(FILE* file, AbteilungsListe * abtList);
-
-
+    bool readZeitFile(QTextStream &ts, AbteilungsListe * abtlist);
+    bool readFile(QTextStream& ts, AbteilungsListe *abtList, bool comments_only);
+    bool readCommentsFromZeitFile(QTextStream& ts, AbteilungsListe * abtList);
 };
 
 #endif

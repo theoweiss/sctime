@@ -25,8 +25,7 @@
 #define  BEREITSCHAFTSDATENINFODATABASE_H
 
 #include "bereitschaftsdateninfo.h"
-
-class DBConnector;
+#include "DBConnector.h"
 
 /**
   * Liest die Bereitschaftsdaten ueber die Datenbank ein.

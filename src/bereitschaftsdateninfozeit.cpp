@@ -22,70 +22,50 @@
 
 #include <stdio.h>
 #include <errno.h>
-#include <iostream>
-#include <iomanip>
-#include <QRegExp>
-#include <QDebug>
 #include <QMessageBox>
+#include <QFile>
 #include "globals.h"
 #include "utils.h"
 #include "abteilungsliste.h"
-#include "DBConnector.h"
 #include "bereitschaftsdateninfozeit.h"
 
-BereitschaftsDatenInfoZeit::BereitschaftsDatenInfoZeit()
-{
+BereitschaftsDatenInfoZeit::BereitschaftsDatenInfoZeit() {
     m_DatenFileName="";
 }
 
-BereitschaftsDatenInfoZeit::BereitschaftsDatenInfoZeit(QString sourcefile)
-{
+BereitschaftsDatenInfoZeit::BereitschaftsDatenInfoZeit(QString sourcefile) {
     m_DatenFileName=sourcefile;
 }
 
-bool BereitschaftsDatenInfoZeit::readBereitschaftsFile(FILE* file, BereitschaftsListe * berList)
-{
-    char zeile[800];
-    int bereitschaftsCounter=0;
-
-    while (!feof(file)) {
-      // Konto, unterkonto sind eindeutig durch leerzeichen getrennt,
-      // der Rest muss gesondert behandelt werden.
-        if (fscanf(file,"%[^\n]",zeile)==1) {
-        // Falls alle drei Strings korrekt eingelesen wurden...
-
-            bereitschaftsCounter++;
-            QString qstringzeile(zeile);
-            QStringList ql = qstringzeile.split("|");
-
-            if (ql.size()<2) {
-                continue;
-            }
-
-            QString name = ql[0].simplified();
-
-            QString beschreibung = ql[1].simplified();
-
-            if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
-
-            berList->insertEintrag(name, beschreibung, IS_IN_DATABASE);
-
-        }
-        fscanf(file,"\n");
-    }
-    return (bereitschaftsCounter>0);
+bool BereitschaftsDatenInfoZeit::readBereitschaftsFile(QTextStream& ts, BereitschaftsListe * berList) {
+  int zeilen = 0;
+  for (QString l; !(l = ts.readLine()).isNull();) {
+    zeilen++;
+    if (l.isEmpty()) continue;
+     QStringList ql = l.split("|");
+     if (ql.size()<2) {
+       QMessageBox::critical(NULL, QObject::tr("sctime: Liste der Bereitschaftsarten lesen"),
+                             QObject::tr("Zeile %1 muss zwei Spalten haben, hat aber nur %2").arg(zeilen).arg(ql.size()));
+       exit(1);
+     }
+     QString name = ql[0].simplified();
+     QString beschreibung = ql[1].simplified();
+     if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden. //FIXME: notwendig?
+     berList->insertEintrag(name, beschreibung, IS_IN_DATABASE);
+   }
+   if (zeilen == 0)
+     QMessageBox::warning(NULL, "sctime: Liste der Bereitschaftsarten lesen", "Liste ist leer");
+     return zeilen > 0;
 }
 
-bool BereitschaftsDatenInfoZeit::readInto(BereitschaftsListe * berList)
-{
+bool BereitschaftsDatenInfoZeit::readInto(BereitschaftsListe * berList) {
   berList->clear();
-  FILE* file;
-  bool result;
 
-  if (m_DatenFileName.isEmpty()) {    
+  if (m_DatenFileName.isEmpty()) {
 #ifdef WIN32
     return false;
 #else
+    FILE* file;
     QString command = "zeitbereitls --separator='|'";
     file = popen(command.toLocal8Bit(), "r");
     if (!file) {
@@ -93,25 +73,27 @@ bool BereitschaftsDatenInfoZeit::readInto(BereitschaftsListe * berList)
                             QObject::tr("Kann Kommando '%1' nicht ausfuehren: %s").arg(command), strerror(errno));
       return false;
     }
-    result=readBereitschaftsFile(file,berList);
+    QTextStream ts(file, QIODevice::ReadOnly);
+    ts.setCodec("UTF-8");
+    bool result = readBereitschaftsFile(ts,berList);
     int rc = pclose(file);
-    if(rc == -1 || !WIFEXITED(rc) || WEXITSTATUS(rc)) {
+    if (rc == -1 || !WIFEXITED(rc) || WEXITSTATUS(rc)) {
       QMessageBox::critical(NULL, QObject::tr("sctime: Bereitschaftsarten laden"),
                             QObject::tr("Fehler bei '%1': %2").arg(command).arg(rc == -1 ? strerror(errno) : "nicht normal beendet"));
       result = false;
     }
+    return result;
 #endif
   } else { // aus Datei lesen
-      file = fopen(m_DatenFileName.toLocal8Bit(), "r");
-      if (!file) {
-        QMessageBox::critical(NULL, QObject::tr("sctime: Bereitschaftsarten laden"),
-                              QObject::tr("Kann Datei '%1' nicht öffnen: %2").arg(m_DatenFileName).arg(strerror(errno)));
-        return false;
-      }
-      fclose(file);
+    QFile qfile(m_DatenFileName);
+    if (!qfile.open(QIODevice::ReadOnly)) {
+      QMessageBox::critical(NULL, QObject::tr("sctime: Bereitschaftsarten laden"),
+                            QObject::tr("Kann Datei '%1' nicht öffnen: %2").arg(m_DatenFileName, qfile.errorString()));
+      return false;
+    }
+    QTextStream ts (&qfile);
+    return readBereitschaftsFile(ts, berList);
   }
-  return result;
 }
-
 
 

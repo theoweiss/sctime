@@ -7,7 +7,7 @@
 class DBConnector {
   public:
     DBConnector();
-    void configureDB(QSqlDatabase& db);
+    QSqlDatabase open();
   private:
     QString m_username;
     QString m_password;
