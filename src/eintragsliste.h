@@ -25,10 +25,10 @@
 #define EINTRAGSLISTE_H
 
 #include <map>
-#include "unterkontoeintrag.h"
 #include <QStringList>
-#include "descdata.h"
 #include <QColor>
+#include "descdata.h"
+#include "unterkontoeintrag.h"
 
 typedef std::map<int,UnterKontoEintrag> Map_Int_UnterKontoEintrag; // Visual-C-Workaround
 

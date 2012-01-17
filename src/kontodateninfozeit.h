@@ -24,8 +24,8 @@
 #ifndef KONTODATENINFOZEIT_H
 #define  KONTODATENINFOZEIT_H
 
-#include "kontodateninfo.h"
 #include <QObject>
+#include "kontodateninfo.h"
 
 class Einchecker:QObject
 {

@@ -19,24 +19,22 @@
 
 */
 
-#include "kontoliste.h"
-#include "abteilungsliste.h"
-#include "kontodateninfo.h"
-
 #include <iostream>
+#include <QDir>
+#include <QString>
 #include <QTextStream>
 #include <QFile>
+
+#include <utility>
 #include <iomanip>
-
-
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <utility>
+#include "kontoliste.h"
+#include "kontodateninfo.h"
 #include "globals.h"
-#include <QDir>
-#include <QString>
+#include "abteilungsliste.h"
 
 /** Erzeugt eine Abteilungsliste fuer das angegebene Datum.
  */

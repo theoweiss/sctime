@@ -23,7 +23,19 @@
 #include <iostream>
 #include <iomanip>
 #include <stdio.h>
+#include <string>
+
+#ifdef WIN32
+#include <windows.h>
+
+#else
+#include <unistd.h>
+#endif
+
+#include <QApplication>
+#include <QDebug>
 #include <QRegExp>
+#include <QMessageBox>
 #include "globals.h"
 #include "utils.h"
 #include "kontodateninfozeit.h"

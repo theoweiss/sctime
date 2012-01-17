@@ -22,9 +22,9 @@
 #ifndef ABTEILUNGSLISTE_H
 #define  ABTEILUNGSLISTE_H
 
-#include "kontoliste.h"
 #include <QDateTime>
 #include <QColor>
+#include "kontoliste.h"
 
 #define IS_DISABLED 8
 #define IS_IN_DATABASE 4
