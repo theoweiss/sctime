@@ -23,7 +23,6 @@
 #define  KONTODATENINFO_H
 
 #include "abteilungsliste.h"
-#include <iostream>
 
 class KontoDatenInfo
 {

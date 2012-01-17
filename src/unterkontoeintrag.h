@@ -25,7 +25,6 @@
 #define UNTERKONTOEINTRAG_H
 
 #include <QString>
-#include <iostream>
 
 #define UK_PERSOENLICH 1
 #define UK_AKTIV       2

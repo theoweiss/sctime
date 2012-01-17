@@ -20,15 +20,13 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include "kontodateninfozeit.h"
 #include <iostream>
 #include <iomanip>
 #include <stdio.h>
 #include <QRegExp>
 #include "globals.h"
 #include "utils.h"
-#include <QMessageBox>
-#include <string>
+#include "kontodateninfozeit.h"
 
 #ifdef WIN32
 #define popen _popen

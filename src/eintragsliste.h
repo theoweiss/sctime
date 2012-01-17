@@ -26,10 +26,8 @@
 
 #include <map>
 #include "unterkontoeintrag.h"
-#include <QString>
 #include <QStringList>
 #include "descdata.h"
-#include <iostream>
 #include <QColor>
 
 typedef std::map<int,UnterKontoEintrag> Map_Int_UnterKontoEintrag; // Visual-C-Workaround

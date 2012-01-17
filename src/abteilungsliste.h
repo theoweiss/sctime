@@ -24,7 +24,6 @@
 
 #include "kontoliste.h"
 #include <QDateTime>
-#include <iostream>
 #include <QColor>
 
 #define IS_DISABLED 8

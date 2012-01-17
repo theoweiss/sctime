@@ -23,7 +23,6 @@
 #ifndef KONTOLISTE_H
 #define  KONTOLISTE_H
 
-#include <QString>
 #include "unterkontoliste.h"
 
 typedef std::map<QString,UnterKontoListe> Map_QString_UnterKontoListe; // Visual-C-Workaround
