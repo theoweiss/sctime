@@ -74,7 +74,7 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
            "#!/bin/sh\n"
            "# -*- coding: "<<codec.toLower()<<" -*-\n\n"
            "set -e\n"
-           "trap '[ $? -gt 0 ] && echo ABBRUCH in $0[$LINENO] >&2 && exit 1' 0"
+           "trap '[ $? -gt 0 ] && echo ABBRUCH in $0[$LINENO] - nicht alle Buchungen sind uebernommen >&2 && exit 1' 0"
            "\n\n"
            "# Zeit Aufrufe von sctime "<<QUOTEME(VERSIONSTR)<<" generiert \n"
            "# Gesamtzeit: "<<tc.toString()<<"/"<<tcAbzur.toString()<<"\n"
