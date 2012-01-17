@@ -245,15 +245,15 @@ bool KontoDatenInfoZeit::readCommentsFromZeitFile(FILE* file, AbteilungsListe * 
             QString qstringzeile=QString::fromLocal8Bit(zeile);
             QStringList ql = qstringzeile.split("|");
 
-            if (ql.size()<7) {
-                continue;
+	    if (ql.size() < 12) {
+		QMessageBox::critical(NULL, "sctime: Konfigurationsproblem",
+		    QString("Die Kontenliste muss mindestens 12 Spalten haben, Zeile %1 hat aber nur %2").arg(unterkontoCounter).arg(ql.size()));
+                exit(1);
             }
 
             QString abt = ql[0].simplified();
             QString konto = ql[2].simplified();
             QString unterkonto = ql[7].simplified();
-
-            QString verantwortlicher = ql[9].simplified();
             QString typ = ql[10].simplified();
 
             QString beschreibung = ql[11].simplified();
@@ -285,19 +285,19 @@ bool KontoDatenInfoZeit::readZeitFile(FILE* file, AbteilungsListe * abtList)
 {
     char zeile[800];
     int unterkontoCounter=0;
-
     while (!feof(file)) {
       // Konto, unterkonto sind eindeutig durch leerzeichen getrennt,
       // der Rest muss gesondert behandelt werden.
         if (fscanf(file,"%[^\n]",zeile)==1) {
         // Falls alle drei Strings korrekt eingelesen wurden...
-
             unterkontoCounter++;
-            QString qstringzeile=QString::fromLocal8Bit(zeile);
+            QString qstringzeile = QString::fromLocal8Bit(zeile);
             QStringList ql = qstringzeile.split("|");
 
-            if (ql.size()<7) {
-                continue;
+            if (ql.size() < 12) {
+		QMessageBox::critical(NULL, "sctime: Konfigurationsproblem", 
+		    QString("Die Kontenliste muss mindestens 12 Spalten haben, Zeile %1 hat aber %2. Abbruch.").arg(unterkontoCounter).arg(ql.size()));
+		exit(1);
             }
 
             QString abt = ql[0].simplified();
