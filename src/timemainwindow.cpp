@@ -72,7 +72,7 @@
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
 TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* bereitschaftsdatenReader):QMainWindow()
 {
-
+  setObjectName("sctime");  
   std::vector<QString> xmlfilelist;
   QDate heute;
   abtListToday=new AbteilungsListe(heute.currentDate(),zk);
