@@ -155,10 +155,10 @@ void GetOpt::init( int argc, char *argv[], int offset )
     currArg = 1; // appname is not part of the arguments
     if ( argc ) {
         // application name
-        aname = QFileInfo( QString::fromUtf8( argv[0] ) ).fileName();
+        aname = QFileInfo( QString::fromLocal8Bit( argv[0] ) ).fileName();
         // arguments
         for ( int i = offset; i < argc; ++i )
-            args.append( QString::fromUtf8( argv[i] ) );
+            args.append( QString::fromLocal8Bit( argv[i] ) );
     }
 }
 

@@ -2,27 +2,45 @@
 #define LOCK_H
 #include <QString>
 
-QString lock_acquire(const QString &path, bool local_exclusion_already_provided = false);
-QString lock_release(const QString &name);
 
-/*implementiert Lockfiles;
-    sie enthalten Rechername und PID;
-    UNIX: lokale Sperren werden mit "kill -0" geprueft;
-    WIN32: benutzt zusaetzlich lokal WIN32-Sperren */
 class Lock {
 public:
-    Lock(const QString &path, const QString& name); // name: fuer WIN32-Sperren
-    QString acquire(); // ok: isNull; sonst: Fehlermeldung 
-    QString release(); // ok: isNull: sonst: Fehlermeldung (mit undef. Zustand)
-    ~Lock();
-    const QString path;
-    const QString name;
+  inline void setNext(Lock *val) { this->next = val; }
+  inline QString errorString() const { return err; }
+  bool acquire();
+  bool release();
+protected:
+  Lock();
+  QString err;
+  Lock* next;
+  bool acquired;
 private:
-    bool acquired;
-#ifdef WIN32
-    Qt::HANDLE local_lock;
-#endif
+  virtual bool _acquire() = 0;
+  virtual bool _release() = 0;
 };
 
-
+class LockLocal : public Lock {
+public:
+  LockLocal(const QString& name, const bool user);
+  virtual bool _acquire();
+  virtual bool _release();
+  const bool user;
+  const QString name;
+  const QString path;
+private:
+#ifdef WIN32
+    Qt::Handle handle;
+#else
+    int fd;
 #endif
+};
+#endif
+
+class Lockfile: public Lock {
+public:
+  Lockfile(const QString& path, const bool localExclusionProvided);
+  virtual bool _acquire();
+  virtual bool _release();
+  const QString path;
+  const bool localExclusionProvided;
+};

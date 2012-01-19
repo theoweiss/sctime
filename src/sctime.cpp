@@ -109,6 +109,7 @@ public:
  ausgefuehrt */
 int main( int argc, char **argv ) {
   SctimeApp app(argc, argv);
+  QTextCodec::setCodecForTr(QTextCodec::codecForName ("UTF-8"));
   app.setObjectName("Sctime");
   
   if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1],"--help") == 0 || strcmp(argv[1], "-h") == 0||strcmp(argv[1],"--help") == 0)) {
@@ -135,7 +136,7 @@ int main( int argc, char **argv ) {
 
   QSplashScreen splash(QPixmap(":/splash.png"));
   splash.showMessage("Konfigurationsdateien suchen");
-  splash.show(); // sp�ter: app.processEvents();
+  splash.show(); // später: app.processEvents();
 
   QDir directory;
   if (!directory.cd(configdirstring)) {
@@ -153,10 +154,10 @@ int main( int argc, char **argv ) {
   splash.showMessage("Sperrdatei anlegen");
   app.processEvents();
 
-  Lock lock(configDir + "/LOCK", "sctime");
-  QString err = lock.acquire();
-  if (!err.isNull()) fatal("sctime: Sperre", err);
-
+  LockLocal local("sctime", true);
+  Lock *global = new Lockfile(configDir + "/LOCK", true);
+  local.setNext(global);
+  if (!local.acquire()) fatal(QObject::tr("sctime: läuft bereits oder Problem mit Sperre"), local.errorString());
   splash.showMessage("Kontenliste einlesen");
   app.processEvents();
 
@@ -184,7 +185,6 @@ int main( int argc, char **argv ) {
   bereitschaftsdatenReader = bereitschaftsfile.isEmpty()
       ? new BereitschaftsDatenInfoZeit() // FIXME: Speicherlecks
       :  new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
-
 #endif
   TimeMainWindow mainWindow(zk, bereitschaftsdatenReader);
   splash.finish(&mainWindow);
@@ -200,5 +200,7 @@ int main( int argc, char **argv ) {
   mainWindow.show();
   app.exec();
   mainWindow.save();
+  local.release();
+  delete global;
   return 0;
 }
