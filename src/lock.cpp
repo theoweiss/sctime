@@ -4,12 +4,9 @@
 #include <sys/stat.h> // (_)S_IWRITE
 #include <fcntl.h> // (_)O_RDWR
 
-//#define getpid _getpid
 #ifdef WIN32
 #include <Windows.h>
-#include <WinBase.h> // _open
 #include <io.h>
-#include <process.h> // _getpid
 
 #else // !WIN32
 #include <unistd.h>
@@ -21,6 +18,8 @@
 #include <QFile>
 #include <QDir>
 #include <QStringList>
+#include <QMessageBox>
+#include <QTextStream>
 
 #include "lock.h"
 
@@ -30,20 +29,6 @@
 
    Das Lockfile soll Hostnamen und PID durch Leerzeichen getrennt enthalten.
 */
-
-#ifndef HOST_NAME_MAX
-#define HOST_NAME_MAX 300
-#endif
-
-static char _hostname[HOST_NAME_MAX + 1] = "";
-
-static const char* lock_hostname() {
-  if (!_hostname[0])
-    // funktioniert leider nicht: QHostInfo::localHostName()
-    if (gethostname(_hostname, HOST_NAME_MAX + 1))
-	qWarning() << "Could not get the hostname:" << strerror(errno);
-  return _hostname;
-}
 
 Lock::Lock():next(NULL), acquired(false) {}
 
@@ -68,10 +53,10 @@ bool Lock::release() {
 }
 
 #ifdef WIN32
-LockLocal::LockLocal(QString name, bool user):path((user ? "Local\\" : "Global\\" ) + name):name(name),user(user) {}
+LockLocal::LockLocal(const QString& name, bool user):path((user ? "Local\\" : "Global\\" ) + name),name(name),user(user) {}
 
-bool LocalLock::_acquire() {
-  handle = CreateEventW(NULL, false, true, name.toUtf16());
+bool LockLocal::_acquire() {
+  handle = CreateEventA(NULL, false, true, name.toLocal8Bit());
   if (!handle) {
     err = QObject::tr("Kann die lokale Sperre %1 nicht anlegen: %2").arg(name).arg(GetLastError());
     return false;
@@ -83,8 +68,8 @@ bool LocalLock::_acquire() {
   return true;
 }
 
-bool LocalLock::_release() {
-  if (!CloseHandle(local_lock)) {
+bool LockLocal::_release() {
+  if (!CloseHandle(handle)) {
       err = QString("Konnte lokale Sperre '%1' nicht aufgeben").arg(name);
       return false;
   }
@@ -138,7 +123,7 @@ bool Lockfile::_acquire() {
         QString line = in.readLine();
         if (!line.isEmpty()) {
           if (localExclusionProvided) {
-            QString host(lock_hostname());
+	    QString host(QHostInfo::localHostName());
             QStringList words = line.split(" ");
             if (words.size() >= 1 && words[0].compare(host) == 0) {
               QFile p(path);
@@ -172,7 +157,7 @@ bool Lockfile::_acquire() {
       rv = false;
   } else {
     QTextStream out(&f);
-    out << lock_hostname() << "\n";
+    out << QHostInfo::localHostName() << "\n";
     rv = true;
     f.close();
   }

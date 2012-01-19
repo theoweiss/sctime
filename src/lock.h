@@ -29,7 +29,7 @@ public:
   const QString path;
 private:
 #ifdef WIN32
-    Qt::Handle handle;
+    Qt::HANDLE handle;
 #else
     int fd;
 #endif

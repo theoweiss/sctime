@@ -6,7 +6,7 @@
 TEMPLATE = app
 VERSIONSTR = '"0.70"'
 CONFIG += warn_on qt uic
-QT += xml gui core
+QT += xml gui core network
 TARGET = sctime
 DEFINES += BUILDDATESTR=$$BUILDDATESTR VERSIONSTR=$$VERSIONSTR
 SOURCES += abteilungsliste.cpp \
