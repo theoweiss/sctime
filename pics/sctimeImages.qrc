@@ -20,6 +20,6 @@
         <file alias="hi16_action_apply">hi16_action_apply.xpm</file>
         <file alias="zero">zero.xpm</file>
         <file alias="cr16_action_bookmark">cr16-action-bookmark.xpm</file>
-        <file>splash.png</file>
+        <file alias="splash">sc64pixel.gif</file>
     </qresource>
 </RCC>

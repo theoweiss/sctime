@@ -134,9 +134,6 @@ int main( int argc, char **argv ) {
   }
   setlocale();
 
-  QSplashScreen splash(QPixmap(":/splash.png"));
-  splash.showMessage("Konfigurationsdateien suchen");
-  splash.show(); // später: app.processEvents();
 
   QDir directory;
   if (!directory.cd(configdirstring)) {
@@ -151,13 +148,15 @@ int main( int argc, char **argv ) {
   }
   configDir=directory.path();
 
-  splash.showMessage("Sperrdatei anlegen");
   app.processEvents();
 
   LockLocal local("sctime", true);
   Lock *global = new Lockfile(configDir + "/LOCK", true);
   local.setNext(global);
   if (!local.acquire()) fatal(QObject::tr("sctime: läuft bereits oder Problem mit Sperre"), local.errorString());
+
+  QSplashScreen splash(QPixmap(":/splash"));
+  splash.show(); // später: app.processEvents();
   splash.showMessage("Kontenliste einlesen");
   app.processEvents();
 
