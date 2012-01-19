@@ -3,7 +3,7 @@
 mydir=`dirname $0`
 srcdir="$mydir"/../..
 [ -z "$1" ] || srcdir="$1"
-approot="$srcdir"/bin/sctime.app
+approot="$srcdir"/src/scTime.app
 sctime="$approot"/Contents/MacOS/scTime
 
 patchqmake="$mydir"/patchqmake

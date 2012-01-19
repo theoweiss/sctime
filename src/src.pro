@@ -117,7 +117,7 @@ irix-g++{
 mac {
   ICON = ../pics/scTime.icns
   QMAKE_INFO_PLIST = ../extra/mac/Info.plist
-  #TARGET = ../bin/scTime
+  TARGET = scTime
   QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.5.sdk
   DEFINES += MACOS
   CONFIG += x86 ppc
