@@ -136,8 +136,8 @@ bool Lockfile::_acquire() {
           err = QObject::tr("Die Sperrdatei %1 existiert bereits.\n"
                             "Wahrscheinlich läuft das Programm bereits auf einem anderen Rechner (%2).\n").arg(path, line);
           if (localExclusionProvided)
-            err.append(QObject::tr("\nNach einem Absturz gegebenenalls verbleibende, veraltete Sperrdateien werden entfernt, "
-                                   "wenn man das Programm auf dem Rechner nochmal startet, "
+            err.append(QObject::tr("\nNach einem Absturz gegebenenfalls verbleibende, veraltete Sperrdateien werden entfernt, "
+                                   "wenn man das Programm auf dem gleichen Rechner nochmals startet."
                        "auf dem es zuletzt lief"));
           return false;
         }

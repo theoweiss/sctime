@@ -177,7 +177,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   copyAction->setStatusTip("Name ins Clipboard kopieren");
   connect(copyAction, SIGNAL(triggered()), this, SLOT(copyNameToClipboard()));
 
-  QAction* changeDateAction = new QAction( "&Datum wählen", this);
+  QAction* changeDateAction = new QAction(tr("&Datum wählen"), this);
   changeDateAction->setShortcut(Qt::CTRL+Qt::Key_D);
   connect(changeDateAction, SIGNAL(triggered()), this, SLOT(callDateDialog()));
 
@@ -192,7 +192,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   connect(checkInAction, SIGNAL(triggered()), this, SLOT(checkIn()));
 #endif
 
-  inPersKontAction = new QAction( QIcon(":/hi22_action_attach"),"In persönliche &Konten", this);
+  inPersKontAction = new QAction( QIcon(":/hi22_action_attach"), tr("In persönliche &Konten"), this);
   inPersKontAction->setShortcut(Qt::CTRL+Qt::Key_K);
   inPersKontAction->setCheckable(true);
   connect(inPersKontAction, SIGNAL(toggled(bool)), this, SLOT(inPersoenlicheKonten(bool)));
@@ -236,10 +236,10 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   connect(eintragActivateAction, SIGNAL(triggered()), this, SLOT(eintragAktivieren()));
 
   QAction* eintragAddAction = new QAction(QIcon(":/hi22_action_queue" ),
-                                             "&Eintrag hinzufügen", this);
+                                             tr("&Eintrag hinzufügen"), this);
   connect(eintragAddAction, SIGNAL(triggered()), this, SLOT(eintragHinzufuegen()));
 
-  eintragRemoveAction = new QAction("&Eintrag löschen", this);
+  eintragRemoveAction = new QAction(tr("&Eintrag löschen"), this);
   eintragRemoveAction->setShortcut(Qt::Key_Delete);
   connect(eintragRemoveAction, SIGNAL(triggered()), this, SLOT(eintragEntfernen()));
 
@@ -248,7 +248,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   bereitschaftsAction->setShortcut(Qt::CTRL+Qt::Key_B);
   connect(bereitschaftsAction, SIGNAL(triggered()), this, SLOT(editBereitschaftPressed()));
 
-  bgColorAction = new QAction("&Hintergrundfarbe wählen", this);
+  bgColorAction = new QAction(tr("&Hintergrundfarbe wählen"), this);
 
   jumpAction = new QAction("&Zu selektiertem Konto in \"Alle Konten\" springen", this);
 
@@ -353,7 +353,7 @@ void TimeMainWindow::aktivesKontoPruefen(){
   EintragsListe *dummy2;
   if (!abtList->findEintrag(dummy, dummy2, a, k, u, i))
     QMessageBox::warning(NULL, QObject::tr("sctime: Zeiterfassung gestoppt"),
-                         QObject::tr("Ihr zuletzt aktives Konto war %1/%2. Wahrscheinlich wurde es geschlossen oder umbenannt. Bitte wählen Sie nun ein neues Konto aus, damit die Zeiterfassung beginnt!").arg(k,u));
+                         tr("Ihr zuletzt aktives Konto war %1/%2. Wahrscheinlich wurde es geschlossen oder umbenannt. Bitte wählen Sie nun ein neues Konto aus, damit die Zeiterfassung beginnt!").arg(k,u));
 }
 
 void TimeMainWindow::closeEvent(QCloseEvent * event)
@@ -629,7 +629,7 @@ void TimeMainWindow::updateTaskbarTitle(int zeit)
 
 void TimeMainWindow::showArbeitszeitwarning()
 {
-  QMessageBox::warning(0,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
+  QMessageBox::warning(0, "Warnung",tr("Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten."),
                        QMessageBox::Ok, QMessageBox::Ok);
 }
 
@@ -738,7 +738,7 @@ void TimeMainWindow::eintragEntfernen()
   KontoTreeItem *topi, *abti, *koi, *ukoi, *eti;
 
   if (abtList->isAktiv(abt,ko,uko,idx)) {
-      QMessageBox::warning(NULL,"Warnung","Kann aktiven Eintrag nicht löschen\n",
+      QMessageBox::warning(NULL, "Warnung",tr("Kann aktiven Eintrag nicht löschen\n"),
                               QMessageBox::Ok, QMessageBox::NoButton);
       return;
   }
@@ -1011,12 +1011,12 @@ void TimeMainWindow::flagsChanged(const QString& abt, const QString& ko, const Q
 void TimeMainWindow::checkIn()
 {
   if (abtList->getDatum()>=QDate::currentDate()) {
-    QMessageBox::critical(0,"Fehler","Heutiges Datum kann nicht über die GUI eingecheckt werden.\nZeiten nicht eingecheckt!",
+    QMessageBox::critical(0,"Fehler", tr("Heutiges Datum kann nicht über die GUI eingecheckt werden.\nZeiten nicht eingecheckt!"),
                        QMessageBox::Ok, QMessageBox::Ok);
     return;
   }
   if (abtList->checkInState()) {
-    QMessageBox::critical(0,"Fehler","Ausgewähltes Datum ist bereits eingecheckt.\nZeiten nicht eingecheckt!",
+    QMessageBox::critical(0,"Fehler", tr("Ausgewähltes Datum ist bereits eingecheckt.\nZeiten nicht eingecheckt!"),
                        QMessageBox::Ok, QMessageBox::Ok);
     return;
   }
@@ -1332,8 +1332,7 @@ void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item)
   layout->addStretch(1);
 
 
-  QLabel* infolabel=new QLabel (QString("Bitte wählen Sie die geleisteten Bereitschaften für dieses ")+
-          "Unterkonto aus.", &dialog);
+  QLabel* infolabel=new QLabel (tr("Bitte wählen Sie die geleisteten Bereitschaften für dieses Unterkonto aus."), &dialog);
   infolabel->setWordWrap(true);
   layout->addWidget(infolabel);
 
