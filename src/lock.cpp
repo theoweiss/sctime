@@ -52,8 +52,8 @@ static QString lock_host_pid() {
 // Der Inhalt der ersten Zeile wird dann Teil der Fehlermeldung.
 // Der Rueckgabewert ist die Fehlermeldung. "isNull()" gilt, wenn alles OK ist.
 // "content" wird in die Datei geschrieben.
-QString lock_acquire(const QString &path, bool local_exclusion_already_provided) {
-  QString status;
+QString lock_acquire(const QString &path, bool local_exclusion_already_provided) {  
+  QString status; // : isNull()
 #ifdef WIN32
   int fd = _open(path.toLocal8Bit(), _O_WRONLY | _O_CREAT | _O_EXCL, _S_IREAD | _S_IWRITE);
 #else
@@ -72,17 +72,27 @@ QString lock_acquire(const QString &path, bool local_exclusion_already_provided)
     QString host(lock_hostname());
     QStringList words = line.split(" ");
     if (words.size() >= 2 && words[0].compare(host) == 0) {
-      if (local_exclusion_already_provided)
-	return status; // Das Lockfile ist von einer Instanz auf dem gleichen Rechner liegen geblieben.
+      if (local_exclusion_already_provided) {
+        QFile p(path);
+        if (p.remove())
+          return lock_acquire(path, local_exclusion_already_provided);
+        else
+          return QObject::tr("Kann veraltete Sperre %1 nicht loeschen: %2").arg(path, p.errorString());
+      }
 #ifndef WIN32
       int pid = words[1].toInt();
-      if (pid > 2 &&kill(pid, 0) == -1 && errno == ESRCH)
-	return status; // Den (lokalen) Prozess, der das Lock hatte, gibt's nicht mehr.
+      if (pid > 2 &&kill(pid, 0) == -1 && errno == ESRCH) {
+        // FIXME: hier koennen sich zwei Prozesse auf der gleichen Maschine ins Gehege kommen
+        QFile p(path);
+        if (p.remove())
+          return lock_acquire(path, local_exclusion_already_provided);
+        else
+          return QObject::tr("Kann veraltete Sperre %1 nicht loeschen: %2").arg(path, p.errorString());
+      }
 #endif
     }
     return QString::fromUtf8("%1 gehört einem anderen Prozess (%2)").arg(path, line);
   }
-
   // fd == 0: Es hat geklappt.
   QFile f(path);
   if (!f.open(fd, QFile::WriteOnly)) {
