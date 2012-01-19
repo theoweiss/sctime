@@ -36,7 +36,6 @@ class KontoDatenInfoZeit: public KontoDatenInfo
   Q_OBJECT
 signals:
   void kontoListeGeladen();
-
   public:
     KontoDatenInfoZeit();
     KontoDatenInfoZeit(QString sourcefile);

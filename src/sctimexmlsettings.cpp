@@ -552,7 +552,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     mainwindowsizetag.setAttribute("height",mainwindowSize.height());
     generaltag.appendChild(mainwindowsizetag);
 
-    for (unsigned int i=0; i<columnwidth.size(); i++) {
+    for (unsigned int i=0; i<columnwidth.size() - 1; i++) { // do not save the width of the comment column
         QDomElement columnwidthtag = doc.createElement("column");
         columnwidthtag.setAttribute("width",columnwidth[i]);
         generaltag.appendChild(columnwidthtag);
