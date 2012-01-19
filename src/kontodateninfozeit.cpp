@@ -21,7 +21,6 @@
 */
 
 #include <errno.h>
-#include <string>
 
 #ifdef WIN32
 #include <windows.h>
@@ -30,11 +29,18 @@
 #include <stdio.h>
 #include <unistd.h>
 #endif
-
 #include <QMessageBox>
 #include <QFile>
+
 #include "globals.h"
 #include "kontodateninfozeit.h"
+
+static void addOnce(QString& list, const QString& word) {
+  if (list.isEmpty())
+    list = word;
+  else if (!(word == list || list.startsWith(word + " ") || list.contains(" " + word + " ") || list.endsWith(" " + word)))
+    list.append(" ").append(word);
+}
 
 KontoDatenInfoZeit::KontoDatenInfoZeit() {
     m_DatenFileName="";
@@ -62,8 +68,11 @@ bool KontoDatenInfoZeit::readFile(QTextStream& ts, AbteilungsListe * abtList, bo
     QString abt = ql[0].simplified(), konto = ql[2].simplified(), unterkonto = ql[7].simplified();
     if (!comments_only) {
       QString typ = ql[10].simplified(), beschreibung = ql[11].simplified();
-      QString verantwortlicher = ql[9].simplified();
+      QString verantwortlicher = ql[3].simplified();
       if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
+      addOnce(verantwortlicher, ql[4]);
+      addOnce(verantwortlicher, ql[8]);
+      addOnce(verantwortlicher, ql[9]);
       abtList->insertEintrag(abt,konto,unterkonto);
       abtList->setDescription(abt,konto,unterkonto,DescData(beschreibung ,verantwortlicher, typ));
       abtList->setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);

@@ -133,6 +133,19 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   layout->addSpacing(5);
   layout->addStretch(2);
 
+  QString beschreibung = abtList->getDescription(abt,ko,uko).description().simplified();
+  if (!beschreibung.isEmpty()) {
+    QLabel *l = new QLabel("Beschreibung: " + beschreibung, this);
+    layout->addWidget(l);
+    layout->addSpacing(5);
+    layout->addStretch(2);
+    l->setOpenExternalLinks(true);
+  }
+  QLabel *l2 = new QLabel(tr("Verantwortlich: ") + abtList->getDescription(abt,ko,uko).responsible(), this);
+  layout->addWidget(l2);
+  layout->addSpacing(5);
+  layout->addStretch(2);
+
   /*m_bereitschaften = m_unterkonto->getBereitschaft();
 
   bereitschaftsView=new BereitschaftsView(this);
@@ -147,7 +160,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   buttonlayout->addWidget(projektAktivieren);
   buttonlayout->addSpacing(10);
   buttonlayout->addStretch(1);
-  persoenlichesKonto=new QCheckBox("In Persönliche Konten",this);
+  persoenlichesKonto=new QCheckBox(tr("In die persönlichen Konten übernehmen"),this);
   persoenlichesKonto->setChecked(et.flags&UK_PERSOENLICH);
   buttonlayout->addWidget(persoenlichesKonto);
   buttonlayout->addStretch(1);
@@ -173,7 +186,6 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
     connect (zeitBox, SIGNAL(minuteChangedBy(int)), zeitAbzurBox, SLOT(doStepMin(int)));
     connect (zeitBox, SIGNAL(hourChangedBy(int)), zeitAbzurBox, SLOT(doStepHour(int)));
   }
-
 };
 
 QString UnterKontoDialog::getComment()

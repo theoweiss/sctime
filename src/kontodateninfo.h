@@ -34,5 +34,4 @@ public:
   virtual bool checkIn(AbteilungsListe* abtlist)=0;
   virtual ~KontoDatenInfo() {};
 };
-
 #endif

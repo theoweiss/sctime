@@ -82,18 +82,14 @@ bool KontoDatenInfoDatabase::readInto2(AbteilungsListe *abtList, bool comments_o
 " u.eintragbar "
 "Order By gb.name, konto.name, u.name, uk.kommentar "
    , db);
-  QString aalt;
-  step = tr("Befehlsstatus prüfen");
+  step = tr("Befehlsstatus prÃ¼fen");
   if (query.isActive() ) {
     step = tr("ersten Datensatz holen");
     while (query.next() ) {
       ret = true;
       QString abt = query.value(0).toString().simplified(), ko = query.value(2).toString().simplified();
       QString uko = query.value(7).toString().simplified(), beschreibung = query.value(11).toString();
-      QString responsible = query.value(3).toString().simplified(); // TODO: es gibt nicht nur einen...
-      QString type = query.value(10).toString().simplified();
-      // Do not simplify comment to preserve intentional whitespace.
-      QString commentstr = query.value(12).toString();
+      QString commentstr = query.value(12).toString(); // Leerzeichen behalten
       if (beschreibung.isNull())
 	beschreibung="";
       if (responsible.isNull())
@@ -109,6 +105,12 @@ bool KontoDatenInfoDatabase::readInto2(AbteilungsListe *abtList, bool comments_o
 	  }
 	}
       } else {
+        QString responsible = query.value(3).toString().simplified();
+        QString type = query.value(10).toString().simplified();
+        addOnce(verantwortlicher, query.value(4).toString());
+        addOnce(verantwortlicher, query.value(8).toString());
+        addOnce(verantwortlicher, query.value(9).toString());
+
 	abtList->insertEintrag(abt,ko,uko);
 	abtList->setDescription(abt,ko,uko,DescData(beschreibung,responsible,type));
 	abtList->setUnterKontoFlags(abt,ko,uko,IS_IN_DATABASE,FLAG_MODE_OR);
