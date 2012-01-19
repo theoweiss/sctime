@@ -25,6 +25,6 @@ die () {
 
 [ -f sctime ] || die "$0 im Build-Verzeichnis aufrufen!"
 [ -h sc-sctime.desktop ] || ln -s "$bindir/sc-sctime.desktop" .
-scpm -c -f "$bindir/sctime.f4" -n sctime -p sctime-0.70.p4 -v 0.70 
+scpm -c -f "$bindir/sctime.f4" -n sctime -p sctime-0.71.p4 -v 0.71
 
 
