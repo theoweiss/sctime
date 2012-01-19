@@ -28,11 +28,20 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QDebug>
 #include "globals.h"
 #include "descdata.h"
 #include "DBConnector.h"
 #include "kontodateninfodatabase.h"
 #include "unterkontoeintrag.h"
+
+static void addOnce(QString& list, const QString& word) {
+  if (word.isEmpty()) return;
+  if (list.isEmpty())
+    list = word;
+  else if (!(word == list || list.startsWith(word + " ") || list.contains(" " + word + " ") || list.endsWith(" " + word)))
+    list.append(" ").append(word);
+}
 
 KontoDatenInfoDatabase::KontoDatenInfoDatabase(DBConnector* dbconnector){ m_dbconnector=dbconnector; }
 
@@ -90,12 +99,6 @@ bool KontoDatenInfoDatabase::readInto2(AbteilungsListe *abtList, bool comments_o
       QString abt = query.value(0).toString().simplified(), ko = query.value(2).toString().simplified();
       QString uko = query.value(7).toString().simplified(), beschreibung = query.value(11).toString();
       QString commentstr = query.value(12).toString(); // Leerzeichen behalten
-      if (beschreibung.isNull())
-	beschreibung="";
-      if (responsible.isNull())
-	responsible="";
-      if (type.isNull())
-	type="";
       if (comments_only) {
 	if (!commentstr.isEmpty()) {
 	  UnterKontoListe::iterator itUk;
@@ -107,9 +110,13 @@ bool KontoDatenInfoDatabase::readInto2(AbteilungsListe *abtList, bool comments_o
       } else {
         QString responsible = query.value(3).toString().simplified();
         QString type = query.value(10).toString().simplified();
-        addOnce(verantwortlicher, query.value(4).toString());
-        addOnce(verantwortlicher, query.value(8).toString());
-        addOnce(verantwortlicher, query.value(9).toString());
+        if (type.isNull())
+    	  type="";
+        if (beschreibung.isNull())
+  	  beschreibung="";
+	addOnce(responsible, query.value(4).toString());
+        addOnce(responsible, query.value(8).toString());
+        addOnce(responsible, query.value(9).toString());
 
 	abtList->insertEintrag(abt,ko,uko);
 	abtList->setDescription(abt,ko,uko,DescData(beschreibung,responsible,type));

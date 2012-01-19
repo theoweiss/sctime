@@ -36,6 +36,7 @@
 #include "kontodateninfozeit.h"
 
 static void addOnce(QString& list, const QString& word) {
+  if (word.isEmpty()) return;
   if (list.isEmpty())
     list = word;
   else if (!(word == list || list.startsWith(word + " ") || list.contains(" " + word + " ") || list.endsWith(" " + word)))
