@@ -67,7 +67,7 @@ static void fatal(const QString& title, const QString& body);
 
 QString configDir;
 QString lockfilePath;
-
+const QString version("0.71");
 
 static void fatal(const QString& title, const QString& body) {
   QMessageBox::critical(NULL, title, body, QMessageBox::Ok);

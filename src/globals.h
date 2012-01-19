@@ -24,22 +24,8 @@
 #ifndef GLOBALS_H
 #define GLOBALS_H
 
-#ifndef BUILDDATESTR
-#ifndef WIN32
-#define BUILDDATESTR "unknown"
-#else
-#define BUILDDATESTR __DATE__+" "__TIME__
-#endif
-#endif
-#ifndef VERSIONSTR
-#define VERSIONSTR "unknown"
-#endif
-
 #include <QString>
-
-/** Enthaelt das Config-Verzeichnis */
 extern QString configDir;
-
 extern QString lockfilePath;
-
+extern const QString version;
 #endif

@@ -123,12 +123,6 @@ mac {
 #LIBS+=-L../../gdbmacros -lgdbmacros
 
 !win32{
-  BUILDDATESTR = '"`date`"'
   SOURCES += signalhandler.cpp
   HEADERS += signalhandler.h
 }
-isEmpty(BUILDDATESTR){
-  BUILDDATESTR = '"unknown"'
-}
-
-OTHER_FILES +=
