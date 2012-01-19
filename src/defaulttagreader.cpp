@@ -20,23 +20,14 @@
 
 */
 
-#include <iostream>
-
-#include "defaulttagreader.h"
-#include "globals.h"
-#include "abteilungsliste.h"
 #include <QFile>
-#include <QDir>
+#include "globals.h"
+#include "defaulttagreader.h"
 #ifndef NO_XML
 #include "qdom.h"
 #endif
 
-/**
- * Liest alle Einstellungen.
- */
-
-void DefaultTagReader::read(QStringList* taglist)
-{
+void DefaultTagReader::read(QStringList* taglist) {
   #ifndef NO_XML
   QDomDocument doc("defaulttags");
   QString filename;
