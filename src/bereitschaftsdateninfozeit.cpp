@@ -20,12 +20,10 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
-#include <stdio.h>
 #include <errno.h>
 #include <QMessageBox>
 #include <QFile>
 #include "globals.h"
-#include "utils.h"
 #include "abteilungsliste.h"
 #include "bereitschaftsdateninfozeit.h"
 
@@ -88,7 +86,7 @@ bool BereitschaftsDatenInfoZeit::readInto(BereitschaftsListe * berList) {
     QFile qfile(m_DatenFileName);
     if (!qfile.open(QIODevice::ReadOnly)) {
       QMessageBox::critical(NULL, QObject::tr("sctime: Bereitschaftsarten laden"),
-                            QObject::tr("Kann Datei '%1' nicht öffnen: %2").arg(m_DatenFileName, qfile.errorString()));
+                            QObject::tr("Kann Datei '%1' nicht Ã¶ffnen: %2").arg(m_DatenFileName, qfile.errorString()));
       return false;
     }
     QTextStream ts (&qfile);

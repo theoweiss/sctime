@@ -34,7 +34,6 @@
 #include <QMessageBox>
 #include <QFile>
 #include "globals.h"
-#include "utils.h"
 #include "kontodateninfozeit.h"
 
 KontoDatenInfoZeit::KontoDatenInfoZeit() {

@@ -17,27 +17,15 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
  */
-
-#include <iostream>
-
-#include "sctimexmlsettings.h"
-#include "abteilungsliste.h"
 #include <QFile>
 #include <QDir>
-//Added by qt3to4:
 #include <QTextStream>
-#include "globals.h"
-#include "utils.h"
-#include "timecounter.h"
-#include <QRegExp>
 #include <QTextCodec>
 #include <QRect>
-#include <QApplication>
 #include <QDesktopWidget>
-#include <stdio.h>
-#include <stdlib.h>
+#include <QMessageBox>
+#include <QApplication>
 #ifndef WIN32
-#include <locale.h>
 #include <langinfo.h>
 #else
 #include <windows.h>
@@ -45,23 +33,29 @@
 #ifndef NO_XML
 #include "qdom.h"
 #endif
+#include "sctimexmlsettings.h"
+#include "abteilungsliste.h"
+#include "globals.h"
+#include "timecounter.h"
 #define WIN_CODEC "utf8"
+
+float roundTo(float f, float step) { return int(f/step+0.5)*step; }
+double roundTo(double f, double step){ return int(f/step+0.5)*step;}
 
 /** Schreibt die Eintraege in ein Shellskript */
 void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
 {
   if (abtList->checkInState()) {
-      std::cout<<"Shell-Skript nicht geschrieben, da bereits eingecheckt"<<std::endl;
+      QMessageBox::warning(NULL, QObject::tr("sctime: speichern"), QObject::tr("Shell-Skript nicht geschrieben, da bereits eingecheckt"));
       return;
   }
   QString filename="/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".sh";
   QFile shellFile(configDir+filename);
 
   if (!shellFile.open(QIODevice::WriteOnly)) {
-      std::cout<<"Kann Ausgabedatei nicht schreiben: "<<(configDir+filename).toLocal8Bit().constData()<<std::endl;
+      QMessageBox::warning(NULL, QObject::tr("sctime: Shell-Skript schreiben"), shellFile.fileName() + ": " + shellFile.errorString());
       return;
   }
-
   QTextStream stream( & shellFile);
 
   int sek, abzurSek;
@@ -76,7 +70,7 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
            "set -e\n"
            "trap '[ $? -gt 0 ] && echo ABBRUCH in $0[$LINENO] - nicht alle Buchungen sind uebernommen >&2 && exit 1' 0"
            "\n\n"
-           "# Zeit Aufrufe von sctime "<<QUOTEME(VERSIONSTR)<<" generiert \n"
+           "# Zeit Aufrufe von sctime "<< VERSIONSTR <<" generiert \n"
            "# Gesamtzeit: "<<tc.toString()<<"/"<<tcAbzur.toString()<<"\n"
            "ZEIT_ENCODING="<<codec<<"\n"
            "export ZEIT_ENCODING\n";
@@ -506,14 +500,15 @@ void SCTimeXMLSettings::writeSettings(AbteilungsListe* abtList)
 void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
 {
   if ((abtList->checkInState())&&(!global)) {
-      std::cout<<"xml nicht geschrieben, da bereits eingecheckt"<<std::endl;
+      QMessageBox::warning(NULL, QObject::tr("sctime: XML-Datei schreiben"), QObject::tr("Datei nicht geschrieben, da bereits eingecheckt"));
       return;
   }
   #ifndef NO_XML
   QDomDocument doc("settings");
 
   QDomElement root = doc.createElement( "sctime" );
-  root.setAttribute("version",QUOTEME(VERSIONSTR));
+  // TODO: XML/HTML-Quoting
+  root.setAttribute("version", VERSIONSTR);
   doc.appendChild( root );
   QDomElement generaltag = doc.createElement( "general" );
 
@@ -762,7 +757,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   QFile f(filename+"~");
   f.remove();
   if ( !f.open( QIODevice::WriteOnly) ) {
-      std::cerr<<"Kann Settings nicht speichern"<<std::endl;
+      QMessageBox::warning(NULL, QObject::tr("sctime: Einstellungen speichern"), f.errorString());
       return;
   }
   QTextStream stream( & f);

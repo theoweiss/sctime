@@ -20,7 +20,7 @@
 
 #define NO_CHECKIN_ACTION
 
-#include "utils.h"
+#include <QTextCodec>
 #include "timemainwindow.h"
 #include <QClipboard>
 #include <QApplication>
@@ -177,7 +177,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   copyAction->setStatusTip("Name ins Clipboard kopieren");
   connect(copyAction, SIGNAL(triggered()), this, SLOT(copyNameToClipboard()));
 
-  QAction* changeDateAction = new QAction( "&Datum wählen", this);
+  QAction* changeDateAction = new QAction( "&Datum wÃ¤hlen", this);
   changeDateAction->setShortcut(Qt::CTRL+Qt::Key_D);
   connect(changeDateAction, SIGNAL(triggered()), this, SLOT(callDateDialog()));
 
@@ -192,7 +192,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   connect(checkInAction, SIGNAL(triggered()), this, SLOT(checkIn()));
 #endif
 
-  inPersKontAction = new QAction( QIcon(":/hi22_action_attach"),"In persönliche &Konten", this);
+  inPersKontAction = new QAction( QIcon(":/hi22_action_attach"),"In persÃ¶nliche &Konten", this);
   inPersKontAction->setShortcut(Qt::CTRL+Qt::Key_K);
   inPersKontAction->setCheckable(true);
   connect(inPersKontAction, SIGNAL(toggled(bool)), this, SLOT(inPersoenlicheKonten(bool)));
@@ -236,10 +236,10 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   connect(eintragActivateAction, SIGNAL(triggered()), this, SLOT(eintragAktivieren()));
 
   QAction* eintragAddAction = new QAction(QIcon(":/hi22_action_queue" ),
-                                             "&Eintrag hinzufügen", this);
+                                             "&Eintrag hinzufÃ¼gen", this);
   connect(eintragAddAction, SIGNAL(triggered()), this, SLOT(eintragHinzufuegen()));
 
-  eintragRemoveAction = new QAction("&Eintrag löschen", this);
+  eintragRemoveAction = new QAction("&Eintrag lÃ¶schen", this);
   eintragRemoveAction->setShortcut(Qt::Key_Delete);
   connect(eintragRemoveAction, SIGNAL(triggered()), this, SLOT(eintragEntfernen()));
 
@@ -248,7 +248,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   bereitschaftsAction->setShortcut(Qt::CTRL+Qt::Key_B);
   connect(bereitschaftsAction, SIGNAL(triggered()), this, SLOT(editBereitschaftPressed()));
 
-  bgColorAction = new QAction("&Hintergrundfarbe wählen", this);
+  bgColorAction = new QAction("&Hintergrundfarbe wÃ¤hlen", this);
 
   jumpAction = new QAction("&Zu selektiertem Konto in \"Alle Konten\" springen", this);
 
@@ -353,7 +353,7 @@ void TimeMainWindow::aktivesKontoPruefen(){
   EintragsListe *dummy2;
   if (!abtList->findEintrag(dummy, dummy2, a, k, u, i))
     QMessageBox::warning(NULL, QObject::tr("sctime: Zeiterfassung gestoppt"),
-                         QObject::tr("Ihr zuletzt aktives Konto war %1/%2. Wahrscheinlich wurde es geschlossen oder umbenannt. Bitte wählen Sie nun ein neues Konto aus, damit die Zeiterfassung beginnt!").arg(k,u));
+                         QObject::tr("Ihr zuletzt aktives Konto war %1/%2. Wahrscheinlich wurde es geschlossen oder umbenannt. Bitte wÃ¤hlen Sie nun ein neues Konto aus, damit die Zeiterfassung beginnt!").arg(k,u));
 }
 
 void TimeMainWindow::closeEvent(QCloseEvent * event)
@@ -600,7 +600,7 @@ void TimeMainWindow::zeitChanged()
     // => nix gut am naechsten morgen, wenn man das ausloggen vergisst :-)
     last=zeit;
     // OK, QTimer erwartet nun, dass der letzte aufruf zurueckgekehrt ist, bevor
-    // der nächste kommen kann. Da wir ueber einen QTimer aufgerufen wurden,
+    // der nÃ¤chste kommen kann. Da wir ueber einen QTimer aufgerufen wurden,
     // und wir weiter Tick-Events bekommen muessen, muessen wir den Arbeitszeitdialog asynchron starten.
     // Das tun wir ueber einen weiteren QTimer (das klappt, weil wir hier einen Wegwerftimer benutzen.
     QTimer::singleShot(0, this, SLOT(showArbeitszeitwarning()));
@@ -629,7 +629,7 @@ void TimeMainWindow::updateTaskbarTitle(int zeit)
 
 void TimeMainWindow::showArbeitszeitwarning()
 {
-  QMessageBox::warning(0,"Warnung","Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.",
+  QMessageBox::warning(0,"Warnung","Warnung: die gesetzlich zulÃ¤ssige Arbeitszeit wurde Ã¼berschritten.",
                        QMessageBox::Ok, QMessageBox::Ok);
 }
 
@@ -738,7 +738,7 @@ void TimeMainWindow::eintragEntfernen()
   KontoTreeItem *topi, *abti, *koi, *ukoi, *eti;
 
   if (abtList->isAktiv(abt,ko,uko,idx)) {
-      QMessageBox::warning(NULL,"Warnung","Kann aktiven Eintrag nicht löschen\n",
+      QMessageBox::warning(NULL,"Warnung","Kann aktiven Eintrag nicht lÃ¶schen\n",
                               QMessageBox::Ok, QMessageBox::NoButton);
       return;
   }
@@ -1011,12 +1011,12 @@ void TimeMainWindow::flagsChanged(const QString& abt, const QString& ko, const Q
 void TimeMainWindow::checkIn()
 {
   if (abtList->getDatum()>=QDate::currentDate()) {
-    QMessageBox::critical(0,"Fehler","Heutiges Datum kann nicht über die GUI eingecheckt werden.\nZeiten nicht eingecheckt!",
+    QMessageBox::critical(0,"Fehler","Heutiges Datum kann nicht Ã¼ber die GUI eingecheckt werden.\nZeiten nicht eingecheckt!",
                        QMessageBox::Ok, QMessageBox::Ok);
     return;
   }
   if (abtList->checkInState()) {
-    QMessageBox::critical(0,"Fehler","Ausgewähltes Datum ist bereits eingecheckt.\nZeiten nicht eingecheckt!",
+    QMessageBox::critical(0,"Fehler","AusgewÃ¤hltes Datum ist bereits eingecheckt.\nZeiten nicht eingecheckt!",
                        QMessageBox::Ok, QMessageBox::Ok);
     return;
   }
@@ -1266,14 +1266,15 @@ void TimeMainWindow::callAboutBox()
   layout->setRowMinimumHeight(0,logo->pixmap()->height()+69);
 
   layout->addWidget(logo,0,0);
-  QLabel versioninfo(QString("<h2>sctime</h2><nobr><b>Version:</b> ")+QUOTEME(VERSIONSTR)+
-                             "</nobr><br><nobr><b>Qt Version:</b> "+ QUOTEME(QT_VERSION_STR) + "</nobr>" +
-                             "<br><nobr><b>Datum des Builds:</b> "+QUOTEME(BUILDDATESTR)+"</nobr>",aboutBox);
+  // TODO: HTML-Quoting fehlt
+  QLabel versioninfo(QString("<h2>sctime</h2><nobr><b>Version:</b> ") + VERSIONSTR +
+                             "</nobr><br><nobr><b>Qt Version:</b> "+ QT_VERSION_STR + "</nobr>" +
+                             "<br><nobr><b>Datum des Builds:</b> "+BUILDDATESTR +"</nobr>",aboutBox);
   versioninfo.setTextFormat(Qt::RichText);
   layout->addWidget(&versioninfo,0,1);
   layout->addItem(new QSpacerItem(0, 20), 1, 0);
   layout->addWidget(new QLabel("Core Developers:",aboutBox),2,0);
-  layout->addWidget(new QLabel(tr("Alexander Wütz <a.wuetz@science-computing.de>"),aboutBox),2,1);
+  layout->addWidget(new QLabel(tr("Alexander WÃ¼tz <a.wuetz@science-computing.de>"),aboutBox),2,1);
   layout->addWidget(new QLabel("Core Developer:",aboutBox),3,0);
   layout->addWidget(new QLabel("Florian Schmitt <f.schmitt@science-computing.de>",aboutBox),3,1);
   layout->addWidget(new QLabel("Patches:",aboutBox),4,0);
@@ -1332,7 +1333,7 @@ void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item)
   layout->addStretch(1);
 
 
-  QLabel* infolabel=new QLabel (QString("Bitte wählen Sie die geleisteten Bereitschaften für dieses ")+
+  QLabel* infolabel=new QLabel (QString("Bitte wÃ¤hlen Sie die geleisteten Bereitschaften fÃ¼r dieses ")+
           "Unterkonto aus.", &dialog);
   infolabel->setWordWrap(true);
   layout->addWidget(infolabel);

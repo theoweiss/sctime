@@ -20,7 +20,6 @@ SOURCES += abteilungsliste.cpp \
            preferencedialog.cpp \
            defaultcommentreader.cpp \
            qdatepicker.cpp \
-           utils.cpp \
            defaulttagreader.cpp \
            kontodateninfozeit.cpp \
            kontotreeitem.cpp \
@@ -55,7 +54,6 @@ HEADERS += abteilungsliste.h \
            unterkontoliste.h \
            preferencedialog.h \
            defaultcommentreader.h \
-           utils.h \
            qdatepicker.h \
            defaulttagreader.h \
            kontodateninfozeit.h \

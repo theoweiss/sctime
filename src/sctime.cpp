@@ -20,6 +20,7 @@
 
 */
 
+#include <QTextCodec>
 #include <QApplication>
 #include <QDir>
 #include <QFileInfo>

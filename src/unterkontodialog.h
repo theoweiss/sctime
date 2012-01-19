@@ -25,26 +25,14 @@
 #define UNTERKONTODIALOG_H
 
 #include <QDialog>
-#include <QPushButton>
-#include <QLayout>
-#include <QLabel>
-#include <QLineEdit>
-#include <QStringList>
 #include <QComboBox>
-#include <QGroupBox>
 #include <QCheckBox>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QTextCodec>
-#include <QMessageBox>
-#include <iostream>
 
 #include "abteilungsliste.h"
 #include "timeedit.h"
 
 #include "bereitschaftsview.h"
 #include "globals.h"
-//#include "sctimeapp.h"
 #include "timemainwindow.h"
 #include "sctimexmlsettings.h"
 

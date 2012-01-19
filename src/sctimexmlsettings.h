@@ -21,14 +21,16 @@
 #ifndef SCTIMESETTINGS_H
 #define  SCTIMESETTINGS_H
 
-#define MAX_WORKTIME_DEFAULT 10*60*60 // Warn if more time is spent
-
-#include "abteilungsliste.h"
 #include <QDateTime>
 #include <QPoint>
 #include <QSize>
-#include <iostream>
+//#include <iostream>
 #include <vector>
+
+#include "abteilungsliste.h"
+
+#define MAX_WORKTIME_DEFAULT 10*60*60 // Warn if more time is spent
+
 
 class QTextStream;
 

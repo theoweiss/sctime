@@ -20,6 +20,18 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include <QPushButton>
+#include <QLayout>
+#include <QLabel>
+#include <QLineEdit>
+#include <QStringList>
+#include <QGroupBox>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QTextCodec>
+#include <QMessageBox>
+#include <QDebug>
+
 #include "unterkontodialog.h"
 
 /**
@@ -32,7 +44,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
                                    :QDialog(parent, Qt::Dialog)
 {
   setModal(true);
-  setWindowTitle( "Einstellungen für Unterkonto" );
+  setWindowTitle( "Einstellungen fÃ¼r Unterkonto" );
   abtList=abtlist;
   unterKontoName=uko;
   kontoName=ko;
@@ -45,7 +57,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   EintragsListe::iterator etiter;
 
   if (!abtList->findEintrag(etiter,m_unterkonto, abt, ko, uko,idx)) {
-    std::cerr<<"Unterkonto nicht gefunden!"<<std::endl;
+    qWarning() <<"Unterkonto nicht gefunden!";
     return;
   }
   et = etiter->second;
@@ -101,7 +113,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
      hboxLayout->addWidget(tagcombo);
      //tagcombo->insertStringList(*taglist); //Qt3
      tagcombo->insertItems(0, *taglist);
-     QPushButton * addtagbutton = new QPushButton( "Hinzufügen", taggroup );;
+     QPushButton * addtagbutton = new QPushButton( "HinzufÃ¼gen", taggroup );;
      hboxLayout->addWidget(addtagbutton);
      layout->addWidget(taggroup);
      connect (addtagbutton, SIGNAL(clicked()), this, SLOT(addTag()));
@@ -135,7 +147,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   buttonlayout->addWidget(projektAktivieren);
   buttonlayout->addSpacing(10);
   buttonlayout->addStretch(1);
-  persoenlichesKonto=new QCheckBox("In Persönliche Konten",this);
+  persoenlichesKonto=new QCheckBox("In PersÃ¶nliche Konten",this);
   persoenlichesKonto->setChecked(et.flags&UK_PERSOENLICH);
   buttonlayout->addWidget(persoenlichesKonto);
   buttonlayout->addStretch(1);
@@ -205,7 +217,7 @@ void UnterKontoDialog::accept()
      emit bereitschaftChanged(abteilungsName,kontoName,unterKontoName);
   }*/
 
-  // Größe/Position des Dialogs festhalten
+  // GrÃ¶ÃŸe/Position des Dialogs festhalten
 
   if( settings != NULL )
   {
