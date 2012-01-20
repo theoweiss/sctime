@@ -80,7 +80,7 @@ bool LockLocal::_release() {
 LockLocal::LockLocal(const QString& name, bool user):user(user),name(name), path(QFileInfo(QDir::temp(), user ? name + "." + getenv("LOGNAME") : name).absoluteFilePath()) {}
 
 bool LockLocal::_acquire() {
-  fd = open(name.toLocal8Bit(), O_WRONLY | O_CREAT, 0600);
+  fd = open(path.toLocal8Bit(), O_WRONLY | O_CREAT, 0600);
   if (fd == -1) {
     err = strerror(errno);
     return false;
