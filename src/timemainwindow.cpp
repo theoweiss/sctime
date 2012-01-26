@@ -1,4 +1,4 @@
-/*f
+/*
     Copyright (C) 2003 Florian Schmitt, Science and Computing AG
                        f.schmitt@science-computing.de
 
@@ -50,11 +50,8 @@
 #ifndef HAS_NO_DATETIMEEDIT
 #include "datedialog.h"
 #endif
-#ifndef NO_TEXTEDIT
-#include <QTextEdit>
-#endif
+#include <QTextBrowser>
 #include "findkontodialog.h"
-#include "sctimehelp.h"
 #include "defaulttagreader.h"
 #ifndef WIN32
 #include "kontodateninfozeit.h"
@@ -1243,16 +1240,10 @@ void TimeMainWindow::callHelpDialog()
 {
   QDialog * helpDialog = new QDialog(this);
   QVBoxLayout* layout = new QVBoxLayout(helpDialog);
-  QTextEdit * helpBrowser = new QTextEdit("Anleitung", helpDialog);
+  QTextBrowser *helpBrowser = new QTextBrowser(this);
 
-  //helpBrowser->setMimeSourceFactory(mimeSourceFactory);
-  //helpBrowser->setTextFormat(Qt::RichText); //Qt3
-  helpBrowser->setAcceptRichText(true);
-  helpBrowser->setText(sctimehelptext);
-
-  helpBrowser->setReadOnly(true);
+  helpBrowser->setSource(QUrl("qrc:/hilfe"));
   layout->addWidget(helpBrowser);
-
   layout->addSpacing(7);
 
   QHBoxLayout* buttonlayout=new QHBoxLayout();

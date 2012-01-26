@@ -46,7 +46,6 @@ HEADERS += abteilungsliste.h \
            toolbar.h \
            unterkontodialog.h \
            kontodateninfo.h \
-           sctimehelp.h \
            unterkontoeintrag.h \
            sctimexmlsettings.h \
            unterkontoliste.h \
@@ -124,3 +123,4 @@ mac {
   SOURCES += signalhandler.cpp
   HEADERS += signalhandler.h
 }
+
