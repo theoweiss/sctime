@@ -156,9 +156,13 @@ class TimeMainWindow: public QMainWindow
      */
     void aktivierbarerEintragSelected(bool isActivable);
 
+  private slots:
+    void quit();
+
   protected:
     virtual void moveEvent( QMoveEvent *event);
   private:
+    void checkLock();
     void updateTaskbarTitle(int zeit);
     void closeEvent(QCloseEvent * event);
     KontoTreeView* kontoTree;
@@ -191,5 +195,6 @@ class TimeMainWindow: public QMainWindow
     // Event auzuloesen. Wenn inPersoenlicheKontenAllowed=false, tut inPersoenlicheKonten(bool) gar nichts.
     bool inPersoenlicheKontenAllowed;
 };
+
 
 #endif

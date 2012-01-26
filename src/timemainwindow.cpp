@@ -41,6 +41,7 @@
 #include <QRect>
 #include <QFile>
 #include <QVariant>
+#include <QDebug>
 
 #include "globals.h"
 #include "time.h"
@@ -74,6 +75,7 @@
 #include "defaultcommentreader.h"
 #include "abteilungsliste.h"
 #include "sctimexmlsettings.h"
+#include "lock.h"
 
 
 QTreeWidget* TimeMainWindow::getKontoTree() { return kontoTree; };
@@ -675,7 +677,7 @@ void TimeMainWindow::save()
   std::vector<int> columnwidthlist;
   kontoTree->getColumnWidthList(columnwidthlist);
   settings->setColumnWidthList(columnwidthlist);
-
+  checkLock();
   settings->setMainWindowGeometry(pos(),size());
   settings->writeSettings(abtListToday);
   settings->writeShellSkript(abtListToday);
@@ -685,7 +687,20 @@ void TimeMainWindow::save()
   }
 }
 
+void TimeMainWindow::checkLock() {
+  if (!lock->check()) {
+    QMessageBox msg;
+    msg.setText(tr("Das Programm beendet sich in wenigen Sekunden ohne zu speichern."));
+    msg.setInformativeText(lock->errorString());
+    qDebug() << tr("Das Programm beendet sich ohne zu speichern.") << lock->errorString();
+    QTimer::singleShot(10000, this, SLOT(quit()));
+    msg.exec();
+  }
+}
 
+void TimeMainWindow::quit() {
+  _exit(1);
+}
 
 /**
  * Loest ein callUnterKontoDialog Signal mit dem selektierten Item auf
@@ -787,7 +802,6 @@ void TimeMainWindow::eintragEntfernen()
 void TimeMainWindow::changeDate(const QDate& datum)
 {
   bool currentDateSel = (datum==QDate::currentDate());
-
   kontoTree->flagClosedPersoenlicheItems();
   std::vector<int> columnwidthlist;
   kontoTree->getColumnWidthList(columnwidthlist);
@@ -802,6 +816,7 @@ void TimeMainWindow::changeDate(const QDate& datum)
       abtList=NULL;
     //}
   } else {
+    checkLock();
     settings->writeSettings(abtList);
     settings->writeShellSkript(abtList);
   }
