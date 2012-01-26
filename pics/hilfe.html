@@ -4,63 +4,134 @@
         <meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=UTF-8">
 </head>
 <body>
-<h1><img src="/images/scLogo_15Farben.png">
-Kurzanleitung f&uuml;r sctime</h1>
-<p>
-Das Zeiterfassungstool sctime bietet zwei Ansichten auf den Kontobaum. In
-&bdquo;Alle Konten&ldquo; werden, wie der Name bereits vermuten
-l&auml;&szlig;t, alle bei s+c
-vorhandenen Konten aufgef&uuml;hrt. Da dies ziemlich viele sind, kann
-man die f&uuml;r einen selbst Interessanten entweder &uuml;ber das
-B&uuml;roklammericon oder den &bdquo;Konto editieren&ldquo; Dialog in
-die &bdquo;pers&ouml;nliche Konten&ldquo;-Ansicht &uuml;bernehmen.</p>
+<h1><img src="scLogo_15Farben"/> Kurzanleitung für sctime</h1>
+<h2>Bedienung</h2>
+<h3>Kontobaum</h3>
+Unter <em>Alle Konten</em> werden in einer Struktur aus Abteilung, Konto und Unterkonto
+alle Konten angezeigt, auf die man Stunden buchen kann. Mit einem Doppelklick
+auf ein Unterkonto oder einen Eintrag unterhalb des Unterkontos erreicht man
+das <em>Unterkontofenster</em>. Wenn man  ein Unterkonto als persönliches
+Konto markiert, dann erscheint es zusätzlich in dem zweiten, übersichtlicheren
+Baum <em>Persönliche Konten</em>.
 
-<p>Um
-die momentan verstreichende Zeit automatisch auf ein bestimmtes
-Unterkonto zu buchen, muss dieses aktiviert werden. Dies geschieht
-durch einen Doppelclick auf das entsprechende Konto. Das aktive Konto
-wird durch einen Haken markiert.</p>
+<h3>Aktives Konto</h3>
+Sobald man das Programm startet, misst das Programm die Zeit und verbucht sie
+auf das mit einem Haken markierte Unterkonto.
 
-<p>Um
-die Zeiterfassung anzuhalten, kann der Pause-Button benutzt werden.
-Es gibt im Kontomen&uuml; auch eine spezielle Pausenfunktion, die nur
-die abzurechnende Zeit anh&auml;lt.</p>
-
-<p>Der
-&bdquo;Konto editieren&ldquo;-Dialog erlaubt das Editieren der
-Zeiten, das Eingeben eines Kommentars und das Setzten der
-Einstellungen f&uuml;r ein Konto. Er wird entweder &uuml;ber die
-rechte Maustaste, den Shortcutbutton in der Iconleiste, oder im Men&uuml;
-ge&ouml;ffnet.</p>
-
-<p>Die
-aktuellen Zeiten und Einstellungen werden automatisch alle f&uuml;nf
-Minuten gespeichert, dies kann aber auch explizit &uuml;ber die
-entsprechende Men&uuml;funktion geschehen.</p>
-
-<p>Erfassung von Bereitschaftszeiten:
-Das Unterkonto des Kunden/Projekts/Auftrags zu dem die Bereitschaft
-geh&ouml;rt markieren.
-Auf den Stempel in der Menüleiste klicken. Eine Auswahl m&ouml;glicher
+<h3>Bereitschaftszeiten</h3>
+<p>Das Unterkonto des Kunden/Projekts/Auftrags zu dem die Bereitschaft
+gehört markieren.
+Auf den Stempel in der Menüleiste klicken. Eine Auswahl möglicher
 Bereitschaftskategorien wird angezeigt.
-Eine oder mehrere Kategorien ausw&auml;hlen, ok klicken.
-Zum l&ouml;schen, wieder auf den Stempel klicken, angew&auml;hlte Kategorien
-abw&auml;hlen, ok.
+Eine oder mehrere Kategorien auswählen, ok klicken.
+Zum löschen, wieder auf den Stempel klicken, angewählte Kategorien
+abwählen, ok.
 </p>
-<p>Unter
-Unix werden die Daten in ~/.sctime gesichert. Wichtig sind vor allem
-die zeit*.sh Dateien.
-Das sind Shellskripte, mit denen die Zeiten in die Zeitdatenbank
-&uuml;bernommen werden k&ouml;nnen.</p>
-<p>
+
+<h3> Drag'n'Drop </h3>
 Mittels Drag 'n' Drop lassen sich die Zeiten zwischen Unterkonten und
-Eintr&auml;gen verschieben.
-Wird dabei die &bdquo;Shift&ldquo;-Taste gedr&uuml;ckt k&ouml;nnen auch
-die gesetzten Kommentare verschoben werden.
+Einträgen verschieben.
+Wird dabei die &bdquo;Shift&ldquo;-Taste gedrückt, werden auch die gesetzten Kommentare verschoben.
 </p>
+
+<h2>Datenhaltung</h2>
+<h3>Daten speichern</h3>
+<p>Das Programm speichert automatisch alle fünf Minuten, bei Programmende und
+  auf Wunsch des Benutzers sofort die aktuellen Zeiten
+  und die Einstellungen.
+
+<h3>Speicherort und -format</h3>
+Das Programm speichert die Daten (Zeiten und Einstellungen) im Unterverzeichnis <tt>.sctime</tt> des persönlichen
+Verzeichnisses des Benutzers gespeichert. Die Zeiten werden sowohl als Shellskripte
+als auch als XML-Dateien abgelegt. Das Programm <tt>sctimeorg2</tt> überträgt
+die in den Shellskripten gespeicherten Daten in die Datenbank.
+
+<h2>Einstellungen</h2>
+<h3> Schriften unter UNIX</h3>
+<p>Unter KDE werden die Einstellungen die Desktops übernommen. Weitere
+Einstellungen gibt es mit dem Programm <tt>qtconfig</tt>. Für Antialiasing
+gibt zusätzlich <tt>~/.fonts.conf</tt>(?).</p>
+
+<h2><a name="Standardkommentare_Mikrokonten_v"></a> Standardkommentare, Mikrokonten, vordefinierte Kommentare </h2>
+<p>
+Die drei oben genannten Begriffe bedeuten das Gleiche:
+Man erstellt Vorschläge für die Kommentare bei den Zeiteinträgen.
+Diese Vorschläge beziehen sich auf jeweils ein Unterkonto.</p>
+
+<p>Es gibt zumindeset zwei gute Gründe dafür, solche Standardkommentare zu
+  erstellen: Erstens biete sctime bietet Standardkommentare als Textbausteine an, die
+  man nicht immer und immer wieder tippen muss. Zweitens kann man Tätigkeiten,
+  die auf ein Unterkonto gebucht werden, weiter zu unterteilen und so noch genauer
+  zu bilanzieren mit <code>zeitbilanz --sort=mikrokonto</code></p>
+
+<p><code>zeitbilanz --sort=mikro</code> erwartet,
+  dass alle Standardkommentare mit einem Doppelpunkt enden. </p>
+<p>Die Standardkommentare kann man so in die Datenbank eintragen:
+  <pre>
+    <code>zeitmikro --eintragen KONTO UNTERKONTO</pre></p>
+<p>
+
+<h2><a name="Offline_Betrieb"></a>Offline-Betrieb </h2>
+Um sctime auch ohne Verbindung zur Zeitdatenbank betreiben zu können, gibt es zwei Optionen:
+<code>--configdir DIRNAME</code> erlaubt es das Konfigurationsdirectory umzusetzen (Default ist h:\.sctime unter Windows und ~/.sctime unter *nix). Nützlich, wenn das Homedirectory auf einem Netzlaufwerk liegt.</p>
+
+<p>  <code>--zeitkontenfile FILENAME</code>: Kontendaten aus der einer Datei lesen.-
+  Eine solche Datei kann man so erzeugen:<pre>
+    zeitkonten --mikrokonten --separator='|' &gt; zeitkontenfile.txt</pre></p>
+
+<p> <code>--bereitschaftsfile FILENAME</code>: Bereitschaftskategorien aus der Datei lesen.
+  Diese Datei kann man so erzeugen:<pre>
+    zeitbereitls --separator='|' &gt; FILENAME</pre></p>
+<h2><a name="Offline_Betrieb_portable_Edition"></a> Offline-Betrieb, portable Edition </h2>
+sctime kann ohne Probleme von einem USB-Stick gestartet werden, jedoch ändert sich beim Arbeiten an verschiedenen Rechnern immer wieder der Laufwerksbuchstabe des USB-Sticks. Das hat zur Konsequenz das sich der Programmaufruf ändert und, da es keinen Kommandozeilenschalter für die Defaultkommentare gibt, diese ohne Workaround nicht genutzt werden können. Folgende Konfiguration ist bei uns im Einsatz und hat sich bewährt:
+<p />
+Auf dem USB-Stick getrennte Verzeichnisse für Programme und Konfiguration anlegen: hier %pdrive%\Programme und %pdrive%\Anwendungsdaten.
+Nach %pdrive%\Programme wird sctime und die Bereitschafts- und Zeitkontendatei kopiert.
+Nach %pdrive%\Anwendungsdaten\sctime\ die settings.xml sowie die defaultcomments.xml kopiert.
+<p />
+Die settings.xml muss so angepasst werden das der Pfad zu defaultcommentsfile NICHT angegeben wird, damit erwartet sctime
+die Datei immer in dem Verzeichnis in dem die settings.xml liegt. 
+Das sieht folgendermaßen aus:
+<p />
+<pre>
+ &lt;general&gt;
+ ...
+ &lt;defaultscommentsfile name="defaultcomments.xml"/&gt;
+ ...
+ &lt;\general&gt;
+</pre>
+<p>
+Der Aufruf erfolgt dann mit: (alles auf eine Zeile)
+<pre>
+ %pdrive%\Programme\sctime-0.58\sctime.exe 
+  --configdir=%pdrive%\Anwendungsdaten\sctime\ 
+  --zeitkontenfile=%pdrive%\Programme\sctime-0.58\zeitkontenfile.txt 
+  --bereitschaftsfile=%pdrive%\Programme\sctime-0.58\bereitschaftsfile.txt
+</pre>
+</p><p>
+Wobei %pdrive% natürlich automatisch je nach Rechner/Laufwerksbuchstabe ersetzt wird. Wir nutzen als Wrapper für den Aufruf pstart, siehe <a href="http://www.pegtop.net" target="_top">http://www.pegtop.net</a> .  
+Wenn es den Bedarf gibt kann ich in meinen willek/www auch eine fertige Version zum runterladen anbieten, 
+bitte melden wenn es Bedarf dafür gibt: <a href="mailto&#58;lutz&#46;willek&#64;science&#45;computing&#46;de">lutz.willek&#64;science-computing.de</a>
+</p>
+
+<h2>Weitere Hinweise</h2>
+<h3>Sperren</h3>
+Sobald das Programm startet, versucht es exklusiv eine lokale Sperre
+anzulegen. Das Betriebssystem entfernt diese lokale Sperre zuverlässig nach
+einem eventuellen Absturz des Programms (unter UNIX: lockf()).
+Wenn die lokale Sperre angelegt werden kann, prüft das Programm die Existenz
+der Datei <code>.sctime/LOCK</code>. Wenn es sie gibt und einen fremden
+Rechnernamen enthält, dann geht das Programm davon aus, dass eine weitere
+Instanz auf einem anderen Rechner läuft und beendet sich.
+
+<h3>Kontenliste laden</h3>
+Unter UNIX benötigt sctime die Programme <code>zeitkonten</code>
+und <code>zeitbereitls</code>, um die
+Kontenliste und die verfügbaren Arten von Bereitschaftszeiten zu laden. Unter
+
+Unter Windows hingegen versucht das Programm, die ODBC-Verbindung
+<code>postgres_zeit</code> zu verwenden. Wenn das nicht klappt, versucht es,
+eine direkte Verbindung zur Zeitdatenbank aufzubauen.
 
 </body>
 </html>
-
-
-

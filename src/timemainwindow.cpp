@@ -1241,7 +1241,7 @@ void TimeMainWindow::callHelpDialog()
   QDialog * helpDialog = new QDialog(this);
   QVBoxLayout* layout = new QVBoxLayout(helpDialog);
   QTextBrowser *helpBrowser = new QTextBrowser(this);
-
+  helpBrowser->setOpenLinks(false);
   helpBrowser->setSource(QUrl("qrc:/hilfe"));
   layout->addWidget(helpBrowser);
   layout->addSpacing(7);
