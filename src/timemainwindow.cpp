@@ -1231,95 +1231,54 @@ void TimeMainWindow::callDateDialog()
   dateDialog->show();
 }
 
-#ifndef NO_TEXTEDIT
-/**
- *  Baut den Hilfe-Dialog auf.
- */
+void TimeMainWindow::callHelpDialog() {
+  QDialog *dialog;
+  QTextBrowser *browser;
+  infoDialog(dialog, browser);
+  browser->setSource(QUrl("qrc:/hilfe"));
+  dialog->resize(600,450);
+  dialog->show();
+}
 
-void TimeMainWindow::callHelpDialog()
-{
-  QDialog * helpDialog = new QDialog(this);
-  QVBoxLayout* layout = new QVBoxLayout(helpDialog);
-  QTextBrowser *helpBrowser = new QTextBrowser(this);
-  helpBrowser->setOpenLinks(false);
-  helpBrowser->setSource(QUrl("qrc:/hilfe"));
-  layout->addWidget(helpBrowser);
+void TimeMainWindow::infoDialog(QDialog *&dialog, QTextBrowser *&browser) {
+  dialog = new QDialog(this);
+  QVBoxLayout *layout = new QVBoxLayout(dialog);
+  browser = new QTextBrowser(this);
+  browser->setOpenLinks(false);
+  layout->addWidget(browser);
   layout->addSpacing(7);
 
   QHBoxLayout* buttonlayout=new QHBoxLayout();
   buttonlayout->setContentsMargins(3,3,3,3);
-  QPushButton * okbutton=new QPushButton( "OK", helpDialog);
+  QPushButton * okbutton=new QPushButton( "OK", dialog);
 
   buttonlayout->addStretch(1);
   buttonlayout->addWidget(okbutton);
   buttonlayout->addStretch(1);
   layout->addLayout(buttonlayout);
   layout->addSpacing(4);
-
-  helpDialog->resize(600,450);
-
-  connect (okbutton, SIGNAL(clicked()), helpDialog, SLOT(close()));
-
-  helpDialog->show();
+  //dialog->resize(600,450);
+  connect (okbutton, SIGNAL(clicked()), dialog, SLOT(close()));
+  dialog->show();
 }
 
-#endif
-
-/**
- * Zeigt eine About-Box an.
- */
-
-void TimeMainWindow::callAboutBox()
-{
-  QDialog * aboutBox=new QDialog(this);
-  //aboutBox->setPaletteBackgroundColor(Qt::white);
-  aboutBox->setBackgroundRole(QPalette::Window);
-  aboutBox->setAutoFillBackground( true );
-  aboutBox->setStyleSheet("background-color:#FFFFFF;");
-  QGridLayout* layout=new QGridLayout(aboutBox);
-  QLabel* logo=new QLabel(aboutBox);
-  logo->setPixmap(QPixmap(":/scLogo_15Farben"));
-
-  // huh?!? why do we need these strange numbers? I guess its a bug in qt.
-  layout->setRowMinimumHeight(0,logo->pixmap()->height()+69);
-
-  layout->addWidget(logo,0,0);
-  // TODO: HTML-Quoting fehlt
-  QLabel versioninfo(QString("<h2>sctime</h2><nobr><b>Version:</b> ") + version +
-                             "</nobr><br><nobr><b>Qt Version:</b> "+ QT_VERSION_STR + "</nobr>", aboutBox);
-  versioninfo.setTextFormat(Qt::RichText);
-  layout->addWidget(&versioninfo,0,1);
-  layout->addItem(new QSpacerItem(0, 20), 1, 0);
-  layout->addWidget(new QLabel("Core Developers:",aboutBox),2,0);
-  layout->addWidget(new QLabel(tr("Alexander Wütz <a.wuetz@science-computing.de>"),aboutBox),2,1);
-  layout->addWidget(new QLabel("Core Developer:",aboutBox),3,0);
-  layout->addWidget(new QLabel("Florian Schmitt <f.schmitt@science-computing.de>",aboutBox),3,1);
-  layout->addWidget(new QLabel("Patches:",aboutBox),4,0);
-  layout->addWidget(new QLabel("Marcus Camen <m.camen@science-computing.de>",aboutBox),4,1);
-
-  layout->addItem(new QSpacerItem(0, 18), 5, 0);
-  //layout->addMultiCellWidget(new QLabel("<center>This Program is licensed under the GNU Public License.</center>",aboutBox),5,5,0,1);
-  layout->addWidget(new QLabel("<center>This Program is licensed under the GNU Public License.</center>", aboutBox),6,0,6,2);
-  layout->addItem(new QSpacerItem(0, 18), 7, 0);
-
-  QHBoxLayout* buttonlayout=new QHBoxLayout();
-  QPushButton * okbutton=new QPushButton( "OK", aboutBox);
-
-  buttonlayout->addStretch(1);
-  buttonlayout->addWidget(okbutton);
-  buttonlayout->addStretch(1);
-  //layout->addMultiCellLayout(buttonlayout,7,7,0,1);
-  layout->addLayout(buttonlayout,9,0,9,2);
-  connect (okbutton, SIGNAL(clicked()), aboutBox, SLOT(close()));
-  //layout->addRowSpacing(8,10);
-  layout->addItem(new QSpacerItem(0, 10), 9, 0);
-
-  aboutBox->exec();
-
+void TimeMainWindow::callAboutBox() {
+  QDialog *dialog;
+  QTextBrowser *browser;
+  infoDialog(dialog, browser);
+  browser->setHtml(tr(
+        "<h2><img src=':/scLogo_15Farben' />sctime</h2>"
+        "<table><tr><td>Version:</td><td>%1</td></tr>"
+        "<tr><td>Qt-Version:</td><td>%2</td></tr>"
+        "<tr><td>Entwickler:</td><td>Johannes Abt, Alexander Wütz, Florian Schmitt</td></tr>"
+        "<tr><td>Patches:</td><td>Marcus Camen</td></tr>"
+        "<tr><td>Mac:</td><td>Michael Weiser</td></tr></table>"
+        "<p>Dieses Programm ist unter der GNU Plublic License v2 lizenziert.</p>").arg(version, QT_VERSION_STR));
+  dialog->resize(400, 300);
+  dialog->show();
 }
 
-void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item)
-{
+void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item) {
   if ((!kontoTree->isUnterkontoItem(item))||(abtList->checkInState()))
     return;
   QString top,uko,ko,abt;

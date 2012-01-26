@@ -36,6 +36,7 @@ class KontoDatenInfo;
 class EintragsListe;
 class StatusBar;
 class UnterKontoDialog;
+class QTextBrowser;
 
 #include <defaultcommentreader.h>
 
@@ -52,6 +53,7 @@ class TimeMainWindow: public QMainWindow
     QTreeWidget* getKontoTree();
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;
+    void infoDialog(QDialog *&dialog, QTextBrowser *&browser);
 
   public slots:
 
