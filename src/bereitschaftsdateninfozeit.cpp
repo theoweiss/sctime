@@ -22,10 +22,12 @@
 
 #include <errno.h>
 #include <QMessageBox>
+#include <QTextStream>
 #include <QFile>
 #include "globals.h"
-#include "abteilungsliste.h"
 #include "bereitschaftsdateninfozeit.h"
+#include "bereitschaftsliste.h"
+
 
 BereitschaftsDatenInfoZeit::BereitschaftsDatenInfoZeit() {
     m_DatenFileName="";
@@ -49,7 +51,7 @@ bool BereitschaftsDatenInfoZeit::readBereitschaftsFile(QTextStream& ts, Bereitsc
      QString name = ql[0].simplified();
      QString beschreibung = ql[1].simplified();
      if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden. //FIXME: notwendig?
-     berList->insertEintrag(name, beschreibung, IS_IN_DATABASE);
+     berList->insertEintrag(name, beschreibung);
    }
    if (zeilen == 0)
      QMessageBox::warning(NULL, "sctime: Liste der Bereitschaftsarten lesen", "Liste ist leer");

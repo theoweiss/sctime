@@ -23,6 +23,17 @@
 
 #include "findkontodialog.h"
 
+#include <QComboBox>
+#include <QLabel>
+#include <QPushButton>
+#include "abteilungsliste.h"
+#include "kontotreeview.h"
+
+#include <QTreeWidget>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QGridLayout>
+
 
 #define ALLE "Alle"
 #define KONTO "Konto"
@@ -86,14 +97,14 @@ void FindKontoDialog::createWidgets()
 
   resultTree = new QTreeWidget(this);
   resultTree->setHeaderLabel(tr("Suchergebnis"));
-  resultTree->setColumnCount( 1 ) ;
+  resultTree->setColumnCount(1) ;
   resultTree->setSelectionMode(QAbstractItemView::SingleSelection);
   rightLayout->addWidget(resultTree);
 
   okButton=new QPushButton( "OK", this );
   okButton->setEnabled(false);
   cancelButton=new QPushButton(tr("Abbrechen"), this );
-  searchButton=new QPushButton(tr("Search"), this );
+  searchButton=new QPushButton(tr("Suchen"), this );
   searchButton->setDefault( true );
 
   buttonLayout->setAlignment(Qt::AlignRight);

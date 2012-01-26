@@ -1,6 +1,6 @@
 #include "bereitschaftsview.h"
+#include <QStringList>
 #include "bereitschaftsliste.h"
-#include <iostream>
 
 BereitschaftsView::BereitschaftsView (QWidget * parent): QListView(parent)
 {

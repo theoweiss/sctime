@@ -22,9 +22,14 @@
 #ifndef ABTEILUNGSLISTE_H
 #define  ABTEILUNGSLISTE_H
 
+
 #include <QDateTime>
-#include <QColor>
+class QColor;
+
+// nicht als Vorwärtsdeklarationen möglich
 #include "kontoliste.h"
+#include "unterkontoliste.h"
+#include "eintragsliste.h"
 
 #define IS_DISABLED 8
 #define IS_IN_DATABASE 4
@@ -69,7 +74,7 @@ class AbteilungsListe: public std::map<QString,KontoListe>
 
     EintragsListe* insertUnterKonto(const QString& abteilung,const QString& konto,const QString& unterkonto);
 
-    int insertEintrag(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx=-1, UnterKontoEintrag eintrag=UnterKontoEintrag());
+    int insertEintrag(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx=-1);
 
     void deleteEintrag(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
 

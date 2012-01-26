@@ -27,9 +27,8 @@
 #include "ui_preferencedialogbase.h"
 #include <QDialog>
 #include <QFont>
-#include "sctimexmlsettings.h"
 
-
+class SCTimeXMLSettings;
  /**
   * Der Dialog zum Eingeben eines Datums
   */

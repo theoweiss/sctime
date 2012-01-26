@@ -24,7 +24,6 @@
 #define TIMEEDIT_H
 
 #include <QSpinBox>
-#include <iostream>
 #include <QGroupBox>
 #include <QHBoxLayout>
 #include <QLabel>

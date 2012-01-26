@@ -24,14 +24,13 @@
 #include <QDateTime>
 #include <QPoint>
 #include <QSize>
-//#include <iostream>
+#include <QColor>
 #include <vector>
-
-#include "abteilungsliste.h"
 
 #define MAX_WORKTIME_DEFAULT 10*60*60 // Warn if more time is spent
 
 
+class AbteilungsListe;
 class QTextStream;
 
 class SCTimeXMLSettings

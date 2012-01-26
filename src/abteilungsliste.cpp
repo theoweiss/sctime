@@ -19,11 +19,13 @@
 
 */
 
-#include <iostream>
+#include "abteilungsliste.h"
+
 #include <QDir>
 #include <QString>
 #include <QTextStream>
 #include <QFile>
+#include <QDebug>
 
 #include <utility>
 #include <iomanip>
@@ -34,7 +36,8 @@
 #include "kontoliste.h"
 #include "kontodateninfo.h"
 #include "globals.h"
-#include "abteilungsliste.h"
+#include "unterkontoeintrag.h"
+
 
 /** Erzeugt eine Abteilungsliste fuer das angegebene Datum.
  */
@@ -246,9 +249,9 @@ EintragsListe* AbteilungsListe::insertUnterKonto(const QString& abteilung,const 
  *  Es wird der Index des neuen Eintrags zurueckgegeben.
  *  Mit idx!=-1 kann der Index des Eintrags vordefiniert werden (Doppelte Eintraege werden verworfen).
  */
-int AbteilungsListe::insertEintrag(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, UnterKontoEintrag eintrag)
+int AbteilungsListe::insertEintrag(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx)
 {
-
+  UnterKontoEintrag eintrag;
   EintragsListe *eintragsliste=insertUnterKonto(abteilung,konto,unterkonto);
   if (idx==-1) {
     idx=0;
@@ -424,7 +427,7 @@ int applyFlagMode(int oldflags, int mask, int mode)
     case FLAG_MODE_OR: newflags=oldflags|mask; break;
     case FLAG_MODE_NAND: newflags=oldflags&(~mask); break;
     case FLAG_MODE_XOR: newflags=oldflags^mask; break;
-    default: std::cout<<"Unknown Mode in applyFlagMode"<<std::endl;
+    default: qDebug() <<"Unknown Mode in applyFlagMode"<< mode;
   }
   return newflags;
 }

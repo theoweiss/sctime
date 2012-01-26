@@ -1,19 +1,19 @@
 #ifndef BEREITSCHAFTSLISTE_H
 #define BEREITSCHAFTSLISTE_H
 
-#include <QAbstractTableModel>
+#include <QList>
+#include <QString>
 
 struct BereitschaftsEintrag
 {
   QString bezeichnung;
   QString beschreibung;
-  int flags;
 };
 
 class BereitschaftsListe: public QList<BereitschaftsEintrag>
 {
 public:
-  void insertEintrag(QString bezeichnung, QString beschreibung, int flags=0);
+  void insertEintrag(QString bezeichnung, QString beschreibung);
   static BereitschaftsListe* getInstance();
 private:
   BereitschaftsListe() {};

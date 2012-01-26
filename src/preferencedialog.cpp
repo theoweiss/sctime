@@ -24,6 +24,7 @@
 #include <QSpinBox>
 #include <QCheckBox>
 #include "smallfontdialog.h"
+#include "sctimexmlsettings.h"
 
 
 PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent)

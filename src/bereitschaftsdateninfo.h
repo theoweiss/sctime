@@ -24,8 +24,7 @@
 #ifndef BEREITSCHAFTSDATENINFO_H
 #define  BEREITSCHAFTSDATENINFO_H
 
-#include "QObject"
-#include "bereitschaftsliste.h"
+class BereitschaftsListe;
 
 /**
   * Liest die Bereitschaftsdaten ueber die Zeittools ein.

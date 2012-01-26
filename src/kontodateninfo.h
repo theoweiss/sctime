@@ -22,8 +22,8 @@
 #ifndef KONTODATENINFO_H
 #define  KONTODATENINFO_H
 
-#include "abteilungsliste.h"
-
+#include <QObject>
+class AbteilungsListe;
 class KontoDatenInfo:public QObject
 {
   Q_OBJECT

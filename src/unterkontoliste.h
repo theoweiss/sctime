@@ -24,7 +24,10 @@
 #ifndef UNTERKONTOLISTE_H
 #define  UNTERKONTOLISTE_H
 
-#include "eintragsliste.h"
+#include <map>
+#include <QString>
+#include <QColor>
+class EintragsListe;
 
 typedef std::map<QString,EintragsListe> Map_QString_EintragsListe; // Visual-C-Workaround
 

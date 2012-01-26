@@ -21,22 +21,22 @@
 
 */
 
+#include "bereitschaftsdateninfodatabase.h"
+
 #include <QSqlDatabase>
 #include <QMessageBox>
 #include <QSqlQuery>
 #include <QSqlError>
+#include <QVariant>
 
+#include "DBConnector.h"
 #include "bereitschaftsliste.h"
-#include "abteilungsliste.h"
 #include "globals.h"
 #include "descdata.h"
 
-#include "bereitschaftsdateninfodatabase.h"
 
 BereitschaftsDatenInfoDatabase::BereitschaftsDatenInfoDatabase(DBConnector* dbconnector)
-{
-  m_dbconnector=dbconnector;
-}
+:m_dbconnector(dbconnector) {}
 
 /**
  * Liest aus einer ODBC-Datenbank nach abtList
@@ -60,7 +60,7 @@ bool BereitschaftsDatenInfoDatabase::readInto(BereitschaftsListe * berlist)
        QString name = query.value(0).toString().simplified();
        QString beschreibung = query.value(1).toString().simplified();
        if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
-       berlist->insertEintrag(name, beschreibung, IS_IN_DATABASE);
+       berlist->insertEintrag(name, beschreibung);
      }
   }
   if (!ret)

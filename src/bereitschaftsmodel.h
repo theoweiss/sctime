@@ -1,8 +1,9 @@
 #ifndef BEREITSCHAFTSMODEL_H
 #define BEREITSCHAFTSMODEL_H
 
-class BereitschaftsModel: public QAbstractTableModel
-{
+#include <QStringList>
+#include <QModelIndex>
+class BereitschaftsModel: public QAbstractTableModel {
 public:
   BereitschaftsModel();
   int rowCount ( const QModelIndex & parent = QModelIndex() ) const;

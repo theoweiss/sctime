@@ -1,14 +1,10 @@
 #include "bereitschaftsliste.h"
-#include <assert.h>
-#include <iostream>
 
-
-void BereitschaftsListe::insertEintrag(QString bezeichnung, QString beschreibung, int flags)
+void BereitschaftsListe::insertEintrag(QString bezeichnung, QString beschreibung)
 {
    BereitschaftsEintrag eintrag;
    eintrag.bezeichnung=bezeichnung;
    eintrag.beschreibung=beschreibung;
-   eintrag.flags=flags;
    append(eintrag);
 }
 

@@ -20,6 +20,8 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include "unterkontodialog.h"
+
 #include <QPushButton>
 #include <QLayout>
 #include <QLabel>
@@ -31,7 +33,11 @@
 #include <QTextCodec>
 #include <QMessageBox>
 
-#include "unterkontodialog.h"
+#include "unterkontoeintrag.h"
+#include "timeedit.h"
+#include "eintragsliste.h"
+#include "abteilungsliste.h"
+#include "sctimexmlsettings.h"
 
 /**
  * Baut den Dialog zum Aendern der Eigenschaften eines Unterkontos auf.

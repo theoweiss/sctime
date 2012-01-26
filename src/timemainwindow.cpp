@@ -20,55 +20,64 @@
 
 #define NO_CHECKIN_ACTION
 
-#include <QTextCodec>
 #include "timemainwindow.h"
+
+#include <QTextCodec>
 #include <QClipboard>
 #include <QApplication>
 #include <QMenu>
 #include <QMenuBar>
-#include <QAction>
 #include <QHeaderView>
-#include <QPixmap>
-#include <QPicture>
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QLabel>
-#include <QVBoxLayout>
-#include <QCustomEvent>
 #include <QFont>
 #include <QTextStream>
-#include "colorchooser.h"
-#include "kontotreeview.h"
-#include "time.h"
+#include <QInputDialog>
 #include <QTimer>
-#include <iostream>
-#include "toolbar.h"
 #include <QMessageBox>
 #include <QStringList>
-#include "statusbar.h"
 #include <QDateTime>
 #include <QSystemTrayIcon>
 #include <QDir>
+#include <QPoint>
+#include <QRect>
+#include <QFile>
+#include <QVariant>
+
+#include "globals.h"
+#include "time.h"
+#include "colorchooser.h"
 #include "preferencedialog.h"
-#include "defaulttagreader.h"
 #ifndef HAS_NO_DATETIMEEDIT
 #include "datedialog.h"
 #endif
-#include <QPoint>
-#include <QRect>
-#include "globals.h"
-#include <QInputDialog>
 #ifndef NO_TEXTEDIT
 #include <QTextEdit>
 #endif
-#include <QFile>
 #include "findkontodialog.h"
 #include "sctimehelp.h"
+#include "defaulttagreader.h"
 #ifndef WIN32
 #include "kontodateninfozeit.h"
 #else
 #include "kontodateninfodatabase.h"
 #endif
+#include "statusbar.h"
+#include "kontotreeitem.h"
+#include "bereitschaftsliste.h"
+#include "bereitschaftsview.h"
+#include "globals.h"
+#include "timeedit.h"
+#include "kontotreeview.h"
+#include "bereitschaftsdateninfo.h"
+#include "unterkontodialog.h"
+#include "kontotreeview.h"
+#include "toolbar.h"
+#include "defaultcommentreader.h"
+#include "abteilungsliste.h"
+#include "sctimexmlsettings.h"
+
+
+QTreeWidget* TimeMainWindow::getKontoTree() { return kontoTree; };
+
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
 TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* bereitschaftsdatenReader):QMainWindow()
 {
@@ -824,8 +833,8 @@ void TimeMainWindow::changeDate(const QDate& datum)
   }
 }
 
-void TimeMainWindow::refreshKontoListe()
-{
+void TimeMainWindow::refreshKontoListe() {
+  qApp->setOverrideCursor(Qt::WaitCursor);
   kontoTree->flagClosedPersoenlicheItems();
   std::vector<int> columnwidthlist;
   kontoTree->getColumnWidthList(columnwidthlist);
@@ -842,10 +851,11 @@ void TimeMainWindow::refreshKontoListe()
   kontoTree->load(abtList);
   kontoTree->closeFlaggedPersoenlicheItems();
   abtList->setZeitDifferenz(diff);
+  qApp->restoreOverrideCursor();
 }
 
-void TimeMainWindow::reloadDefaultComments()
-{
+void TimeMainWindow::reloadDefaultComments() {
+  qApp->setOverrideCursor(Qt::WaitCursor);
   std::vector<QString> xmlfilelist;
   settings->getDefaultCommentFiles(xmlfilelist);
   if (abtList!=abtListToday) {
@@ -854,8 +864,7 @@ void TimeMainWindow::reloadDefaultComments()
   }
   abtList->clearDefaultComments();
   bool rc = defaultCommentReader.read(abtList,xmlfilelist);
-
-
+  qApp->restoreOverrideCursor();
   if( zk != NULL )
   {
     #ifdef WIN32
@@ -1307,18 +1316,14 @@ void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item)
 {
   if ((!kontoTree->isUnterkontoItem(item))||(abtList->checkInState()))
     return;
-
   QString top,uko,ko,abt;
-
   int idx;
-
   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
-
   UnterKontoListe *ukl;
   UnterKontoListe::iterator ukiter;
 
   if (!abtList->findUnterKonto(ukiter, ukl, abt, ko, uko)) {
-    std::cerr<<"Unterkonto nicht gefunden!"<<std::endl;
+    QMessageBox::critical(this, tr("sctime: Bereitschaftszeiten"), tr("Unterkonto nicht gefunden!"));
     return;
   }
 

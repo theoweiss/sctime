@@ -22,18 +22,14 @@
 #ifndef DEFAULTCOMMENTREADER_H
 #define DEFAULTCOMMENTREADER_H
 
-#include "abteilungsliste.h"
+class AbteilungsListe;
+class QString;
 #include <vector>
 
 class DefaultCommentReader
 {
   public:
-
-    DefaultCommentReader()
-    {
-    }
-
+    DefaultCommentReader() {}
     bool read(AbteilungsListe* abtList, const std::vector<QString>& xmlfilelist);
 };
-
 #endif

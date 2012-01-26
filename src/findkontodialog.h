@@ -25,22 +25,16 @@
 #define FINDKONTODIALOG_H
 
 #include <QDialog>
-#include <QPushButton>
-#include <QLayout>
-#include <QLabel>
-#include <QComboBox>
+class QPushButton;
+class QLabel;
+class QComboBox;
+class QTreeWidget;
+class QVBoxLayout;
+class QTreeWidgetItem;
+class QGridLayout;
+class QHBoxLayout;
 
-#include "abteilungsliste.h"
-#include "timeedit.h"
-//#include "kontotreeitem.h"
-#include "kontotreeview.h"
-#include <QStringList>
-#include <QTreeWidget>
-#include <QTreeWidgetItem>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
-#include <QMessageBox>
-#include <QMouseEvent>
+class AbteilungsListe;
 
 /**
  * Der Dialog Aendern der Einstellungen

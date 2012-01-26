@@ -28,13 +28,11 @@
 #include <QComboBox>
 #include <QCheckBox>
 
-#include "abteilungsliste.h"
-#include "timeedit.h"
-
-#include "bereitschaftsview.h"
-#include "globals.h"
+class AbteilungsListe;
+class EintragsListe;
+class ZeitBox;
+class SctimeXMLSettings;
 #include "timemainwindow.h"
-#include "sctimexmlsettings.h"
 
 /**
  * Der Dialog zum Aendern der Eigenschaften eines Unterkontos.
@@ -80,8 +78,6 @@ class UnterKontoDialog: public QDialog
     EintragsListe* m_unterkonto;
     QWidget* parent;
     SCTimeXMLSettings* settings;
-    //BereitschaftsView* bereitschaftsView;
-    //QStringList m_bereitschaften;
 };
 
 #endif

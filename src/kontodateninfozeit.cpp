@@ -20,20 +20,14 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include "kontodateninfozeit.h"
+
 #include <errno.h>
-
-#ifdef WIN32
-#include <windows.h>
-
-#else
-#include <stdio.h>
-#include <unistd.h>
-#endif
 #include <QMessageBox>
 #include <QFile>
 
 #include "globals.h"
-#include "kontodateninfozeit.h"
+#include "abteilungsliste.h"
 
 static void addOnce(QString& list, const QString& word) {
   if (word.isEmpty()) return;

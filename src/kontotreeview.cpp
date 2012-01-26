@@ -22,20 +22,24 @@
 */
 
 #include "kontotreeview.h"
+#include <vector>
 #include <QTreeWidget>
-#include "abteilungsliste.h"
 #include <QString>
 
-#include "timecounter.h"
-#include <iostream>
+#include <QKeyEvent>
 #include <QEvent>
-#include "globals.h"
-#include "descdata.h"
-#include <vector>
 #include <QApplication>
 #include <QHeaderView>
 #include <QTreeWidgetItem>
+#include <QTextStream>
+#include <QToolTip>
 
+#include "timecounter.h"
+#include "globals.h"
+#include "descdata.h"
+#include "abteilungsliste.h"
+#include "kontotreeitem.h"
+#include "unterkontoeintrag.h"
 
 /**
  * Erzeugt ein neues Objekt zur Anzeige des Kontobaums. Seine Daten bezieht es aus abtlist.

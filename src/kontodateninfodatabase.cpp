@@ -33,6 +33,7 @@
 #include "DBConnector.h"
 #include "kontodateninfodatabase.h"
 #include "unterkontoeintrag.h"
+#include "abteilungsliste.h"
 
 static void addOnce(QString& list, const QString& word) {
   if (word.isEmpty()) return;

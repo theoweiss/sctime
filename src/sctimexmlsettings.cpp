@@ -17,6 +17,9 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
  */
+
+#include "sctimexmlsettings.h"
+
 #include <QFile>
 #include <QDir>
 #include <QTextStream>
@@ -33,11 +36,11 @@
 #ifndef NO_XML
 #include "qdom.h"
 #endif
-#include "sctimexmlsettings.h"
 #include "abteilungsliste.h"
 #include "globals.h"
 #include "timecounter.h"
 #define WIN_CODEC "utf8"
+#include "globals.h"
 
 float roundTo(float f, float step) { return int(f/step+0.5)*step; }
 double roundTo(double f, double step){ return int(f/step+0.5)*step;}

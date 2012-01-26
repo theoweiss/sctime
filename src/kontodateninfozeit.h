@@ -43,7 +43,6 @@ signals:
     bool readInto2(AbteilungsListe * abtList, bool re);
     void setKommando(const QString& command);
     virtual bool checkIn(AbteilungsListe* abtlist);
-
     bool readDefaultComments(AbteilungsListe * abtList);
   private:
     QString m_DatenFileName;

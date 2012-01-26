@@ -25,18 +25,15 @@
 #define KONTOTREEVIEW_H
 
 #include <QTreeWidget>
-#include <QMimeData>
-#include "abteilungsliste.h"
-#include <QString>
-#include <QPixmap>
-#include <QToolTip>
-#include "kontotreeitem.h"
-#include <vector>
-#include <QTextStream>
 
+class KontoTreeItem;
+class QString;
+class QTextStream;
+class QToolTip;
+class AbteilungsListe;
 class TimeCounter;
 
-#define PERSOENLICHE_KONTEN_STRING "Persönliche Konten"
+#define PERSOENLICHE_KONTEN_STRING "PersÃ¶nliche Konten"
 #define ALLE_KONTEN_STRING "Alle Konten"
 #define MIMETYPE_ACCOUNT "application/sctime.account"
 #define MIMETYPE_SECONDS "application/sctime.seconds"

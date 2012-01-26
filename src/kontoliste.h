@@ -23,8 +23,10 @@
 #ifndef KONTOLISTE_H
 #define  KONTOLISTE_H
 
-#include "unterkontoliste.h"
-
+#include <map>
+#include <QColor>
+#include <QString>
+class UnterKontoListe;
 typedef std::map<QString,UnterKontoListe> Map_QString_UnterKontoListe; // Visual-C-Workaround
 
 /** KontoListe ist eine Map zwischen den Namen des Kontos und den UnterKontoListen */

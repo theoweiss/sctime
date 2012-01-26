@@ -24,7 +24,9 @@
 #ifndef BEREITSCHAFTSDATENINFOZEIT_H
 #define  BEREITSCHAFTSDATENINFOZEIT_H
 
-#include <QTextStream>
+class QTextStream;
+class QString;
+class BereitschaftsListe;
 #include "bereitschaftsdateninfo.h"
 
 /**

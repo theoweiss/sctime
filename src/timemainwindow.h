@@ -20,28 +20,25 @@
 #ifndef TIMEMAINWINDOW_H
 #define TIMEMAINWINDOW_H
 
-#include <QTreeWidget>
+#include <QObject>
 #include <QMainWindow>
-#include <QToolBar>
-//#include <QMimeSourceFactory>
 #include <QAction>
-//Added by qt3to4:
-#include <QCustomEvent>
+#include <QDateTime>
+class QTreeWidget;
+class QTreeWidgetItem;
 
-#include "kontodateninfo.h"
-#include "bereitschaftsdateninfo.h"
-#include "unterkontodialog.h"
-#include "kontotreeview.h"
-#include "toolbar.h"
-
-#include "sctimexmlsettings.h"
-#include "defaultcommentreader.h"
-
-#define SIGINT_EVENT_ID QEvent::User
-
-
+class BereitschaftsDatenInfo;
+class UnterKontoDialog;
+class KontoTreeView;
+class ToolBar;
+class SCTimeXMLSettings;
+class KontoDatenInfo;
+class EintragsListe;
 class StatusBar;
 class UnterKontoDialog;
+
+#include <defaultcommentreader.h>
+
 
 /** Diese Klasse implementiert das Hauptfenster des Programms,
     und sorgt zudem fuer das Fortschreiten der Zeit.
@@ -52,7 +49,7 @@ class TimeMainWindow: public QMainWindow
 
   public:
     TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* bereitschaftsdatenReader);
-    QTreeWidget* getKontoTree() { return kontoTree; };
+    QTreeWidget* getKontoTree();
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;
 

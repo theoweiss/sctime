@@ -25,12 +25,9 @@
 #define KONTOTREE_ITEM_H
 
 #include <QTreeWidgetItem>
-#include <QDropEvent>
-#include <QColor>
-#include <QPen>
-#include <QPainter>
-
-#include <vector>
+class QTreeWidget;
+class QPaintEvent;
+class QString;
 
 class KontoTreeItem: public QTreeWidgetItem
 {

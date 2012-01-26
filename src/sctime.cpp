@@ -53,6 +53,7 @@ static void fatal(const QString& title, const QString& body);
 #include "bereitschaftsdateninfozeit.h"
 #include "timemainwindow.h"
 #include "sctimexmlsettings.h"
+#include "globals.h"
 
 
 #ifndef CONFIGSUBDIR 

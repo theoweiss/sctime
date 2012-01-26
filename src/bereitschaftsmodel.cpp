@@ -1,8 +1,5 @@
-#include "bereitschaftsliste.h"
 #include "bereitschaftsmodel.h"
-#include <assert.h>
-#include <iostream>
-#include <QStringList>
+#include "bereitschaftsliste.h"
 
 BereitschaftsModel::BereitschaftsModel()
 {
