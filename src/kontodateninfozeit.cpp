@@ -76,6 +76,7 @@ bool KontoDatenInfoZeit::readFile(QTextStream& ts, AbteilungsListe * abtList, bo
       // Do not simplify comment to preserve intentional whitespace.
       QString commentstr = ql[12];
       if (!commentstr.isEmpty()) {
+        if (commentstr.endsWith(":")) commentstr.append(" ");
         UnterKontoListe::iterator itUk;
         UnterKontoListe* ukl;
         if (abtList->findUnterKonto(itUk,ukl,abt,konto,unterkonto)) {

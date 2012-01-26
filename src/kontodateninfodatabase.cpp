@@ -99,6 +99,7 @@ bool KontoDatenInfoDatabase::readInto2(AbteilungsListe *abtList, bool comments_o
       QString abt = query.value(0).toString().simplified(), ko = query.value(2).toString().simplified();
       QString uko = query.value(7).toString().simplified(), beschreibung = query.value(11).toString();
       QString commentstr = query.value(12).toString(); // Leerzeichen behalten
+      if (commentstr.endsWith(":")) commentstr.append(" ");
       if (comments_only) {
 	if (!commentstr.isEmpty()) {
 	  UnterKontoListe::iterator itUk;
