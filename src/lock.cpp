@@ -36,7 +36,7 @@ bool Lock::acquire() {
   if (acquired) return true;
   if (!_acquire()) return false;
   if (next && !next->acquire()) {
-    err = next->errorString();
+    errStr = next->errorString();
     return false;
   }
   acquired = true;
@@ -48,7 +48,7 @@ bool Lock::release() {
   if (!acquired) return true;
   acquired = false; // wenn's beim 'release' Fehler gibt, dann ist der Zustand unsicher
   if (next &&(rv = next->_release()))
-    err = next->errorString();
+    errStr = next->errorString();
   return (_release() && rv);
 }
 
@@ -82,11 +82,11 @@ LockLocal::LockLocal(const QString& name, bool user):user(user),name(name), path
 bool LockLocal::_acquire() {
   fd = open(path.toLocal8Bit(), O_WRONLY | O_CREAT, 0600);
   if (fd == -1) {
-    err = strerror(errno);
+    errStr = strerror(errno);
     return false;
   }
   if (lockf(fd,F_TLOCK,0) == -1) {
-    err = errno == EACCES || errno == EAGAIN
+    errStr = errno == EACCES || errno == EAGAIN
       ? (user
          ? QObject::tr("%1 läuft schon für Benutzer \"%2\" auf diesem Rechner\n(Sperrdatei: %3)").arg(name, getenv("LOGNAME"), path)
          : QObject::tr("%1 läuft schon auf diesem Rechner (Sperrdatei: %3)").arg(name, path))
@@ -99,7 +99,7 @@ bool LockLocal::_acquire() {
 
 bool LockLocal::_release() {
    if (close(fd)) {
-     err = strerror(errno);
+     errStr = strerror(errno);
      return false;
    }
    return true;
@@ -129,7 +129,7 @@ bool Lockfile::_acquire() {
               QFile p(path);
               if (p.remove())
                 continue; // nächster Versuch
-              err = QObject::tr("Kann veraltete Sperre %1 nicht löschen: %2").arg(path, p.errorString());
+              errStr = QObject::tr("Kann veraltete Sperre %1 nicht löschen: %2").arg(path, p.errorString());
               return false;
             }
           }
@@ -142,18 +142,18 @@ bool Lockfile::_acquire() {
           return false;
         }
       }
-      err = QString("%1 existiert bereits.").arg(path);
+      errStr = QString("%1 existiert bereits.").arg(path);
     return false;
   }
   if (fd == -1) {
-    err = QString("%1 konnte nicht angelegt werden (%2)").arg(path, strerror(errno));
+    errStr = QString("%1 konnte nicht angelegt werden (%2)").arg(path, strerror(errno));
     return false;
   }
   // Konnte das Lockfile anlegen
   QFile f(path);
   bool rv;
   if (!f.open(fd, QFile::WriteOnly)) {
-      err = QObject::tr("Konnte das Lockfile %1 nicht öffnen (%1)").arg(path, f.errorString());
+      errStr = QObject::tr("Konnte das Lockfile %1 nicht öffnen (%1)").arg(path, f.errorString());
       rv = false;
   } else {
     QTextStream out(&f);

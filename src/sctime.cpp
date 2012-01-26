@@ -161,7 +161,8 @@ int main( int argc, char **argv ) {
   LockLocal local("sctime", true);
   Lock *global = new Lockfile(configDir + "/LOCK", true);
   local.setNext(global);
-  if (!local.acquire()) fatal(QObject::tr("sctime: läuft bereits oder Problem mit Sperre"), local.errorString());
+  if (!local.acquire()) fatal(QObject::tr("sctime: kann nicht starten"), local.errorString());
+  lock = &local;
 
   QSplashScreen splash(QPixmap(":/splash"));
   splash.show(); // später: app.processEvents();

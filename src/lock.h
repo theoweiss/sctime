@@ -6,12 +6,12 @@
 class Lock {
 public:
   inline void setNext(Lock *val) { this->next = val; }
-  inline QString errorString() const { return err; }
+  inline QString errorString() const { return errStr; }
   bool acquire();
   bool release();
 protected:
   Lock();
-  QString err;
+  QString errStr;
   Lock* next;
   bool acquired;
 private:
