@@ -25,6 +25,7 @@
 #define KONTOTREEVIEW_H
 
 #include <QTreeWidget>
+#include <QString>
 
 class KontoTreeItem;
 class QString;
@@ -33,8 +34,8 @@ class QToolTip;
 class AbteilungsListe;
 class TimeCounter;
 
-#define PERSOENLICHE_KONTEN_STRING "Persönliche Konten"
-#define ALLE_KONTEN_STRING "Alle Konten"
+extern QString PERSOENLICHE_KONTEN_STRING;
+extern QString ALLE_KONTEN_STRING;
 #define MIMETYPE_ACCOUNT "application/sctime.account"
 #define MIMETYPE_SECONDS "application/sctime.seconds"
 

@@ -1328,6 +1328,7 @@ void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item)
   }
 
   QDialog dialog(this);
+  dialog.setObjectName("sctime: Bereitschaftszeiten");
   dialog.setWindowTitle("Bereitschaftszeiten");
 
   QVBoxLayout* layout=new QVBoxLayout(&dialog);

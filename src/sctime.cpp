@@ -54,6 +54,7 @@ static void fatal(const QString& title, const QString& body);
 #include "timemainwindow.h"
 #include "sctimexmlsettings.h"
 #include "globals.h"
+#include "kontotreeview.h"
 
 
 #ifndef CONFIGSUBDIR 
@@ -69,6 +70,9 @@ static void fatal(const QString& title, const QString& body);
 QString configDir;
 QString lockfilePath;
 const QString version("0.71");
+QString PERSOENLICHE_KONTEN_STRING;
+QString ALLE_KONTEN_STRING;
+
 
 static void fatal(const QString& title, const QString& body) {
   QMessageBox::critical(NULL, title, body, QMessageBox::Ok);
@@ -113,7 +117,9 @@ int main( int argc, char **argv ) {
   SctimeApp app(argc, argv);
   QTextCodec::setCodecForTr(QTextCodec::codecForName ("UTF-8"));
   app.setObjectName("Sctime");
-  
+  PERSOENLICHE_KONTEN_STRING = QObject::tr("Persönliche Konten");
+  ALLE_KONTEN_STRING = QObject::tr("Alle Konten");
+
   if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1],"--help") == 0 || strcmp(argv[1], "-h") == 0||strcmp(argv[1],"--help") == 0)) {
     QMessageBox::information(NULL,"sctime", help, QMessageBox::Ok);
     exit(0);

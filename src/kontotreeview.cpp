@@ -41,6 +41,7 @@
 #include "kontotreeitem.h"
 #include "unterkontoeintrag.h"
 
+
 /**
  * Erzeugt ein neues Objekt zur Anzeige des Kontobaums. Seine Daten bezieht es aus abtlist.
  */
