@@ -72,6 +72,7 @@ QString lockfilePath;
 const QString version("0.71");
 QString PERSOENLICHE_KONTEN_STRING;
 QString ALLE_KONTEN_STRING;
+Lock *lock;
 
 
 static void fatal(const QString& title, const QString& body) {
@@ -121,7 +122,7 @@ int main( int argc, char **argv ) {
   ALLE_KONTEN_STRING = QObject::tr("Alle Konten");
 
   if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1],"--help") == 0 || strcmp(argv[1], "-h") == 0||strcmp(argv[1],"--help") == 0)) {
-    QMessageBox::information(NULL,"sctime", help, QMessageBox::Ok);
+    QMessageBox::information(NULL, "sctime", help);
     exit(0);
   }
   QString configdirstring, zeitkontenfile, bereitschaftsfile;

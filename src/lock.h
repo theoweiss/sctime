@@ -9,6 +9,7 @@ public:
   inline QString errorString() const { return errStr; }
   bool acquire();
   bool release();
+  bool check();
 protected:
   Lock();
   QString errStr;
@@ -17,6 +18,7 @@ protected:
 private:
   virtual bool _acquire() = 0;
   virtual bool _release() = 0;
+  virtual bool _check() { return true; }
 };
 
 class LockLocal : public Lock {
@@ -41,6 +43,7 @@ public:
   Lockfile(const QString& path, const bool localExclusionProvided);
   virtual bool _acquire();
   virtual bool _release();
+  virtual bool _check();
   const QString path;
   const bool localExclusionProvided;
 };

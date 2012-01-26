@@ -25,7 +25,9 @@
 #define GLOBALS_H
 
 #include <QString>
+class Lock;
 extern QString configDir;
 extern QString lockfilePath;
 extern const QString version;
+extern Lock *lock;
 #endif

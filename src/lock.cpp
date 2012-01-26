@@ -52,6 +52,15 @@ bool Lock::release() {
   return (_release() && rv);
 }
 
+bool Lock::check() {
+  if (!_check()) return false;
+  if (next && !next->_check()) {
+    errStr = next->errorString();
+    return false;
+  }
+  return true;
+}
+
 #ifdef WIN32
 LockLocal::LockLocal(const QString& name, bool user):path((user ? "Local\\" : "Global\\" ) + name),name(name),user(user) {}
 
@@ -157,7 +166,7 @@ bool Lockfile::_acquire() {
       rv = false;
   } else {
     QTextStream out(&f);
-    out << QHostInfo::localHostName() << "\n";
+    out << QHostInfo::localHostName();
     rv = true;
     f.close();
   }
@@ -172,6 +181,19 @@ bool Lockfile::_acquire() {
 bool Lockfile::_release() {
   QFile p(path);
   if (p.remove()) return true;
-  err = QObject::tr("Konnte %1 nicht entfernen: %2").arg(path, p.errorString());
+  errStr = QObject::tr("Konnte %1 nicht entfernen: %2").arg(path, p.errorString());
   return false;
+}
+
+bool Lockfile::_check() {
+  QFile f(path);
+  if (f.open(QIODevice::ReadOnly)) {
+    QTextStream in(&f);
+    QString line = in.readLine();
+    if (line == QHostInfo::localHostName()) return true;
+    errStr = QObject::tr("Die Datei %1 wurde von außen verändert: %2").arg(path, line);
+  }
+  else
+    errStr = QString("Die Datei %1 wurde von außen gelöscht.").arg(path);
+return false;
 }
