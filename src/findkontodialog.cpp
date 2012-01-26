@@ -79,21 +79,21 @@ void FindKontoDialog::createWidgets()
   valueChoose->setAutoCompletion(false);
   valueChoose->setFocus();
 
-  leftLayout->addWidget(new QLabel("Bitte wählen Sie den gesuchten Typ:",this));
+  leftLayout->addWidget(new QLabel(tr("Bitte wÃ¤hlen Sie den gesuchten Typ:"),this));
   leftLayout->addWidget(typeChoose);
-  leftLayout->addWidget(new QLabel("Bitte wählen Sie den gesuchten Namen:", this));
+  leftLayout->addWidget(new QLabel(tr("Bitte wÃ¤hlen Sie den gesuchten Namen:"), this));
   leftLayout->addWidget(valueChoose);
 
   resultTree = new QTreeWidget(this);
-  resultTree->setHeaderLabel( "Suchergebnis" );
+  resultTree->setHeaderLabel(tr("Suchergebnis"));
   resultTree->setColumnCount( 1 ) ;
   resultTree->setSelectionMode(QAbstractItemView::SingleSelection);
   rightLayout->addWidget(resultTree);
 
   okButton=new QPushButton( "OK", this );
   okButton->setEnabled(false);
-  cancelButton=new QPushButton( "Cancel", this );
-  searchButton=new QPushButton( "Search", this );
+  cancelButton=new QPushButton(tr("Abbrechen"), this );
+  searchButton=new QPushButton(tr("Search"), this );
   searchButton->setDefault( true );
 
   buttonLayout->setAlignment(Qt::AlignRight);

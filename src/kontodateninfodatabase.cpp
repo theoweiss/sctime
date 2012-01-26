@@ -28,7 +28,6 @@
 #include <QVariant>
 #include <QSqlError>
 #include <QSqlQuery>
-#include <QDebug>
 #include "globals.h"
 #include "descdata.h"
 #include "DBConnector.h"

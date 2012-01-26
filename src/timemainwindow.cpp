@@ -164,31 +164,31 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   QAction* pauseAbzurAction = new QAction( QIcon(":/hi22_action_player_pause_half"),
                                            "Pause der &abzur. Zeit", this);
   pauseAbzurAction->setShortcut(Qt::CTRL+Qt::Key_A);
-  pauseAbzurAction->setStatusTip("Pausiert nur die abzurechnende Zeit");
+  pauseAbzurAction->setStatusTip(tr("Hält nur die Uhr für die abzurechnende Zeit an"));
   pauseAbzurAction->setCheckable(true);
   connect(pauseAbzurAction, SIGNAL(toggled(bool)), this, SLOT(pauseAbzur(bool)));
 
-  QAction* saveAction = new QAction( QIcon(":/hi22_action_filesave" ),"&Save", this);
+  QAction* saveAction = new QAction( QIcon(":/hi22_action_filesave" ), tr("&Speichern"), this);
   saveAction->setShortcut(Qt::CTRL+Qt::Key_S);
   connect(saveAction, SIGNAL(triggered()), this, SLOT(save()));
 
-  QAction* copyAction = new QAction("&Copy", this);
+  QAction* copyAction = new QAction(tr("&Copy"), this);
   copyAction->setShortcut(Qt::CTRL+Qt::Key_C);
   copyAction->setStatusTip("Name ins Clipboard kopieren");
   connect(copyAction, SIGNAL(triggered()), this, SLOT(copyNameToClipboard()));
 
-  QAction* changeDateAction = new QAction(tr("&Datum wählen"), this);
+  QAction* changeDateAction = new QAction(tr("&Datum wählen..."), this);
   changeDateAction->setShortcut(Qt::CTRL+Qt::Key_D);
   connect(changeDateAction, SIGNAL(triggered()), this, SLOT(callDateDialog()));
 
   QAction* resetAction = new QAction( "&Differenz auf Null", this);
   resetAction->setShortcut(Qt::CTRL+Qt::Key_N);
-  resetAction->setStatusTip("Zeitdifferenz auf Null setzen");
+  resetAction->setStatusTip(tr("Beim gewählten Unterkonto die abzurechnenden auf die geleisteten Stunden setzen"));
   connect(resetAction, SIGNAL(triggered()), this, SLOT(resetDiff()));
 
 #ifndef NO_CHECKIN_ACTION
-  checkInAction = new QAction( "&Tag einchecken", this);
-  checkInAction->setShortcut("Aktuellen Tag einchecken");
+  checkInAction = new QAction(tr("&Tag einchecken"), this);
+  checkInAction->setShortcut(tr("Aktuellen Tag einchecken"));
   connect(checkInAction, SIGNAL(triggered()), this, SLOT(checkIn()));
 #endif
 
@@ -197,41 +197,41 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   inPersKontAction->setCheckable(true);
   connect(inPersKontAction, SIGNAL(toggled(bool)), this, SLOT(inPersoenlicheKonten(bool)));
 
-  QAction* quitAction = new QAction("&Beenden", this);
+  QAction* quitAction = new QAction(tr("&Beenden"), this);
   quitAction->setShortcut(Qt::CTRL+Qt::Key_Q);
-  quitAction->setStatusTip("Programm beenden");
+  quitAction->setStatusTip(tr("Programm beenden"));
   connect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
 
-  QAction* findKontoAction = new QAction("&Suchen", this);
+  QAction* findKontoAction = new QAction(tr("Konto &suchen..."), this);
   findKontoAction->setShortcut(Qt::CTRL+Qt::Key_F);
-  findKontoAction->setStatusTip("Konto suchen");
+  //findKontoAction->setStatusTip(tr("Konto suchen"));
   connect(findKontoAction, SIGNAL(triggered()), this, SLOT(callFindKontoDialog()));
 
-  QAction* refreshAction = new QAction("&Kontoliste neu laden", this);
+  QAction* refreshAction = new QAction(tr("&Kontoliste neu laden"), this);
   refreshAction->setShortcut(Qt::CTRL+Qt::Key_R);
   connect(refreshAction, SIGNAL(triggered()), this, SLOT(refreshKontoListe()));
 
-  QAction* preferenceAction = new QAction("sctime &konfigurieren",this);
+  QAction* preferenceAction = new QAction(tr("&Einstellungen..."),this);
   connect(preferenceAction, SIGNAL(triggered()), this, SLOT(callPreferenceDialog()));
 
-  QAction* defaultCommentAction = new QAction("&Default Kommentare neu einlesen", this);
+  QAction* defaultCommentAction = new QAction(tr("&Standardkommentare/Mikrokonten neu einlesen"), this);
   connect(defaultCommentAction, SIGNAL(triggered()), this, SLOT(reloadDefaultComments()));
 
 #ifndef NO_TEXTEDIT
-  QAction* helpAction = new QAction("&Anleitung", this);
+  QAction* helpAction = new QAction(tr("&Anleitung..."), this);
   helpAction->setShortcut(Qt::Key_F1);
   connect(helpAction, SIGNAL(triggered()), this, SLOT(callHelpDialog()));
 #endif
 
-  QAction* aboutAction = new QAction("&About", this);
-  aboutAction->setStatusTip("About sctime");
+  QAction* aboutAction = new QAction(tr("&Über sctime..."), this);
+  aboutAction->setStatusTip(tr("Über sctime..."));
   connect(aboutAction, SIGNAL(triggered()), this, SLOT(callAboutBox()));
 
-  editUnterKontoAction = new QAction(QIcon(":/hi22_action_edit" ), "&Editieren", this);
-  editUnterKontoAction->setStatusTip("Unterkonto editieren");
+  editUnterKontoAction = new QAction(QIcon(":/hi22_action_edit" ), "&Editieren...", this);
+  editUnterKontoAction->setStatusTip(tr("Unterkonto editieren"));
   connect(editUnterKontoAction, SIGNAL(triggered()), this, SLOT(editUnterKontoPressed()));
 
-  QAction* eintragActivateAction = new QAction("Eintrag a&ktivieren", this);
+  QAction* eintragActivateAction = new QAction(tr("Eintrag a&ktivieren"), this);
   eintragActivateAction->setShortcut(Qt::CTRL+Qt::Key_X);
   connect(eintragActivateAction, SIGNAL(triggered()), this, SLOT(eintragAktivieren()));
 
@@ -244,33 +244,33 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   connect(eintragRemoveAction, SIGNAL(triggered()), this, SLOT(eintragEntfernen()));
 
   QAction* bereitschaftsAction = new QAction(QIcon(":/hi16_action_stamp" ),
-                                             "&Bereitschaftszeiten setzen", this);
+                                            tr("&Bereitschaftszeiten setzen..."), this);
   bereitschaftsAction->setShortcut(Qt::CTRL+Qt::Key_B);
   connect(bereitschaftsAction, SIGNAL(triggered()), this, SLOT(editBereitschaftPressed()));
 
-  bgColorAction = new QAction(tr("&Hintergrundfarbe wählen"), this);
+  bgColorAction = new QAction(tr("&Hintergrundfarbe wählen..."), this);
 
   jumpAction = new QAction("&Zu selektiertem Konto in \"Alle Konten\" springen", this);
 
   QAction* min5PlusAction = new QAction(QIcon(":/hi22_action_1uparrow" ),
-                                           "Zeit incrementieren", this);
+                                          tr("Zeit erhöhen"), this);
   QAction* min5MinusAction = new QAction(QIcon(":/hi22_action_1downarrow" ),
-                                            "Zeit decrementieren", this);
+                                            tr("Zeit verringern"), this);
 
   QAction* fastPlusAction = new QAction(QIcon(":/hi22_action_2uparrow" ),
-                                           "Zeit schnell incrementieren", this);
+                                           tr("Zeit schnell erhöhen"), this);
   QAction* fastMinusAction = new QAction(QIcon(":/hi22_action_2downarrow" ),
-                                            "Zeit schnell decrementieren", this);
+                                            tr("Zeit schnell verringern"), this);
 
   abzurMin5PlusAction = new QAction(QIcon(":/hi22_action_1uparrow_half" ),
-                                      "Abrechenbare Zeit incrementieren", this);
+                                      tr("Abrechenbare Zeit erhöhen"), this);
   abzurMin5MinusAction = new QAction(QIcon(":/hi22_action_1downarrow_half" ),
-                                       "Abrechenbare Zeit decrementieren", this);
+                                       tr("Abrechenbare Zeit verringern"), this);
 
   fastAbzurPlusAction = new QAction(QIcon(":/hi22_action_2uparrow_half" ),
-                                      "Abrechenbare Zeit schnell incrementieren", this);
+                                      tr("Abrechenbare Zeit schnell erhöhen"), this);
   fastAbzurMinusAction = new QAction(QIcon(":/hi22_action_2downarrow_half" ),
-                                       "Abrechenbare Zeit schnell decrementieren", this);
+                                       tr("Abrechenbare Zeit schnell verringern"), this);
 
   connect(kontoTree, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem * )), this, SLOT(changeShortCutSettings(QTreeWidgetItem * ) ));
 
@@ -352,8 +352,11 @@ void TimeMainWindow::aktivesKontoPruefen(){
   EintragsListe::iterator dummy;
   EintragsListe *dummy2;
   if (!abtList->findEintrag(dummy, dummy2, a, k, u, i))
-    QMessageBox::warning(NULL, QObject::tr("sctime: Zeiterfassung gestoppt"),
-                         tr("Ihr zuletzt aktives Konto war %1/%2. Wahrscheinlich wurde es geschlossen oder umbenannt. Bitte wählen Sie nun ein neues Konto aus, damit die Zeiterfassung beginnt!").arg(k,u));
+    QMessageBox::warning(
+          NULL,
+          QObject::tr("sctime: Zeiterfassung gestoppt"),
+          tr("Ihr zuletzt aktives Konto war %1/%2. Wahrscheinlich wurde es geschlossen oder umbenannt. "
+             "Bitte wählen Sie nun ein neues Konto aus, damit die Zeiterfassung beginnt!").arg(k,u));
 }
 
 void TimeMainWindow::closeEvent(QCloseEvent * event)
@@ -738,7 +741,7 @@ void TimeMainWindow::eintragEntfernen()
   KontoTreeItem *topi, *abti, *koi, *ukoi, *eti;
 
   if (abtList->isAktiv(abt,ko,uko,idx)) {
-      QMessageBox::warning(NULL, "Warnung",tr("Kann aktiven Eintrag nicht löschen\n"),
+      QMessageBox::warning(NULL, tr("Warnung"), tr("Kann aktiven Eintrag nicht löschen\n"),
                               QMessageBox::Ok, QMessageBox::NoButton);
       return;
   }
@@ -1408,23 +1411,20 @@ void TimeMainWindow::jumpToAlleKonten()
    }
 }
 
-void TimeMainWindow::checkComment(const QString& abt, const QString& ko , const QString& uko,int idx)
-{
+void TimeMainWindow::checkComment(const QString& abt, const QString& ko , const QString& uko,int idx) {
   UnterKontoEintrag eintrag;
-  if (abtList->getEintrag(eintrag, abt, ko, uko, idx))
-  {
+  if (abtList->getEintrag(eintrag, abt, ko, uko, idx)) {
     QTextCodec *codec = QTextCodec::codecForName("ISO 8859-1");
-    if (!codec->canEncode(eintrag.kommentar)) {
-      QMessageBox::warning(0,"Warnung","Warnung: In dem von "
-        "Ihnen eingegebenen Kommentar kommt ein Zeichen vor, das ausserhalb von "
-        "ISO-8859-1 ist und somit auf manchen Plattformen nicht darstellbar ist. "
-        "Dies kann spaeter eventuell zu Problemen mit Auswerteskripten fuehren.",
-                         QMessageBox::Ok, QMessageBox::Ok);
-    }
+    if (!codec->canEncode(eintrag.kommentar))
+      QMessageBox::warning(
+            0,
+            tr("Warnung"),
+            tr("Warnung: In dem von Ihnen eingegebenen Kommentar kommt ein "
+               "Zeichen vor, das mit ISO-8859-1 und somit auf manchen Plattformen nicht darstellbar ist. "
+               "Dies führt eventuell zu Problemen mit Auswerteskripten."));
   }
 }
 
-void TimeMainWindow::moveEvent(QMoveEvent *event)
-{
+void TimeMainWindow::moveEvent(QMoveEvent *event) {
   settings->setMainWindowGeometry(pos(),size());
 }

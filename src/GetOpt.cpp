@@ -180,7 +180,6 @@ void GetOpt::init( int argc, char *argv[], int offset )
 */
 bool GetOpt::parse( bool untilFirstSwitchOnly )
 {
-    //    qDebug( "parse(%s)", args.join( QString( "," ) ).ascii() );
     // push all arguments as we got them on a stack
     // more pushes might following when parsing condensed arguments
     // like --key=value.
@@ -213,7 +212,6 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
             stack.removeLast();
             currArg++;
             origA = a;
-            //      qDebug( "popped %s", a.ascii() );
             if ( a.startsWith( QString::fromLatin1( "--" ) ) ) {
                 // recognized long option
                 a = a.mid( 2 );

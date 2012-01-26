@@ -30,7 +30,6 @@
 #include <QHBoxLayout>
 #include <QTextCodec>
 #include <QMessageBox>
-#include <QDebug>
 
 #include "unterkontodialog.h"
 
@@ -57,7 +56,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   EintragsListe::iterator etiter;
 
   if (!abtList->findEintrag(etiter,m_unterkonto, abt, ko, uko,idx)) {
-    qWarning() <<"Unterkonto nicht gefunden!";
+    QMessageBox::information(parent,tr("sctime: Einstellungen des Unterkontos"), tr("Unterkonto nicht gefunden!"));
     return;
   }
   et = etiter->second;
@@ -68,7 +67,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   QVBoxLayout* layout=new QVBoxLayout(this);
   layout->setContentsMargins(3,3,3,3);
 
-  QPushButton * cancelbutton=new QPushButton( "Abbruch", this );
+  QPushButton * cancelbutton=new QPushButton(tr("Abbruch"), this );
   QPushButton * okbutton=NULL;
   if (!readOnly) {
     okbutton=new QPushButton( "OK", this );
@@ -135,7 +134,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
 
   QString beschreibung = abtList->getDescription(abt,ko,uko).description().simplified();
   if (!beschreibung.isEmpty()) {
-    QLabel *l = new QLabel("Beschreibung: " + beschreibung, this);
+    QLabel *l = new QLabel(tr("Beschreibung: ") + beschreibung, this);
     layout->addWidget(l);
     layout->addSpacing(5);
     layout->addStretch(2);

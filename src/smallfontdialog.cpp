@@ -217,7 +217,7 @@ SmallFontDialog::SmallFontDialog(QWidget *parent, bool modal, Qt::WFlags f)
         connect(ok, SIGNAL(clicked()), SLOT(accept()));
     ok->setDefault(true);
 
-    QString cancelt = modal ? tr("Cancel") : tr("Close");
+    QString cancelt = modal ? tr("Abbrechen") : tr("Schließen");
     cancel = new QPushButton(cancelt, this);
     connect(cancel, SIGNAL(clicked()), SLOT(reject()));
 
