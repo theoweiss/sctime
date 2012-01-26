@@ -137,7 +137,7 @@ bool Lockfile::_acquire() {
             if (words.size() >= 1 && words[0].compare(host) == 0)
               return true; // Das Lockfile stammt von einem Absturz auf diesem Rechner. Wir übernehmen es.
           }
-          errStr = QObject::tr("Das Programm bereits auf einem anderen Rechner (%1: „%2“).\n").arg(path, line);
+          errStr = QObject::tr("Das Programm läuft bereits auf einem anderen Rechner (%1: „%2“).\n").arg(path, line);
           if (localExclusionProvided)
             errStr.append(QObject::tr(
                             "\nWenn das nicht so ist, sondern das Programm sich beim letzten Mal auf einem anderen Rechner nicht regulär beenden konnte",
