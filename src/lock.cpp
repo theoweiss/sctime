@@ -134,13 +134,8 @@ bool Lockfile::_acquire() {
           if (localExclusionProvided) {
 	    QString host(QHostInfo::localHostName());
             QStringList words = line.split(" ");
-            if (words.size() >= 1 && words[0].compare(host) == 0) {
-              QFile p(path);
-              if (p.remove())
-                continue; // nächster Versuch
-              errStr = QObject::tr("Kann veraltete Sperre %1 nicht löschen: %2").arg(path, p.errorString());
-              return false;
-            }
+            if (words.size() >= 1 && words[0].compare(host) == 0)
+              return true; // Das Lockfile stammt von einem Absturz auf diesem Rechner. Wir übernehmen es.
           }
           errStr = QObject::tr("Das Programm bereits auf einem anderen Rechner (%1: „%2“).\n").arg(path, line);
           if (localExclusionProvided)
