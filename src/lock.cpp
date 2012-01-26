@@ -67,11 +67,11 @@ LockLocal::LockLocal(const QString& name, bool user):path((user ? "Local\\" : "G
 bool LockLocal::_acquire() {
   handle = CreateEventA(NULL, false, true, name.toLocal8Bit());
   if (!handle) {
-    err = QObject::tr("Kann die lokale Sperre %1 nicht anlegen: %2").arg(name).arg(GetLastError());
+    errStr = QObject::tr("Kann die lokale Sperre %1 nicht anlegen: %2").arg(name).arg(GetLastError());
     return false;
   }
   if (GetLastError () == ERROR_ALREADY_EXISTS) {
-    err = QObject::tr("Das Programm „%1“ läuft bereits (auf diesem Rechner)").arg(name);
+    errStr = QObject::tr("Das Programm „%1“ läuft bereits (auf diesem Rechner)").arg(name);
     return false;
   }
   return true;
@@ -79,7 +79,7 @@ bool LockLocal::_acquire() {
 
 bool LockLocal::_release() {
   if (!CloseHandle(handle)) {
-      err = QString("Fehler aufgetreten beim Löschen der lokalen Sperre „%1“").arg(name)
+      errStr = QString("Fehler aufgetreten beim Löschen der lokalen Sperre „%1“").arg(name);
       return false;
   }
   return true;
@@ -190,10 +190,10 @@ bool Lockfile::_check() {
   if (f.open(QIODevice::ReadOnly)) {
     QTextStream in(&f);
     QString line = in.readLine();
-    if (line == QHostInfo::localHostName()) return true;
+    if (line.compare(QHostInfo::localHostName()) == 0)  return true;
     errStr = QObject::tr("Die Datei %1 wurde von außen verändert: %2").arg(path, line);
   }
   else
-    errStr = QString("Die Datei %1 wurde von außen gelöscht.").arg(path);
+    errStr = QString(QObject::tr("Die Datei %1 wurde von außen gelöscht.")).arg(path);
 return false;
 }
