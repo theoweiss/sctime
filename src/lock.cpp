@@ -62,7 +62,7 @@ bool LockLocal::_acquire() {
     return false;
   }
   if (GetLastError () == ERROR_ALREADY_EXISTS) {
-    err = QObject::tr("Die lokale Sperre %1 existiert bereits").arg(name);
+    err = QObject::tr("Das Programm „%1“ läuft bereits (auf diesem Rechner)").arg(name);
     return false;
   }
   return true;
@@ -70,7 +70,7 @@ bool LockLocal::_acquire() {
 
 bool LockLocal::_release() {
   if (!CloseHandle(handle)) {
-      err = QString("Konnte lokale Sperre '%1' nicht aufgeben").arg(name);
+      err = QString("Fehler aufgetreten beim Löschen der lokalen Sperre „%1“").arg(name)
       return false;
   }
   return true;
@@ -88,9 +88,9 @@ bool LockLocal::_acquire() {
   if (lockf(fd,F_TLOCK,0) == -1) {
     errStr = errno == EACCES || errno == EAGAIN
       ? (user
-         ? QObject::tr("%1 läuft schon für Benutzer \"%2\" auf diesem Rechner\n(Sperrdatei: %3)").arg(name, getenv("LOGNAME"), path)
-         : QObject::tr("%1 läuft schon auf diesem Rechner (Sperrdatei: %3)").arg(name, path))
-      : QObject::tr("Konnte Datei %1 nicht sperren: %2").arg(path, strerror(errno));
+         ? QObject::tr("Das Programm „%1“ läuft bereits (auf diesem Rechner und für diesen Benutzer) (%2)").arg(name, path)
+         : QObject::tr("Das Programm „%1“ läuft bereits (auf diesem Rechner ) (%2)").arg(name, path))
+      : QObject::tr("Fehler beim Sperren der Datei  „%1“: %2").arg(path, strerror(errno));
     close(fd);
     return false;
   }
@@ -133,12 +133,12 @@ bool Lockfile::_acquire() {
               return false;
             }
           }
-          err = QObject::tr("Die Sperrdatei %1 existiert bereits.\n"
-                            "Wahrscheinlich läuft das Programm bereits auf einem anderen Rechner (%2).\n").arg(path, line);
+          errStr = QObject::tr("Das Programm bereits auf einem anderen Rechner (%1: „%2“).\n").arg(path, line);
           if (localExclusionProvided)
-            err.append(QObject::tr("\nNach einem Absturz gegebenenfalls verbleibende, veraltete Sperrdateien werden entfernt, "
-                                   "wenn man das Programm auf dem gleichen Rechner nochmals startet."
-                       "auf dem es zuletzt lief"));
+            errStr.append(QObject::tr(
+                            "\nWenn das nicht so ist, sondern das Programm sich beim letzten Mal auf einem anderen Rechner nicht regulär beenden konnte",
+                            "dann starten Sie bitte das Programm nochmal auf diesem anderen Rechner!\n"
+                            "Eine gefährliche Alternative ist, die Datei %1 zu löschen.").arg(1));
           return false;
         }
       }
