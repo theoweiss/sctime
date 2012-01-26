@@ -37,7 +37,7 @@ class SCTimeXMLSettings
 {
   public:
 
-    SCTimeXMLSettings()
+    SCTimeXMLSettings():firstSave(true)
     {
       timeInc = 5*60;
       fastTimeInc = 60*30;
@@ -254,6 +254,7 @@ class SCTimeXMLSettings
     int m_maxWorkingTime;
     QString m_customFont;
     int m_customFontSize;
+    bool firstSave; // nur beim ersten Speichern ein  Backup von settings.xml erstellen
 
     QPoint unterKontoWindowPosition;
     QSize unterKontoWindowSize;

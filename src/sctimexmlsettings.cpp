@@ -30,6 +30,7 @@
 #include <QApplication>
 #ifndef WIN32
 #include <langinfo.h>
+#include <errno.h>
 #else
 #include <windows.h>
 #endif
@@ -206,20 +207,22 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
     }
   }
 
-  QFile f( configDir + filename );
+  QFile f(configDir + filename);
   if ( !f.open( QIODevice::ReadOnly ) ) {
-      return;
-      }
-  if ( !doc.setContent( &f ) ) {
-      f.close();
+      QMessageBox::warning(NULL, QObject::tr("sctime: Konfigurationsdatei öffnen"),
+                           QObject::tr("%1 : %2").arg(f.fileName(), f.errorString()));
       return;
   }
+  QString errMsg;
+  int errLine, errCol;
+  if (!doc.setContent(&f, &errMsg, &errLine, &errCol)) {
+    QMessageBox::critical(NULL, QObject::tr("sctime: Konfigurationsdatei lesen"),
+                          QObject::tr("Fehler in %1, Zeile %2, Spalte %3: %4.").arg(errMsg).arg(errLine).arg(errCol).arg(errMsg));
+    return;
+  }
   f.close();
-
   QDomElement aktiveskontotag;
-
   QDomElement docElem = doc.documentElement();
-
   if (global) {
     defaultcommentfiles.clear();
     columnwidth.clear();
@@ -757,22 +760,38 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   else
     filename=configDir+"/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
 
-  QFile f(filename+"~");
-  f.remove();
-  if ( !f.open( QIODevice::WriteOnly) ) {
-      QMessageBox::warning(NULL, QObject::tr("sctime: Einstellungen speichern"), f.errorString());
+  QFile fnew(filename + ".tmp");
+  if (!fnew.open(QIODevice::WriteOnly)) {
+      QMessageBox::critical(NULL, QObject::tr("sctime: Einstellungen speichern"), QObject::tr("Datei %1 zum Schreiben öffnen: %2").arg(fnew.fileName(), fnew.errorString()));
       return;
   }
-  QTextStream stream( & f);
-  QString codec=codecString(stream);
-
-  stream<<"<?xml version=\"1.0\" encoding=\""<<codec<<"\"?>"<<endl;
+  QTextStream stream(&fnew);
+  stream<<"<?xml version=\"1.0\" encoding=\""<<codecString(stream)<<"\"?>"<<endl;
   stream<<doc.toString()<<endl;
+  fnew.close();
+  QFile fcurrent(filename);
+  if (global && firstSave && fcurrent.exists()) {
+    // Backup erstellen für settings.xml
+    QFile fbackup(filename + ".bak");
+    if (fbackup.exists()) fbackup.remove();
+    if (!fcurrent.copy(fbackup.fileName()))
+      QMessageBox::warning(NULL, QObject::tr("sctime: Einstellungen speichern"),
+                           QObject::tr("Kann nicht %1 kopieren nach %2: %3").arg(filename, fbackup.fileName(), fcurrent.errorString()));
+    else
+      firstSave = false;
+  }
+#ifndef WIN32
+  // unter Windows funktioniert kein "rename", wenn es den Zielnamen schon gibt.
+  // Doch unter UNIX kann ich damit Dateien atomar ersetzen.
+  if (!rename(fnew.fileName().toLocal8Bit(), filename.toLocal8Bit())) return;
+  QMessageBox::information(NULL, QObject::tr("sctime: Einstellungen speichern"),
+                        QObject::tr("Kann nicht %1 umbenennen zu %2: %3").arg(fnew.fileName(), filename, strerror(errno)));
+#endif
+  fcurrent.remove();
+  if (!fnew.rename(filename))
+    QMessageBox::critical(NULL, QObject::tr("sctime: Einstellungen speichern"),
+                         QObject::tr("Kann nicht %1 umbenennen zu %2: %3").arg(fnew.fileName(), filename, fnew.errorString()));
 
-  f.close();
-  QFile oldfile(filename);
-  oldfile.remove();
-  f.rename(filename);
   #endif
 }
 
