@@ -1,13 +1,13 @@
 #define QT_NO_CAST_ASCII
 #define QT_NO_ASCII_CAST
 
+#include "GetOpt.h"
 
 #include <assert.h>
 #include <QApplication>
 #include <QFileInfo>
 #include <QtDebug>
 #include <QLinkedList>
-#include "GetOpt.h"
 
 /**
    \class GetOpt

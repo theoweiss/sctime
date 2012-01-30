@@ -187,7 +187,7 @@ class TimeMainWindow: public QMainWindow
     //QMimeSourceFactory* mimeSourceFactory;
     DefaultCommentReader defaultCommentReader;
     QToolBar* powerToolBar;
-    ToolBar* toolBar;
+    QToolBar* toolBar;
     QStringList defaultTags;
     KontoDatenInfo* zk;
     bool paused;

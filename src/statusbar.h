@@ -5,8 +5,8 @@
 #include <QString>
 #include <QStatusBar>
 #include <QLabel>
-#include "timecounter.h"
 #include <QDateTime>
+#include "timecounter.h"
 
 /** Die Statusbar des Hauptfensters */
 class StatusBar:public QStatusBar

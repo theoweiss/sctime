@@ -21,6 +21,8 @@
 
 */
 
+#include "kontodateninfodatabase.h"
+
 #include <QObject>
 #include <QSqlDatabase>
 #include <QMessageBox>
@@ -31,7 +33,6 @@
 #include "globals.h"
 #include "descdata.h"
 #include "DBConnector.h"
-#include "kontodateninfodatabase.h"
 #include "unterkontoeintrag.h"
 #include "abteilungsliste.h"
 

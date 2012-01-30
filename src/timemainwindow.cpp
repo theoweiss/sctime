@@ -42,6 +42,7 @@
 #include <QFile>
 #include <QVariant>
 #include <QDebug>
+#include <QToolBar>
 
 #include "globals.h"
 #include "time.h"
@@ -68,7 +69,6 @@
 #include "bereitschaftsdateninfo.h"
 #include "unterkontodialog.h"
 #include "kontotreeview.h"
-#include "toolbar.h"
 #include "defaultcommentreader.h"
 #include "abteilungsliste.h"
 #include "sctimexmlsettings.h"
@@ -143,7 +143,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
     //kontoTree->header()->setResizeEnabled(false, 1);
   }
 
-  toolBar   = new ToolBar("Main ToolBar", this);
+  toolBar   = new QToolBar("Main ToolBar", this);
   toolBar->setIconSize(QSize(22,22));
 
   configClickMode(settings->singleClickActivation());

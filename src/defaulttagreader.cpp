@@ -20,9 +20,9 @@
 
 */
 
+#include "defaulttagreader.h"
 #include <QFile>
 #include "globals.h"
-#include "defaulttagreader.h"
 #ifndef NO_XML
 #include "qdom.h"
 #endif

@@ -22,14 +22,13 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
-#include "qdatepicker.h"
+#include "datedialog.h"
 #include <QPushButton>
 #include <QDir>
 #include <QStringList>
-#include "datedialog.h"
-#include "globals.h"
-#include <iostream>
 #include <QTextCharFormat>
+#include "globals.h"
+#include "qdatepicker.h"
 
 DateDialog::DateDialog(const QDate& datum, QWidget *parent)
 : QDialog(parent)

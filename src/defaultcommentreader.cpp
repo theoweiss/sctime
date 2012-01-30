@@ -20,14 +20,14 @@
 
 */
 
-#include <iostream>
-
 #include "defaultcommentreader.h"
-#include "globals.h"
-#include "abteilungsliste.h"
+
+#include <iostream>
 #include <QFile>
 #include <QDir>
 #include <QMessageBox>
+#include "globals.h"
+#include "abteilungsliste.h"
 #ifndef NO_XML
 #include "qdom.h"
 #endif

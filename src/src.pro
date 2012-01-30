@@ -38,7 +38,6 @@ HEADERS += abteilungsliste.h \
            findkontodialog.h \
            timemainwindow.h \
            globals.h \
-           toolbar.h \
            unterkontodialog.h \
            kontodateninfo.h \
            unterkontoeintrag.h \
@@ -121,4 +120,3 @@ mac {
   #revtarget.target = revlabel.c
   #revtarget.commands = "const char revlabel[] =\"$(shell git describe --always --dirty)\";" > $$revtarget.target
   }
-

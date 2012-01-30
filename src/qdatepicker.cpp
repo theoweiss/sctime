@@ -19,7 +19,7 @@
     Boston, MA 02111-1307, USA.
 */
 
-// This file has been ported from KDE to plain QT
+#include "qdatepicker.h"
 
 #include <QFrame>
 #include <QDialog>
@@ -29,9 +29,6 @@
 #include <QToolTip>
 #include <QFont>
 #include <QValidator>
-
-#include "qdatepicker.h"
-
 #include <QBoxLayout>
 #include <QVBoxLayout>
 #include <QHBoxLayout>

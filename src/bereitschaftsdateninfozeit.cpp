@@ -20,22 +20,21 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
 
+#include "bereitschaftsdateninfozeit.h"
+
 #include <errno.h>
 #include <QMessageBox>
 #include <QTextStream>
 #include <QFile>
 #include "globals.h"
-#include "bereitschaftsdateninfozeit.h"
 #include "bereitschaftsliste.h"
 
 
-BereitschaftsDatenInfoZeit::BereitschaftsDatenInfoZeit() {
-    m_DatenFileName="";
-}
+BereitschaftsDatenInfoZeit::BereitschaftsDatenInfoZeit()
+  : m_DatenFileName("") {}
 
-BereitschaftsDatenInfoZeit::BereitschaftsDatenInfoZeit(QString sourcefile) {
-    m_DatenFileName=sourcefile;
-}
+BereitschaftsDatenInfoZeit::BereitschaftsDatenInfoZeit(QString sourcefile)
+  : m_DatenFileName(sourcefile) {}
 
 bool BereitschaftsDatenInfoZeit::readBereitschaftsFile(QTextStream& ts, BereitschaftsListe * berList) {
   int zeilen = 0;

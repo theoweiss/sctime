@@ -1,8 +1,8 @@
+#include "signalhandler.h"
+
 #include <errno.h>
 #include <string.h>
 #include <unistd.h>
-
-#include "signalhandler.h"
 
 static int fds[2];
 

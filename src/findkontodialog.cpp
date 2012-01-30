@@ -26,13 +26,13 @@
 #include <QComboBox>
 #include <QLabel>
 #include <QPushButton>
-#include "abteilungsliste.h"
-#include "kontotreeview.h"
-
 #include <QTreeWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
+
+#include "abteilungsliste.h"
+#include "kontotreeview.h"
 
 
 #define ALLE "Alle"

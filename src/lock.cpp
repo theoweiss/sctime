@@ -1,4 +1,6 @@
 
+#include "lock.h"
+
 #include <errno.h>
 #include <string.h> // strerror
 #include <sys/stat.h> // (_)S_IWRITE
@@ -21,7 +23,6 @@
 #include <QMessageBox>
 #include <QTextStream>
 
-#include "lock.h"
 
 /* Ich arbeite mit Lockfiles, weil ich mit "byte range locks"
    und -- unter Windows -- "sharing modes" (_sopen_s) -- nichts gefunden habe,

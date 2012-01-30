@@ -1,10 +1,11 @@
+#include "DBConnector.h"
+
 #include <windows.h>
 #include <lmcons.h> // UNLEN
 #include <QFile>
 #include <QDir>
 #include <QTextStream>
 #include <QMessageBox>
-#include "DBConnector.h"
 
 DBConnector::DBConnector() {
     char winUserName[UNLEN + 1];
