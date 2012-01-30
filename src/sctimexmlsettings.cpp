@@ -209,9 +209,11 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
 
   QFile f(configDir + filename);
   if ( !f.open( QIODevice::ReadOnly ) ) {
+    if (global || f.exists())
+      // keine Fehlerausgabe, wenn "zeit-HEUTE.xml" fehlt
       QMessageBox::warning(NULL, QObject::tr("sctime: Konfigurationsdatei öffnen"),
                            QObject::tr("%1 : %2").arg(f.fileName(), f.errorString()));
-      return;
+    return;
   }
   QString errMsg;
   int errLine, errCol;
