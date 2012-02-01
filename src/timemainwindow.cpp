@@ -314,17 +314,20 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   kontomenu->addAction(saveAction);
   kontomenu->addAction(pauseAction);
   kontomenu->addAction(pauseAbzurAction);
+  kontomenu->addSeparator();
   kontomenu->addAction(findKontoAction);
+  kontomenu->addAction(jumpAction);
   kontomenu->addAction(refreshAction);
-  kontomenu->addAction(bereitschaftsAction);
+  kontomenu->addAction(defaultCommentAction);
+  kontomenu->addSeparator();
   kontomenu->addAction(bgColorChooseAction);
   kontomenu->addAction(bgColorRemoveAction);
-  kontomenu->addAction(jumpAction);
+  kontomenu->addSeparator();
+  kontomenu->addAction(bereitschaftsAction);
   kontomenu->addSeparator();
   kontomenu->addAction(quitAction);
   zeitmenu->addAction(changeDateAction);
   zeitmenu->addAction(resetAction);
-  settingsmenu->addAction(defaultCommentAction);
   settingsmenu->addAction(preferenceAction);
   #ifndef NO_TEXTEDIT
   hilfemenu->addAction(helpAction);
