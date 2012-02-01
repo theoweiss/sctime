@@ -418,7 +418,7 @@ void KontoTreeView::closeFlaggedPersoenlicheItems()
   KontoTreeItem *topi, *abti, *koi, *ukoi;
 
 
-  for (topi=(KontoTreeItem*)topLevelItem(0); (topi!=NULL)&&(topi->text(0)!=PERSOENLICHE_KONTEN_STRING); topi=(KontoTreeItem*)topi->nextSibling());
+  for (topi=(KontoTreeItem*)topLevelItem(0); (topi!=NULL)&&(topi->text(0)!=PERSOENLICHE_KONTEN_STRING); topi=(KontoTreeItem*)topi->nextSibling()) ;
   if (topi==NULL) {
     return;
   }
@@ -644,7 +644,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
   QStringList bereitschaften=etl->getBereitschaft();
 
   KontoTreeItem *topi,*abti,*koi,*ukoi,*eti;
-  bool isExpandedAlleKonten, isExpandedPersonKonten;
+  bool isExpandedAlleKonten = false, isExpandedPersonKonten = false;
 
   for(int i=0; i<topLevelItemCount(); i++)
   {
