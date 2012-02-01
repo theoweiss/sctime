@@ -549,8 +549,6 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
                 newItem->setText( 4, tcAbzur.toString());
                 newItem->setText( 5, etPos->second.kommentar);
                 newItem->setGray();
-                //newItem->setGray(abtList->checkInState());
-                //std::cout<<"load :setGray()="<<abtList->checkInState()<<std::endl;
                 //newItem->setDragEnabled(true);
                 //newItem->setDropEnabled(true);
                 newItem->setBgColor(abtList->getBgColor(abtPos->first,kontPos->first,ukontPos->first));

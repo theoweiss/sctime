@@ -145,8 +145,3 @@ void KontoDatenInfoZeit::setKommando(const QString& command) {
   m_Kommando=command;
 }
 
-bool KontoDatenInfoZeit::checkIn(AbteilungsListe* abtlist) {
-  QMessageBox::critical(NULL, "sctime: interner Fehler", "checkin ist nicht implementiert");
-  return false;
-}
-

@@ -46,7 +46,6 @@ AbteilungsListe::AbteilungsListe(const QDate _datum, KontoDatenInfo* ki): std::m
   datum=_datum;
   kontoDatenInfo=ki;
   checkedIn=false;
-  reload();
 }
 
 /** Erzeugt eine Abteilungsliste fuer das angegebene Datum, und uebernimmt den Kontobaum der
@@ -825,21 +824,9 @@ void AbteilungsListe::clearDefaultComments()
      zeitDifferenz = diff;
   }
 
-bool AbteilungsListe::checkIn()
-{
-  setCheckInState(kontoDatenInfo->checkIn(this));
-  return checkInState();
-}
+  bool AbteilungsListe::checkInState(){  return checkedIn; }
 
-bool AbteilungsListe::checkInState()
-{
-  return checkedIn;
-}
-
-void AbteilungsListe::setCheckInState(bool state)
-{
-  checkedIn = state;
-}
+  void AbteilungsListe::setCheckInState(bool state) {checkedIn = state;}
 
 void AbteilungsListe::setBgColor(QColor bgColor, const QString& abteilung,
                                const QString& konto, const QString& unterkonto)

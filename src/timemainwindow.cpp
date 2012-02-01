@@ -18,8 +18,6 @@
 
 */
 
-#define NO_CHECKIN_ACTION
-
 #include "timemainwindow.h"
 
 #include <QTextCodec>
@@ -124,13 +122,9 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
 
   settings->getColumnWidthList(columnwidthlist);
 
- // setCaption("sctime "+abtList->getDatum().toString("dd.MM.yyyy"));
   kontoTree=new KontoTreeView( this, abtList, columnwidthlist );
   kontoTree->closeFlaggedPersoenlicheItems();
   kontoTree->showPersoenlicheKontenSummenzeit(settings->persoenlicheKontensumme());
-
-  //mimeSourceFactory=new QMimeSourceFactory();
-  //mimeSourceFactory->setPixmap("/images/scLogo_15Farben.png",QPixmap((const char **)scLogo_15Farben_xpm));
 #ifndef Q_WS_MAC
   setWindowIcon(QIcon(":/sc_logo"));  
 #endif
@@ -139,8 +133,6 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
 
   if (!settings->showTypeColumn()) {
     kontoTree->hideColumn(1);
-    //kontoTree->setColumnWidthMode(1,QListView::Manual);
-    //kontoTree->header()->setResizeEnabled(false, 1);
   }
 
   toolBar   = new QToolBar("Main ToolBar", this);
@@ -193,12 +185,6 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   resetAction->setShortcut(Qt::CTRL+Qt::Key_N);
   resetAction->setStatusTip(tr("Beim gewählten Unterkonto die abzurechnenden auf die geleisteten Stunden setzen"));
   connect(resetAction, SIGNAL(triggered()), this, SLOT(resetDiff()));
-
-#ifndef NO_CHECKIN_ACTION
-  checkInAction = new QAction(tr("&Tag einchecken"), this);
-  checkInAction->setShortcut(tr("Aktuellen Tag einchecken"));
-  connect(checkInAction, SIGNAL(triggered()), this, SLOT(checkIn()));
-#endif
 
   inPersKontAction = new QAction( QIcon(":/hi22_action_attach"), tr("In persönliche &Konten"), this);
   inPersKontAction->setShortcut(Qt::CTRL+Qt::Key_K);
@@ -326,9 +312,6 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   kontomenu->addAction(quitAction);
   zeitmenu->addAction(changeDateAction);
   zeitmenu->addAction(resetAction);
-#ifndef NO_CHECKIN_ACTION
-  zeitmenu->addAction(checkInAction);
-#endif
   settingsmenu->addAction(defaultCommentAction);
   settingsmenu->addAction(preferenceAction);
   #ifndef NO_TEXTEDIT
@@ -351,6 +334,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   //selected
   kontoTree->closeFlaggedPersoenlicheItems();
   showAdditionalButtons(settings->powerUserView());
+  QTimer::singleShot(10, this, SLOT(refreshKontoListe()));
 }
 
 void TimeMainWindow::aktivesKontoPruefen(){
@@ -847,6 +831,8 @@ void TimeMainWindow::changeDate(const QDate& datum)
 
 void TimeMainWindow::refreshKontoListe() {
   qApp->setOverrideCursor(Qt::WaitCursor);
+  statusBar->showMessage(tr("Kontenliste laden..."));
+  qApp->processEvents();
   kontoTree->flagClosedPersoenlicheItems();
   std::vector<int> columnwidthlist;
   kontoTree->getColumnWidthList(columnwidthlist);
@@ -863,6 +849,7 @@ void TimeMainWindow::refreshKontoListe() {
   kontoTree->load(abtList);
   kontoTree->closeFlaggedPersoenlicheItems();
   abtList->setZeitDifferenz(diff);
+  statusBar->showMessage(tr("Kontenliste geladen"), 2000);
   qApp->restoreOverrideCursor();
 }
 
@@ -1030,36 +1017,6 @@ void TimeMainWindow::flagsChanged(const QString& abt, const QString& ko, const Q
   }
 
   updateCaption();
-}
-
-void TimeMainWindow::checkIn()
-{
-  if (abtList->getDatum()>=QDate::currentDate()) {
-    QMessageBox::critical(0,"Fehler", tr("Heutiges Datum kann nicht über die GUI eingecheckt werden.\nZeiten nicht eingecheckt!"),
-                       QMessageBox::Ok, QMessageBox::Ok);
-    return;
-  }
-  if (abtList->checkInState()) {
-    QMessageBox::critical(0,"Fehler", tr("Ausgewähltes Datum ist bereits eingecheckt.\nZeiten nicht eingecheckt!"),
-                       QMessageBox::Ok, QMessageBox::Ok);
-    return;
-  }
-  settings->writeSettings(abtList);
-  settings->writeShellSkript(abtList);
-
-  // do checkin
-  if (!abtList->checkIn()) {
-    QMessageBox::critical(0,"Fehler","Fehler beim einchecken.\nZeiten nicht eingecheckt!",
-                       QMessageBox::Ok, QMessageBox::Ok);
-    return;
-  } else {
-    // move zeit* files
-    abtList->setCheckInState(true);
-    settings->moveToCheckedIn(abtList);
-  };
-  kontoTree->load(abtList);
-  kontoTree->closeFlaggedPersoenlicheItems();
-  kontoTree->showAktivesProjekt();
 }
 
 void TimeMainWindow::showContextMenu(const QPoint& pos)

@@ -156,20 +156,12 @@ int main( int argc, char **argv ) {
     if (!directory.cd(configdirstring)) fatal("sctime: Konfigurationsproblem", QString("Kann nicht auf %1 zugreifen.").arg(configdirstring));
   }
   configDir=directory.path();
-
-  app.processEvents();
-
   LockLocal local("sctime", true);
   Lock *global = new Lockfile(configDir + "/LOCK", true);
   local.setNext(global);
   if (!local.acquire()) fatal(QObject::tr("sctime: kann nicht starten"), local.errorString());
   lock = &local;
-
-  QSplashScreen splash(QPixmap(":/splash"));
-  splash.show(); // später: app.processEvents();
-  splash.showMessage("Kontenliste einlesen");
   app.processEvents();
-
   KontoDatenInfo* zk;
   BereitschaftsDatenInfo* bereitschaftsdatenReader;
 
@@ -196,7 +188,6 @@ int main( int argc, char **argv ) {
       :  new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
 #endif
   TimeMainWindow mainWindow(zk, bereitschaftsdatenReader);
-  splash.finish(&mainWindow);
 #ifndef WIN32
   SignalHandler term(SIGTERM);
   app.connect(&term, SIGNAL(received()), &app, SLOT(closeAllWindows()));
@@ -204,9 +195,10 @@ int main( int argc, char **argv ) {
   app.connect(&hup, SIGNAL(received()), &app, SLOT(closeAllWindows()));
   SignalHandler int_(SIGINT);
   app.connect(&int_, SIGNAL(received()), &app, SLOT(closeAllWindows()));
-#endif
-
+#endif  
   mainWindow.show();
+  app.processEvents();
+
   app.exec();
   mainWindow.save();
   local.release();
