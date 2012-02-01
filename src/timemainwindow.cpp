@@ -41,10 +41,10 @@
 #include <QVariant>
 #include <QDebug>
 #include <QToolBar>
+#include <QColorDialog>
 
 #include "globals.h"
 #include "time.h"
-#include "colorchooser.h"
 #include "preferencedialog.h"
 #ifndef HAS_NO_DATETIMEEDIT
 #include "datedialog.h"
@@ -242,7 +242,8 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   bereitschaftsAction->setShortcut(Qt::CTRL+Qt::Key_B);
   connect(bereitschaftsAction, SIGNAL(triggered()), this, SLOT(editBereitschaftPressed()));
 
-  bgColorAction = new QAction(tr("&Hintergrundfarbe wählen..."), this);
+  bgColorChooseAction = new QAction(tr("&Hintergrundfarbe wählen..."), this);
+  bgColorRemoveAction = new QAction(tr("&Hintergrundfarbe entfernen"), this);
 
   jumpAction = new QAction("&Zu selektiertem Konto in \"Alle Konten\" springen", this);
 
@@ -273,7 +274,8 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   connect(fastPlusAction, SIGNAL(triggered()), this, SLOT(addFastTimeInc()));
   connect(fastMinusAction, SIGNAL(triggered()), this, SLOT(subFastTimeInc()));
 
-  connect(bgColorAction, SIGNAL(triggered()),this, SLOT(callColorDialog()));
+  connect(bgColorChooseAction, SIGNAL(triggered()),this, SLOT(callColorDialog()));
+  connect(bgColorRemoveAction, SIGNAL(triggered()),this, SLOT(removeBgColor()));
   connect(jumpAction, SIGNAL(triggered()),this, SLOT(jumpToAlleKonten()));
 
   connect(this,SIGNAL(eintragSelected(bool)), min5PlusAction, SLOT(setEnabled(bool)));
@@ -306,7 +308,8 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   kontomenu->addAction(findKontoAction);
   kontomenu->addAction(refreshAction);
   kontomenu->addAction(bereitschaftsAction);
-  kontomenu->addAction(bgColorAction);
+  kontomenu->addAction(bgColorChooseAction);
+  kontomenu->addAction(bgColorRemoveAction);
   kontomenu->addAction(jumpAction);
   kontomenu->addSeparator();
   kontomenu->addAction(quitAction);
@@ -978,7 +981,9 @@ void TimeMainWindow::changeShortCutSettings(QTreeWidgetItem * item)
     emit aktivierbarerEintragSelected(false);
     eintragRemoveAction->setEnabled(false);
   }
-  bgColorAction->setEnabled((depth>=1)&&(depth<=3));
+  bool custom_color_is_allowed = (depth>=1)&&(depth<=3);
+  bgColorChooseAction->setEnabled(custom_color_is_allowed);
+  bgColorRemoveAction->setEnabled(custom_color_is_allowed);
   jumpAction->setEnabled((top!=ALLE_KONTEN_STRING)&&(depth>=1));
   inPersoenlicheKontenAllowed=true; // Wieder enablen.
 }
@@ -1294,6 +1299,18 @@ void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item) {
   }
 }
 
+void TimeMainWindow::refreshAfterColorChange(QString& abt, QString& ko, QString& uko) {
+	if (ko != "") {
+		if(uko != "") {
+			kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
+		} else {
+			kontoTree->refreshAllItemsInKonto(abt,ko);
+		}
+	} else {
+		kontoTree->load(abtList);
+	}
+}
+
 void TimeMainWindow::callColorDialog()
 {
    QTreeWidgetItem * item=kontoTree->currentItem();
@@ -1301,27 +1318,24 @@ void TimeMainWindow::callColorDialog()
    int idx;
    kontoTree->itemInfo(item,top,abt,ko,uko,idx);
 
-   ColorChooser cc(abtList->hasBgColor(abt,ko,uko),abtList->getBgColor(abt,ko,uko));
-   cc.exec();
+   QColor color, initial = Qt::white;
+   if (abtList->hasBgColor(abt,ko,uko))
+     initial = abtList->getBgColor(abt,ko,uko);
+   color = QColorDialog::getColor(initial, this, tr("Hintergrundfarbe"));
 
-   if (cc.result()) {
-     QColor* color=cc.selectedColor();
-     if (color)
-     {
-       abtList->setBgColor(*color, abt,ko,uko);
-     }
-     else
-       abtList->unsetBgColor(abt,ko,uko);
-
-     if (ko!="") {
-       if(uko!="")
-         kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
-       else
-         kontoTree->refreshAllItemsInKonto(abt,ko);
-     }
-     else
-       kontoTree->load(abtList);
+   if (color.isValid()) {
+     abtList->setBgColor(color, abt,ko,uko);
+     refreshAfterColorChange(abt, ko, uko);
    }
+}
+
+void TimeMainWindow::removeBgColor() {
+   QTreeWidgetItem * item=kontoTree->currentItem();
+   QString top,uko,ko,abt;
+   int idx;
+   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
+   abtList->unsetBgColor(abt,ko,uko);
+   refreshAfterColorChange(abt, ko, uko);
 }
 
 void TimeMainWindow::jumpToAlleKonten()

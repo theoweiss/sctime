@@ -96,6 +96,7 @@ class TimeMainWindow: public QMainWindow
     void callPreferenceDialog();
     void callBereitschaftsDialog(QTreeWidgetItem * item);
     void callColorDialog();
+    void removeBgColor();
     void jumpToAlleKonten();
 
     void refreshKontoListe();
@@ -166,6 +167,7 @@ class TimeMainWindow: public QMainWindow
     void checkLock();
     void updateTaskbarTitle(int zeit);
     void closeEvent(QCloseEvent * event);
+    void refreshAfterColorChange(QString&, QString&, QString&);
     KontoTreeView* kontoTree;
     UnterKontoDialog* unterKontoDialog;
     QAction* editUnterKontoAction;
@@ -176,7 +178,8 @@ class TimeMainWindow: public QMainWindow
     QAction* fastAbzurMinusAction;
     QAction* eintragRemoveAction;
     QAction* checkInAction;
-    QAction* bgColorAction;
+    QAction* bgColorChooseAction;
+    QAction* bgColorRemoveAction;
     QAction* jumpAction;
     QDateTime lastMinuteTick;
     QFont qtDefaultFont;

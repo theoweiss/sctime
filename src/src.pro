@@ -24,7 +24,6 @@ SOURCES += abteilungsliste.cpp \
            bereitschaftsview.cpp \
            bereitschaftsmodel.cpp \
            lock.cpp \
-           colorchooser.cpp \
            kontodateninfodatabase.cpp \
 	   bereitschaftsdateninfodatabase.cpp \
 	   DBConnector.cpp
@@ -59,14 +58,12 @@ HEADERS += abteilungsliste.h \
            bereitschaftsliste.h \
            bereitschaftsview.h \
            bereitschaftsmodel.h \
-           colorchooser.h \
            kontodateninfodatabase.h \
            bereitschaftsdateninfodatabase.h \
            DBConnector.h
 RESOURCES= ../pics/sctimeImages.qrc
 FORMS += datedialogbase.ui \
-         preferencedialogbase.ui \
-         colorchooserbase.ui
+         preferencedialogbase.ui
 #target.path = /$(prefix)/bin
 INSTALLS += target
 linux-g++-static{
