@@ -334,6 +334,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   //selected
   kontoTree->closeFlaggedPersoenlicheItems();
   showAdditionalButtons(settings->powerUserView());
+  QTimer::singleShot(10, this, SLOT(refreshKontoListe()));
 }
 
 void TimeMainWindow::aktivesKontoPruefen(){
@@ -830,6 +831,8 @@ void TimeMainWindow::changeDate(const QDate& datum)
 
 void TimeMainWindow::refreshKontoListe() {
   qApp->setOverrideCursor(Qt::WaitCursor);
+  statusBar->showMessage(tr("Kontenliste laden..."));
+  qApp->processEvents();
   kontoTree->flagClosedPersoenlicheItems();
   std::vector<int> columnwidthlist;
   kontoTree->getColumnWidthList(columnwidthlist);
@@ -846,6 +849,7 @@ void TimeMainWindow::refreshKontoListe() {
   kontoTree->load(abtList);
   kontoTree->closeFlaggedPersoenlicheItems();
   abtList->setZeitDifferenz(diff);
+  statusBar->showMessage(tr("Kontenliste geladen"), 2000);
   qApp->restoreOverrideCursor();
 }
 

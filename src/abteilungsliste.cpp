@@ -46,7 +46,6 @@ AbteilungsListe::AbteilungsListe(const QDate _datum, KontoDatenInfo* ki): std::m
   datum=_datum;
   kontoDatenInfo=ki;
   checkedIn=false;
-  reload();
 }
 
 /** Erzeugt eine Abteilungsliste fuer das angegebene Datum, und uebernimmt den Kontobaum der

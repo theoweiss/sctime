@@ -195,9 +195,10 @@ int main( int argc, char **argv ) {
   app.connect(&hup, SIGNAL(received()), &app, SLOT(closeAllWindows()));
   SignalHandler int_(SIGINT);
   app.connect(&int_, SIGNAL(received()), &app, SLOT(closeAllWindows()));
-#endif
-
+#endif  
   mainWindow.show();
+  app.processEvents();
+
   app.exec();
   mainWindow.save();
   local.release();
