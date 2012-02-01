@@ -192,6 +192,13 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   connect(inPersKontAction, SIGNAL(toggled(bool)), this, SLOT(inPersoenlicheKonten(bool)));
 
   QAction* quitAction = new QAction(tr("&Beenden"), this);
+  // force this item to have the quit role so that Qt properly moves it into
+  // the Mac application menu.
+  // FIXME: This is a workaround. With proper translation, Qt's heuristic would
+  // do this automatically based on the menu item title. Also, translation does
+  // not seem to work as this time. The menu tetxts always end up English after
+  // being merged into the application menu.
+  quitAction->setMenuRole(QAction::QuitRole);
   quitAction->setShortcut(Qt::CTRL+Qt::Key_Q);
   quitAction->setStatusTip(tr("Programm beenden"));
   connect(quitAction, SIGNAL(triggered()), this, SLOT(close()));
@@ -206,6 +213,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   connect(refreshAction, SIGNAL(triggered()), this, SLOT(refreshKontoListe()));
 
   QAction* preferenceAction = new QAction(tr("&Einstellungen..."),this);
+  preferenceAction->setMenuRole(QAction::PreferencesRole);
   connect(preferenceAction, SIGNAL(triggered()), this, SLOT(callPreferenceDialog()));
 
   QAction* defaultCommentAction = new QAction(tr("&Standardkommentare/Mikrokonten neu einlesen"), this);
@@ -219,6 +227,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
 
   QAction* aboutAction = new QAction(tr("&Über sctime..."), this);
   aboutAction->setStatusTip(tr("Über sctime..."));
+  aboutAction->setMenuRole(QAction::AboutRole);
   connect(aboutAction, SIGNAL(triggered()), this, SLOT(callAboutBox()));
 
   editUnterKontoAction = new QAction(QIcon(":/hi22_action_edit" ), "&Editieren...", this);
