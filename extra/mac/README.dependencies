@@ -1,0 +1,13 @@
+How to build postgres and Qt for scTime.
+
+postgres:
+run postgres-universal-10.5.sh
+
+Qt:
+possibly patch Qt >= 4.8 for 10.5 support using qt-4.8-10.5.patch
+./configure -release -universal -sdk /Developer/SDKs/MacOSX10.5.sdk \
+	-qt-sql-odbc -qt-sql-psql -prefix $HOME/bin/qt-4.8.0 -opensource \
+	-no-exceptions -verbose -I$HOME/bin/postgresql-9.1/include \
+	-L$HOME/bin/postgresql-9.1/lib -confirm-license
+make -j4
+wait lots
