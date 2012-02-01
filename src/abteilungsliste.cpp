@@ -27,12 +27,6 @@
 #include <QFile>
 #include <QDebug>
 
-#include <utility>
-#include <iomanip>
-#include <stdlib.h>
-#include <sys/stat.h>
-#include <sys/types.h>
-
 #include "kontoliste.h"
 #include "kontodateninfo.h"
 #include "globals.h"
