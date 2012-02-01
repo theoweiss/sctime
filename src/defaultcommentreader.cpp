@@ -22,10 +22,11 @@
 
 #include "defaultcommentreader.h"
 
-#include <iostream>
 #include <QFile>
 #include <QDir>
 #include <QMessageBox>
+#include <QApplication>
+#include <QtDebug>
 #include "globals.h"
 #include "abteilungsliste.h"
 #ifndef NO_XML
@@ -36,13 +37,11 @@
  * Liest alle Einstellungen.
  */
 
-bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QString>& xmlfilelist)
-{
+bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QString>& xmlfilelist) {
 #ifndef NO_XML
   QDomDocument doc("comments");
 
   for (unsigned int i=0; i<xmlfilelist.size(); i++) {
-
       QString filename;
 
       QDir dummy(xmlfilelist[i]);
@@ -69,14 +68,9 @@ bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
       int domerrorline;
       int domerrorcol;
       if ( !doc.setContent( &f, false, &domerror,&domerrorline,&domerrorcol ) ) {
-          std::cerr<<"Fehler in "<<filename.toStdString()<<" in Zeile "<<domerrorline<<" Spalte "<<domerrorcol<<std::endl;
-          std::cerr<<domerror.toStdString()<<std::endl;
-          QMessageBox::warning( 0,
-                QString::fromLatin1("Warnung"),
-                domerror,
-                "OK" );
-          f.close();
-          return false;
+        QMessageBox::warning(0, QObject::tr("Warnung"), domerror);
+        f.close();
+        return false;
       }
       f.close();
 
@@ -115,7 +109,7 @@ bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
                                                           itUk->second.addDefaultComment(commentstr);
                                                       }
                                                       else
-                                                          std::cerr<<"Kann Unterkonto "<<unterkontostr.toStdString()<<" fuer Defaultkommentar nicht finden!"<<std::endl;
+                                                        qWarning() << "Kann Unterkonto " << unterkontostr <<" fuer Defaultkommentar nicht finden!";
                                                   }
                                               }
                                           }
