@@ -1314,6 +1314,11 @@ void TimeMainWindow::refreshAfterColorChange(QString& abt, QString& ko, QString&
 void TimeMainWindow::callColorDialog()
 {
    QTreeWidgetItem * item=kontoTree->currentItem();
+   // when first started there is no selected item, so we cannot select a color
+   // for that
+   if (!item)
+     return;
+
    QString top,uko,ko,abt;
    int idx;
    kontoTree->itemInfo(item,top,abt,ko,uko,idx);
