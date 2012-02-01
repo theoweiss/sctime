@@ -24,4 +24,4 @@ downloadsource.target = patchqmake.c
 QMAKE_EXTRA_TARGETS += downloadsource
 
 # throw away generated patchqmake.c on make clean
-QMAKE_CLEAN += patchqmake.c
+QMAKE_CLEAN += patchqmake.c patchqmake
