@@ -122,13 +122,9 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
 
   settings->getColumnWidthList(columnwidthlist);
 
- // setCaption("sctime "+abtList->getDatum().toString("dd.MM.yyyy"));
   kontoTree=new KontoTreeView( this, abtList, columnwidthlist );
   kontoTree->closeFlaggedPersoenlicheItems();
   kontoTree->showPersoenlicheKontenSummenzeit(settings->persoenlicheKontensumme());
-
-  //mimeSourceFactory=new QMimeSourceFactory();
-  //mimeSourceFactory->setPixmap("/images/scLogo_15Farben.png",QPixmap((const char **)scLogo_15Farben_xpm));
 #ifndef Q_WS_MAC
   setWindowIcon(QIcon(":/sc_logo"));  
 #endif
@@ -137,8 +133,6 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
 
   if (!settings->showTypeColumn()) {
     kontoTree->hideColumn(1);
-    //kontoTree->setColumnWidthMode(1,QListView::Manual);
-    //kontoTree->header()->setResizeEnabled(false, 1);
   }
 
   toolBar   = new QToolBar("Main ToolBar", this);
