@@ -144,8 +144,3 @@ bool KontoDatenInfoDatabase::readInto2(AbteilungsListe *abtList, bool comments_o
 bool KontoDatenInfoDatabase::readDefaultCommentsInto(AbteilungsListe *abtList) {
   return readInto2(abtList, true);
 }
-
-bool KontoDatenInfoDatabase::checkIn(AbteilungsListe* abtlist) {
-  QMessageBox::critical(NULL, "sctime", QObject::tr("Kann nicht einchecken, da nicht implementiert"));
-  return false;
-}

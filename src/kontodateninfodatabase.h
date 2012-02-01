@@ -40,7 +40,6 @@ signals:
      KontoDatenInfoDatabase(DBConnector* dbconnector);
     virtual bool readInto(AbteilungsListe * abtlist);
     bool readInto2(AbteilungsListe *abtList, bool comments_only);
-    virtual bool checkIn(AbteilungsListe* abtlist);
     bool readDefaultCommentsInto (AbteilungsListe * abtList);
   private:
     DBConnector* m_dbconnector;

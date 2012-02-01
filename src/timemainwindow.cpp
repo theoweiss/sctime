@@ -18,8 +18,6 @@
 
 */
 
-#define NO_CHECKIN_ACTION
-
 #include "timemainwindow.h"
 
 #include <QTextCodec>
@@ -194,12 +192,6 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   resetAction->setStatusTip(tr("Beim gewählten Unterkonto die abzurechnenden auf die geleisteten Stunden setzen"));
   connect(resetAction, SIGNAL(triggered()), this, SLOT(resetDiff()));
 
-#ifndef NO_CHECKIN_ACTION
-  checkInAction = new QAction(tr("&Tag einchecken"), this);
-  checkInAction->setShortcut(tr("Aktuellen Tag einchecken"));
-  connect(checkInAction, SIGNAL(triggered()), this, SLOT(checkIn()));
-#endif
-
   inPersKontAction = new QAction( QIcon(":/hi22_action_attach"), tr("In persönliche &Konten"), this);
   inPersKontAction->setShortcut(Qt::CTRL+Qt::Key_K);
   inPersKontAction->setCheckable(true);
@@ -326,9 +318,6 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   kontomenu->addAction(quitAction);
   zeitmenu->addAction(changeDateAction);
   zeitmenu->addAction(resetAction);
-#ifndef NO_CHECKIN_ACTION
-  zeitmenu->addAction(checkInAction);
-#endif
   settingsmenu->addAction(defaultCommentAction);
   settingsmenu->addAction(preferenceAction);
   #ifndef NO_TEXTEDIT
@@ -1030,36 +1019,6 @@ void TimeMainWindow::flagsChanged(const QString& abt, const QString& ko, const Q
   }
 
   updateCaption();
-}
-
-void TimeMainWindow::checkIn()
-{
-  if (abtList->getDatum()>=QDate::currentDate()) {
-    QMessageBox::critical(0,"Fehler", tr("Heutiges Datum kann nicht über die GUI eingecheckt werden.\nZeiten nicht eingecheckt!"),
-                       QMessageBox::Ok, QMessageBox::Ok);
-    return;
-  }
-  if (abtList->checkInState()) {
-    QMessageBox::critical(0,"Fehler", tr("Ausgewähltes Datum ist bereits eingecheckt.\nZeiten nicht eingecheckt!"),
-                       QMessageBox::Ok, QMessageBox::Ok);
-    return;
-  }
-  settings->writeSettings(abtList);
-  settings->writeShellSkript(abtList);
-
-  // do checkin
-  if (!abtList->checkIn()) {
-    QMessageBox::critical(0,"Fehler","Fehler beim einchecken.\nZeiten nicht eingecheckt!",
-                       QMessageBox::Ok, QMessageBox::Ok);
-    return;
-  } else {
-    // move zeit* files
-    abtList->setCheckInState(true);
-    settings->moveToCheckedIn(abtList);
-  };
-  kontoTree->load(abtList);
-  kontoTree->closeFlaggedPersoenlicheItems();
-  kontoTree->showAktivesProjekt();
 }
 
 void TimeMainWindow::showContextMenu(const QPoint& pos)

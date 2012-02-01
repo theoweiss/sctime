@@ -825,21 +825,9 @@ void AbteilungsListe::clearDefaultComments()
      zeitDifferenz = diff;
   }
 
-bool AbteilungsListe::checkIn()
-{
-  setCheckInState(kontoDatenInfo->checkIn(this));
-  return checkInState();
-}
+  bool AbteilungsListe::checkInState(){  return checkedIn; }
 
-bool AbteilungsListe::checkInState()
-{
-  return checkedIn;
-}
-
-void AbteilungsListe::setCheckInState(bool state)
-{
-  checkedIn = state;
-}
+  void AbteilungsListe::setCheckInState(bool state) {checkedIn = state;}
 
 void AbteilungsListe::setBgColor(QColor bgColor, const QString& abteilung,
                                const QString& konto, const QString& unterkonto)

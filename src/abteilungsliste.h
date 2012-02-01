@@ -158,8 +158,6 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     void getUnterKontoZeiten(const QString& abteilung, const QString& konto,
                                          const QString& unterkonto, int& sek, int& sekabzur);
 
-    bool checkIn();
-
     bool checkInState();
 
     void setCheckInState(bool state);

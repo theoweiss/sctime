@@ -67,7 +67,6 @@ class TimeMainWindow: public QMainWindow
     void updateCaption();
     void save();
     void resetDiff();
-    void checkIn();
     void aktivesKontoPruefen();
 
     void inPersoenlicheKonten(bool hinzufuegen);
