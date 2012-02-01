@@ -11,7 +11,7 @@ patchqmake="$mydir"/patchqmake
 # patch qt library paths in binary itself (not known to exist, but might)
 "$patchqmake" "$sctime" /dev/null
 
-otool -L "$sctime" | grep "/Qt" | sed "s, (compatibility .*$,," | \
+otool -L "$sctime" | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
 	while read lib ; do
 
 	libbase=`echo "$lib" | sed "s,^.*/lib/,,"`
