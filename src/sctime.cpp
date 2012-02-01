@@ -33,10 +33,10 @@
 #include <QTranslator>
 #include <QSocketNotifier>
 
-#ifdef WIN32
 #include "kontodateninfodatabase.h"
 #include "bereitschaftsdateninfodatabase.h"
 #include "DBConnector.h"
+#ifdef WIN32
 static void fatal(const QString& title, const QString& body);
 
 #else
@@ -173,7 +173,7 @@ int main( int argc, char **argv ) {
   KontoDatenInfo* zk;
   BereitschaftsDatenInfo* bereitschaftsdatenReader;
 
-#ifdef WIN32
+#if defined(WIN32) || defined(Q_OS_MAC)
     DBConnector  dbconnector;
     zk = zeitkontenfile.isEmpty()
         ? (KontoDatenInfo*) new KontoDatenInfoDatabase(&dbconnector) 

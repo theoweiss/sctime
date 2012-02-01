@@ -1,6 +1,6 @@
 TEMPLATE = app
 CONFIG += warn_on qt uic
-QT += xml gui core network
+QT += xml gui core network sql
 TARGET = sctime
 SOURCES += abteilungsliste.cpp \
            datedialog.cpp \
@@ -24,7 +24,10 @@ SOURCES += abteilungsliste.cpp \
            bereitschaftsview.cpp \
            bereitschaftsmodel.cpp \
            lock.cpp \
-           colorchooser.cpp
+           colorchooser.cpp \
+           kontodateninfodatabase.cpp \
+	   bereitschaftsdateninfodatabase.cpp \
+	   DBConnector.cpp
 HEADERS += abteilungsliste.h \
            lock.h \
            kontoliste.h \
@@ -56,7 +59,10 @@ HEADERS += abteilungsliste.h \
            bereitschaftsliste.h \
            bereitschaftsview.h \
            bereitschaftsmodel.h \
-           colorchooser.h
+           colorchooser.h \
+           kontodateninfodatabase.h \
+           bereitschaftsdateninfodatabase.h \
+           DBConnector.h
 RESOURCES= ../pics/sctimeImages.qrc
 FORMS += datedialogbase.ui \
          preferencedialogbase.ui \
@@ -73,12 +79,9 @@ linux-g++{
   LIBS += -ldl
 }
 win32{
-   QT += sql
   # CONFIG -=debug # Ich haette gerne, dass er unter Windows _nur_ Release baut.
   CONFIG += embed_manifest_exe release
   QMAKE_CXXFLAGS += -EHsc # C++-Ausnahmen
-  SOURCES += kontodateninfodatabase.cpp bereitschaftsdateninfodatabase.cpp DBConnector.cpp
-  HEADERS += kontodateninfodatabase.h bereitschaftsdateninfodatabase.h DBConnector.h
   RC_FILE += sctime.rc
   LIBS += ws2_32.lib
   DEFINES += _CRT_SECURE_NO_WARNINGS
