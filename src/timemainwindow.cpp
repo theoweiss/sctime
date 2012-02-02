@@ -1002,9 +1002,9 @@ void TimeMainWindow::changeShortCutSettings(QTreeWidgetItem * item)
     emit aktivierbarerEintragSelected(false);
     eintragRemoveAction->setEnabled(false);
   }
-  bool custom_color_is_allowed = (depth>=1)&&(depth<=3);
-  bgColorChooseAction->setEnabled(custom_color_is_allowed);
-  bgColorRemoveAction->setEnabled(custom_color_is_allowed);
+  bool customColorIsAllowed = (depth>=1)&&(depth<=3);
+  bgColorChooseAction->setEnabled(customColorIsAllowed);
+  bgColorRemoveAction->setEnabled(customColorIsAllowed);
   jumpAction->setEnabled((top!=ALLE_KONTEN_STRING)&&(depth>=1));
   inPersoenlicheKontenAllowed=true; // Wieder enablen.
 }
