@@ -1335,7 +1335,7 @@ void TimeMainWindow::refreshAfterColorChange(QString& abt, QString& ko, QString&
 			kontoTree->refreshAllItemsInKonto(abt,ko);
 		}
 	} else {
-		kontoTree->load(abtList);
+		kontoTree->refreshAllItemsInDepartment(abt);
 	}
 }
 

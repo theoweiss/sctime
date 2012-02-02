@@ -92,6 +92,7 @@ class KontoTreeView: public QTreeWidget
     virtual void refreshItem(const QString& abt, const QString& ko,const QString& uko, int idx);
     void refreshAllItemsInUnterkonto(const QString& abt, const QString& ko,const QString& uko);
     void refreshAllItemsInKonto(const QString& abt, const QString& ko);
+    void refreshAllItemsInDepartment(const QString&);
 
   protected:
     virtual bool eventFilter ( QObject* obj, QEvent * e );

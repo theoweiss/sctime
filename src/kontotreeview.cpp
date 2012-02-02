@@ -974,6 +974,19 @@ void KontoTreeView::refreshAllItemsInKonto(const QString& abt, const QString& ko
   }
 }
 
+void KontoTreeView::refreshAllItemsInDepartment(const QString& department)
+{
+	KontoListe* accountList;
+
+	if (!abtList->findDepartment(accountList, department)) return;
+
+	for (KontoListe::iterator subAccountPos = accountList->begin();
+			subAccountPos != accountList->end();
+			++subAccountPos) {
+		refreshAllItemsInKonto(department, subAccountPos->first);
+	}
+}
+
 Qt::MouseButton KontoTreeView::getCurrentButton()
 {
   return currentButton;

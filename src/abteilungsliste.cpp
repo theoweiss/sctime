@@ -119,6 +119,17 @@ bool AbteilungsListe::findEintrag(EintragsListe::iterator& itEt, EintragsListe* 
 }
 
 
+/* find a department by name and return the associated account list */
+bool AbteilungsListe::findDepartment(KontoListe* &accountList, const QString&
+		department) {
+	iterator posDept = find(department);
+	if (posDept == end())
+		return false;
+
+	accountList = &(posDept->second);
+	return true;
+}
+
 /**
  * Sucht das uebergebene Konto, und liefert die Liste in der es sich befindet,
  * in kontoliste und den Iterator darauf in itKo zurueck.
