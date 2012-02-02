@@ -156,6 +156,15 @@ int main( int argc, char **argv ) {
     if (!directory.cd(configdirstring)) fatal("sctime: Konfigurationsproblem", QString("Kann nicht auf %1 zugreifen.").arg(configdirstring));
   }
   configDir=directory.path();
+  // Ich lege eine lokale Sperre an, die vom Betriebssystem zuverlässig auch
+  // nach einem Absturz aufgegeben wird. Außerdem lege ich noch ein globales
+  // Lock mit dem Rechnernamen an.
+  // Gründe:
+  // - Es gibt keine globalen Sperren (für SMB und NFS hinweg sichtbar), die
+  //   nach einem Absturz automatisch entfernt werden.
+  // - Das Programm kann ausgeben, auf welchem Rechner sctime noch läuft.
+  // - Nach einem Absturz kann ich auf dem gleichen Rechner neu starten,
+  //   ohne de Benutzer mit Warnungen wegen alter Sperren zu belästigen.
   LockLocal local("sctime", true);
   Lock *global = new Lockfile(configDir + "/LOCK", true);
   local.setNext(global);
