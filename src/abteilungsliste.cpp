@@ -136,12 +136,8 @@ bool AbteilungsListe::findDepartment(KontoListe* &accountList, const QString&
  */
 bool AbteilungsListe::findKonto(KontoListe::iterator& itKo, KontoListe* &kontoliste, const QString& abteilung, const QString& konto)
 {
-  iterator posAbt=find(abteilung);
-
-  if (posAbt==end())
+  if (!findDepartment(kontoliste, abteilung))
     return false;
-
-  kontoliste=&(posAbt->second);
 
   itKo=kontoliste->find(konto);
 
