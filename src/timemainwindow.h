@@ -38,6 +38,7 @@ class StatusBar;
 class UnterKontoDialog;
 class QTextBrowser;
 
+
 #include <defaultcommentreader.h>
 
 
@@ -160,6 +161,7 @@ class TimeMainWindow: public QMainWindow
 
   private slots:
     void quit();
+    void logDialog();
 
   protected:
     virtual void moveEvent( QMoveEvent *event);
@@ -199,6 +201,4 @@ class TimeMainWindow: public QMainWindow
     // Event auzuloesen. Wenn inPersoenlicheKontenAllowed=false, tut inPersoenlicheKonten(bool) gar nichts.
     bool inPersoenlicheKontenAllowed;
 };
-
-
 #endif

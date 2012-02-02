@@ -42,7 +42,7 @@
 #include <QDebug>
 #include <QToolBar>
 #include <QColorDialog>
-
+#include <QtMsgHandler>
 #include "globals.h"
 #include "time.h"
 #include "preferencedialog.h"
@@ -75,10 +75,16 @@
 
 QTreeWidget* TimeMainWindow::getKontoTree() { return kontoTree; };
 
+static QString logText("-- Start --");
+static void printMessage(QtMsgType type, const char *msg) {
+  logText.append(type).append(": ").append(msg).append("\n");
+}
+
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
 TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* bereitschaftsdatenReader):QMainWindow()
 {
   setObjectName("sctime");
+  qInstallMsgHandler(printMessage);
   connect(zk, SIGNAL(kontoListeGeladen()), this, SLOT(aktivesKontoPruefen()), Qt::QueuedConnection);
   std::vector<QString> xmlfilelist;
   QDate heute;
@@ -117,7 +123,6 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
 
   statusBar = new StatusBar(this);
   setStatusBar(statusBar);
-
   std::vector<int> columnwidthlist;
 
   settings->getColumnWidthList(columnwidthlist);
@@ -222,13 +227,16 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
 #ifndef NO_TEXTEDIT
   QAction* helpAction = new QAction(tr("&Anleitung..."), this);
   helpAction->setShortcut(Qt::Key_F1);
-  connect(helpAction, SIGNAL(triggered()), this, SLOT(callHelpDialog()));
+  connect(helpAction, SIGNAL(triggered()), this, SLOT(callHelpDialog()));  
 #endif
 
   QAction* aboutAction = new QAction(tr("&Über sctime..."), this);
   aboutAction->setStatusTip(tr("Über sctime..."));
   aboutAction->setMenuRole(QAction::AboutRole);
   connect(aboutAction, SIGNAL(triggered()), this, SLOT(callAboutBox()));
+
+  QAction* logAction = new QAction(tr("&Meldungen..."), this);
+  connect(logAction, SIGNAL(triggered()), this, SLOT(logDialog()));
 
   editUnterKontoAction = new QAction(QIcon(":/hi22_action_edit" ), "&Editieren...", this);
   editUnterKontoAction->setStatusTip(tr("Unterkonto editieren"));
@@ -333,6 +341,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   hilfemenu->addAction(helpAction);
   #endif
   hilfemenu->addAction(aboutAction);
+  hilfemenu->addAction(logAction);
 
   addToolBar(toolBar);
 
@@ -1248,6 +1257,13 @@ void TimeMainWindow::callAboutBox() {
         "</table><p>Dieses Programm ist unter der GNU Public License v2 lizenziert.</p>").arg(version, QT_VERSION_STR));
   dialog->resize(400, 300);
   dialog->show();
+}
+
+void TimeMainWindow::logDialog() {
+  QDialog *dialog;
+  QTextBrowser *browser;
+  infoDialog(dialog, browser);
+  browser->setPlainText(logText);
 }
 
 void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item) {
