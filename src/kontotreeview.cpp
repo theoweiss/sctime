@@ -967,10 +967,7 @@ void KontoTreeView::refreshAllItemsInKonto(const QString& abt, const QString& ko
   if (!abtList->findKonto(itKo,kontoliste,abt,ko)) return;
   UnterKontoListe* unterkontoliste=&(itKo->second);
   for (UnterKontoListe::iterator ukontPos=unterkontoliste->begin(); ukontPos!=unterkontoliste->end(); ++ukontPos) {
-    EintragsListe* eintragsliste=&(ukontPos->second);
-    for (EintragsListe::iterator etPos=eintragsliste->begin(); etPos!=eintragsliste->end(); ++etPos) {
-      refreshItem(abt,ko,ukontPos->first,etPos->first);
-    }
+    refreshAllItemsInUnterkonto(abt,ko,ukontPos->first);
   }
 }
 
