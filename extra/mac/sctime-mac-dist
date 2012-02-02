@@ -41,7 +41,7 @@ otool -L "$sctime" | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
 	# change install name of this library
 	install_name_tool -id @executable_path/../Frameworks/"$libbase" "$privatelib"
 
-	otool -L $privatelib | grep "/Qt" | sed "s, (compatibility .*$,," | \
+	otool -L $privatelib | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
 		while read sublib ; do
 
 		sublibbase=`echo "$sublib" | sed "s,^.*/lib/,,"`
