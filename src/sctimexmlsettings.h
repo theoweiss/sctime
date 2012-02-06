@@ -73,8 +73,6 @@ class SCTimeXMLSettings
 
     void setFastTimeIncrement(int sekunden) { fastTimeInc=sekunden; };
 
-    bool moveToCheckedIn(AbteilungsListe* abtList);
-
     void setMainWindowGeometry(const QPoint& pos, const QSize& size)
     {
         mainwindowPosition=pos;

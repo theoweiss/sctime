@@ -4,7 +4,7 @@
         <meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=UTF-8">
 </head>
 <body>
-<h1><img src="scLogo_15Farben"/> Kurzanleitung für sctime</h1>
+<h1><img src="scLogo_15Farben"/>sctime</h1>
 <h2>Bedienung</h2>
 <h3>Kontobaum</h3>
 Unter <em>Alle Konten</em> werden in einer Struktur aus Abteilung, Konto und Unterkonto
@@ -72,17 +72,29 @@ Diese Vorschläge beziehen sich auf jeweils ein Unterkonto.</p>
 <p>
 
 <h2><a name="Offline_Betrieb"></a>Offline-Betrieb </h2>
+
+<p><em>Diese Anleitung ist sehr alt. Die darin beschriebene Methode sollte
+    vereinfach werden. Siehe Abschnitt &bdquo;Kontenliste
+    laden&rdquo;.</em></p>
+
 Um sctime auch ohne Verbindung zur Zeitdatenbank betreiben zu können, gibt es zwei Optionen:
-<code>--configdir DIRNAME</code> erlaubt es das Konfigurationsdirectory umzusetzen (Default ist h:\.sctime unter Windows und ~/.sctime unter *nix). Nützlich, wenn das Homedirectory auf einem Netzlaufwerk liegt.</p>
+<code>--configdir DIRNAME</code> erlaubt es das Konfigurationsverzeichnis umzusetzen (Default ist h:\.sctime unter Windows und ~/.sctime unter *nix). Nützlich, wenn das Homedirectory auf einem Netzlaufwerk liegt.</p>
 
 <p>  <code>--zeitkontenfile FILENAME</code>: Kontendaten aus der einer Datei lesen.-
   Eine solche Datei kann man so erzeugen:<pre>
-    zeitkonten --mikrokonten --separator='|' &gt; zeitkontenfile.txt</pre></p>
+    zeitkonten --mikrokonten --separator='|' &gt; zeitkonten.txt</pre></p>
 
 <p> <code>--bereitschaftsfile FILENAME</code>: Bereitschaftskategorien aus der Datei lesen.
   Diese Datei kann man so erzeugen:<pre>
     zeitbereitls --separator='|' &gt; FILENAME</pre></p>
+
+
 <h2><a name="Offline_Betrieb_portable_Edition"></a> Offline-Betrieb, portable Edition </h2>
+
+<p><em>Diese Anleitung ist sehr alt. Die darin beschriebene Methode sollte
+    vereinfach werden. Siehe Abschnitt &bdquo;Kontenliste
+    laden&rdquo;.</em></p>
+
 sctime kann ohne Probleme von einem USB-Stick gestartet werden, jedoch ändert sich beim Arbeiten an verschiedenen Rechnern immer wieder der Laufwerksbuchstabe des USB-Sticks. Das hat zur Konsequenz das sich der Programmaufruf ändert und, da es keinen Kommandozeilenschalter für die Defaultkommentare gibt, diese ohne Workaround nicht genutzt werden können. Folgende Konfiguration ist bei uns im Einsatz und hat sich bewährt:
 <p />
 Auf dem USB-Stick getrennte Verzeichnisse für Programme und Konfiguration anlegen: hier %pdrive%\Programme und %pdrive%\Anwendungsdaten.
@@ -125,13 +137,22 @@ Rechnernamen enthält, dann geht das Programm davon aus, dass eine weitere
 Instanz auf einem anderen Rechner läuft und beendet sich.
 
 <h3>Kontenliste laden</h3>
-Unter UNIX benötigt sctime die Programme <code>zeitkonten</code>
-und <code>zeitbereitls</code>, um die
-Kontenliste und die verfügbaren Arten von Bereitschaftszeiten zu laden. Unter
-
-Unter Windows hingegen versucht das Programm, die ODBC-Verbindung
-<code>postgres_zeit</code> zu verwenden. Wenn das nicht klappt, versucht es,
-eine direkte Verbindung zur Zeitdatenbank aufzubauen.
-
+<p>Das Programm lädt die Kontenliste und die Liste der Bereitschaftsarten mit
+einer der folgenden Methoden:
+<table>
+  <tr><td>Kommandozeile</td><td>die Datei oder Dateien, die beim Aufruf angegeben wurde</td></tr>
+  <tr><td>QPSQL</td><td>Datenbank-Treiber von Qt für Postgres</td></tr>
+  <tr><td>QODBC</td><td>Datenbank-Treiber von Qt; verwendet die ODBC-Datenquelle <tt>postgres_zeit</tt></td></tr>
+  <tr><td>command</td><td>verwendet die Kommandos <tt>zeitkonten</tt> und <tt>zeitbereitls</tt></td></tr>
+  <tr><td>file</td>
+    <td>liest die Dateien <tt>zeitkonten.txt</tt> und <tt>zeitbereitls.txt</tt>
+      aus dem Konfigurationsverzeichnis (üblicherweise ist
+      das <tt>.sctime</tt>)</td></tr>
+</table>
 </body>
+</p>
+<p>Die Methoden werden in dieser Reihenfolge angewendet, bis die erste
+erfolgreich ist. Fehlende Module oder fehlende Dateien sind die Ursachen für
+  die meisten Fehler. Die zuhörigen Meldungen sind unter dem
+  Menüpunkt <tt>Meldungen</tt>einzusehen.</p>
 </html>

@@ -30,6 +30,7 @@ class QColor;
 #include "kontoliste.h"
 #include "unterkontoliste.h"
 #include "eintragsliste.h"
+#include "datasource.h"
 
 #define IS_DISABLED 8
 #define IS_IN_DATABASE 4
@@ -153,7 +154,7 @@ class AbteilungsListe: public std::map<QString,KontoListe>
 
     void clearDefaultComments();
 
-    void reload();
+    void reload(const DSResult &data);
 
     bool kontoDatenInfoConnected();
 

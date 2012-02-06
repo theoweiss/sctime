@@ -43,20 +43,13 @@
 #include <QToolBar>
 #include <QColorDialog>
 #include <QtMsgHandler>
+#include <QTextBrowser>
 #include "globals.h"
 #include "time.h"
 #include "preferencedialog.h"
-#ifndef HAS_NO_DATETIMEEDIT
 #include "datedialog.h"
-#endif
-#include <QTextBrowser>
 #include "findkontodialog.h"
 #include "defaulttagreader.h"
-#ifndef WIN32
-#include "kontodateninfozeit.h"
-#else
-#include "kontodateninfodatabase.h"
-#endif
 #include "statusbar.h"
 #include "kontotreeitem.h"
 #include "bereitschaftsliste.h"
@@ -64,28 +57,33 @@
 #include "globals.h"
 #include "timeedit.h"
 #include "kontotreeview.h"
-#include "bereitschaftsdateninfo.h"
 #include "unterkontodialog.h"
 #include "kontotreeview.h"
 #include "defaultcommentreader.h"
 #include "abteilungsliste.h"
 #include "sctimexmlsettings.h"
 #include "lock.h"
+#include "datasource.h"
+#include "setupdsm.h"
 
 
-QTreeWidget* TimeMainWindow::getKontoTree() { return kontoTree; };
+QTreeWidget* TimeMainWindow::getKontoTree() { return kontoTree; }
 
-static QString logText("-- Start --");
-static void printMessage(QtMsgType type, const char *msg) {
-  logText.append(type).append(": ").append(msg).append("\n");
+static QString logTextLastLine("-- Start --");
+static QString logText(logTextLastLine + "\n");
+void trace(const QString &msg) {
+  logError(msg);
+}
+
+void logError(const QString &msg) {
+  logText.append(msg).append("\n");
+  logTextLastLine = msg;
 }
 
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
-TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* bereitschaftsdatenReader):QMainWindow()
+TimeMainWindow::TimeMainWindow():QMainWindow()
 {
   setObjectName("sctime");
-  qInstallMsgHandler(printMessage);
-  connect(zk, SIGNAL(kontoListeGeladen()), this, SLOT(aktivesKontoPruefen()), Qt::QueuedConnection);
   std::vector<QString> xmlfilelist;
   QDate heute;
   abtListToday=new AbteilungsListe(heute.currentDate(), zk);
@@ -108,9 +106,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   }
 
   defaultCommentReader.read(abtList,xmlfilelist);
-
-  bereitschaftsdatenReader->readInto(BereitschaftsListe::getInstance());
-
+  bereitDSM->start();
   DefaultTagReader defaulttagreader;
   defaulttagreader.read(&defaultTags);
 
@@ -221,15 +217,10 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   preferenceAction->setMenuRole(QAction::PreferencesRole);
   connect(preferenceAction, SIGNAL(triggered()), this, SLOT(callPreferenceDialog()));
 
-  QAction* defaultCommentAction = new QAction(tr("&Standardkommentare/Mikrokonten neu einlesen"), this);
-  connect(defaultCommentAction, SIGNAL(triggered()), this, SLOT(reloadDefaultComments()));
-
-#ifndef NO_TEXTEDIT
   QAction* helpAction = new QAction(tr("&Anleitung..."), this);
   helpAction->setShortcut(Qt::Key_F1);
-  connect(helpAction, SIGNAL(triggered()), this, SLOT(callHelpDialog()));  
-#endif
 
+  connect(helpAction, SIGNAL(triggered()), this, SLOT(callHelpDialog()));  
   QAction* aboutAction = new QAction(tr("&Über sctime..."), this);
   aboutAction->setStatusTip(tr("Über sctime..."));
   aboutAction->setMenuRole(QAction::AboutRole);
@@ -329,7 +320,6 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   kontomenu->addAction(findKontoAction);
   kontomenu->addAction(jumpAction);
   kontomenu->addAction(refreshAction);
-  kontomenu->addAction(defaultCommentAction);
   kontomenu->addSeparator();
   kontomenu->addAction(bgColorChooseAction);
   kontomenu->addAction(bgColorRemoveAction);
@@ -363,6 +353,14 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   kontoTree->closeFlaggedPersoenlicheItems();
   showAdditionalButtons(settings->powerUserView());
   QTimer::singleShot(10, this, SLOT(refreshKontoListe()));
+  connect(kontenDSM, SIGNAL(finished(DSResult)), this, SLOT(commitKontenliste(DSResult)));
+  connect(bereitDSM, SIGNAL(finished(DSResult)), this, SLOT(commitBereit(DSResult)));
+  connect(kontenDSM, SIGNAL(aborted()), this, SLOT(displayLastLogEntry()));
+  connect(bereitDSM, SIGNAL(aborted()), this, SLOT(displayLastLogEntry()));
+}
+
+void TimeMainWindow::displayLastLogEntry(){
+  statusBar->showMessage(logTextLastLine);
 }
 
 void TimeMainWindow::aktivesKontoPruefen(){
@@ -475,8 +473,7 @@ void TimeMainWindow::minutenUhr()
       abtListToday->minuteVergangen(!pausedAbzur);
     else
     {
-      QFile logFile(configDir+"/sctime.log");
-
+      QFile logFile(configDir + "/sctime.log");
       if (logFile.open(QIODevice::Append)) {
          QTextStream stream(&logFile);
          stream<<"Zeitinkonsistenz am "<<currenttime.toString()<<" Dauer: "<<QString::number(delta/60-1)<<" Minuten.\n";
@@ -858,67 +855,30 @@ void TimeMainWindow::changeDate(const QDate& datum)
 }
 
 void TimeMainWindow::refreshKontoListe() {
-  qApp->setOverrideCursor(Qt::WaitCursor);
   statusBar->showMessage(tr("Kontenliste laden..."));
   qApp->processEvents();
+  kontenDSM->start();
+}
+
+void TimeMainWindow::commitKontenliste(DSResult data) {
   kontoTree->flagClosedPersoenlicheItems();
   std::vector<int> columnwidthlist;
   kontoTree->getColumnWidthList(columnwidthlist);
   settings->setColumnWidthList(columnwidthlist);
   settings->writeSettings(abtList); // die Settings ueberstehen das Reload nicht
   int diff = abtList->getZeitDifferenz();
-  abtList->reload();
+  abtList->reload(data);
   settings->readSettings(abtList);
   if (abtList!=abtListToday) {
     settings->writeSettings(abtListToday); // die Settings ueberstehen das Reload nicht
-    abtListToday->reload();
+    abtListToday->reload(data);
     settings->readSettings(abtListToday);
   }
   kontoTree->load(abtList);
   kontoTree->closeFlaggedPersoenlicheItems();
   abtList->setZeitDifferenz(diff);
   statusBar->showMessage(tr("Kontenliste geladen"), 2000);
-  qApp->restoreOverrideCursor();
-}
-
-void TimeMainWindow::reloadDefaultComments() {
-  qApp->setOverrideCursor(Qt::WaitCursor);
-  std::vector<QString> xmlfilelist;
-  settings->getDefaultCommentFiles(xmlfilelist);
-  if (abtList!=abtListToday) {
-    abtListToday->clearDefaultComments();
-    defaultCommentReader.read(abtListToday,xmlfilelist);
-  }
-  abtList->clearDefaultComments();
-  bool rc = defaultCommentReader.read(abtList,xmlfilelist);
-  qApp->restoreOverrideCursor();
-  if( zk != NULL )
-  {
-    #ifdef WIN32
-    KontoDatenInfoDatabase* kdib = (KontoDatenInfoDatabase*)zk;
-    if( kdib != NULL )
-    {
-      if(!kdib->readDefaultCommentsInto( abtList ) && !rc)
-      {
-        QString msg = "Defaultkommentare konnten nicht aus der Datenbank oder der Kommentardatei geladen werden.";
-        QMessageBox::warning(this,"Warnung",   msg,
-          QMessageBox::Ok, QMessageBox::Ok);
-      }
-    }
-    #endif
-    #ifndef WIN32
-    KontoDatenInfoZeit* kdiz = (KontoDatenInfoZeit*)zk;
-    if( kdiz != NULL )
-    {
-      if(!kdiz->readDefaultComments(abtList))
-      {
-        QMessageBox::warning(this,"Warnung",
-          "Die Default Kommentare konnten nicht neu gelesen werden.",
-          QMessageBox::Ok, QMessageBox::Ok);
-      }
-    }
-    #endif
-  }
+  aktivesKontoPruefen();
 }
 
 /**
@@ -1406,4 +1366,16 @@ void TimeMainWindow::checkComment(const QString& abt, const QString& ko , const 
 
 void TimeMainWindow::moveEvent(QMoveEvent *event) {
   settings->setMainWindowGeometry(pos(),size());
+}
+
+void TimeMainWindow::commitBereit(DSResult data) {
+  BereitschaftsListe *berListe = BereitschaftsListe::getInstance();
+  QStringList ql;
+  foreach (ql, data){
+    if (ql.isEmpty()) continue;
+    QString name = ql[0].simplified();
+    QString beschreibung = ql[1].simplified();
+    if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden. //FIXME: notwendig?
+    berListe->insertEintrag(name, beschreibung);
+  }
 }

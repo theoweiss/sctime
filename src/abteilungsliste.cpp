@@ -31,6 +31,7 @@
 #include "kontodateninfo.h"
 #include "globals.h"
 #include "unterkontoeintrag.h"
+#include "datasource.h"
 
 
 /** Erzeugt eine Abteilungsliste fuer das angegebene Datum.
@@ -812,14 +813,42 @@ void AbteilungsListe::clearDefaultComments()
   }
 }
 
+static void addOnce(QString& list, const QString& word) {
+  if (word.isEmpty()) return;
+  if (list.isEmpty())
+    list = word;
+  else if (!(word == list || list.startsWith(word + " ") || list.contains(" " + word + " ") || list.endsWith(" " + word)))
+    list.append(" ").append(word);
+}
+
 /**
   * Laedt die Liste der Abteilungen neu ein
   */
 
-  void AbteilungsListe::reload()
-  {
-    kontoDatenInfoSuccess = kontoDatenInfo->readInto(this);
+void AbteilungsListe::reload(const DSResult &data) {
+  QStringList ql;
+  foreach (ql, data) {
+    QString abt = ql[0].simplified(), konto = ql[2].simplified(), unterkonto = ql[7].simplified();
+    QString typ = ql[10].simplified(), beschreibung = ql[11].simplified();
+    QString verantwortlicher = ql[3].simplified();
+    if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden.
+    addOnce(verantwortlicher, ql[4]);
+    addOnce(verantwortlicher, ql[8]);
+    addOnce(verantwortlicher, ql[9]);
+    insertEintrag(abt,konto,unterkonto);
+    setDescription(abt,konto,unterkonto,DescData(beschreibung ,verantwortlicher, typ));
+    setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
+    // Do not simplify comment to preserve intentional whitespace.
+    QString commentstr = ql[12];
+    if (!commentstr.isEmpty()) {
+      if (commentstr.endsWith(":")) commentstr.append(" ");
+      UnterKontoListe::iterator itUk;
+      UnterKontoListe* ukl;
+      if (findUnterKonto(itUk,ukl,abt,konto,unterkonto))
+        itUk->second.addDefaultComment(commentstr);
+    }
   }
+}
 
   bool AbteilungsListe::kontoDatenInfoConnected()
   {

@@ -14,19 +14,16 @@ SOURCES += abteilungsliste.cpp \
            defaultcommentreader.cpp \
            qdatepicker.cpp \
            defaulttagreader.cpp \
-           kontodateninfozeit.cpp \
            kontotreeitem.cpp \
            GetOpt.cpp \
            descdata.cpp \
            smallfontdialog.cpp \
-           bereitschaftsdateninfozeit.cpp \
            bereitschaftsliste.cpp \
            bereitschaftsview.cpp \
            bereitschaftsmodel.cpp \
            lock.cpp \
-           kontodateninfodatabase.cpp \
-	   bereitschaftsdateninfodatabase.cpp \
-	   DBConnector.cpp
+    datasource.cpp \
+    setupdsm.cpp
 HEADERS += abteilungsliste.h \
            lock.h \
            kontoliste.h \
@@ -41,7 +38,6 @@ HEADERS += abteilungsliste.h \
            timemainwindow.h \
            globals.h \
            unterkontodialog.h \
-           kontodateninfo.h \
            unterkontoeintrag.h \
            sctimexmlsettings.h \
            unterkontoliste.h \
@@ -49,18 +45,14 @@ HEADERS += abteilungsliste.h \
            defaultcommentreader.h \
            qdatepicker.h \
            defaulttagreader.h \
-           kontodateninfozeit.h \
            GetOpt.h \
            descdata.h \
            smallfontdialog.h \
-           bereitschaftsdateninfo.h \
-           bereitschaftsdateninfozeit.h \
            bereitschaftsliste.h \
            bereitschaftsview.h \
            bereitschaftsmodel.h \
-           kontodateninfodatabase.h \
-           bereitschaftsdateninfodatabase.h \
-           DBConnector.h
+    datasource.h \
+    setupdsm.h
 RESOURCES= ../pics/sctimeImages.qrc
 FORMS += datedialogbase.ui \
          preferencedialogbase.ui

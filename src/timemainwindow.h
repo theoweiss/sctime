@@ -38,8 +38,8 @@ class StatusBar;
 class UnterKontoDialog;
 class QTextBrowser;
 
-
 #include <defaultcommentreader.h>
+#include "datasource.h"
 
 
 /** Diese Klasse implementiert das Hauptfenster des Programms,
@@ -50,7 +50,7 @@ class TimeMainWindow: public QMainWindow
   Q_OBJECT
 
   public:
-    TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* bereitschaftsdatenReader);
+    TimeMainWindow();
     QTreeWidget* getKontoTree();
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;
@@ -101,13 +101,14 @@ class TimeMainWindow: public QMainWindow
     void jumpToAlleKonten();
 
     void refreshKontoListe();
-    void reloadDefaultComments();
     void configClickMode(bool singleClickActivation);
     void mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int column );
     void copyNameToClipboard();
     void showContextMenu(const QPoint& pos);
     void showArbeitszeitwarning();
     void checkComment(const QString& abt, const QString& ko , const QString& uko,int idx);
+    void commitKontenliste(DSResult data);
+    void displayLastLogEntry();
 
   signals:        
     /** Wird ausgeloest, falls sich die Gesamtzeit geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden. */
@@ -162,6 +163,7 @@ class TimeMainWindow: public QMainWindow
   private slots:
     void quit();
     void logDialog();
+    void commitBereit(DSResult data);
 
   protected:
     virtual void moveEvent( QMoveEvent *event);

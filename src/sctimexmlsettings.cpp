@@ -121,30 +121,6 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
   shellFile.close();
 }
 
-bool SCTimeXMLSettings::moveToCheckedIn(AbteilungsListe* abtList)
-{
-  QString checkedinstr="/checkedin";
-  QFileInfo qf(configDir+checkedinstr);
-  QDir qd(configDir);
-  if (!qf.exists()) {
-    if (!qd.mkdir(configDir+checkedinstr)) {
-      return false;
-    }
-  }
-  if (!qf.isDir()) {
-    return false;
-  }
-  // erst .sh wegschieben
-  QString filename="zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".sh";
-  if (!qd.rename(configDir+"/"+filename, configDir+checkedinstr+"/"+filename))
-    return false;
-  // dann .xml
-  filename="zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
-  if (!qd.rename(configDir+"/"+filename, configDir+checkedinstr+"/"+filename))
-    return false;
-  return true;
-}
-
 /* returns the used codec for the stream
    may modify the stream and set the codec to a known one.
 */

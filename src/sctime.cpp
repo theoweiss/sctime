@@ -32,14 +32,9 @@
 #include <QString>
 #include <QTranslator>
 #include <QSocketNotifier>
+#include <QSqlDatabase>
 
-#include "kontodateninfodatabase.h"
-#include "bereitschaftsdateninfodatabase.h"
-#include "DBConnector.h"
-#ifdef WIN32
-static void fatal(const QString& title, const QString& body);
-
-#else
+#ifndef WIN32
 #include <assert.h>
 #include <locale.h>
 #include <signal.h>
@@ -49,12 +44,12 @@ static void fatal(const QString& title, const QString& body);
 
 #include "GetOpt.h"
 #include "lock.h"
-#include "kontodateninfozeit.h"
-#include "bereitschaftsdateninfozeit.h"
 #include "timemainwindow.h"
 #include "sctimexmlsettings.h"
 #include "globals.h"
 #include "kontotreeview.h"
+#include "datasource.h"
+#include "setupdsm.h"
 
 
 #ifndef CONFIGSUBDIR 
@@ -69,7 +64,7 @@ static void fatal(const QString& title, const QString& body);
 
 QString configDir;
 QString lockfilePath;
-const QString version("0.71");
+const QString version("0.72");
 QString PERSOENLICHE_KONTEN_STRING;
 QString ALLE_KONTEN_STRING;
 Lock *lock;
@@ -110,6 +105,7 @@ public:
 
   void commitData ( QSessionManager & manager ) {QApplication::commitData(manager); }
 };
+
 
 /** main: hier wird ueberprueft, ob die Applikation ueberhaupt starten soll
  * (Lockfiles,...), und falls ja, wird SCTimeApp initialisiert und
@@ -170,85 +166,14 @@ int main( int argc, char **argv ) {
   local.setNext(global);
   if (!local.acquire()) fatal(QObject::tr("sctime: kann nicht starten"), local.errorString());
   lock = &local;
-  app.processEvents();
-  KontoDatenInfo* zk = NULL;
-  BereitschaftsDatenInfo* bereitschaftsdatenReader = NULL;
 
   SCTimeXMLSettings settings;
   settings.readSettings();
-
   // TODO: Allow to configure and initialise this from settings.
-  QList<QString> accountDataSourcePreference;
-  accountDataSourcePreference << "file";
-  // stay functionally equivalent to the old code
-#if defined(WIN32) || defined(Q_OS_MAC)
-  accountDataSourcePreference << "db";
-#endif
-  accountDataSourcePreference << "command";
-
-  QList<QString> onCallDataSourcePreference(accountDataSourcePreference);
-
-  // FIXME: This one needs to live until after the TimeMainWindow constructor
-  // has finished, doesn't it, because a pointer to it is passed around?
-  DBConnector dbconnector;
-
-  while (!accountDataSourcePreference.isEmpty()) {
-    QString accountDataSource = accountDataSourcePreference.takeFirst();
-
-    // FIXME: There should be a method we can use to ask the data source if it
-    // will be able to perform.
-    if (accountDataSource == "file") {
-      if (!zeitkontenfile.isEmpty()) {
-        zk = new KontoDatenInfoZeit(canonicalPath(zeitkontenfile)); // FIXME: Speicherleck
-        break;
-      }
-    } else if (accountDataSource == "db") {
-      zk = new KontoDatenInfoDatabase(&dbconnector);
-      break;
-    } else if (accountDataSource == "command") {
-      KontoDatenInfoZeit *nzk = new KontoDatenInfoZeit();
-      if (!settings.zeitKontenKommando().isEmpty())
-        nzk->setKommando(settings.zeitKontenKommando());
-      zk = nzk;
-      break;
-    } else {
-      fatal(QObject::tr("Kontodatenquelle"), QObject::tr("Unbekannte Kontodatenquelle")
-        + " " + accountDataSource);
-    }
-  }
-
-  if (zk == NULL) 
-    fatal(QObject::tr("Kontodatenquelle"), QObject::tr("Keine der konfigurierten "
-      "Kontodatenquellen ist funktionstüchtig."));
-
-  while (!onCallDataSourcePreference.isEmpty()) {
-    QString onCallDataSource = onCallDataSourcePreference.takeFirst();
-    if (onCallDataSource == "file") {
-	if (!bereitschaftsfile.isEmpty()) {
-          bereitschaftsdatenReader = new BereitschaftsDatenInfoZeit(canonicalPath(bereitschaftsfile));
-          break;
-	}
-    } else if (onCallDataSource == "db") {
-      bereitschaftsdatenReader = new BereitschaftsDatenInfoDatabase(&dbconnector);
-      break;
-    } else if (onCallDataSource == "command") {
-      bereitschaftsdatenReader = new BereitschaftsDatenInfoZeit(); // FIXME: Speicherlecks
-      // FIXME: not implemented yet
-      //if (!settings.onCallDataCommand().isEmpty())
-      //  nzk->setCommand(settings.onCallDataCommand());
-      break;
-    } else {
-      fatal(QObject::tr("Bereitschaftsdatenquelle"),
-        QObject::tr("Unbekannte Bereitschaftsdatenquelle") + " " +
-        onCallDataSource);
-    }
-  }
-
-  if (zk == NULL) 
-    fatal(QObject::tr("Kontodatenquelle"), QObject::tr("Keine der konfigurierten "
-      "Bereitschaftsdatenquellen ist funktionstüchtig."));
-
-  TimeMainWindow mainWindow(zk, bereitschaftsdatenReader);
+  QList<QString> dataSourceNames;
+  dataSourceNames << "QPSQL" << "QODBC" << "command" << "file";
+  setupDatasources(dataSourceNames, settings, zeitkontenfile, bereitschaftsfile);
+  TimeMainWindow mainWindow;
 #ifndef WIN32
   SignalHandler term(SIGTERM);
   app.connect(&term, SIGNAL(received()), &app, SLOT(closeAllWindows()));
@@ -259,7 +184,6 @@ int main( int argc, char **argv ) {
 #endif  
   mainWindow.show();
   app.processEvents();
-
   app.exec();
   mainWindow.save();
   local.release();

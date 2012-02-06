@@ -57,11 +57,9 @@ DateDialog::~DateDialog()
 void DateDialog::dateChangedSlot(QDate date)
 {
   if ((date.month()!=currentMonth)||(date.year()!=currentYear)) {
-    QDir qd(configDir+"/checkedin");
-    //std::cout << configDir.toStdString() << std::endl;
+    QDir qd(configDir + "/checkedin");
     QStringList dateList;
     dateList << "zeit-" << date.toString("yyyy-MM") << "-*.xml"; //Since Qt4
-    //QStringList files=qd.entryList("zeit-"+date.toString("yyyy-MM")+"-*.xml");
     QStringList files=qd.entryList(dateList);
     for ( QStringList::Iterator it = files.begin(); it != files.end(); ++it ) {
       bool ok;
