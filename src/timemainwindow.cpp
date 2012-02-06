@@ -235,6 +235,9 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   aboutAction->setMenuRole(QAction::AboutRole);
   connect(aboutAction, SIGNAL(triggered()), this, SLOT(callAboutBox()));
 
+  QAction* qtAction = new QAction(tr("Über &Qt..."), this);
+  connect(qtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+
   QAction* logAction = new QAction(tr("&Meldungen..."), this);
   connect(logAction, SIGNAL(triggered()), this, SLOT(logDialog()));
 
@@ -341,6 +344,7 @@ TimeMainWindow::TimeMainWindow(KontoDatenInfo* zk, BereitschaftsDatenInfo* berei
   hilfemenu->addAction(helpAction);
   #endif
   hilfemenu->addAction(aboutAction);
+  hilfemenu->addAction(qtAction);
   hilfemenu->addAction(logAction);
 
   addToolBar(toolBar);
@@ -1249,8 +1253,8 @@ void TimeMainWindow::callAboutBox() {
   browser->setHtml(tr(
         "<h1><img src=':/scLogo_15Farben' />sctime</h1>"
         "<table><tr><td>Version:</td><td>%1</td></tr>"
-        "<tr><td>Qt-Version (Entwicklung):</td><td>%2</td></tr>"
-        "<tr><td>Qt-Version (Laufzeit):</td><td>%3</td></tr>"
+        "<tr><td>Qt-Version:</td><td>%2 (Entwicklung)</td></tr>"
+        "<tr><td></td><td>%3 (Laufzeit)</td></tr>"
         "<tr><td>Entwickler:</td><td>Johannes Abt, Alexander Wütz, Florian Schmitt</td></tr>"
         "<tr><td>Patches:</td><td>Marcus Camen</td></tr>"
         "<tr><td>Mac:</td><td>Michael Weiser</td></tr>"
