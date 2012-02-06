@@ -13,7 +13,7 @@ class Datasource
 {
 public:
   Datasource();
-  virtual bool read(DSResult* result) = 0;
+  virtual bool read(DSResult* const result) = 0;
   bool broken; // the datasource detected a permanent error
 };
 

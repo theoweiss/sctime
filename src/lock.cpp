@@ -141,9 +141,9 @@ bool Lockfile::_acquire() {
           errStr = QObject::tr("Das Programm läuft bereits auf einem anderen Rechner (%1: „%2“).\n").arg(path, line);
           if (localExclusionProvided)
             errStr.append(QObject::tr(
-                            "\nWenn das nicht so ist, sondern das Programm sich beim letzten Mal auf einem anderen Rechner nicht regulär beenden konnte",
-                            "dann starten Sie bitte das Programm nochmal auf diesem anderen Rechner!\n"
-                            "Eine gefährliche Alternative ist, die Datei %1 zu löschen.").arg(1));
+                            "\nWenn das nicht so ist, sondern das Programm sich beim letzten Mal auf einem anderen Rechner nicht regulär beenden konnte, "
+                            "dann starten Sie bitte das Programm nochmal auf diesem anderen Rechner!\n\n"
+                            "Eine gefährliche Alternative ist, die Datei „%1“  zu löschen.").arg(path));
           return false;
         }
       }

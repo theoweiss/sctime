@@ -25,7 +25,7 @@
 #define GLOBALS_H
 
 #include <QString>
-struct DatasourceManager;
+class DatasourceManager;
 class Lock;
 extern QString configDir;
 extern QString lockfilePath;
