@@ -1249,12 +1249,14 @@ void TimeMainWindow::callAboutBox() {
   browser->setHtml(tr(
         "<h1><img src=':/scLogo_15Farben' />sctime</h1>"
         "<table><tr><td>Version:</td><td>%1</td></tr>"
-        "<tr><td>Qt-Version:</td><td>%2</td></tr>"
+        "<tr><td>Qt-Version (Entwicklung):</td><td>%2</td></tr>"
+        "<tr><td>Qt-Version (Laufzeit):</td><td>%3</td></tr>"
         "<tr><td>Entwickler:</td><td>Johannes Abt, Alexander Wütz, Florian Schmitt</td></tr>"
         "<tr><td>Patches:</td><td>Marcus Camen</td></tr>"
         "<tr><td>Mac:</td><td>Michael Weiser</td></tr>"
         "<tr><td>Projektseite:</td><td><a href='http://sourceforge.net/projects/sctime/'>http://sourceforge.net/projects/sctime/</a></td></tr>"
-        "</table><p>Dieses Programm ist unter der GNU Public License v2 lizenziert.</p>").arg(version, QT_VERSION_STR));
+        "</table><p>Dieses Programm ist unter der GNU Public License v2 lizenziert.</p>")
+                   .arg(version, QT_VERSION_STR, qVersion()));
   dialog->resize(400, 300);
   dialog->show();
 }
@@ -1354,7 +1356,7 @@ void TimeMainWindow::callColorDialog()
    QColor color, initial = Qt::white;
    if (abtList->hasBgColor(abt,ko,uko))
      initial = abtList->getBgColor(abt,ko,uko);
-   color = QColorDialog::getColor(initial, this, tr("Hintergrundfarbe"));
+   color = QColorDialog::getColor(initial, this); // nur Qt >= 4.5: , tr("Hintergrundfarbe"));
 
    if (color.isValid()) {
      abtList->setBgColor(color, abt,ko,uko);
