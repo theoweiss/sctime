@@ -331,9 +331,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow()
   hilfemenu->addAction(logAction);
 
   addToolBar(toolBar);
-
   zeitChanged();
-
   changeShortCutSettings(NULL); // Unterkontenmenues deaktivieren...
 
   updateCaption();
@@ -345,11 +343,11 @@ TimeMainWindow::TimeMainWindow():QMainWindow()
   //selected
   kontoTree->closeFlaggedPersoenlicheItems();
   showAdditionalButtons(settings->powerUserView());
-  QTimer::singleShot(10, this, SLOT(refreshKontoListe()));
   connect(kontenDSM, SIGNAL(finished(DSResult)), this, SLOT(commitKontenliste(DSResult)));
   connect(bereitDSM, SIGNAL(finished(DSResult)), this, SLOT(commitBereit(DSResult)));
   connect(kontenDSM, SIGNAL(aborted()), this, SLOT(displayLastLogEntry()));
   connect(bereitDSM, SIGNAL(aborted()), this, SLOT(displayLastLogEntry()));
+  refreshKontoListe();
 }
 
 void TimeMainWindow::displayLastLogEntry(){
@@ -412,26 +410,22 @@ void TimeMainWindow::showAdditionalButtons(bool show)
 
 void TimeMainWindow::configClickMode(bool singleClickActivation)
 {
-    disconnect(kontoTree, SIGNAL(itemClicked ( QTreeWidgetItem * , int )),
+  disconnect(kontoTree, SIGNAL(itemClicked ( QTreeWidgetItem * , int )),
                this, SLOT(mouseButtonInKontoTreeClicked(QTreeWidgetItem * , int )));
     disconnect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
                this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)) );
     disconnect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
                this, SLOT(setAktivesProjekt(QTreeWidgetItem *)));
-    //disconnect(kontoTree, SIGNAL(contextMenuRequested(QTreeWidgetItem *, const QPoint& ,int)),
-    //           this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)));
 
     if (!singleClickActivation) {
-        //connect(kontoTree, SIGNAL(contextMenuRequested(QTreeWidgetItem *, const QPoint& ,int)),
-        //        this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)) );
-        connect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
-                this, SLOT(setAktivesProjekt(QTreeWidgetItem *)));
-        }
+      connect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
+              this, SLOT(setAktivesProjekt(QTreeWidgetItem *)));
+    }
     else {
-        connect(kontoTree, SIGNAL(itemClicked ( QTreeWidgetItem * , int )),
-                   this, SLOT(mouseButtonInKontoTreeClicked(QTreeWidgetItem * , int )));
-        connect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
-                this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)) );
+      connect(kontoTree, SIGNAL(itemClicked ( QTreeWidgetItem * , int )),
+              this, SLOT(mouseButtonInKontoTreeClicked(QTreeWidgetItem * , int )));
+      connect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
+              this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)) );
     }
 }
 
@@ -475,11 +469,13 @@ void TimeMainWindow::minutenUhr()
 
       QString extrawarnung="";
       if (delta<0)
-        extrawarnung="\nACHTUNG: Die Zeit wird zurueckgestellt, wenn Sie mit Ja quittieren!!!";
+        extrawarnung= tr("\nACHTUNG: Die Zeit wird zurückgestellt, wenn Sie mit Ja quittieren.");
       lastMinuteTick=currenttime; // we might spend some time in the dialog... set things back to normal
-      int answer= QMessageBox::question(this, "Zeitinkonsistenz",
-                                   QString("Das System schien fuer ")+QString::number(delta/60)+" Minuten zu haengen oder die Systemzeit wurde veraendert.\n"
-                                   "Soll die entstandene Zeitdifferenz auf das aktive Unterkonto gebucht werden?"+extrawarnung, QMessageBox::Yes,QMessageBox::No);
+      logError(tr("Die Uhr wurde verstellt um %1 Minuten.").arg(delta/60));
+      int answer= QMessageBox::question(this, tr("sctime: Inkonsistenz"),
+                                        tr("Das System scheint %1 Minuten stehen geblieben zu sein, oder die Systemzeit wurde verändert.\n"
+                                           "Soll die entstandene Differenz auf das aktive Unterkonto gebucht werden?").arg(delta/60)
+                                        + extrawarnung, QMessageBox::Yes,QMessageBox::No);
       if (answer==QMessageBox::Yes)
         abtListToday->changeZeit(abt, ko, uko, idx, delta, false);
     }
@@ -849,8 +845,9 @@ void TimeMainWindow::changeDate(const QDate& datum)
 
 void TimeMainWindow::refreshKontoListe() {
   statusBar->showMessage(tr("Kontenliste laden..."));
+  // ein bisschen Zeit geben, um das Hauptfenster zu zeichen
   qApp->processEvents();
-  kontenDSM->start();
+  QTimer::singleShot(100, kontenDSM, SLOT(start()));
 }
 
 void TimeMainWindow::commitKontenliste(DSResult data) {
