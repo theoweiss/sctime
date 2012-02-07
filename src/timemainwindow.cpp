@@ -335,6 +335,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow()
   #endif
   hilfemenu->addAction(aboutAction);
   hilfemenu->addAction(qtAction);
+  hilfemenu->addSeparator();
   hilfemenu->addAction(logAction);
 
   addToolBar(toolBar);
@@ -1178,17 +1179,10 @@ void TimeMainWindow::callDateDialog()
   dateDialog->show();
 }
 
-void TimeMainWindow::callHelpDialog() {
-  QDialog *dialog;
-  QTextBrowser *browser;
-  infoDialog(dialog, browser);
-  browser->setSource(QUrl("qrc:/hilfe"));
-  dialog->resize(600,450);
-  dialog->show();
-}
-
-void TimeMainWindow::infoDialog(QDialog *&dialog, QTextBrowser *&browser) {
+void TimeMainWindow::infoDialog(QDialog *&dialog, QTextBrowser *&browser, const QString& title, const char* name, int x, int y) {
   dialog = new QDialog(this);
+  dialog->setObjectName(name);
+  dialog->setWindowTitle(title);
   QVBoxLayout *layout = new QVBoxLayout(dialog);
   browser = new QTextBrowser(this);
   browser->setOpenExternalLinks(true);
@@ -1203,13 +1197,22 @@ void TimeMainWindow::infoDialog(QDialog *&dialog, QTextBrowser *&browser) {
   layout->addLayout(buttonlayout);
   layout->addSpacing(4);
   connect (okbutton, SIGNAL(clicked()), dialog, SLOT(close()));
+  dialog->resize(x, y);
   dialog->show();
 }
+
+void TimeMainWindow::callHelpDialog() {
+  QDialog *dialog;
+  QTextBrowser *browser;
+  infoDialog(dialog, browser, "sctime: Hilfe", "sctime help", 600, 450);
+  browser->setSource(QUrl("qrc:/hilfe"));
+}
+
 
 void TimeMainWindow::callAboutBox() {
   QDialog *dialog;
   QTextBrowser *browser;
-  infoDialog(dialog, browser);
+  infoDialog(dialog, browser, tr("Über sctime"), "sctime about", 400, 300);
   browser->setHtml(tr(
         "<h1><img src=':/scLogo_15Farben' />sctime</h1>"
         "<table><tr><td>Version:</td><td>%1</td></tr>"
@@ -1221,14 +1224,12 @@ void TimeMainWindow::callAboutBox() {
         "<tr><td>Projektseite:</td><td><a href='http://sourceforge.net/projects/sctime/'>http://sourceforge.net/projects/sctime/</a></td></tr>"
         "</table><p>Dieses Programm ist unter der GNU Public License v2 lizenziert.</p>")
                    .arg(version, QT_VERSION_STR, qVersion()));
-  dialog->resize(400, 300);
-  dialog->show();
 }
 
 void TimeMainWindow::logDialog() {
   QDialog *dialog;
   QTextBrowser *browser;
-  infoDialog(dialog, browser);
+  infoDialog(dialog, browser, tr("sctime: Meldungen"), "sctime message log", 700, 300);
   browser->setPlainText(logText);
 }
 

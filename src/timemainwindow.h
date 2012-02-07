@@ -54,8 +54,8 @@ class TimeMainWindow: public QMainWindow
     QTreeWidget* getKontoTree();
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;
-    void infoDialog(QDialog *&dialog, QTextBrowser *&browser);
-
+    void infoDialog(QDialog *&dialog, QTextBrowser *&browser, const QString& title, const char* name, int x, int y);
+    
   public slots:
 
     void callUnterKontoDialog(QTreeWidgetItem * item);
