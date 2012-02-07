@@ -221,6 +221,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow()
   connect(aboutAction, SIGNAL(triggered()), this, SLOT(callAboutBox()));
 
   QAction* qtAction = new QAction(tr("Über &Qt..."), this);
+  qtAction->setMenuRole(QAction::AboutQtRole);
   connect(qtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
   QAction* logAction = new QAction(tr("&Meldungen..."), this);
