@@ -53,10 +53,6 @@ otool -L "$sctime" | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
 	done
 done
 
-# replace binary by a wrapper script that conditionally adds --zeitkontenfile
-mv "$sctime" "$sctime".bin
-cp $mydir/sctime.sh "$sctime"
-
 # adjust version number and build date in Info.plist
 version=`grep ^VERSIONSTR $srcdir/src/src.pro | cut -d\" -f2`
 date=`date +"%Y%m%d"`
