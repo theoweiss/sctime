@@ -4,8 +4,8 @@
 #include <QString>
 #include <QList>
 #include <QObject>
-class QStringList;
 #include <QSqlDatabase>
+class QStringList;
 
 typedef QList<QStringList> DSResult;
 

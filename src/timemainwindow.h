@@ -22,8 +22,8 @@
 
 #include <QObject>
 #include <QMainWindow>
-#include <QAction>
 #include <QDateTime>
+class QAction;
 class QTreeWidget;
 class QTreeWidgetItem;
 
@@ -38,7 +38,7 @@ class StatusBar;
 class UnterKontoDialog;
 class QTextBrowser;
 
-#include <defaultcommentreader.h>
+#include "defaultcommentreader.h"
 #include "datasource.h"
 
 
@@ -48,8 +48,7 @@ class QTextBrowser;
 class TimeMainWindow: public QMainWindow
 {
   Q_OBJECT
-
-  public:
+public:
     TimeMainWindow();
     QTreeWidget* getKontoTree();
     virtual ~TimeMainWindow();

@@ -25,25 +25,19 @@
 #include <QApplication>
 #include <QMenu>
 #include <QMenuBar>
-#include <QHeaderView>
 #include <QFont>
-#include <QTextStream>
-#include <QInputDialog>
 #include <QTimer>
 #include <QMessageBox>
 #include <QStringList>
-#include <QDateTime>
-#include <QSystemTrayIcon>
 #include <QDir>
 #include <QPoint>
-#include <QRect>
 #include <QFile>
-#include <QVariant>
 #include <QDebug>
 #include <QToolBar>
 #include <QColorDialog>
-#include <QtMsgHandler>
 #include <QTextBrowser>
+#include <QAction>
+
 #include "globals.h"
 #include "time.h"
 #include "preferencedialog.h"
@@ -330,9 +324,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow()
   zeitmenu->addAction(changeDateAction);
   zeitmenu->addAction(resetAction);
   settingsmenu->addAction(preferenceAction);
-  #ifndef NO_TEXTEDIT
   hilfemenu->addAction(helpAction);
-  #endif
   hilfemenu->addAction(aboutAction);
   hilfemenu->addAction(qtAction);
   hilfemenu->addSeparator();
