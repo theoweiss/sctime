@@ -24,9 +24,6 @@
 
 #include <QFile>
 #include <QDir>
-#include <QMessageBox>
-#include <QApplication>
-#include <QtDebug>
 #include "globals.h"
 #include "abteilungsliste.h"
 #ifndef NO_XML
@@ -42,37 +39,22 @@ bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
   QDomDocument doc("comments");
 
   for (unsigned int i=0; i<xmlfilelist.size(); i++) {
-      QString filename;
-
-      QDir dummy(xmlfilelist[i]);
-
-      if (dummy.isRelative())
-        filename=configDir+"/"+xmlfilelist[i];
-      else
-        filename=xmlfilelist[i];
-
-      QFile f( filename );
-      if ( !f.open( QIODevice::ReadOnly ) ) {
-          //siZeit #88348
-          //std::cerr<<"Hinweis: Kann "<<filename.toStdString()<<" nicht oeffnen."<<std::endl;
-//#if 0
-          //QMessageBox::warning( 0,
-                //QString::fromLatin1("Warnung"),
-                //QString::fromLatin1("Hinweis: Kann ")+filename+" nicht oeffnen.",
-                //"OK" );
-//#endif
-
+    QDir dummy(xmlfilelist[i]);
+    QString filename = dummy.isRelative() ? configDir+"/"+xmlfilelist[i] :xmlfilelist[i];
+    {
+        QFile f(filename);
+        if ( !f.open( QIODevice::ReadOnly ) ) {
+          logError(QObject::tr("Standardkommentare: kann Datei '%1' nicht öffnen: %2").arg(filename, f.errorString()));
           return false;
+        }
+        QString domerror;
+        int domerrorline;
+        int domerrorcol;
+        if ( !doc.setContent( &f, false, &domerror,&domerrorline,&domerrorcol ) ) {
+          logError(QObject::tr("Standardkommentare: ") + domerror);
+          return false;
+        }
       }
-      QString domerror;
-      int domerrorline;
-      int domerrorcol;
-      if ( !doc.setContent( &f, false, &domerror,&domerrorline,&domerrorcol ) ) {
-        QMessageBox::warning(0, QObject::tr("Warnung"), domerror);
-        f.close();
-        return false;
-      }
-      f.close();
 
       QDomElement docElem = doc.documentElement();
 
@@ -109,7 +91,7 @@ bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
                                                           itUk->second.addDefaultComment(commentstr);
                                                       }
                                                       else
-                                                        qWarning() << "Kann Unterkonto " << unterkontostr <<" fuer Defaultkommentar nicht finden!";
+                                                        logError(QObject::tr("Standardkommentar: kann Unterkonto %1 nicht finden").arg(unterkontostr));
                                                   }
                                               }
                                           }
