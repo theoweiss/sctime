@@ -141,10 +141,10 @@ Instanz auf einem anderen Rechner läuft und beendet sich.
 einer der folgenden Methoden:
 <table>
   <tr><td>Kommandozeile</td><td>die Datei oder Dateien, die beim Aufruf angegeben wurde</td></tr>
-  <tr><td>QPSQL</td><td>Datenbank-Treiber von Qt für Postgres</td></tr>
-  <tr><td>QODBC</td><td>Datenbank-Treiber von Qt; verwendet die ODBC-Datenquelle <tt>postgres_zeit</tt></td></tr>
-  <tr><td>command</td><td>verwendet die Kommandos <tt>zeitkonten</tt> und <tt>zeitbereitls</tt></td></tr>
-  <tr><td>file</td>
+  <tr><td><tt>QPSQL</tt></td><td>Datenbank-Treiber von Qt für Postgres</td></tr>
+  <tr><td><tt>QODBC</tt></td><td>Datenbank-Treiber von Qt; verwendet die ODBC-Datenquelle <tt>postgres_zeit</tt></td></tr>
+  <tr><td><tt>command</tt></td><td>verwendet die Kommandos <tt>zeitkonten</tt> und <tt>zeitbereitls; ist unter Windows wirkungslos</tt></td></tr>
+  <tr><td><tt>file</tt></td>
     <td>liest die Dateien <tt>zeitkonten.txt</tt> und <tt>zeitbereitls.txt</tt>
       aus dem Konfigurationsverzeichnis (üblicherweise ist
       das <tt>.sctime</tt>)</td></tr>
@@ -154,5 +154,9 @@ einer der folgenden Methoden:
 <p>Die Methoden werden in dieser Reihenfolge angewendet, bis die erste
 erfolgreich ist. Fehlende Module oder fehlende Dateien sind die Ursachen für
   die meisten Fehler. Die zuhörigen Meldungen sind unter dem
-  Menüpunkt <tt>Meldungen</tt>einzusehen.</p>
+  Menüpunkt <tt>Meldungen</tt> einzusehen.</p>
+<p>
+In <tt>settings.xml</tt> und mit der Option <tt>--datasource=NAME</tt>, die man auch mehrmals angeben darf,
+kann man die Standardreihenfolge ändern.
+
 </html>
