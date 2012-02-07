@@ -75,11 +75,7 @@ static QString password() {
   result = username(); // the username is the default password
   // try to read password from a file
   QList<QString> pwdfilepaths;
-  pwdfilepaths << QDir::homePath() + QDir::separator() + ".Zeit";
-#ifdef WIN32
-  // try drive H: on Windows
-  pwdfilepaths << "H:\\.Zeit";
-#endif
+  pwdfilepaths << canonicalPath("~/.Zeit");
   QString p;
   foreach (p, pwdfilepaths) {
     QFile pwdfile(p);

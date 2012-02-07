@@ -52,8 +52,8 @@
 #include "setupdsm.h"
 
 
-#ifndef CONFIGSUBDIR 
-#define CONFIGSUBDIR ".sctime"
+#ifndef CONFIGDIR 
+#define CONFIGDIR "~/.sctime"
 #endif
 
 #ifdef __GNUC__
@@ -86,8 +86,6 @@ static const char help[] =
 
 #ifdef WIN32
 static void setlocale() {}
-static QString canonicalPath(const QString& path) { return QFileInfo(path).canonicalFilePath(); }
-
 #else
 static void setlocale() {
   if (!setlocale(LC_ALL, ""))
@@ -96,10 +94,26 @@ static void setlocale() {
   if (!encoding && !encoding[0])  fatal("sctime: Konfigurationsfehler", "Konnte die locale-Bibliothek nicht initialisieren.");
   if (setenv("LC_ALL", LOCALE, 1)) fatal("sctime: Konfigurationsfehler", "Konnte Umgebungsvariable ZEIT_ENCODING nicht setzen.");
 }
-
-static QString canonicalPath(QString path) {
-    return path.startsWith("~/") ? path.replace(0,2,QDir::homePath()+"/") : QFileInfo(path).canonicalFilePath(); }
 #endif
+
+QString canonicalPath(QString path) {
+    if (path == "~" || path.startsWith("~/") || path.startsWith(QString("~") +
+		QDir::separator())) {
+#ifdef WIN32
+	QString homedir = "H:";
+	// append a separator if only the homedir is requested so that the
+	// drive's root is addressed reliably
+	if (path == "~")
+		homedir.append(QDir::separator());
+#else
+	QString homedir = QDir::homePath();
+#endif /* WIN32 */
+
+	return path.replace(0, 1, homedir);
+    }
+
+    return QFileInfo(path).canonicalFilePath();
+}
 
 class SctimeApp: public QApplication {
 public:
@@ -130,7 +144,6 @@ int main( int argc, char **argv ) {
   }
   QString configdirstring, zeitkontenfile, bereitschaftsfile;
   QStringList dataSourceNames;
-  char *envpointer;
 
   GetOpt opts(argc, argv);
   opts.addOption('f',"configdir", &configdirstring);
@@ -139,24 +152,19 @@ int main( int argc, char **argv ) {
   opts.addRepeatableOption("datasource", &dataSourceNames);
   opts.parse();
 
-  if (configdirstring.startsWith("~/"))
-      configdirstring.replace(0,2,QDir::homePath()+"/");
-
   if (configdirstring.isEmpty()) {
-    envpointer = getenv("SCTIME_CONFIG_DIR");
-    configdirstring = envpointer ? envpointer : CONFIGSUBDIR; // default Configdir
+    char *envpointer = getenv("SCTIME_CONFIG_DIR");
+    configdirstring = envpointer ? envpointer : CONFIGDIR; // default Configdir
   }
-  setlocale();
 
+  // configdirstring can no longer be empty now but still may be relative or
+  // reference home dir by ~
+  configdirstring = canonicalPath(configdirstring);
+
+  setlocale();
 
   QDir directory;
   if (!directory.cd(configdirstring)) {
-#ifdef WIN32
-    QString home("h:\\");
-#else
-    QString home(directory.homePath());
-#endif
-    if (!directory.cd(home)) fatal("sctime: Konfigurationsproblem", QString("Kann nicht auf %1 zugreifen.").arg(home));
     directory.mkdir(configdirstring);
     if (!directory.cd(configdirstring)) fatal("sctime: Konfigurationsproblem", QString("Kann nicht auf %1 zugreifen.").arg(configdirstring));
   }

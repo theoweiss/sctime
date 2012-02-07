@@ -33,4 +33,5 @@ extern const QString version;
 extern Lock *lock;
 void logError(const QString& msg);
 void trace(const QString& msg);
+QString canonicalPath(QString);
 #endif
