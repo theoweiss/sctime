@@ -76,11 +76,13 @@ static void fatal(const QString& title, const QString& body) {
 }
 
 static const char help[] =
-      " Available Options: \n"
-      " --configdir=  location of the directory where your files will be placed (default: ~/.sctime)\n"
-      " --zeitkontenfile=  location of zeitkontenfile (default: output of 'zeitkonten --mikrokonten --sep=\\|')\n"
-      " --bereitschaftsfile=  location of bereitschaftsfile (default: output of 'zeitbereitls'.\n\n"
-     "Without these options, sctime reads the necessary data from the database ('zeitdabaserv')";
+" Available Options: \n"
+" --configdir=  location of the directory where your files will be placed (default: ~/.sctime)\n"
+"--datasource= (repeatable) use these data sources (QPSQL, QODBC, command, file);\n"
+"   overrides <datasources/> in settings.xml\n"
+" --zeitkontenfile=  location of zeitkontenfile (default: output of 'zeitkonten --mikrokonten --sep=\\|')\n"
+" --bereitschaftsfile=  location of bereitschaftsfile (default: output of 'zeitbereitls'.\n\n"
+"Without these options, sctime reads the necessary data from the database ('zeitdabaserv')";
 
 #ifdef WIN32
 static void setlocale() {}
@@ -122,17 +124,19 @@ int main( int argc, char **argv ) {
   PERSOENLICHE_KONTEN_STRING = QObject::tr("Persönliche Konten");
   ALLE_KONTEN_STRING = QObject::tr("Alle Konten");
 
-  if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1],"--help") == 0 || strcmp(argv[1], "-h") == 0||strcmp(argv[1],"--help") == 0)) {
+  if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1],"--help") == 0 || strcmp(argv[1], "/h") == 0||strcmp(argv[1],"/help") == 0)) {
     QMessageBox::information(NULL, "sctime", help);
     exit(0);
   }
   QString configdirstring, zeitkontenfile, bereitschaftsfile;
+  QStringList dataSourceNames;
   char *envpointer;
 
   GetOpt opts(argc, argv);
   opts.addOption('f',"configdir", &configdirstring);
   opts.addOption('f',"zeitkontenfile", &zeitkontenfile);
   opts.addOption('f',"bereitschaftsfile", &bereitschaftsfile);
+  opts.addRepeatableOption("datasource", &dataSourceNames);
   opts.parse();
 
   if (configdirstring.startsWith("~/"))
@@ -174,7 +178,7 @@ int main( int argc, char **argv ) {
 
   SCTimeXMLSettings settings;
   settings.readSettings();
-  QList<QString> dataSourceNames(settings.backends.split(" "));
+  if (dataSourceNames.isEmpty()) dataSourceNames = settings.backends.split(" ");
   setupDatasources(dataSourceNames, settings, zeitkontenfile, bereitschaftsfile);
   TimeMainWindow mainWindow;
 #ifndef WIN32
