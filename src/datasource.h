@@ -15,6 +15,7 @@ public:
   Datasource();
   virtual bool read(DSResult* const result) = 0;
   bool broken; // the datasource detected a permanent error
+  virtual ~Datasource() {};
 };
 
 class DatasourceManager:public QObject
@@ -35,6 +36,7 @@ class FileReader : public Datasource
 {
 public:
   FileReader(const QString &path, const QString& sep, int columns);
+  virtual ~FileReader() {};
   virtual bool read(DSResult* const result);
   const QString path, sep;
   const int columns;
@@ -44,6 +46,7 @@ class SqlReader : public Datasource
 {
 public:
   SqlReader(QSqlDatabase db, const QString &cmd);
+  virtual ~SqlReader() {};
   virtual bool read(DSResult* const result);
   const QString cmd;
   QSqlDatabase db;
@@ -55,6 +58,7 @@ class CommandReader : public Datasource
 {
 public:
   CommandReader(const QString &command, const QString& sep, int columns);
+  virtual ~CommandReader() {};
   virtual bool read(DSResult* const result);
   const QString command, sep;
   const int columns;

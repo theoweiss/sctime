@@ -87,6 +87,7 @@ bool  SqlReader::read(DSResult* const result) {
   if (!query.isActive()) {
     logError(QObject::tr("Fehler ('%1') in Abfrage: %2").arg(db.lastError().databaseText()));
     broken = true;
+    db.close();
     return false;
   }
   int cols = query.record().count();
@@ -96,6 +97,7 @@ bool  SqlReader::read(DSResult* const result) {
       row.append(query.value(i).toString());
     result->append(row);
   }
+  db.close();
   return true;
 }
 #ifndef WIN32

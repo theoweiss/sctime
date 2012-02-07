@@ -191,5 +191,7 @@ int main( int argc, char **argv ) {
   mainWindow.save();
   local.release();
   delete global;
+  delete kontenDSM;
+  delete bereitDSM;
   return 0;
 }
