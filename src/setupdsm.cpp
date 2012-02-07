@@ -128,7 +128,10 @@ void setupDatasources(const QStringList& datasourceNames,
         logError(QObject::tr("data source '%1'not working: %2").arg(dsname, db.lastError().driverText()));
         continue;
       }
-      db.setDatabaseName(dsname.startsWith("QODBC") ? "DSN=Postgres_Zeit" : "zeit");
+      db.setDatabaseName(
+	  dsname.startsWith("QODBC") 
+	    ? "DSN=Postgres_Zeit;DRIVER=PostgreSQL UNICODE" 
+	    : "zeit");
       db.setHostName("zeitdabaserv");
       db.setUserName(username());
       db.setPassword(password());

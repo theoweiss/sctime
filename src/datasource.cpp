@@ -80,7 +80,7 @@ bool  SqlReader::read(DSResult* const result) {
   logError(QObject::tr("Verbindungsaufbau zu Datenbank %1 auf %2 mit Treiber %3 als Benutzer %4")
            .arg(db.databaseName(), db.hostName(), db.driverName(), db.userName()));
   if (!db.open()) {
-    logError(QObject::tr("Verbindungsaufbau fehlgeschlagen: ") + db.lastError().driverText());
+    logError(QObject::tr("Verbindungsaufbau fehlgeschlagen: ") + db.lastError().databaseText());
     return false;
   }
   QSqlQuery query(cmd, db);
@@ -92,7 +92,7 @@ bool  SqlReader::read(DSResult* const result) {
   int cols = query.record().count();
   while (query.next()) {
     QStringList row;
-    for (int i = 0; i < cols; query.record())
+    for (int i = 0; i < cols; i++)
       row.append(query.value(i).toString());
     result->append(row);
   }
