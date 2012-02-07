@@ -1,15 +1,20 @@
 #!/bin/sh
 
+qtdir="$1"
+shift
+
 mydir=`dirname $0`
 srcdir="$mydir"/../..
 [ -z "$1" ] || srcdir="$1"
 approot="$srcdir"/src/scTime.app
 sctime="$approot"/Contents/MacOS/scTime
+appqtdir="$approot"/Contents/Resources/Qt
 
 patchqmake="$mydir"/patchqmake
+patchqtdir="Resources/Qt"
 
 # patch qt library paths in binary itself (not known to exist, but might)
-"$patchqmake" "$sctime" /dev/null
+"$patchqmake" "$sctime" "$patchqtdir"
 
 otool -L "$sctime" | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
 	while read lib ; do
@@ -28,7 +33,7 @@ otool -L "$sctime" | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
 	cp "$lib" "$privatelib"
 
 	# path qt library paths in this library
-	"$patchqmake" "$privatelib" /dev/null
+	"$patchqmake" "$privatelib" "$patchqtdir"
 
 	# newer QtGui needs some resources :-(
 	dir=`dirname "$lib"`
@@ -58,6 +63,15 @@ version=`grep ^VERSIONSTR $srcdir/src/src.pro | cut -d\" -f2`
 date=`date +"%Y%m%d"`
 sed -i .bak -e "s,@VERSION@,$version,g" -e "s,@DATE@,$date,g" \
 	"$approot"/Contents/Info.plist
+
+# copy over translations
+mkdir -p "$appqtdir"/translations
+cp -R "$qtdir"/translations/qt_*.qm "$appqtdir"/translations
+
+# because we patch Qt paths to be relative, some funny logic seems to concat
+# the install prefix and translations path ending up with Resources/Qt in the
+# file name twice - do some symlinking for that - morons
+ln -sfn .. "$appqtdir"/Resources
 
 # clean up
 chmod -R go+r $approot

@@ -4,7 +4,7 @@ SOURCES = patchqmake.c
 CONFIG -= app_bundle
 
 # run the distribution preparation script after linking patchqmake
-QMAKE_POST_LINK = sh sctime-mac-dist
+QMAKE_POST_LINK = sh sctime-mac-dist `$(QMAKE) -query QT_INSTALL_PREFIX`
 
 # rebuild this if scTime binary in source directory changes
 POST_TARGETDEPS = ../../src/scTime.app/Contents/MacOS/scTime
