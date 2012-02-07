@@ -455,10 +455,8 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             if ((global) && (elem2.tagName()=="column")) {
                 columnwidth.push_back(elem2.attribute("width","50").toInt());
             }
-            if (global && elem2.tagName() == "backends") {
+            if (global && elem2.tagName() == "backends")
               backends = elem2.attribute("names", defaultbackends);
-              QMessageBox::information(NULL, "backends", backends);
-            }
           }
         }
       }
