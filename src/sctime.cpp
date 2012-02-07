@@ -112,8 +112,13 @@ public:
  ausgefuehrt */
 int main( int argc, char **argv ) {
   SctimeApp app(argc, argv);
+  QTranslator qtTranslator;
+  qtTranslator.load("qt_" + QLocale::system().name(),
+          QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+  app.installTranslator(&qtTranslator);
   QTextCodec::setCodecForTr(QTextCodec::codecForName ("UTF-8"));
   app.setObjectName("Sctime");
+
   PERSOENLICHE_KONTEN_STRING = QObject::tr("Persönliche Konten");
   ALLE_KONTEN_STRING = QObject::tr("Alle Konten");
 
