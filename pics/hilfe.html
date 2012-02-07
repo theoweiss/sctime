@@ -5,158 +5,354 @@
 </head>
 <body>
 <h1><img src="scLogo_15Farben"/>sctime</h1>
-<h2>Bedienung</h2>
+
+<ol>
+  <li><a href="#intro">Einf&uuml;hrung</a>
+  <li><a href="#usage">Bedienung</a>
+  <li><a href="#settings">Einstellungen</a>
+  <li><a href="#data">Datenhaltung</a>
+  <li><a href="#datasources">Datenquellen</a>
+  <li><a href="#platform">Betriebssystemspezifische Hinweise</a>
+  <li><a href="#misc">Weitere Hinweise</a>
+</ol>
+
+<a name="intro"><h2>Einf&uuml;hrung</h2></a>
+<p>sctime erfa&szlig;t Arbeitszeit.
+Das tut es, indem es die verstreichende Zeit fortlaufend auf einem vom Nutzer
+gew&auml;hlten sogenannten Zeitkonto aufsummiert.</p>
+
+<p>Die erfa&szlig;ten Zeiten k&ouml;nnen zus&auml;tzlich mit Kommentaren versehen
+werden, um genauer zu erl&auml;utern, was in dieser Zeit getan wurde.
+Diese Kommentare finden sich (unter Umst&auml;nden) auf Rapporten an den Kunden
+&uuml;ber die Nutzung seiner Ressourcen wieder.</p>
+
+<p>Wie unter <a href="#defaultcomments">Mikrokonten</a> erl&auml;utert, bietet
+sctime die M&ouml;glichkeit, Vorschl&auml;ge f&uuml;r diese Kommentare in der
+Kontenliste abzulegen.
+Das Programm bietet diese dann als Drop-Down-Liste zur einfachen Auswahl an.</p>
+
+<p>Die Menge der m&ouml;glichen Zeitkonten ist vorgegeben und wird aus einer der
+zur Verf&uuml;gung stehenden externen <a href="#datasources">Datenquellen</a>
+beim Programmstart eingelesen.</p>
+
+<p>Die Zeiten werden hingegen nicht direkt in diese Datenbank
+zur&uuml;ckgeschrieben.
+Stattdessen werden sie, wie unter <a href="#data">Datenhaltung</a> beschrieben,
+erst einmal lokal gespeichert und anschlie&szlig;end durch den Nutzer mit
+externen Skripten in eine Zeitdatenbank &uuml;bertragen.
+
+<a name="usage"><h2>Bedienung</h2></a>
 <h3>Kontobaum</h3>
-Unter <em>Alle Konten</em> werden in einer Struktur aus Abteilung, Konto und Unterkonto
-alle Konten angezeigt, auf die man Stunden buchen kann. Mit einem Doppelklick
-auf ein Unterkonto oder einen Eintrag unterhalb des Unterkontos erreicht man
-das <em>Unterkontofenster</em>. Wenn man  ein Unterkonto als persönliches
-Konto markiert, dann erscheint es zusätzlich in dem zweiten, übersichtlicheren
-Baum <em>Persönliche Konten</em>.
+<p>Unter <em>Alle Konten</em> werden in einer Struktur aus Abteilung, Konto und
+Unterkonto alle Konten angezeigt, auf die man Stunden buchen kann.
+Mit einem Doppelklick auf ein Unterkonto oder einen Eintrag unterhalb des
+Unterkontos erreicht man das <em>Unterkontofenster</em>.
+Wenn man  ein Unterkonto als persönliches Konto markiert, dann erscheint es
+zusätzlich in dem zweiten, übersichtlicheren Baum <em>Persönliche
+Konten</em>.</p>
 
 <h3>Aktives Konto</h3>
-Sobald man das Programm startet, misst das Programm die Zeit und verbucht sie
-auf das mit einem Haken markierte Unterkonto.
+<p>Sobald man das Programm startet, misst das Programm die Zeit und verbucht sie
+auf das mit einem Haken markierte Unterkonto.</p>
 
 <h3>Bereitschaftszeiten</h3>
-<p>Das Unterkonto des Kunden/Projekts/Auftrags zu dem die Bereitschaft
-gehört markieren.
-Auf den Stempel in der Menüleiste klicken. Eine Auswahl möglicher
-Bereitschaftskategorien wird angezeigt.
-Eine oder mehrere Kategorien auswählen, ok klicken.
-Zum löschen, wieder auf den Stempel klicken, angewählte Kategorien
-abwählen, ok.
-</p>
+<p>Um Bereitschaftszeiten zu erfassen, ist zuerst das Unterkonto des
+Kunden/Projekts/Auftrags zu w&auml;hlen, zu dem die Bereitschaft gehört.
+Dann klickt man auf den Stempel in der Menüleiste.
+Eine Auswahl möglicher Bereitschaftskategorien wird angezeigt.
+Hier k&ouml;nnen eine oder mehrere Kategorien ausgew&auml;hlt werden.
+Anschlie&szlig;end ist "Ok" zu klicken.</p>
+<p>Zum Löschen klickt man wieder auf den Stempel, w&auml;hlt angewählte Kategorien
+ab, und best&auml;tigt mit "Ok".</p>
 
-<h3> Drag'n'Drop </h3>
-Mittels Drag 'n' Drop lassen sich die Zeiten zwischen Unterkonten und
+<h3>Drag'n'Drop </h3>
+<p>Mittels Drag 'n' Drop lassen sich die Zeiten zwischen Unterkonten und
 Einträgen verschieben.
-Wird dabei die &bdquo;Shift&ldquo;-Taste gedrückt, werden auch die gesetzten Kommentare verschoben.
-</p>
+Wird dabei die &bdquo;Shift&ldquo;-Taste gedrückt, werden auch die gesetzten
+Kommentare verschoben.</p>
 
-<h2>Datenhaltung</h2>
-<h3>Daten speichern</h3>
-<p>Das Programm speichert automatisch alle fünf Minuten, bei Programmende und
-  auf Wunsch des Benutzers sofort die aktuellen Zeiten
-  und die Einstellungen.
-
-<h3>Speicherort und -format</h3>
-Das Programm speichert die Daten (Zeiten und Einstellungen) im Unterverzeichnis <tt>.sctime</tt> des persönlichen
-Verzeichnisses des Benutzers gespeichert. Die Zeiten werden sowohl als Shellskripte
-als auch als XML-Dateien abgelegt. Das Programm <tt>sctimeorg2</tt> überträgt
-die in den Shellskripten gespeicherten Daten in die Datenbank.
-
-<h2>Einstellungen</h2>
-<h3> Schriften unter UNIX</h3>
-<p>Unter KDE werden die Einstellungen die Desktops übernommen. Weitere
-Einstellungen gibt es mit dem Programm <tt>qtconfig</tt>. Für Antialiasing
-gibt zusätzlich <tt>~/.fonts.conf</tt>(?).</p>
-
-<h2><a name="Standardkommentare_Mikrokonten_v"></a> Standardkommentare, Mikrokonten, vordefinierte Kommentare </h2>
-<p>
-Die drei oben genannten Begriffe bedeuten das Gleiche:
+<a name="defaultcomments"><h3>Standardkommentare, Mikrokonten, vordefinierte Kommentare</h3></a>
+<p>Die drei oben genannten Begriffe bedeuten das Gleiche:
 Man erstellt Vorschläge für die Kommentare bei den Zeiteinträgen.
 Diese Vorschläge beziehen sich auf jeweils ein Unterkonto.</p>
 
-<p>Es gibt zumindeset zwei gute Gründe dafür, solche Standardkommentare zu
-  erstellen: Erstens biete sctime bietet Standardkommentare als Textbausteine an, die
-  man nicht immer und immer wieder tippen muss. Zweitens kann man Tätigkeiten,
-  die auf ein Unterkonto gebucht werden, weiter zu unterteilen und so noch genauer
-  zu bilanzieren mit <code>zeitbilanz --sort=mikrokonto</code></p>
+<p>Es gibt zumindest zwei gute Gründe dafür, solche Standardkommentare zu
+erstellen:
+Erstens bietet sctime Standardkommentare als Textbausteine an, die man
+nicht immer und immer wieder tippen muss.
+Zweitens kann man Tätigkeiten, die auf ein Unterkonto gebucht werden, weiter
+unterteilen und so noch genauer bilanzieren (beispielsweise mit
+<tt>zeitbilanz --sort=mikrokonto</tt>).</p>
 
-<p><code>zeitbilanz --sort=mikro</code> erwartet,
-  dass alle Standardkommentare mit einem Doppelpunkt enden. </p>
+<p><tt>zeitbilanz --sort=mikro</tt> erwartet, dass alle Standardkommentare
+mit einem Doppelpunkt enden.</p>
+
 <p>Die Standardkommentare kann man so in die Datenbank eintragen:
-  <pre>
-    <code>zeitmikro --eintragen KONTO UNTERKONTO</pre></p>
-<p>
+<tt>zeitmikro --eintragen KONTO UNTERKONTO</tt></p>
 
-<h2><a name="Offline_Betrieb"></a>Offline-Betrieb </h2>
+<a name="settings"><h2>Einstellungen</h2></a>
+<h3>Schriften unter UNIX</h3>
+<p>Unter KDE werden die Einstellungen die Desktops übernommen.
+Weitere Einstellungen gibt es mit dem Programm <tt>qtconfig</tt>.
+Für Antialiasing gibt zusätzlich <tt>~/.fonts.conf</tt>(?).</p>
 
-<p><em>Diese Anleitung ist sehr alt. Die darin beschriebene Methode sollte
-    vereinfach werden. Siehe Abschnitt &bdquo;Kontenliste
-    laden&rdquo;.</em></p>
+<a name="data"><h2>Datenhaltung</h2></a>
 
-Um sctime auch ohne Verbindung zur Zeitdatenbank betreiben zu können, gibt es zwei Optionen:
-<code>--configdir DIRNAME</code> erlaubt es das Konfigurationsverzeichnis umzusetzen (Default ist h:\.sctime unter Windows und ~/.sctime unter *nix). Nützlich, wenn das Homedirectory auf einem Netzlaufwerk liegt.</p>
+<h3>Speicherort und -format</h3>
+<p>Das Programm speichert die von ihm erzeugten Daten (Zeiten und Einstellungen)
+im Unterverzeichnis <tt>.sctime</tt> des persönlichen Verzeichnisses des
+Benutzers.
+Die Zeiten werden sowohl als Shellskripte als auch als XML-Dateien abgelegt.
+Das Programm <tt>sctimeorg2</tt> überträgt die in den Shellskripten
+gespeicherten Daten in die Datenbank.</p>
 
-<p>  <code>--zeitkontenfile FILENAME</code>: Kontendaten aus der einer Datei lesen.-
-  Eine solche Datei kann man so erzeugen:<pre>
-    zeitkonten --mikrokonten --separator='|' &gt; zeitkonten.txt</pre></p>
+<h3>Zeiten speichern</h3>
+<p>Das Programm speichert automatisch alle fünf Minuten, bei Programmende und
+auf Wunsch des Benutzers sofort die aktuellen Zeiten und die Einstellungen.</p>
 
-<p> <code>--bereitschaftsfile FILENAME</code>: Bereitschaftskategorien aus der Datei lesen.
-  Diese Datei kann man so erzeugen:<pre>
-    zeitbereitls --separator='|' &gt; FILENAME</pre></p>
+<a name="datasources"><h2>Datenquellen</h2></a>
 
+<p>Das Programm lädt die Kontenliste und die Liste der Bereitschaftsarten mit
+einer der folgenden Methoden:</p>
 
-<h2><a name="Offline_Betrieb_portable_Edition"></a> Offline-Betrieb, portable Edition </h2>
+<ul>
+  <li><tt>QPSQL</tt>: Datenbank-Treiber von Qt für Postgres
+  <li><tt>QODBC</tt>: Datenbank-Treiber von Qt; verwendet die ODBC-Datenquelle <tt>postgres_zeit</tt>
+  <li><tt>command</tt>: verwendet die Kommandos <tt>zeitkonten</tt> und <tt>zeitbereitls.</tt>
+    Ist unter Windows wirkungslos, da hier die in notwendigen Befehle nicht zur
+    Verf&uuml;gung stehen.
+  <li><tt>file</tt>: liest die Dateien <tt>zeitkonten.txt</tt> und <tt>zeitbereitls.txt</tt>
+    aus dem Konfigurationsverzeichnis (üblicherweise <tt>~/.sctime</tt>)
+</ul>
 
-<p><em>Diese Anleitung ist sehr alt. Die darin beschriebene Methode sollte
-    vereinfach werden. Siehe Abschnitt &bdquo;Kontenliste
-    laden&rdquo;.</em></p>
+<p>Die Methoden werden in dieser Reihenfolge angewendet, bis die erste
+erfolgreich ist.
+Typische Ursachen f&uuml;r das Fehlschlagen einer Methode sind fehlende Dateien
+oder Einstellungen.
+Die auftretenden Fehler sind unter dem Menüpunkt <tt>Meldungen</tt>
+im Men&uuml; <tt>Hilfe</tt> einsehbar und geben Hinweise auf die Ursachen.</p>
 
-sctime kann ohne Probleme von einem USB-Stick gestartet werden, jedoch ändert sich beim Arbeiten an verschiedenen Rechnern immer wieder der Laufwerksbuchstabe des USB-Sticks. Das hat zur Konsequenz das sich der Programmaufruf ändert und, da es keinen Kommandozeilenschalter für die Defaultkommentare gibt, diese ohne Workaround nicht genutzt werden können. Folgende Konfiguration ist bei uns im Einsatz und hat sich bewährt:
-<p />
-Auf dem USB-Stick getrennte Verzeichnisse für Programme und Konfiguration anlegen: hier %pdrive%\Programme und %pdrive%\Anwendungsdaten.
-Nach %pdrive%\Programme wird sctime und die Bereitschafts- und Zeitkontendatei kopiert.
-Nach %pdrive%\Anwendungsdaten\sctime\ die settings.xml sowie die defaultcomments.xml kopiert.
-<p />
-Die settings.xml muss so angepasst werden das der Pfad zu defaultcommentsfile NICHT angegeben wird, damit erwartet sctime
-die Datei immer in dem Verzeichnis in dem die settings.xml liegt. 
-Das sieht folgendermaßen aus:
-<p />
+<p>Im Attribut <tt>names</tt> des XML-Elements <tt>sctime/general/backends</tt>
+in <tt>settings.xml</tt> kann die Standardreihenfolge der Module umkonfiguriert werden.
+Hierzu werden die obigen Namen durch Leerzeichen getrennt in der
+gew&uuml;nschten Reihenfolge aufgez&auml;hlt.
+sctime arbeitet sie dann in der Reihenfolge ihrer Nennung ab.</p>
+
+<p>Alternativ kann die Reihenfolge auch mit der Option
+<tt>--datasource=NAME</tt> angeben werden.
+Bei mehrmaligem &Uuml;bergeben der Option werden die Module in der Reihenfolge
+ihrer Nennung abgearbeitet.</p>
+
+<a name="datasource_command"><h4>Datenquelle <tt>command</tt></h4></a>
+<p>Die aufgerufenen Befehle lauten: <tt>zeitkonten --mikrokonten
+--separator='|'</tt> und <tt>zeitbereitls --separator='|'</tt>.
+Momentan k&ouml;nnen sie nicht konfiguriert werden.</p>
+
+<h4>Datenquelle <tt>file</tt></h4>
+
+<p>Die Dateien werden als <tt>~/.sctime/zeitkonten.txt</tt> und
+<tt>~/.sctime/zeitbereitls.txt</tt> erwartet.</p>
+
+<p>Alternative Pfade  k&ouml;nnen mittels der Parameter
+<tt>--zeitkontenfile</tt> und <tt>--bereitschaftsfile</tt> beim Aufruf
+angegeben werden.
+Hierdurch &auml;ndert sich als Nebeneffekt automatisch auch die Reihenfolge, in
+der die Datenquellen abgefragt werden, soda&szlig; zuerst versucht wird, die
+genannten Dateien zu &ouml;ffnen.</p>
+
+<p>Um die Dateien mit dem erforderlichen Inhalt bereitzustellen, bietet sich
+der manuelle Aufruf der unter <a href="#datasource_command">Datenquelle
+command</a> angegebenen Befehle an.
+Mehr hierzu unter <a href="#offline">Offline-Betrieb</a>.
+
+<a name="datasource_database"><h4>Datenquellen <tt>QPSQL</tt> und <tt>QODBC</tt> (Datenbanken)</h4></a>
+<p>Mit den folgenden Attributen des Elements
+<tt>sctime/general/backends/database</tt> k&ouml;nnen die Parameter der
+Datenbank-Datenquellen konfiguriert werden.
+Die m&ouml;glichen Attribute sind:</p>
+
+<ul>
+  <li><tt>server</tt>: der Name des zu kontaktierenden Servers
+  <li><tt>name</tt>: der Name der Datenbank auf dem Server
+  <li><tt>user</tt>: der zu verwendende Nutzername.
+  Ist das Attribut nicht angegeben oder der Wert leer, wird der Anmeldename des
+  Betriebssystems als Anmeldename verwendet.
+  <li><tt>password</tt>: Passwort des Datenbanknutzers.
+  Ist das Attribut nicht vorhanden oder leer, wird nach einer Datei
+  <tt>~/.Zeit</tt> (in dieser Gross-/Kleinschreibung, unter Windows
+  <tt>H:\.Zeit</tt>) gesucht und dessen erste Zeile (ohne den Zeilenumbruch)
+  als Passwort verwendet.
+  Existiert auch die Passwortdatei nicht, wird der Nutzername als Kennwort
+  versucht.
+</ul>
+
+<a name="platform"><h2>Betriebssystemspezifische Hinweise</h2></a>
+
+<h3>Windows</h3>
+
+<p>Unter Windows werden alle Konfigurationsdateien unter <tt>H:\.sctime</tt> gesucht.
+Auch die erzeugten Zeit-Shell-Scripts und -XML-Dateien werden dort abgelegt.</p>
+
+<p>Das Passwort zur Zeitdatenbank wird in der Datei <tt>H:\.Zeit</tt> erwartet
+(wenn es nicht in <tt>settings.xml</tt> konfiguriert ist).</p>
+
+<p>Allgemein kann jede Nennung von <tt>~</tt> (Tilde) als Platzhalter f&uuml;r
+das pers&ouml;nliche Verzeichnis unter UNIX im Kontext von  Windows gedanklich
+durch <tt>H:</tt> ersetzt werden.</p>
+
+<p>Die <tt>zeittools</tt>, die Skripte zum &Uuml;bertragen der Zeiten in die
+Zeitdatenbank, stehen nicht f&uuml;r Windows zur Verf&uuml;gung.
+Es wird davon ausgegangen, da&szlig; der Anwender sich auf einem
+UNIX/Linux-Rechner anmeldet und <tt>sctimeorg2</tt> dort aufruft.
+Hierzu wird wiederum davon ausgegangen, da&szlig; Laufwerk <tt>H:</tt> des
+Windowsrechners gleichzeitig das pers&ouml;nliche Verzeichnis des Nutzers
+(<tt>~</tt>) auf dem UNIX/Linux-System ist.
+Falls nicht, sind die Dateien manuell zu kopieren.</pp>
+
+<h3>Mac</h3>
+
+<p><tt>scTime.app</tt> f&uuml;r den Mac bringt Qt und die
+PostgreSQL-Client-Bibliothek als sogenannte private Frameworks selbst mit und
+ist so ohne externe Komponenten lauff&auml;hig.</p>
+
+<p><tt>QODBC</tt> steht nicht (oder zumindest nicht ohne externe Softwarekomponenten)
+als Datenquelle zur Verf&uuml;gung.</p>
+
+<p>Die Datenquelle <tt>QPSQL</tt> steht zur Verf&uuml;gung.
+Falls der Nutzername am Mac von dem in der Zeitdatenbank abweicht, mu&szlig;
+das Modul via <tt>settings.xml</tt> mit dem richtigen Nutzernamen konfiguriert
+werden.
+Weitere Hinweise hierzu unter <a href="#datasource_database">Datenquellen
+Datenbanken</a>.</p>
+
+<p>Die <tt>zeittools</tt>, die Skripte zum &Uuml;bertragen der Zeiten in die
+Zeitdatenbank, stehen auch f&uuml;r Macs nicht zur Verf&uuml;gung. Es wird davon
+ausgegangen, da&szlig; der Anwender sich auf einem UNIX/Linux-Rechner anmeldet
+und <tt>sctimeorg2</tt> dort aufruft.
+Da das Home des Anwenders auf dem Mac typischweise nicht dem Home auf der
+UNIX/Linux-Maschine entspricht, sind die Dateien z.B. per <tt>scp</tt>
+oder <tt>rsync</tt> manuell zu &uuml;bertragen.</pp>
+
+<p>Werden die Konten- und Bereitschaftsliste als Dateien bereitgestellt,
+m&uuml;ssen diese im Format UTF-8 sein.
+Am besten erzeugt man sie mit einem Aufruf der folgenden Form:
+<tt>ssh user@linuxserver "LC_CTYPE=de_DE.UTF-8 zeitkonten --separator=\"|\" --mikrokonten" >$HOME/.sctime/zeitkonten.txt</tt>
+Dabei wird von passwortfreiem login ausgegangen.</p>
+
+<a name="misc"><h2>Weitere Hinweise</h2></a>
+
+<a name="offline"><h3>Offline-Betrieb</h3></a>
+
+<p>Wie schon in den vorigen Abschnitten angedeutet, kann sctime auch ohne
+Verbindung zur Datenbank betrieben werden.
+Hierzu m&uuml;ssen die notwendigen Daten (Zeitkonten und Bereitschaftszeiten)
+in Dateien am richtigen Ort bereitgestellt werden.
+Die Standardpfade hierf&uuml;r sind <tt>~/.sctime/zeitkonten.txt</tt> und
+<tt>~/.sctime/zeitbereitls.txt</tt>.
+Diese kann man mit folgenden Befehlsaufrufen (gegebenenfalls auf einem anderen
+Rechner mit Zugang zur Zeitdatenbank) erzeugen:
+
+<p><tt>zeitkonten --mikrokonten --separator='|' &gt; zeitkonten.txt</tt></p>
+<p><tt>zeitbereitls --separator='|' &gt; zeitbereitls.txt</tt></p>
+
+<p>Sollen die Dateien in einem anderen Pfad liegen, als es die Defaults
+vorsehen, stehen folgende Kommandozeilenoptionen zur Verf&uuml;gung:</p>
+
+<ul>
+<li><tt>--configdir DIRNAME</tt> erlaubt es das Konfigurationsverzeichnis
+umzusetzen (Default ist <tt>h:\.sctime</tt> unter Windows und
+<tt>~/.sctime</tt> unter *nix).
+<li><tt>--zeitkontenfile FILENAME</tt>: Kontendaten aus der genannten Datei lesen.
+<li><tt>--bereitschaftsfile FILENAME</tt>: Bereitschaftskategorien aus der genannten Datei lesen.
+</ul>
+
+<h3>Offline-Betrieb, portable Edition</h3>
+
+<p>sctime kann ohne Probleme von einem USB-Stick gestartet werden.
+Jedoch ändert sich unter Windows beim Arbeiten an verschiedenen Rechnern immer
+wieder der Laufwerksbuchstabe des USB-Sticks.
+Das hat zur Folge, da&szlig; der default <tt>H:\.sctime</tt> f&uuml;r die Suche
+nach Einstellungsdateien nur in den seltensten F&auml;llen zutreffend ist.</p>
+
+<p>Als Hilfsmittel kann man sich jedoch den Fakt zunutze machen, da&szlig;
+unter Windows das aktuelle Verzeichniss eines Programmes, das &uuml;ber
+eine Vern&uuml;pfung gestartet wurde, dessen Arbeitsverzeichnisangabe leer
+ist, dem Verzeichnis der Verkn&uuml;pfung entspricht.
+Man erstellt also an der Wurzel des USB-Sticks eine Verkn&uuml;pfung.
+Darin tr&auml;t man den folgenden Aufruf von sctime mit ausschlie&szlig;lich
+relativen Pfaden ein:</p>
+
+<p><tt>\sctime\sctime.exe --configdir=\.sctime</tt></p>
+
+<p>Das Feld zur Eingabe des Arbeitsverzeichnisses leert man vollst&auml;ndig.</p>
+
+<p>Ein so gestartetes sctime sucht nun alle Dateien im Unterverzeichnis
+<tt>.sctime</tt> des USB-Sticks, unabh&auml;ngig davon, welchen
+Laufwerksbuchstaben er gerade hat.</p>
+
+<p>UNIX/Linux-Nutzer sorgen einfach auf geeignetem Wege daf&uuml;r da&szlig; der
+USB-Stick immer unter demselben Pfad gemountet wird.</p>
+
+<p>Mac-Nutzer k&ouml;nnen sich darauf verlassen, da&szlig; der USB-Stick unter
+<tt>/Volumes/&lt;Volume-Name&gt;</tt> eingebunden wird.
+Hier besteht die Schwierigkeit eher darin, der Applikation klarzumachen,
+da&szlig; sie an einem anderen Ort nach ihren Einstellungen suchen soll.
+Am einfachsten bewerkstelligt man dies durch Umbenennen von
+<tt>scTime.app/Contents/MacOS/scTime</tt> nach
+<tt>scTime.app/Contents/MacOS/scTime.bin</tt> und Erstellen eines Shell-Sciptes
+unter dem Originalnamen <tt>scTime.app/Contents/MacOS/scTime</tt>.
+Dieses kann dann in etwa folgenden Inhalt haben:</p>
+
 <pre>
- &lt;general&gt;
- ...
- &lt;defaultscommentsfile name="defaultcomments.xml"/&gt;
- ...
- &lt;\general&gt;
+#!/bin/sh
+exec -a $0 $0.bin --configdir /Volumes/USB-Stick/.sctime
 </pre>
-<p>
-Der Aufruf erfolgt dann mit: (alles auf eine Zeile)
-<pre>
- %pdrive%\Programme\sctime-0.58\sctime.exe 
-  --configdir=%pdrive%\Anwendungsdaten\sctime\ 
-  --zeitkontenfile=%pdrive%\Programme\sctime-0.58\zeitkontenfile.txt 
-  --bereitschaftsfile=%pdrive%\Programme\sctime-0.58\bereitschaftsfile.txt
-</pre>
-</p><p>
-Wobei %pdrive% natürlich automatisch je nach Rechner/Laufwerksbuchstabe ersetzt wird. Wir nutzen als Wrapper für den Aufruf pstart, siehe <a href="http://www.pegtop.net" target="_top">http://www.pegtop.net</a> .  
-Wenn es den Bedarf gibt kann ich in meinen willek/www auch eine fertige Version zum runterladen anbieten, 
-bitte melden wenn es Bedarf dafür gibt: <a href="mailto&#58;lutz&#46;willek&#64;science&#45;computing&#46;de">lutz.willek&#64;science-computing.de</a>
-</p>
 
-<h2>Weitere Hinweise</h2>
+<p>Das Script sollte nat&uuml;rlich ausf&uuml;hrbar gemacht werden: <tt>chmod
+755 scTime.app/Contents/MacOS/scTime</tt>.</p>
+
+<h3>Teil-Offline-Betrieb</h3>
+
+Die bereits erl&auml;uterte Suchreihenfolge f&uuml;r Kontendaten erlaubt auch
+einen teilweisen Offline-Betrieb:
+Solange die Datenbank erreicht werden kann, werden die aktuellen Kontendaten
+bei jedem Start von dort bezogen.
+Nur wenn die Datenbank nicht erreichbar ist, wird auf die Dateien in ~/.sctime
+zur&uuml;ckgegriffen.
+Man kann diese Dateien also f&uuml;r offline-Betrieb bereitlegen und bei
+Verf&uuml;gbarkeit trotzdem automatisch die Datenbank nutzen.</p>
+
+<p>Dabei gibt es jedoch zwei Dinge zu beachten</p>
+
+<ol>
+  <li>Man sollte nicht vergessen, die Dateien regelm&auml;&szlig;ig oder
+  zumindest vor jedem offline-Einsatz zu aktualisieren.
+
+  <li>Durch den Verbindungsversuch zur Datenbank kann zu langen
+  Wartezeiten beim Programmstart und Neulesen der Kontenliste kommen.
+  Das ist vor allem dann der Fall, wenn man sich in einem Netzwerk
+  befindet, in dem der konfigurierte Datenbankservername aufl&ouml;sbar,
+  der zugeh&ouml;rige Server aber nicht erreichbar ist, weil eine
+  Firewall dorthin gerichteten Traffic stillschweigend verwirft.
+  In einem solchen Fall kann die Suchreihenfolge wie unter <a
+  href="#datasources">Datenquellen</a> beschrieben,
+  vor&uuml;bergehend abge&auml;ndert oder permanent umkonfiguriert
+  werden.
+</ol>
+
 <h3>Sperren</h3>
 Sobald das Programm startet, versucht es exklusiv eine lokale Sperre
 anzulegen. Das Betriebssystem entfernt diese lokale Sperre zuverlässig nach
 einem eventuellen Absturz des Programms (unter UNIX: lockf()).
 Wenn die lokale Sperre angelegt werden kann, prüft das Programm die Existenz
-der Datei <code>.sctime/LOCK</code>. Wenn es sie gibt und einen fremden
+der Datei <tt>.sctime/LOCK</tt>. Wenn es sie gibt und einen fremden
 Rechnernamen enthält, dann geht das Programm davon aus, dass eine weitere
 Instanz auf einem anderen Rechner läuft und beendet sich.
 
-<h3>Kontenliste laden</h3>
-<p>Das Programm lädt die Kontenliste und die Liste der Bereitschaftsarten mit
-einer der folgenden Methoden:
-<table>
-  <tr><td>Kommandozeile</td><td>die Datei oder Dateien, die beim Aufruf angegeben wurde</td></tr>
-  <tr><td><tt>QPSQL</tt></td><td>Datenbank-Treiber von Qt für Postgres</td></tr>
-  <tr><td><tt>QODBC</tt></td><td>Datenbank-Treiber von Qt; verwendet die ODBC-Datenquelle <tt>postgres_zeit</tt></td></tr>
-  <tr><td><tt>command</tt></td><td>verwendet die Kommandos <tt>zeitkonten</tt> und <tt>zeitbereitls; ist unter Windows wirkungslos</tt></td></tr>
-  <tr><td><tt>file</tt></td>
-    <td>liest die Dateien <tt>zeitkonten.txt</tt> und <tt>zeitbereitls.txt</tt>
-      aus dem Konfigurationsverzeichnis (üblicherweise ist
-      das <tt>.sctime</tt>)</td></tr>
-</table>
-</body>
-</p>
-<p>Die Methoden werden in dieser Reihenfolge angewendet, bis die erste
-erfolgreich ist. Fehlende Module oder fehlende Dateien sind die Ursachen für
-  die meisten Fehler. Die zuhörigen Meldungen sind unter dem
-  Menüpunkt <tt>Meldungen</tt> einzusehen.</p>
-<p>
-In <tt>settings.xml</tt> und mit der Option <tt>--datasource=NAME</tt>, die man auch mehrmals angeben darf,
-kann man die Standardreihenfolge ändern.
+<h3><tt>defaultcomments.xml</tt></h3>
+<p>In fr&uuml;heren Versionen gab es eine Datei <tt>~/.sctime/defaultcomments.xml</tt>.
+Diese ist nicht mehr notwendig und wird nicht mehr unterst&uuml;tzt.
+Die darin enthaltenen Informationen sind jetzt in der Kontenliste enthalten und
+werden dort mit dem Befehl <tt>zeitmikro</tt> gepflegt.</p>
 
 </html>
