@@ -22,7 +22,8 @@ class DatasourceManager:public QObject
 {
   Q_OBJECT
 public:
-  DatasourceManager();
+  DatasourceManager(const QString& name);
+  const QString name;
   QList<Datasource*> sources;
   ~DatasourceManager();
 public slots:

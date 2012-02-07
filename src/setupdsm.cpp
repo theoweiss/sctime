@@ -99,8 +99,8 @@ void setupDatasources(const QStringList& datasourceNames,
                       const SCTimeXMLSettings& settings,
                       const QString &kontenPath, const QString &bereitPath)
 {
-  kontenDSM = new DatasourceManager();
-  bereitDSM = new DatasourceManager();
+  kontenDSM = new DatasourceManager(QObject::tr("Konten"));
+  bereitDSM = new DatasourceManager(QObject::tr("Bereitschaftsarten"));
   trace(QObject::tr("verfügbare Datenbanktreiber: %1.").arg(QSqlDatabase::drivers().join(", ")));
   if (!kontenPath.isEmpty())
     kontenDSM->sources.append(new FileReader(kontenPath, "|", 13));

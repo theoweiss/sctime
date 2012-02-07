@@ -14,7 +14,7 @@ static bool readFile(DSResult* const result, QTextStream &ts, const QString &sep
 
 Datasource::Datasource():broken(false) {}
 
-DatasourceManager::DatasourceManager() {}
+DatasourceManager::DatasourceManager(const QString& name):name(name) {}
 
 DatasourceManager::~DatasourceManager() {
   Datasource *ds;
@@ -32,7 +32,7 @@ void DatasourceManager::start() {
     }
     result.clear();
   }
-  logError(QObject::tr("keine Datenquelle verfügbar"));
+  logError(QObject::tr("%1: keine Datenquelle verfügbar").arg(name));
   emit aborted();
 }
 
