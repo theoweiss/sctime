@@ -174,9 +174,7 @@ int main( int argc, char **argv ) {
 
   SCTimeXMLSettings settings;
   settings.readSettings();
-  QList<QString> dataSourceNames;
-  // TODO: Allow to configure and initialise this from settings.and/or command line.
-  dataSourceNames << "QPSQL" << "QODBC" << "command" << "file";
+  QList<QString> dataSourceNames(settings.backends.split(" "));
   setupDatasources(dataSourceNames, settings, zeitkontenfile, bereitschaftsfile);
   TimeMainWindow mainWindow;
 #ifndef WIN32

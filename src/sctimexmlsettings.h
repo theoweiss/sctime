@@ -26,6 +26,7 @@
 #include <QSize>
 #include <QColor>
 #include <vector>
+#include <QString>
 
 #define MAX_WORKTIME_DEFAULT 10*60*60 // Warn if more time is spent
 
@@ -35,10 +36,11 @@ class QTextStream;
 
 class SCTimeXMLSettings
 {
-  public:
+public:
 
-    SCTimeXMLSettings():firstSave(true)
+    SCTimeXMLSettings():backupSettingsXml(true)
     {
+      defaultbackends = "QPSQL QODBC command file";
       timeInc = 5*60;
       fastTimeInc = 60*30;
       zeitKommando = "zeit";
@@ -59,6 +61,7 @@ class SCTimeXMLSettings
       m_dragNDrop=true;
       m_customFont="helvetica";
       m_customFontSize=10;
+      backends = defaultbackends;
     }
 
     void writeSettings(AbteilungsListe* abtList);
@@ -220,6 +223,7 @@ class SCTimeXMLSettings
     {
         m_zeitKontenKommando=command;
     }
+    QString backends;
 
   private:
 
@@ -252,10 +256,10 @@ class SCTimeXMLSettings
     int m_maxWorkingTime;
     QString m_customFont;
     int m_customFontSize;
-    bool firstSave; // nur beim ersten Speichern ein  Backup von settings.xml erstellen
-
+    bool backupSettingsXml; // nur beim ersten Speichern ein  Backup von settings.xml erstellen
     QPoint unterKontoWindowPosition;
     QSize unterKontoWindowSize;
+    QString defaultbackends;
 };
 
 

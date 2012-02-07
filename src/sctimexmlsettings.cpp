@@ -185,10 +185,13 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
 
   QFile f(configDir + filename);
   if ( !f.open( QIODevice::ReadOnly ) ) {
-    if (global || f.exists())
+    logError(f.fileName() + ": " + f.errorString());
+    if (global || f.exists()) {
       // keine Fehlerausgabe, wenn "zeit-HEUTE.xml" fehlt
       QMessageBox::warning(NULL, QObject::tr("sctime: Konfigurationsdatei öffnen"),
                            QObject::tr("%1 : %2").arg(f.fileName(), f.errorString()));
+      if (global) backupSettingsXml = false;
+    }
     return;
   }
   QString errMsg;
@@ -196,6 +199,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
   if (!doc.setContent(&f, &errMsg, &errLine, &errCol)) {
     QMessageBox::critical(NULL, QObject::tr("sctime: Konfigurationsdatei lesen"),
                           QObject::tr("Fehler in %1, Zeile %2, Spalte %3: %4.").arg(errMsg).arg(errLine).arg(errCol).arg(errMsg));
+    if (global) backupSettingsXml = false;
     return;
   }
   f.close();
@@ -451,6 +455,10 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             if ((global) && (elem2.tagName()=="column")) {
                 columnwidth.push_back(elem2.attribute("width","50").toInt());
             }
+            if (global && elem2.tagName() == "backends") {
+              backends = elem2.attribute("names", defaultbackends);
+              QMessageBox::information(NULL, "backends", backends);
+            }
           }
         }
       }
@@ -597,6 +605,10 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
         defaultcommentfiletag.setAttribute("name",defaultcommentfiles[i]);
         generaltag.appendChild(defaultcommentfiletag);
     }
+
+    QDomElement qdeBackends = doc.createElement("backends");
+    qdeBackends.setAttribute("names", backends);
+    generaltag.appendChild(qdeBackends);
   }
 
   QDomElement aktivtag = doc.createElement("aktives_konto");
@@ -748,7 +760,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   stream<<doc.toString()<<endl;
   fnew.close();
   QFile fcurrent(filename);
-  if (global && firstSave && fcurrent.exists()) {
+  if (global && backupSettingsXml && fcurrent.exists()) {
     // Backup erstellen für settings.xml
     QFile fbackup(filename + ".bak");
     if (fbackup.exists()) fbackup.remove();
@@ -756,7 +768,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
       QMessageBox::warning(NULL, QObject::tr("sctime: Einstellungen speichern"),
                            QObject::tr("Kann nicht %1 kopieren nach %2: %3").arg(filename, fbackup.fileName(), fcurrent.errorString()));
     else
-      firstSave = false;
+      backupSettingsXml = false;
   }
 #ifndef WIN32
   // unter Windows funktioniert kein "rename", wenn es den Zielnamen schon gibt.
