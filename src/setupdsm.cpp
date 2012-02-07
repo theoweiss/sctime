@@ -127,10 +127,19 @@ void setupDatasources(const QStringList& datasourceNames,
       db.setDatabaseName(
 	  dsname.startsWith("QODBC") 
 	    ? "DSN=Postgres_Zeit;DRIVER=PostgreSQL UNICODE" 
-	    : "zeit");
-      db.setHostName("zeitdabaserv");
-      db.setUserName(username());
-      db.setPassword(password());
+	    : settings.database);
+      db.setHostName(settings.databaseserver);
+
+      QString un = settings.databaseuser;
+      if (un.isEmpty())
+	un = username();
+      db.setUserName(un);
+
+      QString pw = settings.databasepassword;
+      if (pw.isEmpty())
+	pw = password();
+      db.setPassword(pw);
+
       kontenDSM->sources.append(new SqlReader(db, kontenQuery));
       bereitDSM->sources.append(new SqlReader(db,  bereitQuery));
     }

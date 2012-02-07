@@ -41,6 +41,8 @@ public:
     SCTimeXMLSettings():backupSettingsXml(true)
     {
       defaultbackends = "QPSQL QODBC command file";
+      defaultdatabaseserver = "zeitdabaserv";
+      defaultdatabase = "zeit";
       timeInc = 5*60;
       fastTimeInc = 60*30;
       zeitKommando = "zeit";
@@ -62,6 +64,10 @@ public:
       m_customFont="helvetica";
       m_customFontSize=10;
       backends = defaultbackends;
+      databaseserver = defaultdatabaseserver;
+      database = defaultdatabase;
+      // databaseuser - empty means "use system username"
+      // databasepassword - empty means "try to read from file"
     }
 
     void writeSettings(AbteilungsListe* abtList);
@@ -225,6 +231,12 @@ public:
     }
     QString backends;
 
+    // database backend
+    QString databaseserver;
+    QString database;
+    QString databaseuser;
+    QString databasepassword;
+
   private:
 
     void writeSettings(bool global, AbteilungsListe* abtList);
@@ -260,6 +272,10 @@ public:
     QPoint unterKontoWindowPosition;
     QSize unterKontoWindowSize;
     QString defaultbackends;
+
+    // database backend
+    QString defaultdatabaseserver;
+    QString defaultdatabase;
 };
 
 

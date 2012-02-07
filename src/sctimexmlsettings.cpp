@@ -455,8 +455,21 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             if ((global) && (elem2.tagName()=="column")) {
                 columnwidth.push_back(elem2.attribute("width","50").toInt());
             }
-            if (global && elem2.tagName() == "backends")
+            if (global && elem2.tagName() == "backends") {
               backends = elem2.attribute("names", defaultbackends);
+
+              for( QDomNode node3 = elem2.firstChild(); !node3.isNull(); node3 = node3.nextSibling() ) {
+                QDomElement elem3 = node3.toElement();
+                if( !elem3.isNull() ) {
+                  if ( elem3.tagName() == "database") {
+                    databaseserver = elem3.attribute("server", defaultdatabaseserver);
+                    database = elem3.attribute("name", defaultdatabase);
+                    databaseuser = elem3.attribute("user");
+                    databasepassword = elem3.attribute("password");
+		  }
+		}
+	      }
+	    }
           }
         }
       }
@@ -607,6 +620,18 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     QDomElement qdeBackends = doc.createElement("backends");
     qdeBackends.setAttribute("names", backends);
     generaltag.appendChild(qdeBackends);
+
+    QDomElement qdeDatabase = doc.createElement("database");
+    // do not save database server and database name for now until we have some
+    // concept how to update them in case they ever change
+    //qdeDatabase.setAttribute("server", databaseserver);
+    //qdeDatabase.setAttribute("name", database);
+    if (!databaseuser.isEmpty())
+      qdeDatabase.setAttribute("user", databaseuser);
+    if (!databasepassword.isEmpty())
+      qdeDatabase.setAttribute("password", databasepassword);
+    if (qdeDatabase.hasAttributes())
+      qdeBackends.appendChild(qdeDatabase);
   }
 
   QDomElement aktivtag = doc.createElement("aktives_konto");
@@ -753,6 +778,10 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
       QMessageBox::critical(NULL, QObject::tr("sctime: Einstellungen speichern"), QObject::tr("Datei %1 zum Schreiben öffnen: %2").arg(fnew.fileName(), fnew.errorString()));
       return;
   }
+
+  // may contain passwords and private data in general
+  fnew.setPermissions(QFile::ReadOwner | QFile::WriteOwner);
+
   QTextStream stream(&fnew);
   stream<<"<?xml version=\"1.0\" encoding=\""<<codecString(stream)<<"\"?>"<<endl;
   stream<<doc.toString()<<endl;
