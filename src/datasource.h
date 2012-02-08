@@ -9,19 +9,24 @@ class QStringList;
 
 typedef QList<QStringList> DSResult;
 
+/* represents a way of reading data (a list of a list of strings) */
 class Datasource
 {
 public:
-  Datasource();
+  /* false: error; */
   virtual bool read(DSResult* const result) = 0;
-  bool broken; // the datasource detected a permanent error
+  /* the datasource detected a permanent error */
+  bool broken;
   virtual ~Datasource() {};
+protected:
+  Datasource();
 };
 
 class DatasourceManager:public QObject
 {
   Q_OBJECT
 public:
+  /* name: identifier for message */
   DatasourceManager(const QString& name);
   const QString name;
   QList<Datasource*> sources;
@@ -29,14 +34,16 @@ public:
 public slots:
   virtual void start();
 signals:
+  /* successfully finished reading */
   void finished(const DSResult& data);
+  /* no datasource provided data */
   void aborted();
 };
 
 class FileReader : public Datasource
 {
 public:
-  FileReader(const QString &path, const QString& sep, int columns);
+  FileReader(const QString &path, const QString& columnSeparator, int columns);
   virtual ~FileReader() {};
   virtual bool read(DSResult* const result);
   const QString path, sep;
@@ -58,7 +65,7 @@ public:
 class CommandReader : public Datasource
 {
 public:
-  CommandReader(const QString &command, const QString& sep, int columns);
+  CommandReader(const QString &command, const QString& columnSeparator, int columns);
   virtual ~CommandReader() {};
   virtual bool read(DSResult* const result);
   const QString command, sep;

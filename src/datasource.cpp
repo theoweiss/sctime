@@ -36,8 +36,8 @@ void DatasourceManager::start() {
   emit aborted();
 }
 
-FileReader::FileReader(const QString &path, const QString& sep, int columns)
-  :Datasource(), path(path), sep(sep), columns(columns) {}
+FileReader::FileReader(const QString &path, const QString&  columnSeparator, int columns)
+  :Datasource(), path(path), sep(columnSeparator), columns(columns) {}
 
 bool FileReader::read(DSResult* const result) {
   QFile file(path);
@@ -58,6 +58,8 @@ static bool readFile(DSResult* const result, QTextStream &ts, const QString& sep
     lines++;
     if (l.isEmpty()) continue;
     int start = 0;
+    // Der Separator soll in der letzten Spalte als einfaches Zeichen behandelt werden soll.
+    // Dafür gibt es keine Methode in QString. Deswegen hier per Hand:
     for (int i = 0; i < columns - 1; i++) {
       int end = l.indexOf(sep, start);
       if (end == -1) {
@@ -65,10 +67,10 @@ static bool readFile(DSResult* const result, QTextStream &ts, const QString& sep
         logError(QObject::tr("Zeile %1 von '%2' hat nur %3 Spalten statt %4").arg(lines).arg(path).arg(i + 1).arg(columns));
         return false;
       }
-      vl.append(l.mid(start, end - start));
+      vl << l.mid(start, end - start);
       start = end + sep.length();
     }
-    vl.append(l.mid(start)); // das letzte Element enthält den ganzen Rest
+    vl << l.mid(start); // das letzte Element enthält den ganzen Rest
     result->append(vl);
   }
   return true;
@@ -103,8 +105,8 @@ bool  SqlReader::read(DSResult* const result) {
 #ifndef WIN32
 #include <stdlib.h>
 #include <errno.h>
-CommandReader::CommandReader(const QString &command, const QString& sep, int columns)
-  :Datasource(), command(command), sep(sep), columns(columns) {}
+CommandReader::CommandReader(const QString &command, const QString& columnSeparator, int columns)
+  :Datasource(), command(command), sep(columnSeparator), columns(columns) {}
 
 bool CommandReader::read(DSResult* const result) {
   FILE *file = popen(command.toLocal8Bit(), "r");
