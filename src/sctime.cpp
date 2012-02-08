@@ -77,12 +77,15 @@ static void fatal(const QString& title, const QString& body) {
 
 static const char help[] =
 " Available Options: \n"
-" --configdir=  location of the directory where your files will be placed (default: ~/.sctime)\n"
-"--datasource= (repeatable) use these data sources (QPSQL, QODBC, command, file);\n"
-"   overrides <datasources/> in settings.xml\n"
-" --zeitkontenfile=  location of zeitkontenfile (default: output of 'zeitkonten --mikrokonten --sep=\\|')\n"
-" --bereitschaftsfile=  location of bereitschaftsfile (default: output of 'zeitbereitls'.\n\n"
-"Without these options, sctime reads the necessary data from the database ('zeitdabaserv')";
+" --configdir=DIR  location of the directory where your files will be placed\n"
+"    (default: ~/.sctime)\n"
+"--datasource= (repeatable) use these data sources\n"
+"    (default: 'QPSQL'',' 'QODBC'', 'command' and 'file'');\n"
+"    overrides <datasources/> in settings.xml\n"
+" --zeitkontenfile=PATH  read the accounts list from file PATH\n"
+" --bereitschaftsfile=PATH  read the 'Bereitschaftsarten'' from file PATH\n"
+"    (default: output of 'zeitbereitls'.\n\n"
+"Please see the Help menu for further information (F1)!";
 
 #ifdef WIN32
 static void setlocale() {}
