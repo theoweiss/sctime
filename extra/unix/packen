@@ -25,4 +25,4 @@ die () {
 
 [ -f sctime ] || die "$0 im Build-Verzeichnis aufrufen!"
 [ -h sc-sctime.desktop ] || ln -s "$bindir/sc-sctime.desktop" .
-scpm -c -f "$bindir/sctime.f4" -n sctime -p sctime-0.71.p4 -v 0.71 --requires="os:unix,os:Linux,cpu:x86_64"
+scpm -c -f "$bindir/sctime.f4" -n sctime -p sctime-0.72.1.p4 -v 0.72.1 --requires="os:unix,os:Linux,cpu:x86_64"

@@ -100,7 +100,6 @@ TimeMainWindow::TimeMainWindow():QMainWindow()
   }
 
   defaultCommentReader.read(abtList,xmlfilelist);
-  bereitDSM->start();
   DefaultTagReader defaulttagreader;
   defaulttagreader.read(&defaultTags);
 
@@ -348,7 +347,8 @@ TimeMainWindow::TimeMainWindow():QMainWindow()
   connect(bereitDSM, SIGNAL(finished(DSResult)), this, SLOT(commitBereit(DSResult)));
   connect(kontenDSM, SIGNAL(aborted()), this, SLOT(displayLastLogEntry()));
   connect(bereitDSM, SIGNAL(aborted()), this, SLOT(displayLastLogEntry()));
-  refreshKontoListe();
+  QMetaObject::invokeMethod(bereitDSM, "start", Qt::QueuedConnection);
+  QMetaObject::invokeMethod(this, "refreshKontoListe", Qt::QueuedConnection);
 }
 
 void TimeMainWindow::displayLastLogEntry(){
@@ -846,8 +846,6 @@ void TimeMainWindow::changeDate(const QDate& datum)
 
 void TimeMainWindow::refreshKontoListe() {
   statusBar->showMessage(tr("Kontenliste laden..."));
-  // ein bisschen Zeit geben, um das Hauptfenster zu zeichen
-  qApp->processEvents();
   QTimer::singleShot(100, kontenDSM, SLOT(start()));
 }
 

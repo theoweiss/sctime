@@ -33,6 +33,7 @@
 #include <QTranslator>
 #include <QSocketNotifier>
 #include <QSqlDatabase>
+#include <QTimer>
 
 #ifndef WIN32
 #include <assert.h>
@@ -189,7 +190,6 @@ int main( int argc, char **argv ) {
   local.setNext(global);
   if (!local.acquire()) fatal(QObject::tr("sctime: kann nicht starten"), local.errorString());
   lock = &local;
-
   SCTimeXMLSettings settings;
   settings.readSettings();
   if (dataSourceNames.isEmpty()) dataSourceNames = settings.backends.split(" ");
