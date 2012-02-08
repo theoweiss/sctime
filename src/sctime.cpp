@@ -38,7 +38,7 @@
 #include <assert.h>
 #include <locale.h>
 #include <signal.h>
-#include "signalhandler.h"
+#include "unix/signalhandler.h"
 #define LOCALE "de_DE.UTF-8"
 #endif
 

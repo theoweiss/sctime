@@ -1,99 +1,35 @@
 TEMPLATE = app
 CONFIG += warn_on qt uic
+VERSION = 0.72.1
 QT += xml gui core network sql
 TARGET = sctime
-SOURCES += abteilungsliste.cpp \
-           datedialog.cpp \
-           unterkontodialog.cpp \
-           kontotreeview.cpp \
-           findkontodialog.cpp \
-           timemainwindow.cpp \
-           sctimexmlsettings.cpp \
-           sctime.cpp \
-           preferencedialog.cpp \
-           defaultcommentreader.cpp \
-           qdatepicker.cpp \
-           defaulttagreader.cpp \
-           kontotreeitem.cpp \
-           GetOpt.cpp \
-           descdata.cpp \
-           smallfontdialog.cpp \
-           bereitschaftsliste.cpp \
-           bereitschaftsview.cpp \
-           bereitschaftsmodel.cpp \
-           lock.cpp \
-    datasource.cpp \
-    setupdsm.cpp
-HEADERS += abteilungsliste.h \
-           lock.h \
-           kontoliste.h \
-           statusbar.h \
-           datedialog.h \
-           kontotreeitem.h \
-           timecounter.h \
-           eintragsliste.h \
-           timeedit.h \
-           kontotreeview.h \
-           findkontodialog.h \
-           timemainwindow.h \
-           globals.h \
-           unterkontodialog.h \
-           unterkontoeintrag.h \
-           sctimexmlsettings.h \
-           unterkontoliste.h \
-           preferencedialog.h \
-           defaultcommentreader.h \
-           qdatepicker.h \
-           defaulttagreader.h \
-           GetOpt.h \
-           descdata.h \
-           smallfontdialog.h \
-           bereitschaftsliste.h \
-           bereitschaftsview.h \
-           bereitschaftsmodel.h \
-    datasource.h \
-    setupdsm.h
+SOURCES += *.cpp
+HEADERS += *.h
 RESOURCES= ../pics/sctimeImages.qrc
-FORMS += datedialogbase.ui \
-         preferencedialogbase.ui
-#target.path = /$(prefix)/bin
+FORMS += *.ui
 INSTALLS += target
-linux-g++-static{
-  LIBS += -ldl
-}
-linux-g++-static-debug{
-  LIBS += -ldl
-}
-linux-g++{
-  LIBS += -ldl
-}
 win32{
-  # CONFIG -=debug # Ich haette gerne, dass er unter Windows _nur_ Release baut.
-  CONFIG += embed_manifest_exe release
-  QMAKE_CXXFLAGS += -EHsc # C++-Ausnahmen
+  CONFIG += embed_manifest_exe
+  #QMAKE_CXXFLAGS += -EHsc # C++-Ausnahmen
   RC_FILE += sctime.rc
-  LIBS += ws2_32.lib
   DEFINES += _CRT_SECURE_NO_WARNINGS
+  }
+!win32{
+  SOURCES += unix/signalhandler.cpp
+  HEADERS += unix/signalhandler.h
 }
 hpux-acc{
-  DEFINES += HPUX
   LIBS += -L/opt/graphics/OpenGL/lib $$QMAKE_LIBS_OPENGL
 }
 solaris-cc{
-  DEFINES += SUN
   QMAKE_CXXFLAGS_RELEASE += -features=conststrings
   LIBS += -ldl $$QMAKE_LIBS_OPENGL
 }
 solaris-g++{
-  DEFINES += SUN
   LIBS += -ldl
 }
 irix-cc{
-  DEFINES += IRIX
   QMAKE_LIBS_QT += -lGL
-}
-irix-g++{
-  DEFINES += IRIX
 }
 mac {
   ICON = ../pics/scTime.icns
@@ -103,12 +39,4 @@ mac {
   DEFINES += MACOS
   CONFIG += x86 ppc
 }
-#LIBS+=-L../../gdbmacros -lgdbmacros
 
-!win32{
-  SOURCES += signalhandler.cpp
-  HEADERS += signalhandler.h
-  #QMAKE_EXTRA_TARGETS += revtarget
-  #revtarget.target = revlabel.c
-  #revtarget.commands = "const char revlabel[] =\"$(shell git describe --always --dirty)\";" > $$revtarget.target
-  }
