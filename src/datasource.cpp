@@ -53,10 +53,11 @@ bool FileReader::read(DSResult* const result) {
 
 static bool readFile(DSResult* const result, QTextStream &ts, const QString& sep, int columns, const QString &path) {
   int lines = 0;
-  for (QString l; !(l = ts.readLine()).isNull();) {
-    QStringList vl;
+  while (!ts.atEnd()) {
+    QString l = ts.readLine();
     lines++;
     if (l.isEmpty()) continue;
+    QStringList vl;
     int start = 0;
     // Der Separator soll in der letzten Spalte als einfaches Zeichen behandelt werden soll.
     // Dafür gibt es keine Methode in QString. Deswegen hier per Hand:
