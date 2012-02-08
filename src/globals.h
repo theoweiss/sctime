@@ -29,7 +29,6 @@ class DatasourceManager;
 class Lock;
 extern QString configDir;
 extern QString lockfilePath;
-extern const QString version;
 extern Lock *lock;
 void logError(const QString& msg);
 void trace(const QString& msg);

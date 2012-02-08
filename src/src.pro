@@ -1,6 +1,8 @@
 TEMPLATE = app
 CONFIG += warn_on qt uic
+# you have to explicitly recompile sctime.cpp whenever you change this value
 VERSION = 0.72.1
+DEFINES += APP_VERSION=$$VERSION
 QT += xml gui core network sql
 TARGET = sctime
 SOURCES += *.cpp
@@ -39,4 +41,5 @@ mac {
   DEFINES += MACOS
   CONFIG += x86 ppc
 }
+
 

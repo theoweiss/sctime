@@ -51,10 +51,13 @@
 #include "datasource.h"
 #include "setupdsm.h"
 
-
-#ifndef CONFIGDIR 
+#ifndef CONFIGDIR
 #define CONFIGDIR "~/.sctime"
 #endif
+
+// transform the value a #define into a string in a portable way
+#define QUOTE_(x) #x
+#define QUOTE(x) QUOTE_(x)
 
 #ifdef __GNUC__
 static void fatal(const QString& title, const QString& body) __attribute__ ((noreturn));
@@ -64,7 +67,6 @@ static void fatal(const QString& title, const QString& body);
 
 QString configDir;
 QString lockfilePath;
-const QString version("0.72");
 QString PERSOENLICHE_KONTEN_STRING;
 QString ALLE_KONTEN_STRING;
 Lock *lock;
@@ -136,13 +138,14 @@ int main( int argc, char **argv ) {
           QLibraryInfo::location(QLibraryInfo::TranslationsPath));
   app.installTranslator(&qtTranslator);
   QTextCodec::setCodecForTr(QTextCodec::codecForName ("UTF-8"));
-  app.setObjectName("Sctime");
+  app.setObjectName("sctime");
+  app.setApplicationVersion(QUOTE(APP_VERSION));
 
   PERSOENLICHE_KONTEN_STRING = QObject::tr("Persönliche Konten");
   ALLE_KONTEN_STRING = QObject::tr("Alle Konten");
 
   if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1],"--help") == 0 || strcmp(argv[1], "/h") == 0||strcmp(argv[1],"/help") == 0)) {
-    QMessageBox::information(NULL, "sctime", help);
+    QMessageBox::information(NULL, "sctime " + qApp->applicationVersion(), help);
     exit(0);
   }
   QString configdirstring, zeitkontenfile, bereitschaftsfile;

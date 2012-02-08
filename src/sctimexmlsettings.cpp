@@ -74,7 +74,7 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
            "set -e\n"
            "trap '[ $? -gt 0 ] && echo ABBRUCH in $0[$LINENO] - nicht alle Buchungen sind uebernommen >&2 && exit 1' 0"
            "\n\n"
-           "# Zeit Aufrufe von sctime "<< version <<" generiert \n"
+           "# Zeit Aufrufe von sctime "<< qApp->applicationVersion() <<" generiert \n"
            "# Gesamtzeit: "<<tc.toString()<<"/"<<tcAbzur.toString()<<"\n"
            "ZEIT_ENCODING="<<codec<<"\n"
            "export ZEIT_ENCODING\n";
@@ -511,7 +511,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
 
   QDomElement root = doc.createElement( "sctime" );
   // TODO: XML/HTML-Quoting
-  root.setAttribute("version", version);
+  root.setAttribute("version", qApp->applicationVersion());
   doc.appendChild( root );
   QDomElement generaltag = doc.createElement( "general" );
 

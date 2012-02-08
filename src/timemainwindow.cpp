@@ -1213,7 +1213,7 @@ void TimeMainWindow::callAboutBox() {
         "<tr><td>Mac:</td><td>Michael Weiser</td></tr>"
         "<tr><td>Projektseite:</td><td><a href='http://sourceforge.net/projects/sctime/'>http://sourceforge.net/projects/sctime/</a></td></tr>"
         "</table><p>Dieses Programm ist unter der GNU Public License v2 lizenziert.</p>")
-                   .arg(version, QT_VERSION_STR, qVersion()));
+                   .arg(qApp->applicationVersion(), QT_VERSION_STR, qVersion()));
 }
 
 void TimeMainWindow::logDialog() {
