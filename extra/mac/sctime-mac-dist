@@ -92,6 +92,7 @@ chmod -R go+r $approot && \
 dmgdir="$builddir"/dmg
 dmgname=scTime-"$version"-"$date"
 rm -rf "$dmgdir" && \
+	rm -f "$dmgname".dmg && \
 	mkdir -p "$dmgdir" && \
 	rsync -aSH --delete "$approot" "$dmgdir" && \
 	hdiutil create "$dmgname".dmg -volname "$dmgname" -srcfolder dmg && \
