@@ -12,6 +12,7 @@ patchqtdir="Resources/Qt"
 
 # patch qt library paths in binary itself (not known to exist, but might)
 "$patchqmake" "$sctime" "$patchqtdir"
+[ "$?" = 0 -o "$?" = "5" ] || exit 1
 
 otool -L "$sctime" | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
 	while read lib ; do
@@ -20,24 +21,27 @@ otool -L "$sctime" | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
 	privatelib="$approot"/Contents/Frameworks/"$libbase"
 
 	# path path to library in main binary
-	install_name_tool -change "$lib" @executable_path/../Frameworks/"$libbase" "$sctime"
+	install_name_tool -change "$lib" @executable_path/../Frameworks/"$libbase" "$sctime" || \
+		exit 1
 
 	# done already
 	[ -f "$privatelib" ] && continue
 
 	tdir=`dirname "$privatelib"`
-	mkdir -p "$tdir"
-	cp "$lib" "$privatelib"
+	mkdir -p "$tdir" && \
+		cp "$lib" "$privatelib" || \
+		exit 1
 
 	# path qt library paths in this library
 	"$patchqmake" "$privatelib" "$patchqtdir"
+	[ "$?" = 0 -o "$?" = "5" ] || exit 1
 
 	# newer QtGui needs some resources :-(
 	dir=`dirname "$lib"`
 	if [ -d "$dir"/Resources -a ! -d "$tdir"/Resources ] ; then
-		cp -R "$dir"/Resources "$tdir"/Resources
+		cp -R "$dir"/Resources "$tdir"/Resources || exit 1
 		#ln -s 4 "$tdir"/../Current
-		ln -s Versions/4/Resources "$tdir"/../..
+		ln -s Versions/4/Resources "$tdir"/../.. || exit 1
 	fi
 
 	# change install name of this library
@@ -51,7 +55,7 @@ otool -L "$sctime" | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
 		# patch path to dependency library in this library
 		install_name_tool \
 			-change "$sublib" @executable_path/../Frameworks/"$sublibbase" \
-			"$privatelib"
+			"$privatelib" || exit 1
 	done
 done
 
@@ -64,20 +68,25 @@ sed -e "s,@VERSION@,$version,g" \
 	-e "s,@ICON@,scTime.icns,g" \
 	-e "s,@EXECUTABLE@,scTime,g" \
 	"$srcdir"/Info.plist \
-	>"$approot"/Contents/Info.plist
+	>"$approot"/Contents/Info.plist || exit 1
 
-cp "$srcdir"/../../pics/scTime.icns "$approot"/Contents/Resources
+cp "$srcdir"/../../pics/scTime.icns "$approot"/Contents/Resources || \
+	exit 1
 
 # copy over translations
-mkdir -p "$appqtdir"/translations
-cp -R "$qtdir"/translations/qt_*.qm "$appqtdir"/translations
+mkdir -p "$appqtdir"/translations && \
+	cp -R "$qtdir"/translations/qt_*.qm "$appqtdir"/translations || \
+	exit 1
 
 # because we patch Qt paths to be relative, some funny logic seems to concat
 # the install prefix and translations path ending up with Resources/Qt in the
 # file name twice - do some symlinking for that - morons
-ln -sfn .. "$appqtdir"/Resources
+ln -sfn .. "$appqtdir"/Resources || exit 1
 
 # clean up
-chmod -R go+r $approot
-chmod 755 $approot/Contents/MacOS/*
-find $approot -name "*.bak" -exec rm -f {} \;
+chmod -R go+r $approot && \
+	chmod 755 $approot/Contents/MacOS/* && \
+	find $approot -name "*.bak" -exec rm -f {} \; || \
+	exit 1
+
+exit 0
