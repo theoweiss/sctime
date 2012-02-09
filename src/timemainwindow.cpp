@@ -353,6 +353,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow()
 
 void TimeMainWindow::displayLastLogEntry(){
   statusBar->showMessage(logTextLastLine);
+  QApplication::restoreOverrideCursor();
 }
 
 void TimeMainWindow::aktivesKontoPruefen(){
@@ -846,6 +847,7 @@ void TimeMainWindow::changeDate(const QDate& datum)
 
 void TimeMainWindow::refreshKontoListe() {
   statusBar->showMessage(tr("Kontenliste laden..."));
+  QApplication::setOverrideCursor(QCursor(Qt::BusyCursor));
   QTimer::singleShot(100, kontenDSM, SLOT(start()));
 }
 
@@ -867,7 +869,8 @@ void TimeMainWindow::commitKontenliste(DSResult data) {
   kontoTree->closeFlaggedPersoenlicheItems();
   abtList->setZeitDifferenz(diff);
   statusBar->showMessage(tr("Kontenliste geladen"), 2000);
-  aktivesKontoPruefen();
+  QApplication::restoreOverrideCursor();
+  QMetaObject::invokeMethod(this, "aktivesKontoPruefen", Qt::QueuedConnection);
 }
 
 /**
