@@ -34,8 +34,10 @@ irix-cc{
   QMAKE_LIBS_QT += -lGL
 }
 mac {
-  ICON = ../pics/scTime.icns
-  QMAKE_INFO_PLIST = ../extra/mac/Info.plist
+  # with Qt-4.8.0 icon and Info.plist rules do not work with out-of-source
+  # builds. try again later... sctime-mac-dist does this for now
+  #ICON = $$PWD/../pics/scTime.icns
+  #QMAKE_INFO_PLIST = $$PWD/../extra/mac/Info.plist
   TARGET = scTime
   QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.5.sdk
   DEFINES += MACOS

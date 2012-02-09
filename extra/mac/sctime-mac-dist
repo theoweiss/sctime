@@ -1,16 +1,13 @@
 #!/bin/sh
 
-qtdir="$1"
-shift
-
-mydir=`dirname $0`
-srcdir="$mydir"/../..
-[ -z "$1" ] || srcdir="$1"
-approot="$srcdir"/src/scTime.app
+builddir="$1"
+srcdir="$2"
+qtdir="$3"
+approot="$builddir"/../../src/scTime.app
 sctime="$approot"/Contents/MacOS/scTime
 appqtdir="$approot"/Contents/Resources/Qt
 
-patchqmake="$mydir"/patchqmake
+patchqmake="$builddir"/patchqmake
 patchqtdir="Resources/Qt"
 
 # patch qt library paths in binary itself (not known to exist, but might)
@@ -59,10 +56,17 @@ otool -L "$sctime" | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
 done
 
 # adjust version number and build date in Info.plist
-version=`grep ^VERSIONSTR $srcdir/src/src.pro | cut -d\" -f2`
+version=`grep ^VERSION $srcdir/../../src/src.pro | cut -d" " -f3`
 date=`date +"%Y%m%d"`
-sed -i .bak -e "s,@VERSION@,$version,g" -e "s,@DATE@,$date,g" \
-	"$approot"/Contents/Info.plist
+sed -e "s,@VERSION@,$version,g" \
+	-e "s,@DATE@,$date,g" \
+	-e "s,@TYPEINFO@,????,g" \
+	-e "s,@ICON@,scTime.icns,g" \
+	-e "s,@EXECUTABLE@,scTime,g" \
+	"$srcdir"/Info.plist \
+	>"$approot"/Contents/Info.plist
+
+cp "$srcdir"/../../pics/scTime.icns "$approot"/Contents/Resources
 
 # copy over translations
 mkdir -p "$appqtdir"/translations

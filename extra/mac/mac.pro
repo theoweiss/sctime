@@ -4,7 +4,7 @@ SOURCES = patchqmake.c
 CONFIG -= app_bundle
 
 # run the distribution preparation script after linking patchqmake
-QMAKE_POST_LINK = sh sctime-mac-dist `$(QMAKE) -query QT_INSTALL_PREFIX`
+QMAKE_POST_LINK = sh "$$PWD"/sctime-mac-dist "$$OUT_PWD" "$$PWD" `$(QMAKE) -query QT_INSTALL_PREFIX`
 
 # rebuild this if scTime binary in source directory changes
 POST_TARGETDEPS = ../../src/scTime.app/Contents/MacOS/scTime
@@ -14,11 +14,11 @@ POST_TARGETDEPS = ../../src/scTime.app/Contents/MacOS/scTime
 # original source is dead, resort to local copy
 #downloadsource.commands = wget -O patchqmake.c \"http://www.valleyhold.org/~gordons/Qt/patchqmake.c\" && \
 #	md5 patchqmake.c | cut -d= -f2 | grep \"^ 1c1d00585ce7c663aa64c404430d7cd4\$\$\" >/dev/null && \
-#	patch -p0 patchqmake.c < patchqmake.c-mac.patch || \
+#	patch -p0 patchqmake.c < $$PWD/patchqmake.c-mac.patch || \
 #	rm patchqmake.c
 downloadsource.commands = rm -f patchqmake.c && \
-	cp patchqmake.c.orig patchqmake.c && \
-	patch patchqmake.c < patchqmake.c-mac.patch || \
+	cp $$PWD/patchqmake.c.orig patchqmake.c && \
+	patch patchqmake.c < $$PWD/patchqmake.c-mac.patch || \
 	rm patchqmake.c
 downloadsource.target = patchqmake.c
 QMAKE_EXTRA_TARGETS += downloadsource
