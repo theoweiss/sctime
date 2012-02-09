@@ -89,4 +89,13 @@ chmod -R go+r $approot && \
 	find $approot -name "*.bak" -exec rm -f {} \; || \
 	exit 1
 
+dmgdir="$builddir"/dmg
+dmgname=scTime-"$version"-"$date"
+rm -rf "$dmgdir" && \
+	mkdir -p "$dmgdir" && \
+	rsync -aSH --delete "$approot" "$dmgdir" && \
+	hdiutil create "$dmgname".dmg -volname "$dmgname" -srcfolder dmg && \
+	rm -rf dmg || \
+	exit 1
+
 exit 0
