@@ -1,7 +1,7 @@
 How to build postgres and Qt for scTime.
 
 postgres:
-run postgres-universal-10.5.sh
+run postgres-universal-10.5.sh in a freshly unpacked postgres source directory
 
 Qt:
 possibly patch Qt >= 4.8 for 10.5 support using qt-4.8-10.5.patch
