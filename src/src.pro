@@ -41,7 +41,7 @@ mac {
   TARGET = scTime
   QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.5.sdk
   DEFINES += MACOS
-  CONFIG += x86 ppc
+  CONFIG += x86_64 x86 ppc
 }
 
 
