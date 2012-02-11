@@ -1,4 +1,33 @@
-How to build postgres and Qt for scTime.
+How to build postgres and Qt for scTime on the Mac.
+
+Content:
+1. Building dependencies yourself
+1.1. Automatically
+1.2. Half-manually
+2. Using dependencies for scTime build
+3. If it doesn't work...
+3.1. scTime quits unexpectedly
+
+1. Building dependencies yourself
+1.1. Automatically:
+
+Go to directory extra/mac of the source tree and run:
+
+make -f Makefile.dependencies
+
+Add -j<number of your Macs CPU cores times two or four> if you want to speed
+things up a lot and have got lots of RAM. Wait lots. Be amazed, how the
+Makefile will automatically download, unpack, patch, configure, build and
+install postgres and Qt for scTime (or not).
+
+If successful, there will be a new subdirectory called deps with postgres and
+Qt installed in it. To use this Qt installation for an scTime build, create a
+build directory somewhere, change into it and run:
+
+<path to scTime source tree>/extra/mac/deps/bin/qmake -r <path to scTime source tree>/sctime.pro
+make (possibly again with the -j option)
+
+1.2. Half-manually:
 
 postgres:
 run postgres-universal-10.5.sh in a freshly unpacked postgres source directory
@@ -15,3 +44,59 @@ Qt:
 	-L$HOME/bin/postgresql-9.1/lib -confirm-license
 make -j4
 wait lots
+
+To use this Qt installation for an scTime build, create a
+build directory somewhere, change into it and run:
+
+$HOME/bin/qt-4.8.0/bin/qmake -r <path to scTime source tree>/sctime.pro
+make (possibly again with the -j option)
+
+The paths shown here are suggestions. If you don't like them, adjust
+postgres-universal-10.5.sh and the Qt configure command accordingly.
+
+2. Using dependencies for scTime build
+
+To use any Qt installation for an scTime build, create a build directory
+somewhere, change into it and run:
+
+<Path to Qt>/bin/qmake -r <path to scTime source tree>/sctime.pro
+make (possibly again with the -j option)
+
+Wait some less lots and be amazed again (or not) how a dmg image appears in
+extra/mac of your build directory. This dmg will contain a univeral scTime for
+Mac OS X 10.5 upwards for ppc, i386 and x86_64 with Qt and postgres included as
+private frameworks.
+
+Obviously, your Qt needs to be universal for ppc, i386 and x86_64 for this to
+happen. If it's not and you still want an scTime of your own, adjust variables
+CONFIG and SDK in the mac part of src/src.pro.
+
+3. If it doesn't work...
+3.1. scTime quits unexpectedly
+
+The most likely cause is a bug in the program. Report it. If you aim to be
+called hoopy frood and be sassed by the maintainer, make the report verbose and
+include a testcase. Including backtraces or even a patch will instantly earn
+you co-maintainership.
+
+One known cause of this type or error is a conflict of scTime's private
+frameworks and a system-wide Qt being pulled into the same binary. This is
+*very* unlikely to happen since measures were taken to prevent it, but still
+possible.
+
+So if you feel adventurous, run scTime from the command line like this:
+
+user@mac:/Volumes/scTime-0.72.2-20120209 # DYLD_PRINT_LIBRARIES=1 scTime.app/Contents/MacOS/scTime
+
+This will show all libraries as they're loaded. If you get any warnings saying
+
+
+then look closely for the same Qt Framework being pulled in twice from
+different paths. If you determine that this is what's happening, you've got
+two choices:
+
+1. Move your colliding installation out of the way.
+2. Remove the Frameworks directory from the scTime application bundle and see
+if that changes anything.
+
+Happy timing!
