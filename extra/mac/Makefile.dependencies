@@ -182,7 +182,7 @@ $(PGSQL_DIR)/downloaded:
 
 pgsql.clean:
 	rm -rf "$(PGSQL_SOURCE_DIR)" \
-		"$(PGSQL_DIR)"/{unpacked,patched,configured,compiled,installed}
+		"$(PGSQL_DIR)"/{unpacked,patched,configured{,.i386,.x86_64,.ppc},compiled,installed}
 
 pgsql.mrproper:
 	rm -rf "$(PGSQL_DIR)"
