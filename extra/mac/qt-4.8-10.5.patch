@@ -1,6 +1,5 @@
-diff -ur qt-everywhere-opensource-src-4.8.0-vanilla/configure qt-everywhere-opensource-src-4.8.0-for-10.5/configure
---- qt-everywhere-opensource-src-4.8.0-vanilla/configure	2011-12-08 06:06:02.000000000 +0100
-+++ qt-everywhere-opensource-src-4.8.0-for-10.5/configure	2011-12-21 01:41:11.000000000 +0100
+--- ./configure.tenfive	2011-12-08 06:06:02.000000000 +0100
++++ ./configure	2012-02-10 17:57:48.000000000 +0100
 @@ -7753,16 +7753,18 @@
  # env. variable. 
  if [ "$PLATFORM_MAC" = "yes" ] && [ "$CFG_MAC_XARCH" != "no" ] ; then
@@ -28,9 +27,19 @@ diff -ur qt-everywhere-opensource-src-4.8.0-vanilla/configure qt-everywhere-open
      fi
      if echo "$CFG_MAC_ARCHS" | grep '\<x86_64\>' > /dev/null 2>&1; then
          QMakeVar add QMAKE_CFLAGS "-Xarch_x86_64 -mmacosx-version-min=10.5"
-diff -ur qt-everywhere-opensource-src-4.8.0-vanilla/src/3rdparty/webkit/Source/WebCore/platform/graphics/mac/MediaPlayerPrivateQTKit.mm qt-everywhere-opensource-src-4.8.0-for-10.5/src/3rdparty/webkit/Source/WebCore/platform/graphics/mac/MediaPlayerPrivateQTKit.mm
---- qt-everywhere-opensource-src-4.8.0-vanilla/src/3rdparty/webkit/Source/WebCore/platform/graphics/mac/MediaPlayerPrivateQTKit.mm	2011-12-08 06:06:03.000000000 +0100
-+++ qt-everywhere-opensource-src-4.8.0-for-10.5/src/3rdparty/webkit/Source/WebCore/platform/graphics/mac/MediaPlayerPrivateQTKit.mm	2011-12-21 02:26:52.000000000 +0100
+--- ./mkspecs/common/mac.conf.tenfive	2012-02-10 17:58:41.000000000 +0100
++++ ./mkspecs/common/mac.conf	2012-02-10 17:58:51.000000000 +0100
+@@ -38,7 +38,7 @@
+ QMAKE_DEL_DIR		= rmdir
+ QMAKE_CHK_DIR_EXISTS	= test -d
+ QMAKE_MKDIR		= mkdir -p
+-QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.4 # overridden to 10.5 for Cocoa on the compiler command line
++QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.5 # overridden to 10.5 for Cocoa on the compiler command line
+ 
+ 
+ include(unix.conf)
+--- ./src/3rdparty/webkit/Source/WebCore/platform/graphics/mac/MediaPlayerPrivateQTKit.mm.tenfive	2011-12-08 06:06:03.000000000 +0100
++++ ./src/3rdparty/webkit/Source/WebCore/platform/graphics/mac/MediaPlayerPrivateQTKit.mm	2012-02-10 17:57:48.000000000 +0100
 @@ -47,6 +47,9 @@
  #import "SoftLinking.h"
  #import "TimeRanges.h"
@@ -41,3 +50,18 @@ diff -ur qt-everywhere-opensource-src-4.8.0-vanilla/src/3rdparty/webkit/Source/W
  #import <QTKit/QTKit.h>
  #import <objc/objc-runtime.h>
  #import <wtf/UnusedParam.h>
+--- ./src/3rdparty/webkit/Source/WebCore/platform/mac/WebVideoFullscreenController.mm.orig	2012-02-11 13:57:02.000000000 +0100
++++ ./src/3rdparty/webkit/Source/WebCore/platform/mac/WebVideoFullscreenController.mm	2012-02-11 13:56:08.000000000 +0100
+@@ -415,10 +415,12 @@
+     _tickleTimer = nil;
+ }
+ 
++#if 0
+ - (void)_tickleTimerFired
+ {
+     UpdateSystemActivity(OverallAct);
+ }
++#endif
+ 
+ - (void)updatePowerAssertions
+ {
