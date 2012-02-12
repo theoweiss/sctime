@@ -18,7 +18,9 @@ POST_TARGETDEPS = ../../src/scTime.app/Contents/MacOS/scTime
 #	rm patchqmake.c
 downloadsource.commands = rm -f patchqmake.c && \
 	cp $$PWD/patchqmake.c.orig patchqmake.c && \
-	patch patchqmake.c < $$PWD/patchqmake.c-mac.patch || \
+	patch patchqmake.c < $$PWD/patchqmake.c-mac.patch && \
+	patch patchqmake.c < $$PWD/patchqmake.c-multi.patch && \
+	patch patchqmake.c < $$PWD/patchqmake.c-speedup.patch || \
 	rm patchqmake.c
 downloadsource.target = patchqmake.c
 QMAKE_EXTRA_TARGETS += downloadsource

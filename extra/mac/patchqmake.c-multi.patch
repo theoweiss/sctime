@@ -1,0 +1,69 @@
+Make sure, we look for all the possible paths and take into account that they
+might appear more than once. The latter is mandatory with Mac OS X universal
+binaries which intrinsically contain them more than once, once for each
+architecture.
+
+--- patchqmake.c.orig	2012-02-12 16:34:12.000000000 +0100
++++ patchqmake.c	2012-02-12 16:41:42.000000000 +0100
+@@ -170,7 +170,7 @@
+    char *match;
+    char *end;
+    char *nextbeg;
+-   int i;
++   int i, matches;
+    #if defined(__linux__) || defined(__APPLE__)
+    FILE *backup = NULL;
+    #endif
+@@ -212,14 +212,17 @@
+    #endif
+    free(match);
+ 
++   matches = 0;
+    for (i = 0; i < ARRAYCOUNT(Searches); i++)
+    {
+-      printf("Searching for '%s'...", Searches[i].find);
++      printf("Searching for '%s'... ", Searches[i].find);
+       for (match = filedata; match < filedata + filesize; match++)
+       {
+          // See if we've found the string to change
+          if (memcmp(match, Searches[i].find, strlen(Searches[i].find)) == 0)
+          {
++            matches++;
++
+             // Move past the string key
+             match += strlen(Searches[i].find);
+             // Find the end of space used, clearing it as we go
+@@ -233,20 +236,24 @@
+                MapFile(NULL, &filesize);
+                return 4;
+             }
+-            printf("patching.\n");
++            printf("patching... ");
+             // Copy in the path they asked for
+             strcpy(match, TargetPath);
+             strcat(match, Searches[i].add);
+-            break;
++
++            // Move past what we've just edited
++            match += strlen(TargetPath) + strlen(Searches[i].add);
+          }
+       }
+-      // Did we find it?
+-      if (match >= filedata + filesize)
+-      {
+-         printf("couldn't find it!\n");
+-         MapFile(NULL, &filesize);
+-         return 5;
+-      }
++      printf("\n");
++   }
++
++   // Did we find it?
++   if (matches > 0)
++   {
++      printf("couldn't find it!\n");
++      MapFile(NULL, &filesize);
++      return 5;
+    }
+ 
+    // Unmap the file
