@@ -11,16 +11,21 @@ patchqmake="$builddir"/patchqmake
 patchqtdir="Resources/Qt"
 
 # patch qt library paths in binary itself (not known to exist, but might)
+echo "Patching Qt resource paths in $sctime..."
 "$patchqmake" "$sctime" "$patchqtdir"
 [ "$?" = 0 -o "$?" = "5" ] || exit 1
 
-otool -L "$sctime" | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
+otool -L "$sctime" | \
+		grep "^[[:space:]]\+.*/\(Qt\|libpq\).*(compatibility" | \
+		grep -v "@executable_path/" | \
+		sed "s, (compatibility .*$,," | \
 	while read lib ; do
 
 	libbase=`echo "$lib" | sed "s,^.*/lib/,,"`
 	privatelib="$approot"/Contents/Frameworks/"$libbase"
 
 	# path path to library in main binary
+	echo "Patching library paths in $sctime for $libbase..."
 	install_name_tool -change "$lib" @executable_path/../Frameworks/"$libbase" "$sctime" || \
 		exit 1
 
@@ -33,6 +38,7 @@ otool -L "$sctime" | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
 		exit 1
 
 	# path qt library paths in this library
+	echo "Patching Qt resource paths in $privatelib..."
 	"$patchqmake" "$privatelib" "$patchqtdir"
 	[ "$?" = 0 -o "$?" = "5" ] || exit 1
 
@@ -45,14 +51,19 @@ otool -L "$sctime" | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
 	fi
 
 	# change install name of this library
+	echo "Patching library ID in $privatelib..."
 	install_name_tool -id @executable_path/../Frameworks/"$libbase" "$privatelib"
 
-	otool -L $privatelib | grep "/Qt\|/libpq" | sed "s, (compatibility .*$,," | \
+	otool -L $privatelib | \
+			grep "^[[:space:]]\+.*/\(Qt\|libpq\).*(compatibility" | \
+			grep -v "@executable_path/" | \
+			sed "s, (compatibility .*$,," | \
 		while read sublib ; do
 
 		sublibbase=`echo "$sublib" | sed "s,^.*/lib/,,"`
 
 		# patch path to dependency library in this library
+		echo "Patching library path in $privatelib for $sublibbase..."
 		install_name_tool \
 			-change "$sublib" @executable_path/../Frameworks/"$sublibbase" \
 			"$privatelib" || exit 1
