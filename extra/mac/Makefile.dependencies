@@ -49,12 +49,12 @@ clean.destdir:
 $(QT_DIR)/installed: $(QT_DIR)/compiled
 	cd "$(QT_SOURCE_DIR)" && \
 		$(MAKE) install \
-		&& touch $@
+		&& touch "$@"
 
 $(QT_DIR)/compiled: $(QT_DIR)/configured
 	cd "$(QT_SOURCE_DIR)" && \
 		$(MAKE) \
-		&& touch $@
+		&& touch "$@"
 
 $(QT_DIR)/configured: $(QT_DIR)/patched $(PGSQL_DIR)/installed
 	cd "$(QT_SOURCE_DIR)" && \
@@ -68,7 +68,7 @@ $(QT_DIR)/configured: $(QT_DIR)/patched $(PGSQL_DIR)/installed
 			-verbose \
 			-I"$(PREFIX)"/include \
 			-L"$(PREFIX)"/lib \
-		&& touch $@
+		&& touch "$@"
 
 $(QT_DIR)/patched: $(QT_DIR)/unpacked
 	cd "$(QT_SOURCE_DIR)" && \
@@ -76,19 +76,19 @@ $(QT_DIR)/patched: $(QT_DIR)/unpacked
 			[ "$$i" != "$(PATCH_DIR)"/qt-"*".patch ] && \
 				patch -p0 < "$$i" ; \
 		done && \
-		touch $@
+		touch "$@"
 
 $(QT_DIR)/unpacked: $(QT_DIR)/downloaded
 	cd "$(QT_DIR)" && \
 		rm -rf "$(QT_SOURCE_DIR)" && \
 		gtar -xzf "$(QT_SOURCE)" && \
-		touch $@
+		touch "$@"
 
 $(QT_DIR)/downloaded:
 	mkdir -p $(QT_DIR)
 	rm -f "$(QT_SOURCE)" && \
 		$(WGET) $(WGET_OPTS) -O "$(QT_SOURCE)" "$(QT_URL)" && \
-		touch $@
+		touch "$@"
 
 qt.clean:
 	rm -rf "$(QT_SOURCE_DIR)" \
@@ -106,12 +106,12 @@ $(PGSQL_DIR)/installed: $(PGSQL_DIR)/compiled
 			"$(PGSQL_SOURCE_DIR)"/src/include/pg_config_x86_64.h \
 			"$(PGSQL_SOURCE_DIR)"/src/include/pg_config_ppc.h \
 			"$(PREFIX)"/include \
-		&& touch $@
+		&& touch "$@"
 
 $(PGSQL_DIR)/compiled: $(PGSQL_DIR)/configured
 	cd "$(PGSQL_SOURCE_DIR)" && \
 		$(MAKE) \
-		&& touch $@
+		&& touch "$@"
 
 $(PGSQL_DIR)/configured: $(PGSQL_DIR)/configured.i386
 	cd "$(PGSQL_SOURCE_DIR)" && \
@@ -128,7 +128,7 @@ $(PGSQL_DIR)/configured: $(PGSQL_DIR)/configured.i386
 		echo "#else" >> src/include/pg_config.h && \
 		echo "#include \"pg_config_i386.h\"" >> src/include/pg_config.h && \
 		echo "#endif" >> src/include/pg_config.h && \
-		touch $@
+		touch "$@"
 
 $(PGSQL_DIR)/configured.i386: $(PGSQL_DIR)/configured.x86_64
 	cd "$(PGSQL_SOURCE_DIR)" && \
@@ -166,19 +166,19 @@ $(PGSQL_DIR)/patched: $(PGSQL_DIR)/unpacked
 			[ "$$i" == "$(PATCH_DIR)/pgsql-*.patch" ] || \
 				patch -p0 < "$$i" ; \
 		done && \
-		touch $@
+		touch "$@"
 
 $(PGSQL_DIR)/unpacked: $(PGSQL_DIR)/downloaded
 	cd "$(PGSQL_DIR)" && \
 		rm -rf "$(PGSQL_SOURCE_DIR)" && \
 		gtar -xjf "$(PGSQL_SOURCE)" && \
-		touch $@
+		touch "$@"
 
 $(PGSQL_DIR)/downloaded:
 	mkdir -p $(PGSQL_DIR)
 	rm -f "$(PGSQL_SOURCE)" && \
 		$(WGET) $(WGET_OPTS) -O "$(PGSQL_SOURCE)" "$(PGSQL_URL)" && \
-		touch $@
+		touch "$@"
 
 pgsql.clean:
 	rm -rf "$(PGSQL_SOURCE_DIR)" \
