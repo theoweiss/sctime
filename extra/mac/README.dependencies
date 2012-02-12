@@ -1,4 +1,4 @@
-How to build postgres and Qt for scTime on the Mac.
+How to build PostgreSQL and Qt for scTime on the Mac.
 
 Content:
 1. Building dependencies yourself
@@ -16,21 +16,29 @@ Go to directory extra/mac of the source tree and run:
 make -f Makefile.dependencies
 
 Add -j<number of your Macs CPU cores times two or four> if you want to speed
-things up a lot and have got lots of RAM. Wait lots. Be amazed, how the
-Makefile will automatically download, unpack, patch, configure, build and
-install postgres and Qt for scTime (or not).
+things up a lot and have got lots of RAM. Do not be afraid if output looks
+messed up with -j - the Makefile *is* meant to work with -j and will do
+anything in parallel that can at all be parallelised. This will cause wget
+download progress, configure output and suchlike to intersperse happily.
 
-If successful, there will be a new subdirectory called deps with postgres and
+Wait lots. Be amazed, how the Makefile will automatically download, unpack,
+patch, configure, build and install PostgreSQL and Qt for scTime (or not).
+
+If successful, there will be a new subdirectory called deps with PostgreSQL and
 Qt installed in it. To use this Qt installation for an scTime build, create a
 build directory somewhere, change into it and run:
 
 <path to scTime source tree>/extra/mac/deps/bin/qmake -r <path to scTime source tree>/sctime.pro
 make (possibly again with the -j option)
 
+Building PostgreSQL and Qt outside of directory extra/mac of the source tree
+is not supported for now but shouldn't be hard to implement. Please holler if
+you really, really need this.
+
 1.2. Half-manually:
 
-postgres:
-run postgres-universal-10.5.sh in a freshly unpacked postgres source directory
+PostgreSQL:
+run postgres-universal-10.5.sh in a freshly unpacked PostgreSQL source directory
 
 Qt:
 - possibly patch Qt >= 4.8 for 10.5 support using qt-4.8-10.5.patch
@@ -64,7 +72,7 @@ make (possibly again with the -j option)
 
 Wait some less lots and be amazed again (or not) how a dmg image appears in
 extra/mac of your build directory. This dmg will contain a univeral scTime for
-Mac OS X 10.5 upwards for ppc, i386 and x86_64 with Qt and postgres included as
+Mac OS X 10.5 upwards for ppc, i386 and x86_64 with Qt and PostgreSQL included as
 private frameworks.
 
 Obviously, your Qt needs to be universal for ppc, i386 and x86_64 for this to
@@ -84,19 +92,35 @@ frameworks and a system-wide Qt being pulled into the same binary. This is
 *very* unlikely to happen since measures were taken to prevent it, but still
 possible.
 
-So if you feel adventurous, run scTime from the command line like this:
+If you get any warnings saying
+
+---
+objc[753]: Class QCocoaColorPanelDelegate is implemented in both
+.../scTime.app/Contents/MacOS/../Frameworks/QtGui.framework/Versions/4/QtGui
+and .../lib/QtGui.framework/Versions/4/QtGui. One of the two will be used.
+Which one is undefined.
+
+QObject::moveToThread: Current thread (0x101411430) is not the object's thread (0x101474070).
+Cannot move to target thread (0x101411430)
+
+On Mac OS X, you might be loading two sets of Qt binaries into the same
+process. Check that all plugins are compiled against the right Qt binaries.
+Export DYLD_PRINT_LIBRARIES=1 and check that only one set of binaries are being
+loaded.
+---
+
+then this is most certainly what's going on. So if you feel adventurous, run
+scTime from the command line like this:
 
 user@mac:/Volumes/scTime-0.72.2-20120209 # DYLD_PRINT_LIBRARIES=1 scTime.app/Contents/MacOS/scTime
 
-This will show all libraries as they're loaded. If you get any warnings saying
+This will show all libraries as they're loaded. With this information in hand,
+you've got three choices:
 
-
-then look closely for the same Qt Framework being pulled in twice from
-different paths. If you determine that this is what's happening, you've got
-two choices:
-
-1. Move your colliding installation out of the way.
-2. Remove the Frameworks directory from the scTime application bundle and see
-if that changes anything.
+1. Tell the maintainer two bloody well fix his damned package for your
+   conditions and wait (possibly lots).
+2. Move your colliding installation out of the way.
+3. Roll your own scTime binary without private frameworks against your Qt
+   installation.
 
 Happy timing!
