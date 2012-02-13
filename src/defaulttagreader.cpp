@@ -23,12 +23,9 @@
 #include "defaulttagreader.h"
 #include <QFile>
 #include "globals.h"
-#ifndef NO_XML
 #include "qdom.h"
-#endif
 
 void DefaultTagReader::read(QStringList* taglist) {
-  #ifndef NO_XML
   QDomDocument doc("defaulttags");
   QString filename;
 
@@ -57,7 +54,6 @@ void DefaultTagReader::read(QStringList* taglist) {
       }
     }
   }
-  #endif
 }
 
 

@@ -204,7 +204,6 @@ int main( int argc, char **argv ) {
   app.connect(&int_, SIGNAL(received()), &app, SLOT(closeAllWindows()));
 #endif  
   mainWindow.show();
-  app.processEvents();
   app.exec();
   mainWindow.save();
   local.release();
