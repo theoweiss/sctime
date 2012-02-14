@@ -140,7 +140,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow()
   QMenu * hilfemenu = menuBar()->addMenu("&Hilfe");
 
   QTimer* timer = new QTimer(this);
-  connect( timer,SIGNAL(timeout()), this, SLOT(minutenUhr()));
+  connect( timer,SIGNAL(timeout()), this, SLOT(minutenTick()));
   timer->setInterval(60000); //Alle 60 Sekunden ticken
   timer->start();
   lastMinuteTick=QDateTime::currentDateTime();
@@ -445,48 +445,56 @@ void TimeMainWindow::mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int c
     }
 }
 
-/** Wird durch einen Timer einmal pro Minute aufgerufen, und sorgt fuer die
-  * korrekte Aktualisierung der Objekte.
-*/
-void TimeMainWindow::minutenUhr()
-{
-  QString abt,ko,uko;
-  int idx;
-
-  QDateTime currenttime=QDateTime::currentDateTime();
-  if (!paused) {
-    abtListToday->getAktiv(abt,ko,uko,idx);
-    int delta=lastMinuteTick.secsTo(QDateTime::currentDateTime());
-
-    if ((delta<120)&&(delta>0)) // Check if we have won or lost a minute.
-      abtListToday->minuteVergangen(!pausedAbzur);
-    else
-    {
-      QFile logFile(configDir.filePath("sctime.log"));
-      if (logFile.open(QIODevice::Append)) {
-         QTextStream stream(&logFile);
-         stream<<"Zeitinkonsistenz am "<<currenttime.toString()<<" Dauer: "<<QString::number(delta/60-1)<<" Minuten.\n";
-      }
-      logFile.close();
-
-      QString extrawarnung="";
-      if (delta<0)
-        extrawarnung= tr("\nACHTUNG: Die Zeit wird zurückgestellt, wenn Sie mit Ja quittieren.");
-      lastMinuteTick=currenttime; // we might spend some time in the dialog... set things back to normal
-      logError(tr("Die Uhr wurde verstellt um %1 Minuten.").arg(delta/60));
-      int answer= QMessageBox::question(this, tr("sctime: Inkonsistenz"),
-                                        tr("Das System scheint %1 Minuten stehen geblieben zu sein, oder die Systemzeit wurde verändert.\n"
-                                           "Soll die entstandene Differenz auf das aktive Unterkonto gebucht werden?").arg(delta/60)
-                                        + extrawarnung, QMessageBox::Yes,QMessageBox::No);
-      if (answer==QMessageBox::Yes)
-        abtListToday->changeZeit(abt, ko, uko, idx, delta, false);
+void TimeMainWindow::uhrVerstellt(int delta) {
+  QString now = QDateTime::currentDateTime().toString();
+  {
+    QFile logFile(configDir.filePath("sctime.log"));
+    if (logFile.open(QIODevice::Append)) {
+      QTextStream stream(&logFile);
+      stream<<"Zeitinkonsistenz am "<< now <<" Dauer: "<<QString::number(delta/60-1)<<" Minuten.\n";
     }
+  }
+  logError(tr("Die Uhr wurde %1 min vorgestellt.").arg(delta/60));
+  QString frage(
+        delta > 0
+        ? tr("Das System scheint %1 min bis %2  stehen geblieben zu sein, oder die Systemzeit wurde verändert.\n"
+             "Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?")
+        : tr("Die Systemzeit wurde %1 min zurückgestellt um %2. Soll die Arbeitszeit auf dem aktiven Unterkonto um diesen Betrag verringert werden?"));
+  if (QMessageBox::question(this, tr("sctime: Systemzeit geändert"),
+                           frage.arg(abs(delta/60)).arg(now))
+			   == QMessageBox::Yes) {
+    QString abt,ko,uko;
+    int idx;
+    abtListToday->getAktiv(abt,ko,uko,idx);
+    abtListToday->changeZeit(abt, ko, uko, idx, delta, false);
+    kontoTree->refreshItem(abt,ko,uko,idx);
+    zeitChanged();
+  }
+}
+
+/* Wird durch einen Timer einmal pro Minute aufgerufen,
+und sorgt fuer die korrekte Aktualisierung der Objekte.
+Da der Timer weiter laufen soll, muss sich diese Methode
+immer schnell beenden.
+*/
+void TimeMainWindow::minutenTick()
+{
+  QDateTime currenttime=QDateTime::currentDateTime();
+  int delta = lastMinuteTick.secsTo(currenttime);
+  lastMinuteTick=currenttime;
+  if (!paused) {
+    QString abt,ko,uko;
+    int idx;
+    abtListToday->getAktiv(abt,ko,uko,idx);
     kontoTree->refreshItem(abt,ko,uko,idx);
     zeitChanged();
     emit minuteTick();
     if (!pausedAbzur) emit minuteAbzurTick();
+    if ((delta<120)&&(delta>0)) // Check if we have won or lost a minute.
+      abtListToday->minuteVergangen(!pausedAbzur);
+    else
+      QMetaObject::invokeMethod(this, "uhrVerstellt", Qt::QueuedConnection, Q_ARG(int, delta));
   }
-  lastMinuteTick=currenttime;
 
   //fix-me: falls bis zu zwei Minuten nach Mitternacht das gestrige Datum
   //eingestellt ist, aufs neue Datum umstellen - Aergernis, falls jemand zw 0:00 und 0:02 tatsaechlich

@@ -60,7 +60,8 @@ public:
     void callUnterKontoDialog(QTreeWidgetItem * item);
     void callDateDialog();
     void callAboutBox();
-    void minutenUhr();
+    void minutenTick();
+    void uhrVerstellt(int sec);
     void pause();
     void pauseAbzur(bool on);
     void zeitChanged();
