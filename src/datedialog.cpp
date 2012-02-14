@@ -57,7 +57,7 @@ DateDialog::~DateDialog()
 void DateDialog::dateChangedSlot(QDate date)
 {
   if ((date.month()!=currentMonth)||(date.year()!=currentYear)) {
-    QDir qd(configDir + "/checkedin");
+    QDir qd(configDir.filePath("checkedin"));
     QStringList dateList;
     dateList << "zeit-" << date.toString("yyyy-MM") << "-*.xml"; //Since Qt4
     QStringList files=qd.entryList(dateList);

@@ -25,9 +25,10 @@
 #define GLOBALS_H
 
 #include <QString>
+#include <QDir>
 class DatasourceManager;
 class Lock;
-extern QString configDir;
+extern QDir configDir;
 extern QString lockfilePath;
 extern Lock *lock;
 void logError(const QString& msg);

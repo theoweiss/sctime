@@ -105,8 +105,8 @@ void setupDatasources(const QStringList& datasourceNames,
   QString dsname;
   foreach (dsname, datasourceNames) {
     if (dsname.compare("file") == 0) {
-      kontenDSM->sources.append(new FileReader(configDir + "/zeitkonten.txt", "|", 13));
-      bereitDSM->sources.append(new FileReader(configDir +"/zeitbereitls.txt", "|", 2));
+      kontenDSM->sources.append(new FileReader(configDir.filePath("zeitkonten.txt"), "|", 13));
+      bereitDSM->sources.append(new FileReader(configDir.filePath("zeitbereitls.txt"), "|", 2));
     } else if (dsname.compare("command") == 0) {
 #ifdef WIN32
       logError(QObject::tr("Datenquelle 'command' ist unter Windows nicht verfügbar"));

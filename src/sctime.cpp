@@ -66,7 +66,7 @@ static void fatal(const QString& title, const QString& body) __attribute__ ((nor
 static void fatal(const QString& title, const QString& body);
 #endif
 
-QString configDir;
+QDir configDir;
 QString lockfilePath;
 QString PERSOENLICHE_KONTEN_STRING;
 QString ALLE_KONTEN_STRING;
@@ -186,7 +186,7 @@ int main( int argc, char **argv ) {
   // - Nach einem Absturz kann ich auf dem gleichen Rechner neu starten,
   //   ohne de Benutzer mit Warnungen wegen alter Sperren zu belästigen.
   LockLocal local("sctime", true);
-  Lock *global = new Lockfile(configDir + "/LOCK", true);
+  Lock *global = new Lockfile(configDir.filePath("LOCK"), true);
   local.setNext(global);
   if (!local.acquire()) fatal(QObject::tr("sctime: kann nicht starten"), local.errorString());
   lock = &local;

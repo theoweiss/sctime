@@ -29,7 +29,7 @@ void DefaultTagReader::read(QStringList* taglist) {
   QDomDocument doc("defaulttags");
   QString filename;
 
-  filename=configDir+"/defaulttags.xml";
+  filename=configDir.filePath("defaulttags.xml");
 
   QFile f( filename );
   if ( !f.open( QIODevice::ReadOnly ) )

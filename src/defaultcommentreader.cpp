@@ -37,7 +37,7 @@ bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
 
   for (unsigned int i=0; i<xmlfilelist.size(); i++) {
     QDir dummy(xmlfilelist[i]);
-    QString filename = dummy.isRelative() ? configDir+"/"+xmlfilelist[i] :xmlfilelist[i];
+    QString filename = dummy.isRelative() ? configDir.filePath(xmlfilelist[i]) :xmlfilelist[i];
     {
         QFile f(filename);
         if ( !f.open( QIODevice::ReadOnly ) ) {

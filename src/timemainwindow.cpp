@@ -462,7 +462,7 @@ void TimeMainWindow::minutenUhr()
       abtListToday->minuteVergangen(!pausedAbzur);
     else
     {
-      QFile logFile(configDir + "/sctime.log");
+      QFile logFile(configDir.filePath("sctime.log"));
       if (logFile.open(QIODevice::Append)) {
          QTextStream stream(&logFile);
          stream<<"Zeitinkonsistenz am "<<currenttime.toString()<<" Dauer: "<<QString::number(delta/60-1)<<" Minuten.\n";

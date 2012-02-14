@@ -51,8 +51,8 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
       QMessageBox::warning(NULL, QObject::tr("sctime: speichern"), QObject::tr("Shell-Skript nicht geschrieben, da bereits eingecheckt"));
       return;
   }
-  QString filename="/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".sh";
-  QFile shellFile(configDir+filename);
+  QString filename="zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".sh";
+  QFile shellFile(configDir.filePath(filename));
 
   if (!shellFile.open(QIODevice::WriteOnly)) {
       QMessageBox::warning(NULL, QObject::tr("sctime: Shell-Skript schreiben"), shellFile.fileName() + ": " + shellFile.errorString());
@@ -166,10 +166,10 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
   QString filename;
 
   if (global)
-    filename="/settings.xml";
+    filename="settings.xml";
   else {
-    filename="/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
-    QFileInfo qf(configDir+"/"+abtList->getDatum().toString("yyyy")+filename);
+    filename = "zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
+    QFileInfo qf(configDir.filePath(abtList->getDatum().toString("yyyy")), filename);
     if (abtList) {
         if (qf.exists()) {
           filename="/"+abtList->getDatum().toString("yyyy")+filename;
@@ -180,7 +180,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
     }
   }
 
-  QFile f(configDir + filename);
+  QFile f(configDir.filePath(filename));
   if ( !f.open( QIODevice::ReadOnly ) ) {
     logError(f.fileName() + ": " + f.errorString());
     if (global || f.exists()) {
@@ -762,19 +762,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
       }
   }
 
-  QString filename;
-
-  if (global)
-    filename=configDir+"/settings.xml";
-  else
-    filename=configDir+"/zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
-
+  QString filename(configDir.filePath(global ? "settings.xml" : "zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml"));
   QFile fnew(filename + ".tmp");
   if (!fnew.open(QIODevice::WriteOnly)) {
       QMessageBox::critical(NULL, QObject::tr("sctime: Einstellungen speichern"), QObject::tr("Datei %1 zum Schreiben öffnen: %2").arg(fnew.fileName(), fnew.errorString()));
       return;
   }
-
   // may contain passwords and private data in general
   fnew.setPermissions(QFile::ReadOwner | QFile::WriteOwner);
 
