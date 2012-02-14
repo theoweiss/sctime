@@ -31,7 +31,7 @@ PGSQL_COMMON_LDFLAGS=-Wl,-syslibroot,$(SDK) -mmacosx-version-min=10.5
 PGSQL_CONFIGURE_FLAGS=--with-openssl --without-perl --without-python --without-tcl --without-bonjour --without-pam --with-krb5 --without-libxml
 
 .PHONY: all clean mrproper clean.destdir \
-	qt.clean pgsql.mrproper \
+	qt.clean pgsql.clean \
 	qt.mrproper pgsql.mrproper
 
 .SUFFIXES:
