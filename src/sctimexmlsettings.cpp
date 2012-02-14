@@ -34,9 +34,7 @@
 #else
 #include <windows.h>
 #endif
-#ifndef NO_XML
 #include "qdom.h"
-#endif
 #include "abteilungsliste.h"
 #include "globals.h"
 #include "timecounter.h"
@@ -164,7 +162,6 @@ void SCTimeXMLSettings::readSettings()
 
 void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
 {
-  #ifndef NO_XML
   QDomDocument doc("settings");
   QString filename;
 
@@ -483,7 +480,6 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
     int idx=aktiveskontotag.attribute("index").toInt();
     abtList->setAsAktiv(abtstr,kostr,ukostr,idx);
   }
-  #endif
 }
 
 /** Schreibt saemtliche Einstellungen und Eintraege auf Platte */

@@ -26,16 +26,13 @@
 #include <QDir>
 #include "globals.h"
 #include "abteilungsliste.h"
-#ifndef NO_XML
 #include "qdom.h"
-#endif
 
 /**
  * Liest alle Einstellungen.
  */
 
 bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QString>& xmlfilelist) {
-#ifndef NO_XML
   QDomDocument doc("comments");
 
   for (unsigned int i=0; i<xmlfilelist.size(); i++) {
@@ -105,7 +102,6 @@ bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
           }
       }
   }
-#endif
   return true;
 }
 
