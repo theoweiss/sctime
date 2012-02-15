@@ -475,7 +475,7 @@ void TimeMainWindow::uhrVerstellt(int delta) {
 /* Wird durch einen Timer einmal pro Minute aufgerufen,
 und sorgt fuer die korrekte Aktualisierung der Objekte.
 Da der Timer weiter laufen soll, muss sich diese Methode
-immer schnell beenden.
+beenden ohne zu blockieren.
 */
 void TimeMainWindow::minutenTick()
 {
@@ -489,7 +489,6 @@ void TimeMainWindow::minutenTick()
     kontoTree->refreshItem(abt,ko,uko,idx);
     zeitChanged();
     emit minuteTick();
-    if (!pausedAbzur) emit minuteAbzurTick();
     if ((delta<120)&&(delta>0)) // Check if we have won or lost a minute.
       abtListToday->minuteVergangen(!pausedAbzur);
     else
@@ -606,8 +605,6 @@ void TimeMainWindow::zeitChanged()
   int zeitAbzur, zeit;
   int max_working_time=settings->maxWorkingTime();
   abtList->getGesamtZeit(zeit, zeitAbzur);
-  TimeCounter tc(zeit);
-  //setIconText(tc.toString());
   statusBar->setDiff(abtList->getZeitDifferenz());
   emit gesamtZeitChanged(zeit);
   emit gesamtZeitAbzurChanged(zeitAbzur);

@@ -125,11 +125,6 @@ public:
     void minuteTick();
 
     /**
-      * Wird minuetlich ausgeloest, falls keine Pause aktiv ist.
-      */
-    void minuteAbzurTick();
-
-    /**
      * Wird mit true ausgeloest, wenn ein Eintrag im Kontobaum
      * selektiert wurde, bei anderen Selektionen (Konto,Abteilung oder
      * Unterkonto mit mehreren Eintraegen) mit false

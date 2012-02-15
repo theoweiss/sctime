@@ -902,7 +902,6 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
 void KontoTreeView::getSumTime(QTreeWidgetItem* item, TimeCounter& sum, TimeCounter& sumAbs)
 {
   int childCount = item->childCount();
-  //foreach (const QTreeWidgetItem it, item->takeChildren())
   for( int i=0; i<childCount; i++)
   {
     QTreeWidgetItem* it = item->child( i );
