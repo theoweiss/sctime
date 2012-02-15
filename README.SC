@@ -76,7 +76,7 @@ Postgres-Direktverbindung.
 Ein Nachteil dieses Verfahrens ist, dass man bei Problemen nur die
 Fehlermeldungen des zweiten Verbindungsaufbaus sieht.
 
-Weiter notwendige Bibliotheken:
+Weitere notwendige Bibliotheken:
 
 - QtGui4.dll
 - QtXml4.dll
@@ -85,6 +85,9 @@ Weiter notwendige Bibliotheken:
 - QtNetwork4.dll
 
 - Microsoft Visual C++ 2008 SDK
+
+- qt_de.qm: notfalls per "lrlease" aus "qt_de.ts" generieren
+
 
 
 "shadow" / "out of source"-Build mit Visual Studio 2008
@@ -110,3 +113,51 @@ MSI-Paket bauen
 ----------------
 
 http://appdeveloper.intel.com/en-us/article/how-creating-your-msi-installer-using-visual-studio-2008
+
+Die meisten Abhängigkeiten werden automatisch erkannt. Ein paar muss man noch
+händisch hinzufügen.
+
+So sollte das MSI-Projekt in etwa aussehen:
+
+
+Per "View"->"File System"
+Application Folder
+- sqldrivers (Folder)
+  - qsqlodbc4.dll
+  - qsqlpsql4.dll
+- Primary Ouput from sctime (Active)
+- qt_de.qm
+- QtCore4.dll
+- QtGui4.dll
+- QtNetwork4.dll
+- QtSql4.dll
+- QtXml4.dll
+- sc32pixel.ico
+
+User's Programs Menu
+- Sctime (Shortcut)
+
+
+
+zur Kontrolle die Ansicht im "Solution Explorer"
+
+sctime-setup
+- "Detected Dependencies":
+  - policy_9_0_Microsoft_VC90_CRT_x86.msm
+  - QtCore4.dll
+  - QtGui4.dll
+  - QtNetwork4.dll
+  - QtSql4.dll
+  - QtXml4.dll
+- Primary Ouput from sctime (Active)
+- Microsoft_VC90_CRT_x86.msm
+- qsqlodbc4.dll
+- qsqlpsql4.dll
+- sc32pixel.ico
+- qt_de.qm
+
+
+Mit F4 auf der Projekt-Eintrag erhält man das "Properties Window", das sich
+komplett von dem Fenster unterscheidet, das man mit Rechtsklick->"Properties"
+erhält.
+
