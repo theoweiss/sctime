@@ -24,16 +24,11 @@
 #include <QApplication>
 #include <QDir>
 #include <QFileInfo>
-#include <QFont>
 #include <QLibraryInfo>
 #include <QMessageBox>
-#include <QPixmap>
-#include <QSplashScreen>
 #include <QString>
 #include <QTranslator>
-#include <QSocketNotifier>
 #include <QSqlDatabase>
-#include <QTimer>
 
 #ifndef WIN32
 #include <assert.h>
