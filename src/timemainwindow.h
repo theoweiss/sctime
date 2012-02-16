@@ -47,7 +47,7 @@ class QTextBrowser;
 */
 class TimeMainWindow: public QMainWindow
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
     TimeMainWindow();
     QTreeWidget* getKontoTree();
@@ -60,8 +60,7 @@ public:
     void callUnterKontoDialog(QTreeWidgetItem * item);
     void callDateDialog();
     void callAboutBox();
-    void minutenTick();
-    void uhrVerstellt(int sec);
+    void minuteHochzaehlen();
     void pause();
     void pauseAbzur(bool on);
     void zeitChanged();
@@ -109,7 +108,8 @@ public:
     void checkComment(const QString& abt, const QString& ko , const QString& uko,int idx);
     void commitKontenliste(DSResult data);
     void displayLastLogEntry();
-    void resume();
+    void resume(); // APM event
+    void suspend(); // APM event
 
   signals:        
     /** Wird ausgeloest, falls sich die Gesamtzeit geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden. */
@@ -119,11 +119,6 @@ public:
       * geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden.
       */
     void gesamtZeitAbzurChanged(int) ;
-
-    /**
-      * Wird minuetlich ausgeloest, falls keine Pause aktiv ist.
-      */
-    void minuteTick();
 
     /**
      * Wird mit true ausgeloest, wenn ein Eintrag im Kontobaum
@@ -160,6 +155,7 @@ public:
     void quit();
     void logDialog();
     void commitBereit(DSResult data);
+    void driftKorrektur();
 
   protected:
     virtual void moveEvent( QMoveEvent *event);
@@ -181,6 +177,7 @@ public:
     QAction* bgColorChooseAction;
     QAction* bgColorRemoveAction;
     QAction* jumpAction;
+    const QDateTime startTime;
     QDateTime lastMinuteTick;
     QFont qtDefaultFont;
     AbteilungsListe* abtList;
@@ -192,11 +189,17 @@ public:
     QToolBar* toolBar;
     QStringList defaultTags;
     KontoDatenInfo* zk;
-    bool paused;
     bool pausedAbzur;
     void openItem( QTreeWidgetItem *item );
     // Workaround, um beim Setzen der Voreinstellung fuer den inPersoenlicheKonten-Button nicht das zugehoerige
     // Event auzuloesen. Wenn inPersoenlicheKontenAllowed=false, tut inPersoenlicheKonten(bool) gar nichts.
     bool inPersoenlicheKontenAllowed;
+    int sekunden; // Minuten * 60 seit Beginn minus Pausen; zur Drift-Berechnung
+    QTimer *minutenTimer;
+    QTimer *autosavetimer;
+    void tageswechsel();
+    void zeitKorrektur(int delta);
+    bool paused;
+    void stopTimers(const QString& grund);
 };
 #endif

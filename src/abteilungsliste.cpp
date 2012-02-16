@@ -409,12 +409,10 @@ void AbteilungsListe::changeZeit(const QString& Abteilung,const QString& Konto,c
  */
 void AbteilungsListe::minuteVergangen(bool abzur)
 {
-
   EintragsListe::iterator eti;
   EintragsListe* etl;
 
   if (findEintrag(eti,etl, aktivAbteilung, aktivKonto, aktivUnterkonto,aktivEintrag)) {
-
     eti->second.sekunden+=60;
     if (abzur) eti->second.sekundenAbzur+=60;
   }

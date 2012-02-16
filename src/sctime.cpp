@@ -92,18 +92,19 @@ static TimeMainWindow* mainWindow = 0;
 #ifdef WIN32
 class SctimeApp : public QApplication {
 public:
-  SctimeApp(int &argc, char **argv):QApplication(argc, argv) {}
-  virtual bool SctimeApp::winEventFilter(MSG * msg, long * result) {
-    if(msg->message == WM_POWERBROADCAST 
-      && (msg->wParam == PBT_APMRESUMESUSPEND || msg->wParam == PBT_APMRESUMESTANDBY) {
-      trace("Resumed");
-     if (mainWindow)
-        QMetaObject::invokeMethod(mainWindow, "resume", Qt::QueuedConnection);
-      *result = TRUE;
-      return true;
+    SctimeApp(int &argc, char **argv):QApplication(argc, argv) {}
+    virtual bool SctimeApp::winEventFilter(MSG * msg, long * result) {
+      if (msg->message == WM_POWERBROADCAST && mainWindow && msg->hwnd == mainWindow->winId()) {
+        if (msg->wParam == PBT_APMRESUMEAUTOMATIC)
+            QMetaObject::invokeMethod(mainWindow, "resume", Qt::QueuedConnection);
+        else if (msg->wParam == PBT_APMSUSPEND)
+            QMetaObject::invokeMethod(mainWindow, "suspend", Qt::QueuedConnection);
+        else return false;
+	*result = TRUE;
+	return true;
+      }
+      return false;
     }
-    return false;
-  }
 };
 
 static void setlocale() {}

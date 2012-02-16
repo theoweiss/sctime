@@ -75,14 +75,14 @@ void logError(const QString &msg) {
 }
 
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
-TimeMainWindow::TimeMainWindow():QMainWindow()
-{
+TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDateTime()) {
+  paused = false;
+  sekunden = 0;
   setObjectName("sctime");
   std::vector<QString> xmlfilelist;
   QDate heute;
   abtListToday=new AbteilungsListe(heute.currentDate(), zk);
   abtList=abtListToday;
-  paused=false;
   pausedAbzur=false;
   inPersoenlicheKontenAllowed=true;
   powerToolBar = NULL;
@@ -139,18 +139,16 @@ TimeMainWindow::TimeMainWindow():QMainWindow()
   QMenu * settingsmenu = menuBar()->addMenu("&Einstellungen");
   QMenu * hilfemenu = menuBar()->addMenu("&Hilfe");
 
-  QTimer* timer = new QTimer(this);
-  connect( timer,SIGNAL(timeout()), this, SLOT(minutenTick()));
-  timer->setInterval(60000); //Alle 60 Sekunden ticken
-  timer->start();
-  lastMinuteTick=QDateTime::currentDateTime();
+  minutenTimer = new QTimer(this);
+  connect( minutenTimer,SIGNAL(timeout()), this, SLOT(minuteHochzaehlen()));
+  lastMinuteTick = startTime;
+  minutenTimer->setInterval(60000); //Alle 60 Sekunden ticken
+  minutenTimer->start();
 
-  QTimer* autosavetimer=new QTimer(this);
+  autosavetimer=new QTimer(this);
   connect( autosavetimer,SIGNAL(timeout()), this, SLOT(save()));
   autosavetimer->setInterval(300000); //Alle 5 Minuten ticken.
   autosavetimer->start();
-  //QAction* pauseAction = new QAction( QPixmap((const char **)hi22_action_player_pause ),
-                                      //"&Pause", this);
   QAction* pauseAction = new QAction( QIcon(":/hi22_action_player_pause"), "&Pause", this);
   pauseAction->setShortcut(Qt::CTRL+Qt::Key_P);
   connect(pauseAction, SIGNAL(triggered()), this, SLOT(pause()));
@@ -431,13 +429,50 @@ void TimeMainWindow::configClickMode(bool singleClickActivation)
     }
 }
 
+void TimeMainWindow::suspend() {
+    // sonst könnten die anderen Timer früher als das Resume-Ereignis eintreffen
+    stopTimers(tr("suspend"));
+}
+
 void TimeMainWindow::resume() {
+  QDateTime now(QDateTime::currentDateTime()), before(lastMinuteTick);
+  if (! paused) {
+      minutenTimer->start();
+      autosavetimer->start();
+  }
+  int pauseSecs = before.secsTo(now);
   statusBar->showMessage("resume", 3000);
-  trace("resume");
+  trace(tr("resume %2; suspend war %1").arg(lastMinuteTick.toString(), now.toString()));
+  if (pauseSecs < 60) return;
+  sekunden += pauseSecs; // damit  sich driftKorrektur() nicht beschwert
+  lastMinuteTick = now;
+  if (pauseSecs > 12 * 3600 * 3600) {
+    QMessageBox::information(
+        this,  tr("sctime: fortsetzen"),
+          tr("Der Rechner war von %1 bis %2 angehalten. Bitte die Arbeitszeiten gegebenenfalls überarbeiten!")
+          .arg(before.toString(), now.toString()));
+    return;
+  }
+  if (QMessageBox::question(
+        this, tr("sctime: fortsetzen"),
+        tr("Der Rechner war von %1 bis %2 angehalten. Soll diese Zeit auf dem aktiven Konto gutgeschrieben werden?")
+        .arg(before.toString(), now.toString()),
+	QMessageBox::Yes, QMessageBox::No)
+      == QMessageBox::Yes)
+    zeitKorrektur(pauseSecs);
+}
+
+void TimeMainWindow::zeitKorrektur(int delta) {
+  QString abt,ko,uko;
+  int idx;
+  abtListToday->getAktiv(abt,ko,uko,idx);
+  abtListToday->changeZeit(abt, ko, uko, idx, delta, false);
+  kontoTree->refreshItem(abt,ko,uko,idx);
+  zeitChanged();
 }
 
 void TimeMainWindow::copyNameToClipboard()
-{
+ {
     QClipboard *cb = QApplication::clipboard();
     cb->setText( kontoTree->currentItem()->text(0), QClipboard::Clipboard );
 }
@@ -450,31 +485,32 @@ void TimeMainWindow::mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int c
     }
 }
 
-void TimeMainWindow::uhrVerstellt(int delta) {
-  QString now = QDateTime::currentDateTime().toString();
+void TimeMainWindow::driftKorrektur() {
+  int drift = startTime.secsTo(lastMinuteTick) - sekunden;
+  if (abs(drift) < 60) return;
+  QString msg = tr("Drift ist %2s (%1)").arg(lastMinuteTick.toString()).arg(drift);
+  logError(msg);
+  sekunden += drift;
   {
     QFile logFile(configDir.filePath("sctime.log"));
     if (logFile.open(QIODevice::Append)) {
       QTextStream stream(&logFile);
-      stream<<"Zeitinkonsistenz am "<< now <<" Dauer: "<<QString::number(delta/60-1)<<" Minuten.\n";
+      stream<< msg << endl;
     }
   }
-  logError(tr("Die Uhr wurde %1 min vorgestellt.").arg(delta/60));
-  QString frage(
-        delta > 0
-        ? tr("Das System scheint %1 min bis %2  stehen geblieben zu sein, oder die Systemzeit wurde verändert.\n"
-             "Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?")
-        : tr("Die Systemzeit wurde %1 min zurückgestellt um %2. Soll die Arbeitszeit auf dem aktiven Unterkonto um diesen Betrag verringert werden?"));
-  if (QMessageBox::question(this, tr("sctime: Systemzeit geändert"),
-                           frage.arg(abs(delta/60)).arg(now))
-			   == QMessageBox::Yes) {
-    QString abt,ko,uko;
-    int idx;
-    abtListToday->getAktiv(abt,ko,uko,idx);
-    abtListToday->changeZeit(abt, ko, uko, idx, delta, false);
-    kontoTree->refreshItem(abt,ko,uko,idx);
-    zeitChanged();
-  }
+  int answer =
+          drift > 0
+          ? QMessageBox::question(
+                  this, tr("sctime: Programm war stehen geblieben"),
+                  tr("Das Programm oder das System istt %1min bis %2  stehen geblieben zu sein, oder die Systemzeit wurde vorgestellt.\n"
+                     "Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?").arg(drift/60).arg(lastMinuteTick.toString()),
+                  QMessageBox::Yes, QMessageBox::No)
+          : QMessageBox::question(
+                this, tr("sctime: Systemzeit zurückgestellt"),
+                tr("Die Systemzeit wurde %1min auf %2 zurückgestellt. Soll die Arbeitszeit auf dem aktiven Unterkonto um diesen Betrag verringert werden?"),
+                QMessageBox::No, QMessageBox::Yes);
+  if (answer == QMessageBox::Yes)
+      zeitKorrektur(drift);
 }
 
 /* Wird durch einen Timer einmal pro Minute aufgerufen,
@@ -482,34 +518,30 @@ und sorgt fuer die korrekte Aktualisierung der Objekte.
 Da der Timer weiter laufen soll, muss sich diese Methode
 beenden ohne zu blockieren.
 */
-void TimeMainWindow::minutenTick()
-{
-  QDateTime currenttime=QDateTime::currentDateTime();
-  int delta = lastMinuteTick.secsTo(currenttime);
-  lastMinuteTick=currenttime;
-  if (!paused) {
-    QString abt,ko,uko;
-    int idx;
-    abtListToday->getAktiv(abt,ko,uko,idx);
-    kontoTree->refreshItem(abt,ko,uko,idx);
-    zeitChanged();
-    emit minuteTick();
-    if ((delta<120)&&(delta>0)) // Check if we have won or lost a minute.
-      abtListToday->minuteVergangen(!pausedAbzur);
-    else
-      QMetaObject::invokeMethod(this, "uhrVerstellt", Qt::QueuedConnection, Q_ARG(int, delta));
-  }
-
-  //fix-me: falls bis zu zwei Minuten nach Mitternacht das gestrige Datum
-  //eingestellt ist, aufs neue Datum umstellen - Aergernis, falls jemand zw 0:00 und 0:02 tatsaechlich
-  //den vorigen Tag aendern moechte.
-
-  if ((abtList->getDatum().daysTo(QDate::currentDate())==1)&&(QTime::currentTime().secsTo ( QTime(0,2) )>0))
-  {
-    emit changeDate(QDate::currentDate());
-  }
+void TimeMainWindow::minuteHochzaehlen() {
+  sekunden += 60;
+  QString abt,ko,uko;
+  int idx;
+  QDateTime now = QDateTime::currentDateTime();
+  int delta = lastMinuteTick.secsTo(now) - 60; // Abweichung seit letzter Minute
+  lastMinuteTick = now;
+  abtListToday->minuteVergangen(!pausedAbzur);
+  // -> notwendig?
+  abtListToday->getAktiv(abt,ko,uko,idx);
+  kontoTree->refreshItem(abt,ko,uko,idx);
+  zeitChanged();
+  // <- notwendig?
+  if (lastMinuteTick.time().secsTo(QTime(0,2)) > 0)
+    tageswechsel();
+  if (abs(delta) >= 5)
+      logError(tr("Minuten-Signal %1s verspätet (%2)").arg(delta).arg(now.toString()));
+  QMetaObject::invokeMethod(this, "driftKorrektur", Qt::QueuedConnection);
 }
 
+void TimeMainWindow::tageswechsel() {
+  if (abtList->getDatum().daysTo(lastMinuteTick.date()))
+    emit changeDate(QDate::currentDate());
+}
 
 /**
   * Addiert timeIncrement auf die Zeiten des selktierten Unterkontos.
@@ -648,21 +680,38 @@ void TimeMainWindow::updateTaskbarTitle(int zeit)
 }
 #endif
 
-void TimeMainWindow::showArbeitszeitwarning()
-{
-  QMessageBox::warning(0, "Warnung",tr("Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten."),
-                       QMessageBox::Ok, QMessageBox::Ok);
+void TimeMainWindow::showArbeitszeitwarning() {
+  QMessageBox::warning(0, tr("Warnung") ,tr("Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten."));
+}
+
+void TimeMainWindow::stopTimers(const QString& grund) {
+    minutenTimer->stop();
+    autosavetimer->stop();
+    // die Sekunden seit dem letzten Tick speichern
+    QDateTime now = QDateTime::currentDateTime();
+    int secSeitTick = lastMinuteTick.secsTo(now);
+    if (secSeitTick > 60) 
+      logError(grund + tr(": wird ignoriert (%1)").arg(now.toString()));
+    lastMinuteTick = now;
+    zeitKorrektur(secSeitTick);
+    emit save();
+    trace(tr("%1: Erfassung angehalten (%2, +%3s)").arg(grund, now.toString()).arg(secSeitTick));
 }
 
 /** Ruft einen modalen Dialog auf, der eine Pause anzeigt, und setzt gleichzeitig
   *  paused auf true, um die Zeiten anzuhalten
   */
-void TimeMainWindow::pause()
-{
-  paused=true;
-  QMessageBox::warning(0,"Pause Dialog","Die Zeiterfassung wurde angehalten. Ende der Pause mit OK.",
-                       QMessageBox::Ok, QMessageBox::Ok);
-  paused=false;
+void TimeMainWindow::pause() {
+    paused = true;
+    stopTimers(tr("Pause"));
+    QDateTime pauseBeginn = QDateTime::currentDateTime();
+    QMessageBox::warning(this, tr("sctime: Pause"), tr("Die Zeiterfassung wurde angehalten. Ende der Pause mit OK."));
+    tageswechsel();
+    autosavetimer->start();
+    minutenTimer->start();
+    paused = false;
+    sekunden += pauseBeginn.secsTo(QDateTime::currentDateTime());
+    trace(tr("Ende der Pause: ") + QDateTime::currentDateTime().toString());
 }
 
 
@@ -1046,7 +1095,7 @@ void TimeMainWindow::callUnterKontoDialog(QTreeWidgetItem * item)
   connect(unterKontoDialog, SIGNAL(bereitschaftChanged(const QString&, const QString&, const QString&)),
           kontoTree, SLOT(refreshAllItemsInUnterkonto(const QString&, const QString&, const QString&)));
   if (abtList->isAktiv(abt,ko,uko,idx) && (abtList->getDatum()==QDate::currentDate()))
-    connect(this, SIGNAL(minuteTick()),unterKontoDialog->getZeitBox(),SLOT(incrMin()));
+    connect(minutenTimer, SIGNAL(timeout()),unterKontoDialog->getZeitBox(),SLOT(incrMin()));
 
   QPoint pos;
   QSize size;
