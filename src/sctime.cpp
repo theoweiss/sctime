@@ -30,7 +30,9 @@
 #include <QTranslator>
 #include <QSqlDatabase>
 
-#ifndef WIN32
+#ifdef WIN32
+#include <windows.h>
+#else
 #include <assert.h>
 #include <locale.h>
 #include <signal.h>
@@ -51,6 +53,7 @@
 #define CONFIGDIR "~/.sctime"
 #endif
 
+
 // transform the value a #define into a string in a portable way
 #define QUOTE_(x) #x
 #define QUOTE(x) QUOTE_(x)
@@ -66,7 +69,6 @@ QString lockfilePath;
 QString PERSOENLICHE_KONTEN_STRING;
 QString ALLE_KONTEN_STRING;
 Lock *lock;
-
 
 static void fatal(const QString& title, const QString& body) {
   QMessageBox::critical(NULL, title, body, QMessageBox::Ok);
@@ -85,9 +87,28 @@ static const char help[] =
 "    (default: output of 'zeitbereitls'.\n\n"
 "Please see the Help menu for further information (F1)!";
 
+static TimeMainWindow* mainWindow = 0;
+
 #ifdef WIN32
+class SctimeApp : public QApplication {
+public:
+  SctimeApp(int &argc, char **argv):QApplication(argc, argv) {}
+  virtual bool SctimeApp::winEventFilter(MSG * msg, long * result) {
+    if(msg->message == WM_POWERBROADCAST 
+      && (msg->wParam == PBT_APMRESUMESUSPEND || msg->wParam == PBT_APMRESUMESTANDBY) {
+      trace("Resumed");
+     if (mainWindow)
+        QMetaObject::invokeMethod(mainWindow, "resume", Qt::QueuedConnection);
+      *result = TRUE;
+      return true;
+    }
+    return false;
+  }
+};
+
 static void setlocale() {}
 #else
+#define SctimeApp QApplication
 static void setlocale() {
   if (!setlocale(LC_ALL, ""))
     fatal("sctime: Konfigurationsproblem", "Die 'locale'-Einstellungen sind nicht zulaessig (siehe 'locale -a')");
@@ -112,22 +133,15 @@ QString canonicalPath(QString path) {
 
 	return path.replace(0, 1, homedir);
     }
-
     return QFileInfo(path).canonicalFilePath();
 }
-
-class SctimeApp: public QApplication {
-public:
-  SctimeApp(int &argc, char **argv):QApplication(argc, argv) { }
-
-  void commitData ( QSessionManager & manager ) {QApplication::commitData(manager); }
-};
 
 
 /** main: hier wird ueberprueft, ob die Applikation ueberhaupt starten soll
  * (Lockfiles,...), und falls ja, wird SCTimeApp initialisiert und
  ausgefuehrt */
-int main( int argc, char **argv ) {
+int main(int argc, char **argv ) {
+  //QApplication app(argc, argv);
   SctimeApp app(argc, argv);
   QTranslator qtTranslator;
   qtTranslator.load("qt_" + QLocale::system().name(),
@@ -189,7 +203,7 @@ int main( int argc, char **argv ) {
   settings.readSettings();
   if (dataSourceNames.isEmpty()) dataSourceNames = settings.backends.split(" ");
   setupDatasources(dataSourceNames, settings, zeitkontenfile, bereitschaftsfile);
-  TimeMainWindow mainWindow;
+  mainWindow = new TimeMainWindow();
 #ifndef WIN32
   SignalHandler term(SIGTERM);
   app.connect(&term, SIGNAL(received()), &app, SLOT(closeAllWindows()));
@@ -197,10 +211,12 @@ int main( int argc, char **argv ) {
   app.connect(&hup, SIGNAL(received()), &app, SLOT(closeAllWindows()));
   SignalHandler int_(SIGINT);
   app.connect(&int_, SIGNAL(received()), &app, SLOT(closeAllWindows()));
-#endif  
-  mainWindow.show();
+  SignalHandler cont(SIGCONT);
+  app.connect(&cont, SIGNAL(received()), mainWindow, SLOT(resume()));
+#endif
+  mainWindow->show();
   app.exec();
-  mainWindow.save();
+  delete mainWindow;
   local.release();
   delete global;
   delete kontenDSM;

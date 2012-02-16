@@ -431,6 +431,11 @@ void TimeMainWindow::configClickMode(bool singleClickActivation)
     }
 }
 
+void TimeMainWindow::resume() {
+  statusBar->showMessage("resume", 3000);
+  trace("resume");
+}
+
 void TimeMainWindow::copyNameToClipboard()
 {
     QClipboard *cb = QApplication::clipboard();
