@@ -164,6 +164,7 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     bool checkInState();
 
     void setCheckInState(bool state);
+    bool kontoDatenInfoSuccess;
 
   private:
 
@@ -171,7 +172,6 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     KontoDatenInfo* kontoDatenInfo;
     int aktivEintrag;
     int zeitDifferenz;
-    bool kontoDatenInfoSuccess;
     bool checkedIn;
     QDate datum;
 

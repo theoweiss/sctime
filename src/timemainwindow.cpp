@@ -911,6 +911,7 @@ void TimeMainWindow::refreshKontoListe() {
 }
 
 void TimeMainWindow::commitKontenliste(DSResult data) {
+  abtList->kontoDatenInfoSuccess = true;
   kontoTree->flagClosedPersoenlicheItems();
   std::vector<int> columnwidthlist;
   kontoTree->getColumnWidthList(columnwidthlist);
