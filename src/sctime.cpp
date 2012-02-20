@@ -106,17 +106,8 @@ public:
       return false;
     }
 };
-
-static void setlocale() {}
 #else
 #define SctimeApp QApplication
-static void setlocale() {
-  if (!setlocale(LC_ALL, ""))
-    fatal("sctime: Konfigurationsproblem", "Die 'locale'-Einstellungen sind nicht zulaessig (siehe 'locale -a')");
-  const char *encoding = setlocale(LC_CTYPE, NULL); //query
-  if (!encoding && !encoding[0])  fatal("sctime: Konfigurationsfehler", "Konnte die locale-Bibliothek nicht initialisieren.");
-  if (setenv("LC_ALL", LOCALE, 1)) fatal("sctime: Konfigurationsfehler", "Konnte Umgebungsvariable ZEIT_ENCODING nicht setzen.");
-}
 #endif
 
 QString canonicalPath(QString path) {
@@ -177,9 +168,6 @@ int main(int argc, char **argv ) {
   // configdirstring can no longer be empty now but still may be relative or
   // reference home dir by ~
   configdirstring = canonicalPath(configdirstring);
-
-  setlocale();
-
   QDir directory;
   if (!directory.cd(configdirstring)) {
     directory.mkdir(configdirstring);

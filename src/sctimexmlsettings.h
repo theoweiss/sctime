@@ -223,7 +223,7 @@ public:
         return m_zeitKontenKommando;
     }
 
-    QString codecString(QTextStream& stream);
+    char* charmap();
 
     void setZeitKontenKommando(const QString& command)
     {

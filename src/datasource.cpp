@@ -103,9 +103,11 @@ bool  SqlReader::read(DSResult* const result) {
   db.close();
   return true;
 }
+
 #ifndef WIN32
 #include <stdlib.h>
 #include <errno.h>
+#include <langinfo.h>
 CommandReader::CommandReader(const QString &command, const QString& columnSeparator, int columns)
   :Datasource(), command(command), sep(columnSeparator), columns(columns) {}
 
@@ -118,7 +120,7 @@ bool CommandReader::read(DSResult* const result) {
   }
   trace(QObject::tr("Führe aus: ") + command);
   QTextStream ts(file, QIODevice::ReadOnly);
-  ts.setCodec("UTF-8");
+  ts.setCodec(nl_langinfo(CODESET));
   bool ok = readFile(result, ts, sep, columns, command);
   int rc = pclose(file);
   if (rc == -1 || !WIFEXITED(rc) || WEXITSTATUS(rc)) {

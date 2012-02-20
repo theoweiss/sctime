@@ -106,6 +106,18 @@ Die Zeiten werden sowohl als Shellskripte als auch als XML-Dateien abgelegt.
 Das Programm <tt>sctimeorg2</tt> überträgt die in den Shellskripten
 gespeicherten Daten in die Datenbank.</p>
 
+<p>Alle Einstellungen werden in <tt>settings.xml</tt> gespeichert. Das Programm
+legt eine Sicherungskopie des Standes vor dem letzten Start an: <tt>sctime.xml.bak</tt>.
+Die Liste der persönlichen Konten wird sowohl in <tt>settings.xml</tt> als
+auch in <tt>zeit-HEUTE.xml</tt> gespeichert.</p>
+
+<p>Wenn solche Konten geschlossen wurden, kann man sie mit dem
+Kommando <tt>sctimexmlpatch</tt> aus den Konfigurationsdateien entfernen. Das
+funktioniert derzeit nicht mit geschlossenen Unterkonten.</p>
+
+<p>Die Kodierung (Encoding) der <tt>zeit-HEUTE.sh</tt>-Dateien richtet sich
+  unter UNIX nach den <tt>locale</tt>-Einstellungen.</p>
+
 <h3>Zeiten speichern</h3>
 <p>Das Programm speichert automatisch alle fünf Minuten, bei Programmende und
 auf Wunsch des Benutzers sofort die aktuellen Zeiten und die Einstellungen.</p>
@@ -144,8 +156,9 @@ Bei mehrmaligem &Uuml;bergeben der Option werden die Module in der Reihenfolge
 ihrer Nennung abgearbeitet.</p>
 
 <a name="datasource_command"><h4>Datenquelle <tt>command</tt></h4></a>
-<p>Die aufgerufenen Befehle lauten: <tt>zeitkonten --mikrokonten
---separator='|'</tt> und <tt>zeitbereitls --separator='|'</tt>.
+<p>Die aufgerufenen Befehle lauten:
+<pre>zeitkonten --mikrokonten --separator='|'
+zeitbereitls --separator='|'</pre>
 Momentan k&ouml;nnen sie nicht konfiguriert werden.</p>
 
 <h4>Datenquelle <tt>file</tt></h4>
@@ -234,9 +247,11 @@ UNIX/Linux-Maschine entspricht, sind die Dateien z.B. per <tt>scp</tt>
 oder <tt>rsync</tt> manuell zu &uuml;bertragen.</pp>
 
 <p>Werden die Konten- und Bereitschaftsliste als Dateien bereitgestellt,
-m&uuml;ssen diese im Format UTF-8 sein.
+  m&uuml;ssen diese im Format UTF-8 sein. (Um genau zu sein: Das Programm
+  erwartet, dass diese Dateien die Kodierung aufweisen, die von
+  <tt>locale</tt> angegeben wird.)
 Am besten erzeugt man sie mit einem Aufruf der folgenden Form:
-<tt>ssh user@linuxserver "LC_CTYPE=de_DE.UTF-8 zeitkonten --separator=\"|\" --mikrokonten" >$HOME/.sctime/zeitkonten.txt</tt>
+<pre>ssh user@linuxserver "LC_CTYPE=de_DE.UTF-8 zeitkonten --separator=\"|\" --mikrokonten" >$HOME/.sctime/zeitkonten.txt</pre>
 Dabei wird von passwortfreiem login ausgegangen.</p>
 
 <a name="misc"><h2>Weitere Hinweise</h2></a>
@@ -308,8 +323,8 @@ Dieses kann dann in etwa folgenden Inhalt haben:</p>
 exec -a $0 $0.bin --configdir /Volumes/USB-Stick/.sctime
 </pre>
 
-<p>Das Script sollte nat&uuml;rlich ausf&uuml;hrbar gemacht werden: <tt>chmod
-755 scTime.app/Contents/MacOS/scTime</tt>.</p>
+<p>Das Script sollte nat&uuml;rlich ausf&uuml;hrbar sein:
+<pre>chmod 755 scTime.app/Contents/MacOS/scTime</pre></p>
 
 <h3>Teil-Offline-Betrieb</h3>
 

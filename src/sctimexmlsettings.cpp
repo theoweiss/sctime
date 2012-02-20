@@ -28,6 +28,7 @@
 #include <QDesktopWidget>
 #include <QMessageBox>
 #include <QApplication>
+#include <QDebug>
 #ifndef WIN32
 #include <langinfo.h>
 #include <errno.h>
@@ -59,22 +60,21 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
       return;
   }
   QTextStream stream( & shellFile);
-
+  stream.setCodec(charmap());
   int sek, abzurSek;
   abtList->getGesamtZeit(sek,abzurSek);
   QRegExp apostrophExp=QRegExp("'");
 
   TimeCounter tc(sek), tcAbzur(abzurSek);
-  QString codec=codecString(stream);
   stream<<
            "#!/bin/sh\n"
-           "# -*- coding: "<<codec.toLower()<<" -*-\n\n"
+           "# -*- coding: "<<charmap()<<" -*-\n\n"
            "set -e\n"
            "trap '[ $? -gt 0 ] && echo ABBRUCH in $0[$LINENO] - nicht alle Buchungen sind uebernommen >&2 && exit 1' 0"
            "\n\n"
            "# Zeit Aufrufe von sctime "<< qApp->applicationVersion() <<" generiert \n"
            "# Gesamtzeit: "<<tc.toString()<<"/"<<tcAbzur.toString()<<"\n"
-           "ZEIT_ENCODING="<<codec<<"\n"
+           "ZEIT_ENCODING="<<charmap()<<"\n"
            "export ZEIT_ENCODING\n";
 
   AbteilungsListe::iterator abtPos;
@@ -119,26 +119,13 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
   shellFile.close();
 }
 
-/* returns the used codec for the stream
-   may modify the stream and set the codec to a known one.
-*/
-QString SCTimeXMLSettings::codecString(QTextStream& stream)
-{
-  QString codec;
+// returns the encoding that the user has chosen by his locale settings
+char* SCTimeXMLSettings::charmap() {
 #ifdef WIN32
-  unsigned int cp=GetACP();
-  if (cp==1252) {
-    codec="iso-8859-15";
-  }
-  else
-  {
-    codec=WIN_CODEC;
-  }
-  stream.setCodec(QTextCodec::codecForName(codec.toLatin1()));
+    return "UTF-8";
 #else
-  codec=nl_langinfo(CODESET);
+    return nl_langinfo(CODESET); // has same result as the command "locale charmap"
 #endif
-  return codec;
 }
 
 void SCTimeXMLSettings::readSettings(AbteilungsListe* abtList)
@@ -772,7 +759,8 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   fnew.setPermissions(QFile::ReadOwner | QFile::WriteOwner);
 
   QTextStream stream(&fnew);
-  stream<<"<?xml version=\"1.0\" encoding=\""<<codecString(stream)<<"\"?>"<<endl;
+  stream.setCodec(charmap());
+  stream<<"<?xml version=\"1.0\" encoding=\""<< charmap() <<"\"?>"<<endl;
   stream<<doc.toString()<<endl;
   fnew.close();
   QFile fcurrent(filename);
