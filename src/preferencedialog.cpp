@@ -23,7 +23,7 @@
 #include "preferencedialog.h"
 #include <QSpinBox>
 #include <QCheckBox>
-#include "smallfontdialog.h"
+#include <QFontDialog>
 #include "sctimexmlsettings.h"
 
 
@@ -56,10 +56,9 @@ PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent
         fontPreview->setFont(selectedFont);
 }
 
-void PreferenceDialog::selectCustomFont()
-{
-        bool ok;
-    QFont font = SmallFontDialog::getFont(&ok, selectedFont, this);
+void PreferenceDialog::selectCustomFont() {
+    bool ok;
+    QFont font = QFontDialog::getFont(&ok, selectedFont, this);
     if (ok) {
         selectedFont=font;
     }

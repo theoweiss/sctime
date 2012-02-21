@@ -6,8 +6,8 @@ DEFINES += APP_VERSION=$$VERSION
 QT += xml gui core network sql
 TARGET = sctime
 CODECFORTR= UTF-8
-SOURCES = abteilungsliste.cpp bereitschaftsliste.cpp bereitschaftsmodel.cpp bereitschaftsview.cpp datasource.cpp datedialog.cpp defaultcommentreader.cpp defaulttagreader.cpp descdata.cpp findkontodialog.cpp GetOpt.cpp kontotreeitem.cpp kontotreeview.cpp lock.cpp preferencedialog.cpp qdatepicker.cpp sctime.cpp sctimexmlsettings.cpp setupdsm.cpp smallfontdialog.cpp timemainwindow.cpp unterkontodialog.cpp
-HEADERS = abteilungsliste.h bereitschaftsliste.h bereitschaftsmodel.h bereitschaftsview.h datasource.h datedialog.h defaultcommentreader.h defaulttagreader.h descdata.h eintragsliste.h findkontodialog.h GetOpt.h globals.h kontodateninfo.h kontoliste.h kontotreeitem.h kontotreeview.h lock.h preferencedialog.h qcalendarsystem.h qdatepicker.h sctimexmlsettings.h setupdsm.h smallfontdialog.h statusbar.h timecounter.h timeedit.h timemainwindow.h unterkontodialog.h unterkontoeintrag.h unterkontoliste.h
+SOURCES = abteilungsliste.cpp bereitschaftsliste.cpp bereitschaftsmodel.cpp bereitschaftsview.cpp datasource.cpp datedialog.cpp defaultcommentreader.cpp defaulttagreader.cpp descdata.cpp findkontodialog.cpp GetOpt.cpp kontotreeitem.cpp kontotreeview.cpp lock.cpp preferencedialog.cpp qdatepicker.cpp sctime.cpp sctimexmlsettings.cpp setupdsm.cpp timemainwindow.cpp unterkontodialog.cpp
+HEADERS = abteilungsliste.h bereitschaftsliste.h bereitschaftsmodel.h bereitschaftsview.h datasource.h datedialog.h defaultcommentreader.h defaulttagreader.h descdata.h eintragsliste.h findkontodialog.h GetOpt.h globals.h kontodateninfo.h kontoliste.h kontotreeitem.h kontotreeview.h lock.h preferencedialog.h qcalendarsystem.h qdatepicker.h sctimexmlsettings.h setupdsm.h statusbar.h timecounter.h timeedit.h timemainwindow.h unterkontodialog.h unterkontoeintrag.h unterkontoliste.h
 RESOURCES= ../pics/sctimeImages.qrc
 FORMS = datedialogbase.ui preferencedialogbase.ui
 INSTALLS += target
@@ -44,5 +44,3 @@ mac {
   DEFINES += MACOS
   CONFIG += x86_64 x86 ppc
 }
-
-
