@@ -502,12 +502,13 @@ void TimeMainWindow::driftKorrektur() {
           drift > 0
           ? QMessageBox::question(
                   this, tr("sctime: Programm war stehen geblieben"),
-                  tr("Das Programm oder das System istt %1min bis %2  stehen geblieben zu sein, oder die Systemzeit wurde vorgestellt.\n"
-                     "Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?").arg(drift/60).arg(lastMinuteTick.toString()),
+                  tr("Das Programm oder das System scheint %1min stehen geblieben zu sein. Möglicherweise wurde auch die Systemzeit vorgestellt.\n"
+                     "Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?\n"
+                     "(Aktuelle Systemzeit: %2)").arg(drift/60).arg(lastMinuteTick.toString()),
                   QMessageBox::Yes, QMessageBox::No)
           : QMessageBox::question(
                 this, tr("sctime: Systemzeit zurückgestellt"),
-                tr("Die Systemzeit wurde %1min auf %2 zurückgestellt. Soll die Arbeitszeit auf dem aktiven Unterkonto um diesen Betrag verringert werden?"),
+                tr("Die Systemzeit wurde um %1min auf %2 zurückgestellt. Soll die Arbeitszeit auf dem aktiven Unterkonto um diesen Betrag verringert werden?"),
                 QMessageBox::No, QMessageBox::Yes);
   if (answer == QMessageBox::Yes)
       zeitKorrektur(drift);
@@ -710,8 +711,10 @@ void TimeMainWindow::pause() {
     autosavetimer->start();
     minutenTimer->start();
     paused = false;
-    sekunden += pauseBeginn.secsTo(QDateTime::currentDateTime());
-    trace(tr("Ende der Pause: ") + QDateTime::currentDateTime().toString());
+    QDateTime now = QDateTime::currentDateTime();
+    sekunden += pauseBeginn.secsTo(now);
+    lastMinuteTick = now;
+    trace(tr("Ende der Pause: ") +now.toString());
 }
 
 

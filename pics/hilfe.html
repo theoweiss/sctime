@@ -249,7 +249,7 @@ oder <tt>rsync</tt> manuell zu &uuml;bertragen.</pp>
 <p>Werden die Konten- und Bereitschaftsliste als Dateien bereitgestellt,
   m&uuml;ssen diese im Format UTF-8 sein. (Um genau zu sein: Das Programm
   erwartet, dass diese Dateien die Kodierung aufweisen, die von
-  <tt>locale</tt> angegeben wird.)
+  <tt>locale charmap</tt> angegeben wird.)
 Am besten erzeugt man sie mit einem Aufruf der folgenden Form:
 <pre>ssh user@linuxserver "LC_CTYPE=de_DE.UTF-8 zeitkonten --separator=\"|\" --mikrokonten" >$HOME/.sctime/zeitkonten.txt</pre>
 Dabei wird von passwortfreiem login ausgegangen.</p>
