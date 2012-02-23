@@ -37,7 +37,6 @@
 #include <locale.h>
 #include <signal.h>
 #include "unix/signalhandler.h"
-#define LOCALE "de_DE.UTF-8"
 #endif
 
 #include "GetOpt.h"

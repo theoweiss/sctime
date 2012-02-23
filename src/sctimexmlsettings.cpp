@@ -757,10 +757,10 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   }
   // may contain passwords and private data in general
   fnew.setPermissions(QFile::ReadOwner | QFile::WriteOwner);
-
+  const char xmlcharmap[] = "UTF-8";
   QTextStream stream(&fnew);
-  stream.setCodec(charmap());
-  stream<<"<?xml version=\"1.0\" encoding=\""<< charmap() <<"\"?>"<<endl;
+  stream.setCodec(xmlcharmap);
+  stream<<"<?xml version=\"1.0\" encoding=\""<< xmlcharmap <<"\"?>"<<endl;
   stream<<doc.toString()<<endl;
   fnew.close();
   QFile fcurrent(filename);
