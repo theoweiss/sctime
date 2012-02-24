@@ -35,10 +35,10 @@
 #include "kontotreeview.h"
 
 
-#define ALLE tr("Alle")
-#define KONTO tr("Konto")
-#define UNTERKONTO tr("Unterkonto")
-#define KOMMENTAR tr("Kommentar")
+#define ALLE QObject::tr("Alle")
+#define KONTO QObject::tr("Konto")
+#define UNTERKONTO QObject::tr("Unterkonto")
+#define KOMMENTAR QObject::tr("Kommentar")
 
 /**
  * Baut den Suchdialog auf. In abtlist wird die zu durchsuchende AbteilungsListe angegeben
