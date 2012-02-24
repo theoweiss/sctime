@@ -89,6 +89,13 @@ mkdir -p "$appqtdir"/translations && \
 	cp -R "$qtdir"/translations/qt_*.qm "$appqtdir"/translations || \
 	exit 1
 
+translations=`grep ^TRANSLATIONS $srcdir/../../src/src.pro | \
+	sed -e "s,^TRANSLATIONS[[:space:]]*=[[:space:]]*",, \
+		-e "s,\.ts,\.qm,g"`
+for i in $translations ; do
+	cp "$srcdir"/../../src/$i "$approot"/Contents/MacOS || exit 1
+done
+
 # because we patch Qt paths to be relative, some funny logic seems to concat
 # the install prefix and translations path ending up with Resources/Qt in the
 # file name twice - do some symlinking for that - morons

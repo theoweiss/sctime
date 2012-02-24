@@ -41,14 +41,14 @@ bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
     {
         QFile f(filename);
         if ( !f.open( QIODevice::ReadOnly ) ) {
-          logError(QObject::tr("Standardkommentare: kann Datei '%1' nicht öffnen: %2").arg(filename, f.errorString()));
+          logError(QObject::tr("default comments: cannot open file '%1': %2").arg(filename, f.errorString()));
           return false;
         }
         QString domerror;
         int domerrorline;
         int domerrorcol;
         if ( !doc.setContent( &f, false, &domerror,&domerrorline,&domerrorcol ) ) {
-          logError(QObject::tr("Standardkommentare: ") + domerror);
+          logError(QObject::tr("default comments: ") + domerror);
           return false;
         }
       }
@@ -88,7 +88,7 @@ bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
                                                           itUk->second.addDefaultComment(commentstr);
                                                       }
                                                       else
-                                                        logError(QObject::tr("Standardkommentar: kann Unterkonto %1 nicht finden").arg(unterkontostr));
+                                                        logError(QObject::tr("default comments: cannot find subaccount %1").arg(unterkontostr));
                                                   }
                                               }
                                           }

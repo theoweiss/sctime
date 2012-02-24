@@ -68,11 +68,11 @@ LockLocal::LockLocal(const QString& name, bool user):path((user ? "Local\\" : "G
 bool LockLocal::_acquire() {
   handle = CreateEventA(NULL, false, true, name.toLocal8Bit());
   if (!handle) {
-    errStr = QObject::tr("Kann die lokale Sperre %1 nicht anlegen: %2").arg(name).arg(GetLastError());
+    errStr = QObject::tr("Cannot create lock %1: %2").arg(name).arg(GetLastError());
     return false;
   }
   if (GetLastError () == ERROR_ALREADY_EXISTS) {
-    errStr = QObject::tr("Das Programm „%1“ läuft bereits (auf diesem Rechner)").arg(name);
+    errStr = QObject::tr("This Program (%1) is already running (on this machine)").arg(name);
     return false;
   }
   return true;
@@ -80,7 +80,7 @@ bool LockLocal::_acquire() {
 
 bool LockLocal::_release() {
   if (!CloseHandle(handle)) {
-      errStr = QObject::tr("Fehler aufgetreten beim Löschen der lokalen Sperre „%1“").arg(name);
+      errStr = QObject::tr("Error when removing local lock for this program (%1)").arg(name);
       return false;
   }
   return true;
@@ -98,9 +98,9 @@ bool LockLocal::_acquire() {
   if (lockf(fd,F_TLOCK,0) == -1) {
     errStr = errno == EACCES || errno == EAGAIN
       ? (user
-         ? QObject::tr("Das Programm „%1“ läuft bereits (auf diesem Rechner und für diesen Benutzer) (%2)").arg(name, path)
-         : QObject::tr("Das Programm „%1“ läuft bereits (auf diesem Rechner ) (%2)").arg(name, path))
-      : QObject::tr("Fehler beim Sperren der Datei  „%1“: %2").arg(path, strerror(errno));
+         ? QObject::tr("This Program (%1) is already running (on this machine as this user) (%2)").arg(name, path)
+         : QObject::tr("This Program (%1) is already running (on this machine) (%2)").arg(name, path))
+      : QObject::tr("Error when locking file %1: %2").arg(path, strerror(errno));
     close(fd);
     return false;
   }
@@ -138,27 +138,28 @@ bool Lockfile::_acquire() {
             if (words.size() >= 1 && words[0].compare(host) == 0)
               return true; // Das Lockfile stammt von einem Absturz auf diesem Rechner. Wir übernehmen es.
           }
-          errStr = QObject::tr("Das Programm läuft bereits auf einem anderen Rechner (%1: „%2“).\n").arg(path, line);
+          errStr = QObject::tr("This Program is already running on another machine (%1: %2).\n").arg(path, line);
           if (localExclusionProvided)
             errStr.append(QObject::tr(
-                            "\nWenn das nicht so ist, sondern das Programm sich beim letzten Mal auf einem anderen Rechner nicht regulär beenden konnte, "
-                            "dann starten Sie bitte das Programm nochmal auf diesem anderen Rechner!\n\n"
-                            "Eine gefährliche Alternative ist, die Datei „%1“  zu löschen.").arg(path));
+                            "\nIf this is not the case and the lock file is left over from a crash on"
+			    "that other machine, then just once run the program again on that machine"
+			    "to clean up the lock file.\n\n"
+                            "A potentially dangerous alternative is to remove the lock file %1 manually.").arg(path));
           return false;
         }
       }
-      errStr = QObject::tr("%1 existiert bereits.").arg(path);
+      errStr = QObject::tr("%1 already exists.").arg(path);
     return false;
   }
   if (fd == -1) {
-    errStr = QString(QObject::tr("%1 konnte nicht angelegt werden (%2)")).arg(path, strerror(errno));
+    errStr = QObject::tr("%1 could not be created: %2").arg(path, strerror(errno));
     return false;
   }
   // Konnte das Lockfile anlegen
   QFile f(path);
   bool rv;
   if (!f.open(fd, QFile::WriteOnly)) {
-      errStr = QObject::tr("Konnte das Lockfile %1 nicht öffnen (%1)").arg(path, f.errorString());
+      errStr = QObject::tr("lock file %1 could not be opened: %1").arg(path, f.errorString());
       rv = false;
   } else {
     QTextStream out(&f);
@@ -177,7 +178,7 @@ bool Lockfile::_acquire() {
 bool Lockfile::_release() {
   QFile p(path);
   if (p.remove()) return true;
-  errStr = QObject::tr("Konnte %1 nicht entfernen: %2").arg(path, p.errorString());
+  errStr = QObject::tr("lock file %1 could not be removed: %2").arg(path, p.errorString());
   return false;
 }
 
@@ -187,9 +188,9 @@ bool Lockfile::_check() {
     QTextStream in(&f);
     QString line = in.readLine();
     if (line.compare(QHostInfo::localHostName()) == 0)  return true;
-    errStr = QObject::tr("Die Datei %1 wurde von außen verändert: %2").arg(path, line);
+    errStr = QObject::tr("lock file %1 has been changed by someone else: %2").arg(path, line);
   }
   else
-    errStr = QObject::tr("Die Datei %1 wurde von außen gelöscht.").arg(path);
+    errStr = QObject::tr("lock file %1 has been deleted by someone else.").arg(path);
 return false;
 }

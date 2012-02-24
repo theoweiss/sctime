@@ -49,7 +49,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
                                    :QDialog(parent, Qt::Dialog)
 {
   setModal(true);
-  setWindowTitle( tr("Einstellungen für Unterkonto") );
+  setWindowTitle( tr("Settings for subaccount") );
   abtList=abtlist;
   unterKontoName=uko;
   kontoName=ko;
@@ -62,7 +62,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   EintragsListe::iterator etiter;
 
   if (!abtList->findEintrag(etiter,m_unterkonto, abt, ko, uko,idx)) {
-    QMessageBox::information(parent,tr("sctime: Einstellungen des Unterkontos"), tr("Unterkonto nicht gefunden!"));
+    QMessageBox::information(parent,tr("sctime: Settings of subaccount"), tr("Subaccount not found!"));
     return;
   }
   et = etiter->second;
@@ -73,7 +73,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   QVBoxLayout* layout=new QVBoxLayout(this);
   layout->setContentsMargins(3,3,3,3);
 
-  QPushButton * cancelbutton=new QPushButton(tr("Abbruch"), this );
+  QPushButton * cancelbutton=new QPushButton(tr("Cancel"), this );
   QPushButton * okbutton=NULL;
   if (!readOnly) {
     okbutton=new QPushButton( tr("OK"), this );
@@ -101,7 +101,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
     commentcombo->setEditable(!readOnly);
   }
 
-  layout->addWidget(new QLabel(tr("Kommentar"),this));
+  layout->addWidget(new QLabel(tr("Comment"),this));
   if (commentedit) {
     layout->addWidget(commentedit);
     commentedit->setFocus();
@@ -118,7 +118,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
      hboxLayout->addWidget(tagcombo);
      //tagcombo->insertStringList(*taglist); //Qt3
      tagcombo->insertItems(0, *taglist);
-     QPushButton * addtagbutton = new QPushButton( tr("Hinzufügen"), taggroup );;
+     QPushButton * addtagbutton = new QPushButton( tr("Add"), taggroup );;
      hboxLayout->addWidget(addtagbutton);
      layout->addWidget(taggroup);
      connect (addtagbutton, SIGNAL(clicked()), this, SLOT(addTag()));
@@ -126,13 +126,13 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
      layout->addStretch(2);
   } else tagcombo=NULL;
 
-  zeitBox=new ZeitBox(tr("Zeit"), et.sekunden, this );
+  zeitBox=new ZeitBox(tr("Time:"), et.sekunden, this );
   zeitBox->setReadOnly(readOnly);
   layout->addWidget(zeitBox);
   layout->addSpacing(5);
   layout->addStretch(2);
 
-  zeitAbzurBox=new ZeitBox(tr("Abzurechnende Zeit"), et.sekundenAbzur, this );
+  zeitAbzurBox=new ZeitBox(tr("Accountable time:"), et.sekundenAbzur, this );
   zeitAbzurBox->setReadOnly(readOnly);
   layout->addWidget(zeitAbzurBox);
   layout->addSpacing(5);
@@ -140,13 +140,13 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
 
   QString beschreibung = abtList->getDescription(abt,ko,uko).description().simplified();
   if (!beschreibung.isEmpty()) {
-    QLabel *l = new QLabel(tr("Beschreibung: ") + beschreibung, this);
+    QLabel *l = new QLabel(tr("Description: ") + beschreibung, this);
     layout->addWidget(l);
     layout->addSpacing(5);
     layout->addStretch(2);
     l->setOpenExternalLinks(true);
   }
-  QLabel *l2 = new QLabel(tr("Verantwortlich: ") + abtList->getDescription(abt,ko,uko).responsible(), this);
+  QLabel *l2 = new QLabel(tr("Responsible: ") + abtList->getDescription(abt,ko,uko).responsible(), this);
   layout->addWidget(l2);
   layout->addSpacing(5);
   layout->addStretch(2);
@@ -160,12 +160,12 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   //buttonlayout->setParent(layout);
   buttonlayout->setContentsMargins(3,3,3,3);
 
-  projektAktivieren=new QPushButton(tr("Eintrag aktivieren"),this);
+  projektAktivieren=new QPushButton(tr("Activate entry"),this);
   projektAktivieren->setDisabled(abtList->isAktiv(abt,ko,uko,idx));
   buttonlayout->addWidget(projektAktivieren);
   buttonlayout->addSpacing(10);
   buttonlayout->addStretch(1);
-  persoenlichesKonto=new QCheckBox(tr("In die persönlichen Konten übernehmen"),this);
+  persoenlichesKonto=new QCheckBox(tr("Select as personal account"),this);
   persoenlichesKonto->setChecked(et.flags&UK_PERSOENLICH);
   buttonlayout->addWidget(persoenlichesKonto);
   buttonlayout->addStretch(1);
@@ -281,9 +281,9 @@ void UnterKontoDialog::checkInput()
 {
   QTextCodec* codec=QTextCodec::codecForLocale();
   if (!codec->canEncode(getComment())) {
-    QMessageBox::critical(0,tr("Fehler"),tr("Fehler: In dem von "
-        "Ihnen eingegebenen Kommentar kommt ein Zeichen vor, das in Ihrem Locale "
-            "nicht darstellbar ist. "),
+    QMessageBox::critical(0,tr("Error"),tr("Error: The entered "
+        "description contains a character Ihnen that cannot be displayed in "
+	"your locale."),
             QMessageBox::Ok | QMessageBox::Default,0);
     reject();
   } else

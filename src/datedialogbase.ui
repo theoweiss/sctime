@@ -1,10 +1,8 @@
-<ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>DateDialogBase</class>
- <widget class="QDialog" name="DateDialogBase" >
-  <property name="geometry" >
+ <widget class="QDialog" name="DateDialogBase">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -12,65 +10,54 @@
     <height>281</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy>
-    <hsizetype>7</hsizetype>
-    <vsizetype>7</vsizetype>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="windowTitle" >
-   <string>Datum wählen</string>
+  <property name="windowTitle">
+   <string>Select date</string>
   </property>
-  <layout class="QGridLayout" >
-   <property name="margin" >
+  <layout class="QGridLayout">
+   <property name="margin">
     <number>11</number>
    </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item row="0" column="0" >
-    <widget class="QLabel" name="textLabel1" >
-     <property name="text" >
-      <string>Zu editierendes Datum:</string>
+   <item row="0" column="0">
+    <widget class="QLabel" name="textLabel1">
+     <property name="text">
+      <string>Date to edit:</string>
      </property>
     </widget>
    </item>
-   <item row="1" column="0" >
-    <widget class="QDatePicker" name="datePicker" />
+   <item row="1" column="0">
+    <widget class="QDatePicker" name="datePicker" native="true"/>
    </item>
-   <item row="2" column="0" >
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
+   <item row="2" column="0">
+    <layout class="QHBoxLayout">
      <item>
-      <widget class="QPushButton" name="okbutton" >
-       <property name="text" >
+      <widget class="QPushButton" name="okbutton">
+       <property name="text">
         <string>&amp;OK</string>
        </property>
-       <property name="shortcut" >
+       <property name="shortcut">
         <number>8388687</number>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="applyButton" >
-       <property name="text" >
-        <string>Anwenden</string>
+      <widget class="QPushButton" name="applyButton">
+       <property name="text">
+        <string>&amp;Apply</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelbutton" >
-       <property name="text" >
+      <widget class="QPushButton" name="cancelbutton">
+       <property name="text">
         <string>&amp;Cancel</string>
        </property>
-       <property name="shortcut" >
+       <property name="shortcut">
         <number>8388675</number>
        </property>
       </widget>
@@ -79,15 +66,12 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
- <pixmapfunction></pixmapfunction>
+ <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
    <class>QDatePicker</class>
    <extends></extends>
    <header>qdatepicker.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <resources/>

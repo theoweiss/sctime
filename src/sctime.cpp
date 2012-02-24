@@ -76,15 +76,16 @@ static void fatal(const QString& title, const QString& body) {
 }
 
 static const QString help(QObject::tr(
-" Available Options: \n"
-" --configdir=DIR  location of the directory where your files will be placed\n"
-"    (default: ~/.sctime)\n"
-"--datasource= (repeatable) use these data sources\n"
-"    (default: 'QPSQL'',' 'QODBC'', 'command' and 'file'');\n"
-"    overrides <datasources/> in settings.xml\n"
-" --zeitkontenfile=PATH  read the accounts list from file PATH\n"
-" --bereitschaftsfile=PATH  read the 'Bereitschaftsarten'' from file PATH\n"
-"    (default: output of 'zeitbereitls'.\n\n"
+"Available Options:\n"
+"--configdir=DIR	location of the directory where your files will be placed\n"
+"			(default: ~/.sctime)\n"
+"--datasource=		(repeatable) use these data sources\n"
+"			(default: 'QPSQL'',' 'QODBC'', 'command' and 'file'');\n"
+"			overrides <backends/> in settings.xml\n"
+"--zeitkontenfile=FILE	read the accounts list from file FILE\n"
+"			(default: output of 'zeitkonten'.\n\n"
+"--bereitschaftsfile=FILE	read the 'Bereitschaftsarten'' from file FILE\n"
+"				(default: output of 'zeitbereitls'.\n\n"
 "Please see the Help menu for further information (F1)!"));
 
 static TimeMainWindow* mainWindow = 0;
@@ -139,12 +140,16 @@ int main(int argc, char **argv ) {
   qtTranslator.load("qt_" + QLocale::system().name(),
           QLibraryInfo::location(QLibraryInfo::TranslationsPath));
   app.installTranslator(&qtTranslator);
+  QTranslator sctimeTranslator;
+  sctimeTranslator.load("sctime_" + QLocale::system().name(),
+          QCoreApplication::applicationDirPath());
+  app.installTranslator(&sctimeTranslator);
   QTextCodec::setCodecForTr(QTextCodec::codecForName ("UTF-8"));
   app.setObjectName("sctime");
   app.setApplicationVersion(QUOTE(APP_VERSION));
 
-  PERSOENLICHE_KONTEN_STRING = QObject::tr("Persönliche Konten");
-  ALLE_KONTEN_STRING = QObject::tr("Alle Konten");
+  PERSOENLICHE_KONTEN_STRING = QObject::tr("Personal accounts");
+  ALLE_KONTEN_STRING = QObject::tr("All accounts");
 
   if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1],"--help") == 0 || strcmp(argv[1], "/h") == 0||strcmp(argv[1],"/help") == 0)) {
     QMessageBox::information(NULL, QObject::tr("sctime ") + qApp->applicationVersion(), help);
@@ -171,7 +176,9 @@ int main(int argc, char **argv ) {
   QDir directory;
   if (!directory.cd(configdirstring)) {
     directory.mkdir(configdirstring);
-    if (!directory.cd(configdirstring)) fatal(QObject::tr("sctime: Konfigurationsproblem"), QObject::tr("Kann nicht auf %1 zugreifen.").arg(configdirstring));
+    if (!directory.cd(configdirstring))
+      fatal(QObject::tr("sctime: Configuration problem"),
+        QObject::tr("Cannot access configration directory %1.").arg(configdirstring));
   }
   configDir=directory.path();
   // Ich lege eine lokale Sperre an, die vom Betriebssystem zuverlässig auch
@@ -186,7 +193,7 @@ int main(int argc, char **argv ) {
   LockLocal local("sctime", true);
   Lock *global = new Lockfile(configDir.filePath("LOCK"), true);
   local.setNext(global);
-  if (!local.acquire()) fatal(QObject::tr("sctime: kann nicht starten"), local.errorString());
+  if (!local.acquire()) fatal(QObject::tr("sctime: Cannot start"), local.errorString());
   lock = &local;
   SCTimeXMLSettings settings;
   settings.readSettings();

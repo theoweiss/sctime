@@ -63,7 +63,7 @@ static QString username() {
 #endif
     if (result.isEmpty()) {
       result = "";
-      logError(QObject::tr("Der Benutzername kann nicht festgestellt werden."));
+      logError(QObject::tr("user name cannot be determined."));
     }
     return result;
 }
@@ -84,7 +84,7 @@ static QString password() {
       result = qs.readLine();
       break;
     } else
-      logError(QObject::tr("Beim Lesen aus Datei %1: %2").arg(p, pwdfile.errorString()));
+      logError(QObject::tr("Error when reading from file %1: %2").arg(p, pwdfile.errorString()));
   }
   return result;
 }
@@ -95,9 +95,9 @@ void setupDatasources(const QStringList& datasourceNames,
                       const SCTimeXMLSettings& settings,
                       const QString &kontenPath, const QString &bereitPath)
 {
-  kontenDSM = new DatasourceManager(QObject::tr("Konten"));
-  bereitDSM = new DatasourceManager(QObject::tr("Bereitschaftsarten"));
-  trace(QObject::tr("verfügbare Datenbanktreiber: %1.").arg(QSqlDatabase::drivers().join(", ")));
+  kontenDSM = new DatasourceManager(QObject::tr("Accounts"));
+  bereitDSM = new DatasourceManager(QObject::tr("On-call categories"));
+  trace(QObject::tr("available database drivers: %1.").arg(QSqlDatabase::drivers().join(", ")));
   if (!kontenPath.isEmpty())
     kontenDSM->sources.append(new FileReader(kontenPath, "|", 13));
   if (!bereitPath.isEmpty())
@@ -109,19 +109,19 @@ void setupDatasources(const QStringList& datasourceNames,
       bereitDSM->sources.append(new FileReader(configDir.filePath("zeitbereitls.txt"), "|", 2));
     } else if (dsname.compare("command") == 0) {
 #ifdef WIN32
-      logError(QObject::tr("Datenquelle 'command' ist unter Windows nicht verfügbar"));
+      logError(QObject::tr("data source 'command' is not available on Windows"));
 #else
       kontenDSM->sources.append(new CommandReader("zeitkonten --mikrokonten --separator='|'", "|", 13));
       bereitDSM->sources.append(new CommandReader("zeitbereitls --separator='|'", "|", 2));
 #endif
     } else {
       if (!QSqlDatabase::drivers().contains(dsname)) {
-        logError(QObject::tr("Datenbanktreiber oder Datenquelle nicht verfügbar: ") + dsname);
+        logError(QObject::tr("database driver or data source not available: ") + dsname);
         continue;
       }
       QSqlDatabase db = QSqlDatabase::addDatabase(dsname, dsname);
       if (!db.isValid() || db.isOpenError()) {
-        logError(QObject::tr("data source '%1'not working: %2").arg(dsname, db.lastError().driverText()));
+        logError(QObject::tr("data source '%1' not working: %2").arg(dsname, db.lastError().driverText()));
         continue;
       }
       db.setDatabaseName(

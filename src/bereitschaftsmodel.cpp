@@ -70,7 +70,7 @@ QVariant BereitschaftsModel::headerData (int section, Qt::Orientation orientatio
       switch(orientation)
       {
         case Qt::Horizontal:
-          return QVariant(QObject::tr("Bezeichnung"));
+          return QVariant(QObject::tr("Designation"));
         default:
           return QVariant();
       }

@@ -50,12 +50,12 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
 
   setColumnCount(6);
   QTreeWidgetItem * header = new QTreeWidgetItem;
-  header->setText(0, tr("Konten") );
-  header->setText(1, tr("Typ"));
-  header->setText(2, tr("Aktiv"));
-  header->setText(3, tr("Zeit"));
-  header->setText(4, tr("Abzur."));
-  header->setText(5, tr("Kommentar"));
+  header->setText(0, tr("Accounts") );
+  header->setText(1, tr("Type"));
+  header->setText(2, tr("Active"));
+  header->setText(3, tr("Time"));
+  header->setText(4, tr("Accountable"));
+  header->setText(5, tr("Comment"));
   this->setHeaderItem(header);
   //this->header()->setResizeMode(QHeaderView::Interactive);
   for (std::vector<int>::size_type i=0; i<columnwidth.size(); i++) {
