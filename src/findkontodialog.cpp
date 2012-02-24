@@ -35,10 +35,10 @@
 #include "kontotreeview.h"
 
 
-#define ALLE "Alle"
-#define KONTO "Konto"
-#define UNTERKONTO "Unterkonto"
-#define KOMMENTAR "Kommentar"
+#define ALLE tr("Alle")
+#define KONTO tr("Konto")
+#define UNTERKONTO tr("Unterkonto")
+#define KOMMENTAR tr("Kommentar")
 
 /**
  * Baut den Suchdialog auf. In abtlist wird die zu durchsuchende AbteilungsListe angegeben
@@ -80,7 +80,7 @@ void FindKontoDialog::createLayout()
 void FindKontoDialog::createWidgets()
 {
   this->setMinimumHeight( 300 );
-  this->setWindowTitle("sctime - Suche");
+  this->setWindowTitle(tr("sctime - Suche"));
 
   typeChoose = new QComboBox(this);
   typeChoose->setEditable(false);
@@ -101,7 +101,7 @@ void FindKontoDialog::createWidgets()
   resultTree->setSelectionMode(QAbstractItemView::SingleSelection);
   rightLayout->addWidget(resultTree);
 
-  okButton=new QPushButton( "OK", this );
+  okButton=new QPushButton( tr("OK"), this );
   okButton->setEnabled(false);
   cancelButton=new QPushButton(tr("Abbrechen"), this );
   searchButton=new QPushButton(tr("Suchen"), this );

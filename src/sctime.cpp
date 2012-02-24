@@ -75,7 +75,7 @@ static void fatal(const QString& title, const QString& body) {
   exit(1);
 }
 
-static const char help[] =
+static const QString help(QObject::tr(
 " Available Options: \n"
 " --configdir=DIR  location of the directory where your files will be placed\n"
 "    (default: ~/.sctime)\n"
@@ -85,7 +85,7 @@ static const char help[] =
 " --zeitkontenfile=PATH  read the accounts list from file PATH\n"
 " --bereitschaftsfile=PATH  read the 'Bereitschaftsarten'' from file PATH\n"
 "    (default: output of 'zeitbereitls'.\n\n"
-"Please see the Help menu for further information (F1)!";
+"Please see the Help menu for further information (F1)!"));
 
 static TimeMainWindow* mainWindow = 0;
 
@@ -147,7 +147,7 @@ int main(int argc, char **argv ) {
   ALLE_KONTEN_STRING = QObject::tr("Alle Konten");
 
   if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1],"--help") == 0 || strcmp(argv[1], "/h") == 0||strcmp(argv[1],"/help") == 0)) {
-    QMessageBox::information(NULL, "sctime " + qApp->applicationVersion(), help);
+    QMessageBox::information(NULL, QObject::tr("sctime ") + qApp->applicationVersion(), help);
     exit(0);
   }
   QString configdirstring, zeitkontenfile, bereitschaftsfile;
@@ -171,7 +171,7 @@ int main(int argc, char **argv ) {
   QDir directory;
   if (!directory.cd(configdirstring)) {
     directory.mkdir(configdirstring);
-    if (!directory.cd(configdirstring)) fatal("sctime: Konfigurationsproblem", QString("Kann nicht auf %1 zugreifen.").arg(configdirstring));
+    if (!directory.cd(configdirstring)) fatal(QObject::tr("sctime: Konfigurationsproblem"), QObject::tr("Kann nicht auf %1 zugreifen.").arg(configdirstring));
   }
   configDir=directory.path();
   // Ich lege eine lokale Sperre an, die vom Betriebssystem zuverlässig auch

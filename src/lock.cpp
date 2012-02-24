@@ -80,7 +80,7 @@ bool LockLocal::_acquire() {
 
 bool LockLocal::_release() {
   if (!CloseHandle(handle)) {
-      errStr = QString("Fehler aufgetreten beim Löschen der lokalen Sperre „%1“").arg(name);
+      errStr = QObject::tr("Fehler aufgetreten beim Löschen der lokalen Sperre „%1“").arg(name);
       return false;
   }
   return true;
@@ -147,11 +147,11 @@ bool Lockfile::_acquire() {
           return false;
         }
       }
-      errStr = QString("%1 existiert bereits.").arg(path);
+      errStr = QObject::tr("%1 existiert bereits.").arg(path);
     return false;
   }
   if (fd == -1) {
-    errStr = QString("%1 konnte nicht angelegt werden (%2)").arg(path, strerror(errno));
+    errStr = QString(QObject::tr("%1 konnte nicht angelegt werden (%2)")).arg(path, strerror(errno));
     return false;
   }
   // Konnte das Lockfile anlegen
@@ -190,6 +190,6 @@ bool Lockfile::_check() {
     errStr = QObject::tr("Die Datei %1 wurde von außen verändert: %2").arg(path, line);
   }
   else
-    errStr = QString(QObject::tr("Die Datei %1 wurde von außen gelöscht.")).arg(path);
+    errStr = QObject::tr("Die Datei %1 wurde von außen gelöscht.").arg(path);
 return false;
 }

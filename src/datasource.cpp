@@ -124,7 +124,7 @@ bool CommandReader::read(DSResult* const result) {
   bool ok = readFile(result, ts, sep, columns, command);
   int rc = pclose(file);
   if (rc == -1 || !WIFEXITED(rc) || WEXITSTATUS(rc)) {
-    logError(QObject::tr("Fehler bei '%1': %2").arg(command).arg(rc == -1 ? strerror(errno) : "nicht normal beendet"));
+    logError(QObject::tr("Fehler bei '%1': %2").arg(command).arg(rc == -1 ? strerror(errno) : QObject::tr("nicht normal beendet")));
     broken = true;
     return false;
   }

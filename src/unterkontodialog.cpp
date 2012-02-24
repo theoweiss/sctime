@@ -49,7 +49,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
                                    :QDialog(parent, Qt::Dialog)
 {
   setModal(true);
-  setWindowTitle( "Einstellungen für Unterkonto" );
+  setWindowTitle( tr("Einstellungen für Unterkonto") );
   abtList=abtlist;
   unterKontoName=uko;
   kontoName=ko;
@@ -76,7 +76,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   QPushButton * cancelbutton=new QPushButton(tr("Abbruch"), this );
   QPushButton * okbutton=NULL;
   if (!readOnly) {
-    okbutton=new QPushButton( "OK", this );
+    okbutton=new QPushButton( tr("OK"), this );
     okbutton->setDefault(true);
   }
   else {
@@ -101,7 +101,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
     commentcombo->setEditable(!readOnly);
   }
 
-  layout->addWidget(new QLabel("Kommentar",this));
+  layout->addWidget(new QLabel(tr("Kommentar"),this));
   if (commentedit) {
     layout->addWidget(commentedit);
     commentedit->setFocus();
@@ -112,13 +112,13 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   layout->addSpacing(5);
   layout->addStretch(2);
   if ((taglist) && (!taglist->isEmpty())) {
-     QGroupBox* taggroup = new QGroupBox("Tags",this);
+     QGroupBox* taggroup = new QGroupBox(tr("Tags"),this);
      QHBoxLayout *hboxLayout = new QHBoxLayout(taggroup);
      tagcombo = new QComboBox(taggroup);
      hboxLayout->addWidget(tagcombo);
      //tagcombo->insertStringList(*taglist); //Qt3
      tagcombo->insertItems(0, *taglist);
-     QPushButton * addtagbutton = new QPushButton( "Hinzufügen", taggroup );;
+     QPushButton * addtagbutton = new QPushButton( tr("Hinzufügen"), taggroup );;
      hboxLayout->addWidget(addtagbutton);
      layout->addWidget(taggroup);
      connect (addtagbutton, SIGNAL(clicked()), this, SLOT(addTag()));
@@ -126,13 +126,13 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
      layout->addStretch(2);
   } else tagcombo=NULL;
 
-  zeitBox=new ZeitBox("Zeit", et.sekunden, this );
+  zeitBox=new ZeitBox(tr("Zeit"), et.sekunden, this );
   zeitBox->setReadOnly(readOnly);
   layout->addWidget(zeitBox);
   layout->addSpacing(5);
   layout->addStretch(2);
 
-  zeitAbzurBox=new ZeitBox("Abzurechnende Zeit", et.sekundenAbzur, this );
+  zeitAbzurBox=new ZeitBox(tr("Abzurechnende Zeit"), et.sekundenAbzur, this );
   zeitAbzurBox->setReadOnly(readOnly);
   layout->addWidget(zeitAbzurBox);
   layout->addSpacing(5);
@@ -160,7 +160,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   //buttonlayout->setParent(layout);
   buttonlayout->setContentsMargins(3,3,3,3);
 
-  projektAktivieren=new QPushButton("Eintrag aktivieren",this);
+  projektAktivieren=new QPushButton(tr("Eintrag aktivieren"),this);
   projektAktivieren->setDisabled(abtList->isAktiv(abt,ko,uko,idx));
   buttonlayout->addWidget(projektAktivieren);
   buttonlayout->addSpacing(10);
@@ -281,9 +281,9 @@ void UnterKontoDialog::checkInput()
 {
   QTextCodec* codec=QTextCodec::codecForLocale();
   if (!codec->canEncode(getComment())) {
-    QMessageBox::critical(0,"Fehler","Fehler: In dem von "
+    QMessageBox::critical(0,tr("Fehler"),tr("Fehler: In dem von "
         "Ihnen eingegebenen Kommentar kommt ein Zeichen vor, das in Ihrem Locale "
-            "nicht darstellbar ist. ",
+            "nicht darstellbar ist. "),
             QMessageBox::Ok | QMessageBox::Default,0);
     reject();
   } else

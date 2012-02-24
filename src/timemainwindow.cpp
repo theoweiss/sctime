@@ -63,7 +63,7 @@
 
 QTreeWidget* TimeMainWindow::getKontoTree() { return kontoTree; }
 
-static QString logTextLastLine("-- Start --");
+static QString logTextLastLine(QObject::tr("-- Start --"));
 static QString logText(logTextLastLine + "\n");
 void trace(const QString &msg) {
   logError(msg);
@@ -78,7 +78,7 @@ void logError(const QString &msg) {
 TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDateTime()) {
   paused = false;
   sekunden = 0;
-  setObjectName("sctime");
+  setObjectName(tr("sctime"));
   std::vector<QString> xmlfilelist;
   QDate heute;
   abtListToday=new AbteilungsListe(heute.currentDate(), zk);
@@ -129,15 +129,15 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
     kontoTree->hideColumn(1);
   }
 
-  toolBar   = new QToolBar("Main ToolBar", this);
+  toolBar   = new QToolBar(tr("Main ToolBar"), this);
   toolBar->setIconSize(QSize(22,22));
 
   configClickMode(settings->singleClickActivation());
 
-  QMenu * kontomenu = menuBar()->addMenu("&Konto");
-  QMenu * zeitmenu = menuBar()->addMenu("&Zeit");
-  QMenu * settingsmenu = menuBar()->addMenu("&Einstellungen");
-  QMenu * hilfemenu = menuBar()->addMenu("&Hilfe");
+  QMenu * kontomenu = menuBar()->addMenu(tr("&Konto"));
+  QMenu * zeitmenu = menuBar()->addMenu(tr("&Zeit"));
+  QMenu * settingsmenu = menuBar()->addMenu(tr("&Einstellungen"));
+  QMenu * hilfemenu = menuBar()->addMenu(tr("&Hilfe"));
 
   minutenTimer = new QTimer(this);
   connect( minutenTimer,SIGNAL(timeout()), this, SLOT(minuteHochzaehlen()));
@@ -149,12 +149,12 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   connect( autosavetimer,SIGNAL(timeout()), this, SLOT(save()));
   autosavetimer->setInterval(300000); //Alle 5 Minuten ticken.
   autosavetimer->start();
-  QAction* pauseAction = new QAction( QIcon(":/hi22_action_player_pause"), "&Pause", this);
+  QAction* pauseAction = new QAction( QIcon(":/hi22_action_player_pause"), tr("&Pause"), this);
   pauseAction->setShortcut(Qt::CTRL+Qt::Key_P);
   connect(pauseAction, SIGNAL(triggered()), this, SLOT(pause()));
 
   QAction* pauseAbzurAction = new QAction( QIcon(":/hi22_action_player_pause_half"),
-                                           "Pause der &abzur. Zeit", this);
+                                           tr("Pause der &abzur. Zeit"), this);
   pauseAbzurAction->setShortcut(Qt::CTRL+Qt::Key_A);
   pauseAbzurAction->setStatusTip(tr("Hält nur die Uhr für die abzurechnende Zeit an"));
   pauseAbzurAction->setCheckable(true);
@@ -166,14 +166,14 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
 
   QAction* copyAction = new QAction(tr("&Copy"), this);
   copyAction->setShortcut(Qt::CTRL+Qt::Key_C);
-  copyAction->setStatusTip("Name ins Clipboard kopieren");
+  copyAction->setStatusTip(tr("Name ins Clipboard kopieren"));
   connect(copyAction, SIGNAL(triggered()), this, SLOT(copyNameToClipboard()));
 
   QAction* changeDateAction = new QAction(tr("&Datum wählen..."), this);
   changeDateAction->setShortcut(Qt::CTRL+Qt::Key_D);
   connect(changeDateAction, SIGNAL(triggered()), this, SLOT(callDateDialog()));
 
-  QAction* resetAction = new QAction( "&Differenz auf Null", this);
+  QAction* resetAction = new QAction( tr("&Differenz auf Null"), this);
   resetAction->setShortcut(Qt::CTRL+Qt::Key_N);
   resetAction->setStatusTip(tr("Beim gewählten Unterkonto die abzurechnenden auf die geleisteten Stunden setzen"));
   connect(resetAction, SIGNAL(triggered()), this, SLOT(resetDiff()));
@@ -224,7 +224,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   QAction* logAction = new QAction(tr("&Meldungen..."), this);
   connect(logAction, SIGNAL(triggered()), this, SLOT(logDialog()));
 
-  editUnterKontoAction = new QAction(QIcon(":/hi22_action_edit" ), "&Editieren...", this);
+  editUnterKontoAction = new QAction(QIcon(":/hi22_action_edit" ), tr("&Editieren..."), this);
   editUnterKontoAction->setStatusTip(tr("Unterkonto editieren"));
   connect(editUnterKontoAction, SIGNAL(triggered()), this, SLOT(editUnterKontoPressed()));
 
@@ -248,7 +248,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   bgColorChooseAction = new QAction(tr("&Hintergrundfarbe wählen..."), this);
   bgColorRemoveAction = new QAction(tr("&Hintergrundfarbe entfernen"), this);
 
-  jumpAction = new QAction("&Zu selektiertem Konto in \"Alle Konten\" springen", this);
+  jumpAction = new QAction(tr("&Zu selektiertem Konto in 'Alle Konten' springen"), this);
 
   QAction* min5PlusAction = new QAction(QIcon(":/hi22_action_1uparrow" ),
                                           tr("Zeit erhöhen"), this);
@@ -387,7 +387,7 @@ void TimeMainWindow::showAdditionalButtons(bool show)
 {
    if (show) {
       if (powerToolBar!=NULL) return;
-      powerToolBar = addToolBar("Power Buttons");
+      powerToolBar = addToolBar(tr("Power Buttons"));
       powerToolBar->setIconSize(toolBar->iconSize());
       powerToolBar->addAction(abzurMin5PlusAction);
       powerToolBar->addAction(abzurMin5MinusAction);
@@ -441,7 +441,7 @@ void TimeMainWindow::resume() {
       autosavetimer->start();
   }
   int pauseSecs = before.secsTo(now);
-  statusBar->showMessage("resume", 3000);
+  statusBar->showMessage(tr("resume"), 3000);
   trace(tr("resume %2; suspend war %1").arg(lastMinuteTick.toString(), now.toString()));
   if (pauseSecs < 60) return;
   sekunden += pauseSecs; // damit  sich driftKorrektur() nicht beschwert
@@ -902,7 +902,7 @@ void TimeMainWindow::changeDate(const QDate& datum)
   if( !currentDateSel ){
     if(abtList->checkInState())
     {
-      statusBar->appendWarning(!currentDateSel, " -- Dieser Tag ist bereits eingecheckt!");
+      statusBar->appendWarning(!currentDateSel, tr(" -- Dieser Tag ist bereits eingecheckt!"));
     }
   }
 }
@@ -1033,7 +1033,7 @@ void TimeMainWindow::updateCaption()
    QString abt, ko, uko;
    int idx;
    abtList->getAktiv(abt,ko,uko,idx);
-   setWindowTitle("sctime - "+ abt+"/"+ko+"/"+uko);
+   setWindowTitle(tr("sctime - ")+ abt+"/"+ko+"/"+uko);
 }
 
 void TimeMainWindow::resetDiff()
@@ -1233,7 +1233,7 @@ void TimeMainWindow::callDateDialog()
   dateDialog->show();
 }
 
-void TimeMainWindow::infoDialog(QDialog *&dialog, QTextBrowser *&browser, const QString& title, const char* name, int x, int y) {
+void TimeMainWindow::infoDialog(QDialog *&dialog, QTextBrowser *&browser, const QString& title, const QString& name, int x, int y) {
   dialog = new QDialog(this);
   dialog->setObjectName(name);
   dialog->setWindowTitle(title);
@@ -1244,7 +1244,7 @@ void TimeMainWindow::infoDialog(QDialog *&dialog, QTextBrowser *&browser, const 
   layout->addSpacing(7);
   QHBoxLayout* buttonlayout=new QHBoxLayout();
   buttonlayout->setContentsMargins(3,3,3,3);
-  QPushButton * okbutton=new QPushButton( "OK", dialog);
+  QPushButton * okbutton=new QPushButton( tr("OK"), dialog);
   buttonlayout->addStretch(1);
   buttonlayout->addWidget(okbutton);
   buttonlayout->addStretch(1);
@@ -1258,7 +1258,7 @@ void TimeMainWindow::infoDialog(QDialog *&dialog, QTextBrowser *&browser, const 
 void TimeMainWindow::callHelpDialog() {
   QDialog *dialog;
   QTextBrowser *browser;
-  infoDialog(dialog, browser, "sctime: Hilfe", "sctime help", 600, 450);
+  infoDialog(dialog, browser, tr("sctime: Hilfe"), tr("sctime help"), 600, 450);
   browser->setSource(QUrl("qrc:/hilfe"));
 }
 
@@ -1266,7 +1266,7 @@ void TimeMainWindow::callHelpDialog() {
 void TimeMainWindow::callAboutBox() {
   QDialog *dialog;
   QTextBrowser *browser;
-  infoDialog(dialog, browser, tr("Über sctime"), "sctime about", 400, 300);
+  infoDialog(dialog, browser, tr("Über sctime"), tr("sctime about"), 400, 300);
   browser->setHtml(tr(
         "<h1><img src=':/scLogo_15Farben' />sctime</h1>"
         "<table><tr><td>Version:</td><td>%1</td></tr>"
@@ -1283,7 +1283,7 @@ void TimeMainWindow::callAboutBox() {
 void TimeMainWindow::logDialog() {
   QDialog *dialog;
   QTextBrowser *browser;
-  infoDialog(dialog, browser, tr("sctime: Meldungen"), "sctime message log", 700, 300);
+  infoDialog(dialog, browser, tr("sctime: Meldungen"), tr("sctime message log"), 700, 300);
   browser->setPlainText(logText);
 }
 
@@ -1302,15 +1302,15 @@ void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item) {
   }
 
   QDialog dialog(this);
-  dialog.setObjectName("sctime: Bereitschaftszeiten");
-  dialog.setWindowTitle("Bereitschaftszeiten");
+  dialog.setObjectName(tr("sctime: Bereitschaftszeiten"));
+  dialog.setWindowTitle(tr("Bereitschaftszeiten"));
 
   QVBoxLayout* layout=new QVBoxLayout(&dialog);
   layout->setMargin(15);
 
-  QPushButton * okbutton=new QPushButton("OK", &dialog);
+  QPushButton * okbutton=new QPushButton(tr("OK"), &dialog);
   okbutton->setDefault(true);
-  QPushButton * cancelbutton=new QPushButton("Abbruch", &dialog);
+  QPushButton * cancelbutton=new QPushButton(tr("Abbruch"), &dialog);
 
   layout->addStretch(1);
 
