@@ -353,9 +353,13 @@
     <message>
         <location filename="lock.cpp" line="143"/>
         <source>
-If this is not the case and the lock file is left over from a crash onthat other machine, then just once run the program again on that machineto clean up the lock file.
+If this is not the case and the lock file is left over from a crash on that other machine, then just once run the program again on that machine to clean up the lock file.
 
 A potentially dangerous alternative is to remove the lock file %1 manually.</source>
+        <oldsource>
+If this is not the case and the lock file is left over from a crash onthat other machine, then just once run the program again on that machineto clean up the lock file.
+
+A potentially dangerous alternative is to remove the lock file %1 manually.</oldsource>
         <translation>
 Wenn das nicht so ist, sondern das Programm sich beim letzten Mal auf einem anderen Rechner nicht regulär beenden konnte, dann starten Sie bitte das Programm nochmal auf diesem anderen Rechner!
 

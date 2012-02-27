@@ -141,8 +141,8 @@ bool Lockfile::_acquire() {
           errStr = QObject::tr("This Program is already running on another machine (%1: %2).\n").arg(path, line);
           if (localExclusionProvided)
             errStr.append(QObject::tr(
-                            "\nIf this is not the case and the lock file is left over from a crash on"
-			    "that other machine, then just once run the program again on that machine"
+                            "\nIf this is not the case and the lock file is left over from a crash on "
+			    "that other machine, then just once run the program again on that machine "
 			    "to clean up the lock file.\n\n"
                             "A potentially dangerous alternative is to remove the lock file %1 manually.").arg(path));
           return false;
