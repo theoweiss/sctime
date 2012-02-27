@@ -20,9 +20,9 @@
         <file alias="hi16_action_apply">hi16_action_apply.xpm</file>
         <file alias="zero">zero.xpm</file>
         <file alias="cr16_action_bookmark">cr16-action-bookmark.xpm</file>
-        <file alias="hilfe">help_en.html</file>
+        <file alias="help">help_en.html</file>
     </qresource>
     <qresource prefix="/" lang="de">
-        <file alias="hilfe">help_de.html</file>
+        <file alias="help">help_de.html</file>
     </qresource>
 </RCC>

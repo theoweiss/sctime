@@ -1260,7 +1260,7 @@ void TimeMainWindow::callHelpDialog() {
   QDialog *dialog;
   QTextBrowser *browser;
   infoDialog(dialog, browser, tr("sctime: Help"), tr("sctime help"), 600, 450);
-  browser->setSource(QUrl("qrc:/hilfe"));
+  browser->setSource(QUrl("qrc:/help"));
 }
 
 
