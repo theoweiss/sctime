@@ -27,6 +27,5 @@ die () {
 version=$(echo $(grep "^VERSION" $bindir/../../src/src.pro | cut -d = -f 2))
 echo "Version: $version"
 [ -f sctime ] || die "$0 im Build-Verzeichnis aufrufen!"
-[ -f sctime_de.qm ] || die "$0: provide qm files in build directory"
 [ -h sc-sctime.desktop ] || ln -s "$bindir/sc-sctime.desktop" .
 scpm -c -f "$bindir/sctime.f4" -n sctime -p /share/software/su/sctime/sctime-$version.p4 -v $version --requires="os:unix,os:Linux,cpu:x86_64"
