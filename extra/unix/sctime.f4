@@ -7,7 +7,6 @@ default: owner="venus"
 default: group="admin"
 type=dir dest="zeit" source="." perm="mode:r-xr-xr-x"
 type=file dest="zeit/sctime" source="sctime" perm="mode:r-xr-xr-x"
-type=file dest="zeit/sctime_en.qm" source="sctime_en.qm" perm="mode:r--r--r--"
 type=file dest="zeit/sctime_de.qm" source="sctime_de.qm" perm="mode:r--r--r--"
 
 type=dir dest="share" perm="mode:r-xr-xr-x"
