@@ -141,7 +141,7 @@ int main(int argc, char **argv ) {
           QLibraryInfo::location(QLibraryInfo::TranslationsPath));
   app.installTranslator(&qtTranslator);
   QTranslator sctimeTranslator;
-  sctimeTranslator.load(":/translations/sctime_" + QLocale::system().name());
+  sctimeTranslator.load(":/translations/sctime");
   app.installTranslator(&sctimeTranslator);
   QTextCodec::setCodecForTr(QTextCodec::codecForName ("UTF-8"));
   app.setObjectName("sctime");
