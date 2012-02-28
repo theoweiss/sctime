@@ -1,7 +1,8 @@
 TEMPLATE = app
-CONFIG += warn_on qt uic
+CONFIG += warn_on qt uic precompile_header
 # you have to explicitly recompile sctime.cpp whenever you change this value
 VERSION = 0.73.8
+PRECOMPILED_HEADER = stable.h # grep -h "#include <Q" * */* | sort | uniq > stable.h
 DEFINES += APP_VERSION=$$VERSION
 QT += xml gui core network sql
 TARGET = sctime
