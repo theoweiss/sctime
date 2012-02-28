@@ -49,7 +49,7 @@ double roundTo(double f, double step){ return int(f/step+0.5)*step;}
 void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
 {
   if (abtList->checkInState()) {
-      logError(QObject::tr("Shell-Skript nicht geschrieben, da bereits eingecheckt"));
+      trace(QObject::tr("Shell-Skript nicht geschrieben, da bereits eingecheckt"));
       return;
   }
   QString filename="zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".sh";
@@ -159,7 +159,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
     QFileInfo qf(configDir.filePath(abtList->getDatum().toString("yyyy")), filename);
     if (abtList) {
         if (qf.exists()) {
-          filename="/"+abtList->getDatum().toString("yyyy")+filename;
+          filename = abtList->getDatum().toString("yyyy")+ "/" + filename;
           abtList->setCheckInState(true);
         }
         else
@@ -486,7 +486,7 @@ void SCTimeXMLSettings::writeSettings(AbteilungsListe* abtList)
 void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
 {
   if ((abtList->checkInState())&&(!global)) {
-      logError(QObject::tr("Datei nicht geschrieben, da bereits eingecheckt"));
+      trace(QObject::tr("Datei nicht geschrieben, da bereits eingecheckt"));
       return;
   }
   #ifndef NO_XML

@@ -896,8 +896,8 @@ void TimeMainWindow::changeDate(const QDate& datum)
   kontoTree->showAktivesProjekt();
   zeitChanged();
   emit (currentDateSelected(currentDateSel));
+  trace(tr("Tag gesetzt auf: ") + datum.toString());
   statusBar->dateWarning(!currentDateSel, datum);
-
   //Append Warning if current file is checked in
   if( !currentDateSel ){
     if(abtList->checkInState())
