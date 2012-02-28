@@ -11,7 +11,6 @@ SOURCES = abteilungsliste.cpp bereitschaftsliste.cpp bereitschaftsmodel.cpp bere
 HEADERS = abteilungsliste.h bereitschaftsliste.h bereitschaftsmodel.h bereitschaftsview.h datasource.h datedialog.h defaultcommentreader.h defaulttagreader.h descdata.h eintragsliste.h findkontodialog.h GetOpt.h globals.h kontodateninfo.h kontoliste.h kontotreeitem.h kontotreeview.h lock.h preferencedialog.h qcalendarsystem.h qdatepicker.h sctimexmlsettings.h setupdsm.h statusbar.h timecounter.h timeedit.h timemainwindow.h unterkontodialog.h unterkontoeintrag.h unterkontoliste.h
 RESOURCES= ../pics/sctimeImages.qrc translations.qrc ../help/help.qrc
 FORMS = datedialogbase.ui preferencedialogbase.ui
-INSTALLS += target
 
 isEmpty(QMAKE_LRELEASE) {
    win32:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]\lrelease.exe
