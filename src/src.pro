@@ -12,6 +12,20 @@ HEADERS = abteilungsliste.h bereitschaftsliste.h bereitschaftsmodel.h bereitscha
 RESOURCES= ../pics/sctimeImages.qrc translations.qrc ../help/help.qrc
 FORMS = datedialogbase.ui preferencedialogbase.ui
 INSTALLS += target
+
+isEmpty(QMAKE_LRELEASE) {
+   win32:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]\lrelease.exe
+   else:QMAKE_LRELEASE = $$[QT_INSTALL_BINS]/lrelease
+}
+QMAKE_EXTRA_COMPILERS += lrelease
+lrelease.input = TRANSLATIONS
+lrelease.output = ${QMAKE_FILE_BASE}.qm
+# FIXME: This is not cool: We need to create the qm file inside the source tree
+# because all paths inside qrc files are relative to the location of the qrc
+# file and we cannot address the build dir from there.
+lrelease.commands = $$QMAKE_LRELEASE ${QMAKE_FILE_IN} -qm $$PWD/${QMAKE_FILE_BASE}.qm
+lrelease.CONFIG += no_link target_predeps
+
 win32{
   CONFIG += embed_manifest_exe
   #QMAKE_CXXFLAGS += -EHsc # C++-Ausnahmen
