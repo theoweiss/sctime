@@ -39,7 +39,7 @@ for(resource, GENERATED_RESOURCES) {
 	# dir. Otherwise generatedrcc.input below will find the source dir
 	# files and put them into the make rules instead of the generated files
 	# in the build dir. So just prepent generated_ to make file names
-	# differ. Unfortunately this also causes a warning for earch file:
+	# differ. Unfortunately this also causes a warning for each file:
 	# WARNING: Failure to find: generated_translations.qrc
 	GENERATED_RESOURCES_IN_BUILD_DIR += generated_$$basename(resource)
 }
