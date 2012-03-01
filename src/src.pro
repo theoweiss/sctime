@@ -45,7 +45,7 @@ for(resource, GENERATED_RESOURCES) {
 }
 generatedrcc.input = GENERATED_RESOURCES_IN_BUILD_DIR
 generatedrcc.output = qrc_${QMAKE_FILE_BASE}.cpp
-generatedrcc.commands = "$$QMAKE_RCC" -name ${QMAKE_FILE_IN_BASE} "${QMAKE_FILE_IN_BASE}.qrc" -o "${QMAKE_FILE_OUT}"
+generatedrcc.commands = "$$QMAKE_RCC" -name "${QMAKE_FILE_IN_BASE}" "${QMAKE_FILE_IN_BASE}.qrc" -o "${QMAKE_FILE_OUT}"
 generatedrcc.variable_out = GENERATED_SOURCES
 QMAKE_EXTRA_COMPILERS += generatedrcc
 
