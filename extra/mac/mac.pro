@@ -1,5 +1,5 @@
 TARGET = patchqmake
-SOURCES = patchqmake.c
+GENERATED_SOURCES = patchqmake.c
 # do *not* build an app_bundle
 CONFIG -= app_bundle
 
