@@ -74,7 +74,7 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
   setContextMenuPolicy(Qt::CustomContextMenu);
 
 
-#ifndef MACOS
+#ifndef Q_WS_MAC
   setSelectionMode(QTreeWidget::NoSelection);
 #else
   /* On Mac OS X with NoSelection the TreeView gives no visual feedback, what
