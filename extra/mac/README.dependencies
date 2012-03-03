@@ -11,7 +11,12 @@ Content:
 1. Building dependencies yourself
 1.1. Automatically:
 
-Go to directory extra/mac of the source tree and run:
+Create a build directory for the dependencies, go there and run:
+
+make -f <path to sctime source tree>/extra/mac/Makefile.dependencies SRC_DIR=<path to sctime source tree>/extra/mac/
+
+You can also build directly inside the sctime source tree by changing into
+extra/mac and running:
 
 make -f Makefile.dependencies
 
@@ -26,9 +31,9 @@ patch, configure, build and install PostgreSQL and Qt for scTime (or not).
 
 If successful, there will be a new subdirectory called deps with PostgreSQL and
 Qt installed in it. To use this Qt installation for an scTime build, create a
-build directory somewhere, change into it and run:
+sctime build directory somewhere, change into it and run:
 
-<path to scTime source tree>/extra/mac/deps/bin/qmake -r <path to scTime source tree>/sctime.pro
+<dependency build dir>/deps/bin/qmake -r <path to scTime source tree>/sctime.pro
 make (possibly again with the -j option)
 
 Building PostgreSQL and Qt outside of directory extra/mac of the source tree
