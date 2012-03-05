@@ -35,10 +35,10 @@
 #include "kontotreeview.h"
 
 
-#define ALLE "Alle"
-#define KONTO "Konto"
-#define UNTERKONTO "Unterkonto"
-#define KOMMENTAR "Kommentar"
+#define ALLE QObject::tr("All")
+#define KONTO QObject::tr("Account")
+#define UNTERKONTO QObject::tr("Subaccount")
+#define KOMMENTAR QObject::tr("Comment")
 
 /**
  * Baut den Suchdialog auf. In abtlist wird die zu durchsuchende AbteilungsListe angegeben
@@ -80,7 +80,7 @@ void FindKontoDialog::createLayout()
 void FindKontoDialog::createWidgets()
 {
   this->setMinimumHeight( 300 );
-  this->setWindowTitle("sctime - Suche");
+  this->setWindowTitle(tr("sctime - Search"));
 
   typeChoose = new QComboBox(this);
   typeChoose->setEditable(false);
@@ -90,21 +90,21 @@ void FindKontoDialog::createWidgets()
   valueChoose->setAutoCompletion(false);
   valueChoose->setFocus();
 
-  leftLayout->addWidget(new QLabel(tr("Bitte wählen Sie den gesuchten Typ:"),this));
+  leftLayout->addWidget(new QLabel(tr("Please select type of item to search for:"),this));
   leftLayout->addWidget(typeChoose);
-  leftLayout->addWidget(new QLabel(tr("Bitte wählen Sie den gesuchten Namen:"), this));
+  leftLayout->addWidget(new QLabel(tr("Please select name of item to search for:"), this));
   leftLayout->addWidget(valueChoose);
 
   resultTree = new QTreeWidget(this);
-  resultTree->setHeaderLabel(tr("Suchergebnis"));
+  resultTree->setHeaderLabel(tr("Search result"));
   resultTree->setColumnCount(1) ;
   resultTree->setSelectionMode(QAbstractItemView::SingleSelection);
   rightLayout->addWidget(resultTree);
 
-  okButton=new QPushButton( "OK", this );
+  okButton=new QPushButton( tr("&OK"), this );
   okButton->setEnabled(false);
-  cancelButton=new QPushButton(tr("Abbrechen"), this );
-  searchButton=new QPushButton(tr("Suchen"), this );
+  cancelButton=new QPushButton(tr("&Cancel"), this );
+  searchButton=new QPushButton(tr("&Search"), this );
   searchButton->setDefault( true );
 
   buttonLayout->setAlignment(Qt::AlignRight);

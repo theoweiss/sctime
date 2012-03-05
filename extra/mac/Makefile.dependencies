@@ -1,4 +1,5 @@
-SRC_DIR=$(shell pwd)
+BUILD_DIR=$(shell pwd)
+SRC_DIR=$(BUILD_DIR)
 PATCH_DIR=$(SRC_DIR)
 
 #HTTP_PROXY=http://http-proxy:3128
@@ -7,7 +8,7 @@ PATCH_DIR=$(SRC_DIR)
 WGET=http_proxy=$(HTTP_PROXY) ftp_proxy=$(FTP_PROXY) wget -Yon
 WGET_OPTS=-c
 
-PREFIX=$(SRC_DIR)/deps
+PREFIX=$(BUILD_DIR)/deps
 
 SDK=/Developer/SDKs/MacOSX10.5.sdk
 
@@ -15,7 +16,7 @@ QT_VER=4.8.0
 QT_BN=qt-everywhere-opensource-src-$(QT_VER)
 QT_SOURCE_FILE=$(QT_BN).tar.gz
 QT_URL=http://download.qt.nokia.com/qt/source/$(QT_SOURCE_FILE)
-QT_DIR=$(SRC_DIR)/qt
+QT_DIR=$(BUILD_DIR)/qt
 QT_SOURCE=$(QT_DIR)/$(QT_SOURCE_FILE)
 QT_SOURCE_DIR=$(QT_DIR)/$(QT_BN)
 
@@ -23,7 +24,7 @@ PGSQL_VER=9.1.2
 PGSQL_BN=postgresql-$(PGSQL_VER)
 PGSQL_SOURCE_FILE=$(PGSQL_BN).tar.bz2
 PGSQL_URL=http://ftp.postgresql.org/pub/source/v$(PGSQL_VER)/$(PGSQL_SOURCE_FILE)
-PGSQL_DIR=$(SRC_DIR)/postgres
+PGSQL_DIR=$(BUILD_DIR)/postgres
 PGSQL_SOURCE=$(PGSQL_DIR)/$(PGSQL_SOURCE_FILE)
 PGSQL_SOURCE_DIR=$(PGSQL_DIR)/$(PGSQL_BN)
 PGSQL_COMMON_CFLAGS=-isysroot $(SDK) -mmacosx-version-min=10.5

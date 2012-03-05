@@ -140,7 +140,7 @@ void QDatePicker::fillWeeksCombo(const QDate &date)
   d->selectWeek->clear();
 
   for (i = 1; i <= weeks; i++)
-    d->selectWeek->insertItem(i, QString("Woche %1").arg(i));
+    d->selectWeek->insertItem(i, QString(tr("Week %1")).arg(i));
 }
 
 QDatePicker::QDatePicker(QWidget *parent, QDate dt, const char *name)
@@ -183,10 +183,10 @@ void QDatePicker::init( const QDate &dt )
   d->todayButton->setIcon(QIcon(":/cr16_action_bookmark"));
   table->setFirstDayOfWeek(Qt::Monday);
 
-  //QToolTip::add(d->selectWeek, "Woche wählen");
-  d->selectWeek->setToolTip("Woche wählen");
-  //QToolTip::add(d->todayButton, "Heutigen Tag wählen");
-  d->todayButton->setToolTip("Heutigen Tag wählen");
+  //QToolTip::add(d->selectWeek, tr("Select week"));
+  d->selectWeek->setToolTip(tr("Select week"));
+  //QToolTip::add(d->todayButton, tr("Select day"));
+  d->todayButton->setToolTip(tr("Select day"));
 
   QTextCharFormat format=table->dateTextFormat(QDate::currentDate());
   format.setFontWeight(QFont::Bold);

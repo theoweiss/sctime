@@ -50,12 +50,12 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
 
   setColumnCount(6);
   QTreeWidgetItem * header = new QTreeWidgetItem;
-  header->setText(0, "Konten" );
-  header->setText(1,"Typ");
-  header->setText(2,"Aktiv");
-  header->setText(3,"Zeit");
-  header->setText(4, "Abzur.");
-  header->setText(5,"Kommentar");
+  header->setText(0, tr("Accounts") );
+  header->setText(1, tr("Type"));
+  header->setText(2, tr("Active"));
+  header->setText(3, tr("Time"));
+  header->setText(4, tr("Accountable"));
+  header->setText(5, tr("Comment"));
   this->setHeaderItem(header);
   //this->header()->setResizeMode(QHeaderView::Interactive);
   for (std::vector<int>::size_type i=0; i<columnwidth.size(); i++) {
@@ -74,7 +74,7 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
   setContextMenuPolicy(Qt::CustomContextMenu);
 
 
-#ifndef MACOS
+#ifndef Q_WS_MAC
   setSelectionMode(QTreeWidget::NoSelection);
 #else
   /* On Mac OS X with NoSelection the TreeView gives no visual feedback, what

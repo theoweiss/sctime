@@ -32,7 +32,7 @@ void DatasourceManager::start() {
     }
     result.clear();
   }
-  logError(QObject::tr("%1: keine Datenquelle verfügbar").arg(name));
+  logError(QObject::tr("%1: no data source available").arg(name));
   emit aborted();
 }
 
@@ -42,11 +42,11 @@ FileReader::FileReader(const QString &path, const QString&  columnSeparator, int
 bool FileReader::read(DSResult* const result) {
   QFile file(path);
   if (!file.open(QIODevice::ReadOnly)) {
-    logError(QObject::tr("kann  Datei '%1' nicht öffnen: %2").arg(path, file.errorString()));
+    logError(QObject::tr("file '%1' cannot be opened: %2").arg(path, file.errorString()));
     broken = true;
     return false;
   }
-  trace(QObject::tr("Lese ") + path);
+  trace(QObject::tr("Reading ") + path);
   QTextStream ts(&file);
   return readFile(result, ts, sep, columns, path);
 }
@@ -65,7 +65,7 @@ static bool readFile(DSResult* const result, QTextStream &ts, const QString& sep
       int end = l.indexOf(sep, start);
       if (end == -1) {
         delete result;
-        logError(QObject::tr("Zeile %1 von '%2' hat nur %3 Spalten statt %4").arg(lines).arg(path).arg(i + 1).arg(columns));
+        logError(QObject::tr("Line %1 of '%2' has only %3 columns instead of %4").arg(lines).arg(path).arg(i + 1).arg(columns));
         return false;
       }
       vl << l.mid(start, end - start);
@@ -80,15 +80,15 @@ static bool readFile(DSResult* const result, QTextStream &ts, const QString& sep
 SqlReader::SqlReader(QSqlDatabase db, const QString &cmd):cmd(cmd),db(db) {}
 
 bool  SqlReader::read(DSResult* const result) {
-  logError(QObject::tr("Verbindungsaufbau zu Datenbank %1 auf %2 mit Treiber %3 als Benutzer %4")
+  logError(QObject::tr("Connecting to database %1 on %2 with driver %3 as user %4")
            .arg(db.databaseName(), db.hostName(), db.driverName(), db.userName()));
   if (!db.open()) {
-    logError(QObject::tr("Verbindungsaufbau fehlgeschlagen: ") + db.lastError().databaseText());
+    logError(QObject::tr("connection failed: ") + db.lastError().databaseText());
     return false;
   }
   QSqlQuery query(cmd, db);
   if (!query.isActive()) {
-    logError(QObject::tr("Fehler ('%1') in Abfrage: %2").arg(db.lastError().databaseText()));
+    logError(QObject::tr("Error ('%1') when executing query: %2").arg(db.lastError().databaseText()));
     broken = true;
     db.close();
     return false;
@@ -114,17 +114,17 @@ CommandReader::CommandReader(const QString &command, const QString& columnSepara
 bool CommandReader::read(DSResult* const result) {
   FILE *file = popen(command.toLocal8Bit(), "r");
   if (!file) {
-    logError(QObject::tr("Kann Kommando '%1' nicht ausfuehren: %s2").arg(command, strerror(errno)));
+    logError(QObject::tr("Cannot run command '%1': %s2").arg(command, strerror(errno)));
     broken = true;
     return NULL;
   }
-  trace(QObject::tr("Führe aus: ") + command);
+  trace(QObject::tr("Running command: ") + command);
   QTextStream ts(file, QIODevice::ReadOnly);
   ts.setCodec(nl_langinfo(CODESET));
   bool ok = readFile(result, ts, sep, columns, command);
   int rc = pclose(file);
   if (rc == -1 || !WIFEXITED(rc) || WEXITSTATUS(rc)) {
-    logError(QObject::tr("Fehler bei '%1': %2").arg(command).arg(rc == -1 ? strerror(errno) : "nicht normal beendet"));
+    logError(QObject::tr("Error when executing command '%1': %2").arg(command).arg(rc == -1 ? strerror(errno) : QObject::tr("abnormal termination")));
     broken = true;
     return false;
   }

@@ -1,0 +1,346 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+        <meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=UTF-8">
+</head>
+<body>
+<h1><img src="scLogo_15Farben"/>sctime</h1>
+
+<ol>
+  <li><a href="#intro">Introduction</a>
+  <li><a href="#usage">Usage</a>
+  <li><a href="#settings">Settings</a>
+  <li><a href="#data">Data storage</a>
+  <li><a href="#datasources">Data sources</a>
+  <li><a href="#platform">Platform-specific Notes</a>
+  <li><a href="#misc">Additional Notes</a>
+</ol>
+
+<a name="intro"><h2>Introduction</h2></a>
+<p>sctime records worked time.
+It does this by continually adding passing time to a user-selected
+time account (or just "account" for short).</p>
+
+<p>Recorded times can be commented to give some detail what was done during
+that time.  These comments may for example be used in reports explaining
+resource usage to a customer.</p>
+
+<p>As explained under <a href="#defaultcomments">default comments</a> sctime
+provides a mechanism to provide suggestions for these comments. They will be
+displayed by the program as a drop-down list for easy selection.</p>
+
+<p>The set of accounts is not supposed to be changed by the user. Instead, it
+is provided externally and obtained from a database using one of the available
+<a href="#datasources">data sources</a> at program launch.</p>
+
+<p>Recorded times are not written directly to the database. Instead, they're
+saved locally as explained under <a href="#data">Datenhaltung</a> and checked
+into the database using a separate set of scripts called "zeittools".</p>
+
+<a name="usage"><h2>Usage</h2></a>
+<h3>Account tree</h3>
+<p><em>All accounts</em> shows all available accounts in a tree organised by
+department, account and so-called subaccount. A right click on a subaccount or
+an entry below it opens the <em>subaccount dialog</em>. There, the subaccount
+can be selected as a personal account. This will make it appear in a separate,
+more manageable tree of accounts <em>Personal accounts</em>.</p>
+
+<h3>Active account</h3>
+<p>As soon as the program is started it will start to measure time and
+accumulate it on the subaccount marked by a check mark. This is called the
+active account.</p>
+
+<h3>On-call times</h3>
+<p>To record on-call times, the subaccount belonging to the
+customer/project/order has to be selected. The stamp symbol in the toolbar will
+then display a list of on-call categories. After selecting the desired
+category, a click on OK activates the on-call indication.
+
+<p>To remove an on-call selection, the stamp is clicked again and the
+superfluous categories can be deselected.</p>
+
+<h3>Drag'n'Drop </h3>
+<p>Times can be moved between accounts using Drag 'n' Drop.
+By holding down the &bdquo;shift&ldquo; key, comments are transferred as
+well.</p>
+
+<a name="defaultcomments"><h3>Standard comments, micro accounts, default comments</h3></a>
+<p>Using a mechanism sometimes referred to as standard comments, default
+comments or micro accounts, suggestions for comments can be provided to the
+user. These always apply to a single subaccount.</p>
+
+<p>Apart from freeing the user from typing recurring comments over and over,
+default comments can also be used to provide a more fine-grained reporting
+(e.g. using <tt>zeitbilanz --sort=mikrokonto</tt>).
+(<tt>zeitbilanz --sort=mikro</tt> expects all default comments to end in a
+colon (:).)</p>
+
+<p>The following command is used to add default comments to the database:
+<tt>zeitmikro --eintragen KONTO UNTERKONTO</tt></p>
+
+<a name="settings"><h2>Settings</h2></a>
+<h3>Fonts on UNIX</h3>
+<p>When running inside a KDE session, sctime uses normal desktop settings.
+Some more options can be accessed using the program <tt>qtconfig</tt>.  If
+anti-aliasing is to be configured, <tt>~/.fonts.conf</tt> has to be used.</p>
+
+<a name="data"><h2>Data storage</h2></a>
+
+<h3>Location and format</h3>
+<p>The program saves its data (recorded times and settings) in a directory
+<tt>.sctime</tt> inside the user's home directory (&tilde;). Times are saved
+as XML files for usage by sctime itself as well as shell scripts for usage with
+zeittools. zeittools' <tt>sctimeorg2</tt> command uses the shell scripts to
+transfer recorded times into the database.</p>
+
+<p>All settings are saved in <tt>settings.xml</tt>. When saving settings, the
+program creates a backup copy <tt>settings.xml.bak</tt>. The list of personal
+accounts is saved in <tt>settings.xml</tt> as well as each
+<tt>zeit-&lt;date&gt;.xml</tt>.</p>
+
+<p>Therefore, if accounts are closed in the database, they still linger in the
+XML files. They may then resurface if the account list can not be obtained upon
+program startup. To avoid this, settings files can be cleaned using a command
+<tt>sctimexmlpatch</tt>. This does currently not work with closed
+subaccounts.</p>
+
+<p>Comments are encoded according to current <tt>locale</tt>-settings in the
+script files.</p>
+
+<h3>Saving times</h3>
+<p>The program automaticlly saves its data every five minutes and when exiting.
+The user can explicitly save using the toolbar's disk icon or <em>Save</em>
+account menu item.</p>
+
+<a name="datasources"><h2>Data sources</h2></a>
+
+<p>The program obtains the list of time accounts and on-call categories using
+one of the following methods:</p>
+
+<ul>
+  <li><tt>QPSQL</tt>: Database driver of Qt for Postgres
+  <li><tt>QODBC</tt>: Database driver of Qt for ODBC; uses ODBC-DSN <tt>postgres_zeit</tt>
+  <li><tt>command</tt>: uses the commands <tt>zeitkonten</tt> and <tt>zeitbereitls.</tt>
+    This data source is ignored on Windows because the necessary commands do not exist here.
+  <li><tt>file</tt>: reads the files <tt>zeitkonten.txt</tt> and <tt>zeitbereitls.txt</tt>
+    inside the configuration directory (usually <tt>~/.sctime</tt>)
+</ul>
+
+<p>Methods are tried in the order given above until one succeeds.
+Common reasons for failure of methods are missing files or settings.  Warnings
+and errors, often giving some indication of what's wrong, can be viewed using
+menu item <tt>Messages</tt> of menu <tt>Help</tt>.</p>
+
+<p>Attribute <tt>names</tt> of XML-Element <tt>sctime/general/backends</tt> in
+<tt>settings.xml</tt> can be used to change the order in which data sources are
+tried. Method names given above are just listed in the desired order
+separated by spaces.</p>
+
+<p>Alternatively the order of data sources can be given using command line
+option <tt>--datasource=NAME</tt>. To provide a list of methods to try, the
+option has to be given multiple times. The modules will then be tried in the
+order they are listed on the command line.</p>
+
+<a name="datasource_command"><h4>Data source <tt>command</tt></h4></a>
+<p>The commands called to obtain all the required information are:
+<pre>zeitkonten --mikrokonten --separator='|'
+zeitbereitls --separator='|'</pre>
+These can not be configured at the moment.</p>
+
+<h4>Data source <tt>file</tt></h4>
+
+<p>Two files <tt>~/.sctime/zeitkonten.txt</tt> and
+<tt>~/.sctime/zeitbereitls.txt</tt> are expected with these paths by
+default.</p>
+
+<p>Alternate paths can be provided using command line options
+<tt>--zeitkontenfile</tt> and <tt>--bereitschaftsfile</tt> when running the
+program. As a side-effect this automatically changes the data source order so
+that the <tt>files</tt> data source is tried before all others.</p>
+
+<p>To provide the files with the proper content, the commands given under <a
+href="#datasource_command">data source command</a> can be called
+manually and their output redirected into the files.  More detailed information
+on this is given under <a href="#offline">offline usage</a>.
+
+<a name="datasource_database"><h4>Data sources <tt>QPSQL</tt> and <tt>QODBC</tt> (databases)</h4></a>
+<p>The following attributes of element
+<tt>sctime/general/backends/database</tt> can be used to configure parameters
+of the database data sources:</p>
+
+<ul>
+  <li><tt>server</tt>: the name of the database server to contact
+  <li><tt>name</tt>: the name of the database on the server
+  <li><tt>user</tt>: the user name to use when connecting to the database.
+  If the attribute is not given or has an empty value, the operating system's
+  logon name is used as the database user name.
+  <li><tt>password</tt>: the password of the database user.
+  If the attribute is missing or has an empty value, the file
+  <tt>~/.Zeit</tt> (in this spelling and case; on Windows
+  <tt>H:\.Zeit</tt>) is searched and its first line (without the
+  newline/carriage return) used as password.  If this file cannot be found
+  either, the user name is used as password.
+</ul>
+
+<a name="platform"><h2>Platform-specific Notes</h2></a>
+
+<h3>Windows</h3>
+
+<p>On Windows, all configuration files are expected under <tt>H:\.sctime</tt>.
+The generated shell scripts and XML files are put there as well.</p>
+
+<p>The password to the database is expected in a file <tt>H:\.Zeit</tt> (unless
+set explicitly in <tt>settings.xml</tt>).</p>
+
+<p>In general, every mention of <tt>~</tt> (Tilde) as a placeholder for the
+home directory on UNIX systems can be substituted by <tt>H:</tt> on
+Windows.</p>
+
+<p><tt>zeittools</tt>, the scripts for transferring times into the database,
+are not available on Windows. Instead it is expected of the user to log on to a
+UNIX/Linux machine and run <tt>sctimeorg2</tt> there. For this to work
+seamlessly, it is also assumed that drive <tt>H:</tt> corresponds the the
+user's home directory on UNIX/Linux (<tt>~</tt>). If this is not the case, the
+files have to be copied manually before they can be checked in.</pp>
+
+<h3>Mac</h3>
+
+<p><tt>scTime.app</tt> for the Mac brings its own Qt and PostgreSQL client
+library as so-called private frameworks. This makes it self-contained and able
+to run without any external software components.</p>
+
+<p>Data source <tt>QODBC</tt> is not available (at least without external
+software components).</p>
+
+<p>Data source <tt>QPSQL</tt>, on the other hand, is available. If the system
+login name on the Mac differs from the time database user name, the data source
+has to be configured with the correct database user name in
+<tt>settings.xml</tt>. See <a href="#datasource_database">data sources
+databases</a> for further instructions.</p>
+
+<p><tt>zeittools</tt>, the scripts for transferring recorded times into the
+database, aren't available for Macs either. As with Windows, it is assumed that
+the user logs onto a UNIX/Linux machine and runs <tt>sctimeorg2</tt> there.
+Since the Mac's home is not normally the same as the UNIX home, the files need
+to be copied manually using <tt>scp</tt> or <tt>rsync</tt> first.</pp>
+
+<p>If account list and on-call categories are provided as files, they need to
+use UTF-8 as text encoding. (More specifically, the program expects them to be
+in the format given by <tt>locale charmap</tt>.) They can be generated in the
+correct encoding on a Linux machine using a command such as this:
+<pre>ssh user@linuxserver "LC_CTYPE=de_DE.UTF-8 zeitkonten --separator=\"|\" --mikrokonten" >$HOME/.sctime/zeitkonten.txt</pre>
+This assumes a password-free login to the server.</p>
+
+<a name="misc"><h2>Additional Notes</h2></a>
+
+<a name="offline"><h3>Offline usage</h3></a>
+
+<p>As hinted in the previous sections, sctime can be used without a direct
+connection to the database. For this to work, all necessary data (time
+accounts and on-call categories) needs to be provided as files in the expected
+locations. Default paths for these files are <tt>~/.sctime/zeitkonten.txt</tt> and
+<tt>~/.sctime/zeitbereitls.txt</tt>. These can be generated (possibly on a
+different machine with access to the database) using the following commands:
+
+<p><tt>zeitkonten --mikrokonten --separator='|' &gt; zeitkonten.txt</tt></p>
+<p><tt>zeitbereitls --separator='|' &gt; zeitbereitls.txt</tt></p>
+
+<p>If the files are to be provided at a different location, the following
+command line options can be used to override the defaults:</p>
+
+<ul>
+<li><tt>--configdir DIRNAME</tt> changes the location of the configuration directory.
+(default is <tt>h:\.sctime</tt> on Windows and
+<tt>~/.sctime</tt> on *nix).
+<li><tt>--zeitkontenfile FILENAME</tt> overrides the path to the time account
+list file. (default is <tt>~/.sctime/zeitkonten.txt</tt>)
+<li><tt>--bereitschaftsfile FILENAME</tt> overrides the path to the on-call
+categories file (default is <tt>~/.sctime/zeitbereitls.txt</tt>)
+</ul>
+
+<h3>Offline usage, portable edition</h3>
+
+<p>sctime can be run directly from a USB stick without installation. Some care
+must be taken on Windows, though, since it tends to assign different drive
+letters each time the thumb drive is attached. Because of this, the
+configuration directory default of <tt>H:\.sctime</tt> will be wrong most of
+the time.</p>
+
+<p>As a workaround, a special property of Windows shortcuts can be used: If a
+shortcut has an empty working directory, when running the command in the
+shortcut, the current directory will be the directory of the shortcut itself.
+This way, the actual sctime binary can be addressed relative to the shortcut,
+avoiding the need to know the actual drive letter of the thumb drive.</p>
+
+<p>To try this with a shortcut containing the following command:</p>
+
+<p><tt>\sctime\sctime.exe --configdir=\.sctime</tt></p>
+
+<p>the working directory text field needs to be emptied completely.</p>
+
+<p>When started via such a shortcut, sctime will look for all its files in directory
+<tt>.sctime</tt> relative to the root of the thumb drive, no matter what the
+current drive letter is.</p>
+
+<p>UNIX/Linux users use their mechanism of choice to mount the USB stick at the
+same location every time.</p>
+
+<p>Mac users can rely on the fact that the volume will always be mounted as
+<tt>/Volumes/&lt;Volume-Name&gt;</tt>. The difficulty here is rather to make
+the application look for its settings in a different place, since it is wrapped
+in an application bundle. To provide the actual sctime binary with command line
+parameters, the easiest way is to rename the binary
+<tt>scTime.app/Contents/MacOS/scTime</tt> to, for example,
+<tt>scTime.app/Contents/MacOS/scTime.bin</tt> and create a shell script in its
+place.  This script can then have a content such as this:</p>
+
+<pre>
+#!/bin/sh
+exec -a $0 $0.bin --configdir /Volumes/USB-Stick/.sctime
+</pre>
+
+<p>The script should then be marked executable:
+<pre>chmod 755 scTime.app/Contents/MacOS/scTime</pre></p>
+
+<h3>Partial offline usage</h3>
+
+The default search order for account data explained above can be used for
+running sctime partially (i.e. temporarily) offline.
+As long as the database is reachable, all account data is obtained from there.
+Only if the database is unreachable for some reason, local files in
+<tt>~/.sctime</tt> are tried.
+So these files can be prepared for offline usage but will only be used when
+needed.
+
+<p>Some care should be taken with this, though:</p>
+
+<ol>
+  <li>The files should be refreshed regularly or at least before every
+  (planned) offline use to avoid working with out-of-date information.
+
+  <li>Connection requests to the database can cause delays upon program launch
+  and account list re-read. This may especially happen in networks where the
+  database server name can be resolved but traffic towards it is silently
+  dropped by some firewall. To avoid delays, the search order can be
+  temporarily reconfigured to only read the files and ignore the database as
+  explained in <a href="#datasources">data sources</a>.
+</ol>
+
+<h3>Locks</h3>
+<p>When the program launches, it tries to aquire an exclusive lock. Operating
+system mechanisms are used for this to ensure reliable unlocking if the program
+ever terminates unexpectedly (e.g. lockf() on UNIX). If this lock inside the
+local file system can be acquired, the program checks for existance of the file
+<tt>~/.sctime/LOCK</tt>. If it exists and contains a foreign hostname, the
+program assumes that it's configuration directory is shared between hosts using
+a network filesystem and another instance of itself is running on another
+machine. To avoid data corruption, it will give an error message and quit.</p>
+
+<h3><tt>defaultcomments.xml</tt></h3>
+<p>Previous versions of sctime used a file called
+<tt>~/.sctime/defaultcomments.xml</tt> for storing default comments. This file
+is no longer required nor supported. The data previously stored there is now
+contained in the main time account list and changed inside the database using
+the command <tt>zeitmikro</tt>.</p>
+
+</html>

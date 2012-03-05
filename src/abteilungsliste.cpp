@@ -426,7 +426,7 @@ int applyFlagMode(int oldflags, int mask, int mode)
     case FLAG_MODE_OR: newflags=oldflags|mask; break;
     case FLAG_MODE_NAND: newflags=oldflags&(~mask); break;
     case FLAG_MODE_XOR: newflags=oldflags^mask; break;
-    default: qDebug() <<"Unknown Mode in applyFlagMode"<< mode;
+    default: qDebug() <<QObject::tr("Unknown Mode in applyFlagMode")<< mode;
   }
   return newflags;
 }

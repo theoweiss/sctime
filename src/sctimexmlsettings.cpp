@@ -49,14 +49,14 @@ double roundTo(double f, double step){ return int(f/step+0.5)*step;}
 void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
 {
   if (abtList->checkInState()) {
-      trace(QObject::tr("Shell-Skript nicht geschrieben, da bereits eingecheckt"));
+      trace(QObject::tr("Shell script not written because it has already been checked in."));
       return;
   }
   QString filename="zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".sh";
   QFile shellFile(configDir.filePath(filename));
 
   if (!shellFile.open(QIODevice::WriteOnly)) {
-      QMessageBox::warning(NULL, QObject::tr("sctime: Shell-Skript schreiben"), shellFile.fileName() + ": " + shellFile.errorString());
+      QMessageBox::warning(NULL, QObject::tr("sctime: writing shell script"), shellFile.fileName() + ": " + shellFile.errorString());
       return;
   }
   QTextStream stream( & shellFile);
@@ -172,7 +172,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
     logError(f.fileName() + ": " + f.errorString());
     if (global || f.exists()) {
       // keine Fehlerausgabe, wenn "zeit-HEUTE.xml" fehlt
-      QMessageBox::warning(NULL, QObject::tr("sctime: Konfigurationsdatei öffnen"),
+      QMessageBox::warning(NULL, QObject::tr("sctime: opening configuration file"),
                            QObject::tr("%1 : %2").arg(f.fileName(), f.errorString()));
       if (global) backupSettingsXml = false;
     }
@@ -181,8 +181,8 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
   QString errMsg;
   int errLine, errCol;
   if (!doc.setContent(&f, &errMsg, &errLine, &errCol)) {
-    QMessageBox::critical(NULL, QObject::tr("sctime: Konfigurationsdatei lesen"),
-                          QObject::tr("Fehler in %1, Zeile %2, Spalte %3: %4.").arg(errMsg).arg(errLine).arg(errCol).arg(errMsg));
+    QMessageBox::critical(NULL, QObject::tr("sctime: reading configuration file"),
+                          QObject::tr("error in %1, line %2, column %3: %4.").arg(errMsg).arg(errLine).arg(errCol).arg(errMsg));
     if (global) backupSettingsXml = false;
     return;
   }
@@ -486,7 +486,7 @@ void SCTimeXMLSettings::writeSettings(AbteilungsListe* abtList)
 void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
 {
   if ((abtList->checkInState())&&(!global)) {
-      trace(QObject::tr("Datei nicht geschrieben, da bereits eingecheckt"));
+      trace(QObject::tr("zeit-DAY.sh not written because it has already been checked in"));
       return;
   }
   #ifndef NO_XML
@@ -752,7 +752,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   QString filename(configDir.filePath(global ? "settings.xml" : "zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml"));
   QFile fnew(filename + ".tmp");
   if (!fnew.open(QIODevice::WriteOnly)) {
-      QMessageBox::critical(NULL, QObject::tr("sctime: Einstellungen speichern"), QObject::tr("Datei %1 zum Schreiben öffnen: %2").arg(fnew.fileName(), fnew.errorString()));
+      QMessageBox::critical(NULL, QObject::tr("sctime: saving settings"), QObject::tr("opening file %1 for writing: %2").arg(fnew.fileName(), fnew.errorString()));
       return;
   }
   // may contain passwords and private data in general
@@ -769,8 +769,8 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     QFile fbackup(filename + ".bak");
     if (fbackup.exists()) fbackup.remove();
     if (!fcurrent.copy(fbackup.fileName()))
-      QMessageBox::warning(NULL, QObject::tr("sctime: Einstellungen speichern"),
-                           QObject::tr("Kann nicht %1 kopieren nach %2: %3").arg(filename, fbackup.fileName(), fcurrent.errorString()));
+      QMessageBox::warning(NULL, QObject::tr("sctime: saving settings"),
+                           QObject::tr("%1 cannot be copied to %2: %3").arg(filename, fbackup.fileName(), fcurrent.errorString()));
     else
       backupSettingsXml = false;
   }
@@ -778,13 +778,13 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   // unter Windows funktioniert kein "rename", wenn es den Zielnamen schon gibt.
   // Doch unter UNIX kann ich damit Dateien atomar ersetzen.
   if (!rename(fnew.fileName().toLocal8Bit(), filename.toLocal8Bit())) return;
-  QMessageBox::information(NULL, QObject::tr("sctime: Einstellungen speichern"),
-                        QObject::tr("Kann nicht %1 umbenennen zu %2: %3").arg(fnew.fileName(), filename, strerror(errno)));
+  QMessageBox::information(NULL, QObject::tr("sctime: saving settings"),
+                        QObject::tr("%1 cannot be renamed to %2: %3").arg(fnew.fileName(), filename, strerror(errno)));
 #endif
   fcurrent.remove();
   if (!fnew.rename(filename))
-    QMessageBox::critical(NULL, QObject::tr("sctime: Einstellungen speichern"),
-                         QObject::tr("Kann nicht %1 umbenennen zu %2: %3").arg(fnew.fileName(), filename, fnew.errorString()));
+    QMessageBox::critical(NULL, QObject::tr("sctime: saving settings"),
+                         QObject::tr("%1 cannot be renamed to %2: %3").arg(fnew.fileName(), filename, fnew.errorString()));
 
   #endif
 }

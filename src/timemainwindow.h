@@ -53,7 +53,7 @@ public:
     QTreeWidget* getKontoTree();
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;
-    void infoDialog(QDialog *&dialog, QTextBrowser *&browser, const QString& title, const char* name, int x, int y);
+    void infoDialog(QDialog *&dialog, QTextBrowser *&browser, const QString& title, const QString& name, int x, int y);
     
   public slots:
 
