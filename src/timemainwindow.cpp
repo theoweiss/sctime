@@ -120,7 +120,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   kontoTree->closeFlaggedPersoenlicheItems();
   kontoTree->showPersoenlicheKontenSummenzeit(settings->persoenlicheKontensumme());
 #ifndef Q_WS_MAC
-  setWindowIcon(QIcon(":/sc_logo"));  
+  setWindowIcon(QIcon(":/window_icon"));
 #endif
 
   setCentralWidget(kontoTree);
