@@ -33,6 +33,21 @@ QMAKE_EXTRA_COMPILERS += copytobuilddir
 # used for translation files that are lreleased automatically as part of the
 # build process.
 defined(qtPrepareTool)|load(qt_functions)
+defined(qtPrepareTool)|defineTest(qtPrepareTool) {
+	isEmpty($$1) {
+		!isEmpty(QT_BUILD_TREE):$$1 = $$QT_BUILD_TREE/bin/$$2
+		else:$$1 = $$[QT_INSTALL_BINS]/$$2
+	}
+	$$1 ~= s,[/\\\\],$$QMAKE_DIR_SEP,
+	contains(QMAKE_HOST.os, Windows):!contains($$1, .*\\.(exe|bat)$) {
+		exists($$eval($$1).bat) {
+		$$1 = $$eval($$1).bat
+	} else {
+		$$1 = $$eval($$1).exe
+		}
+	}
+	export($$1)
+}
 qtPrepareTool(QMAKE_RCC, rcc)
 for(resource, GENERATED_RESOURCES) {
 	# file names in build dir *have* to differ from file names in source
