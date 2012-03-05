@@ -17,14 +17,14 @@ FORMS = datedialogbase.ui preferencedialogbase.ui
 # translations qm files - yes, this is somewhat bulky
 qrc_generated_translations_cpp.target = qrc_generated_translations.cpp
 qrc_generated_translations_cpp.depends = $$replace(TRANSLATIONS, ".ts", ".qm")
-QMAKE_EXTRA_TARGETS = qrc_generated_translations_cpp
+QMAKE_EXTRA_TARGETS += qrc_generated_translations_cpp
 
 # add a custom compiler that copies resource files that depend on generated
 # files into the build dir so that the generated files can be included from
 # there.
 copytobuilddir.input = GENERATED_RESOURCES
 copytobuilddir.output = generated_${QMAKE_FILE_BASE}.qrc
-copytobuilddir.commands = $$QMAKE_COPY_FILE "${QMAKE_FILE_IN}" "${QMAKE_FILE_OUT}"
+copytobuilddir.commands = $$QMAKE_COPY "${QMAKE_FILE_IN}" "${QMAKE_FILE_OUT}"
 copytobuilddir.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += copytobuilddir
 
