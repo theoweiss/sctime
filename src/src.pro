@@ -69,7 +69,7 @@ QMAKE_EXTRA_COMPILERS += generatedrcc
 # around that by just making every qrc_*.cpp depend on every *.qm. This
 # obviously is broken from a dependency point of view but serves our purpose
 # well enough.
-win32:generatedrcc.depends = $$replace(TRANSLATIONS, ".ts", ".qm")
+contains(TEMPLATE, vcapp):generatedrcc.depends = $$replace(TRANSLATIONS, ".ts", ".qm")
 
 # add a custom compiler that creates .qm files from .ts translation files
 qtPrepareTool(QMAKE_LRELEASE, lrelease)
