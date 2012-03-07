@@ -93,7 +93,13 @@ win32{
   #QMAKE_CXXFLAGS += -EHsc # C++-Ausnahmen
   RC_FILE += sctime.rc
   DEFINES += _CRT_SECURE_NO_WARNINGS
-  }
+  # When using nmake, we need to add advapi32.lib (Visual Studio automatically
+  # adds a huge list of libs to the linker call). Otherwise we get:
+  # setupdsm.obj : error LNK2019: unresolved external symbol
+  # __imp__GetUserNameA@8 referenced in function "class QString __cdecl
+  # username(void)" (?username@@YA?AVQString@@XZ)
+  LIBS += advapi32.lib
+}
 !win32{
   SOURCES += unix/signalhandler.cpp
   HEADERS += unix/signalhandler.h
