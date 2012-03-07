@@ -63,12 +63,28 @@ generatedrcc.output = qrc_${QMAKE_FILE_BASE}.cpp
 generatedrcc.commands = "$$QMAKE_RCC" -name "${QMAKE_FILE_IN_BASE}" "${QMAKE_FILE_IN_BASE}.qrc" -o "${QMAKE_FILE_OUT}"
 generatedrcc.variable_out = GENERATED_SOURCES
 QMAKE_EXTRA_COMPILERS += generatedrcc
+# Visual-Studio-specific workaround #1: The qmake vcproj template does not
+# support the QMAKE_EXTRA_TARGETS mechanism we use above to define the
+# dependency of qrc_generated_translations.cpp upon sctime_de.qm. We work
+# around that by just making every qrc_*.cpp depend on every *.qm. This
+# obviously is broken from a dependency point of view but serves our purpose
+# well enough.
+win32:generatedrcc.depends = $$replace(TRANSLATIONS, ".ts", ".qm")
 
 # add a custom compiler that creates .qm files from .ts translation files
 qtPrepareTool(QMAKE_LRELEASE, lrelease)
 lrelease.input = TRANSLATIONS
 lrelease.output = ${QMAKE_FILE_BASE}.qm
 lrelease.commands = "$$QMAKE_LRELEASE" "${QMAKE_FILE_IN}" -qm "${QMAKE_FILE_OUT}"
+# Visual-Studio-specific workaround #2: Not adding the output file name to some
+# variable will cause the vcproj template to add the extra compiler rules to
+# the project *twice*: Once in the Translation Files filter (based on the
+# TRANSLATIONS variable) and once in our custom compiler's lrelease filter.
+# This seems to confuse Visual Studio's dependency resolution into not building
+# sctime_*.qm files at all. By adding the output file name to some dummy
+# variable, the lrelease filter and second set of rules is suppressed and
+# building works as desired via the Translation Files filter's rules.
+lrelease.variable_out = RELEASED_TRANSLATIONS
 lrelease.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += lrelease
 
