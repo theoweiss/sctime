@@ -16,7 +16,7 @@ class StatusBar:public QStatusBar
   public:
     StatusBar(QWidget * parent = 0):QStatusBar(parent)
     {
-      zeitLabel=new QLabel("Gesamtzeit: 0",this);
+      zeitLabel=new QLabel(tr("Overall time: ") + "0",this);
       addPermanentWidget(zeitLabel);
       connect(parent,SIGNAL(gesamtZeitChanged(int)),this, SLOT(setSekunden(int)));
       datumsWarnung=new QLabel("",this);
@@ -45,7 +45,7 @@ class StatusBar:public QStatusBar
         else
           text=text+"/"+diffstr;
       }
-      zeitLabel->setText("Gesamtzeit: "+text);
+      zeitLabel->setText(tr("Overall time: ")+text);
     }
 
     void setDiff(int sec)
@@ -57,7 +57,9 @@ class StatusBar:public QStatusBar
     void dateWarning(bool on, QDate datum=QDate::currentDate())
     {
       if (on) {
-        datumsWarnung->setText("Warnung: Es wird der "+datum.toString("dd.MM.yyyy")+" editiert.");
+        datumsWarnung->setText(tr("Warning: Non-current date ") +
+          datum.toString(Qt::SystemLocaleShortDate) +
+          tr(" is being edited."));
         datumsWarnung->setStyleSheet("color:#800000;");
 
         //datumsWarnung->setPaletteForegroundColor(Qt::darkRed);

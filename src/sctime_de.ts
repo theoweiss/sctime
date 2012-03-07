@@ -435,34 +435,34 @@ Please see the Help menu for further information (F1)!</oldsource>
 Please see the Help menu for further information (F1)!</translation>
     </message>
     <message>
-        <location filename="sctime.cpp" line="151"/>
+        <location filename="sctime.cpp" line="150"/>
         <source>Personal accounts</source>
         <translation>Persönliche Konten</translation>
     </message>
     <message>
-        <location filename="sctime.cpp" line="152"/>
+        <location filename="sctime.cpp" line="151"/>
         <source>All accounts</source>
         <translation>Alle Konten</translation>
     </message>
     <message>
-        <location filename="sctime.cpp" line="155"/>
+        <location filename="sctime.cpp" line="154"/>
         <source>sctime </source>
         <translation>sctime </translation>
     </message>
     <message>
-        <location filename="sctime.cpp" line="180"/>
+        <location filename="sctime.cpp" line="179"/>
         <source>sctime: Configuration problem</source>
         <oldsource>sctime: configuration problem</oldsource>
         <translation>sctime: Konfigurationsproblem</translation>
     </message>
     <message>
-        <location filename="sctime.cpp" line="181"/>
+        <location filename="sctime.cpp" line="180"/>
         <source>Cannot access configration directory %1.</source>
         <oldsource>Cannot access conigration directory %1.</oldsource>
         <translation>Kann nicht auf %1 zugreifen.</translation>
     </message>
     <message>
-        <location filename="sctime.cpp" line="196"/>
+        <location filename="sctime.cpp" line="195"/>
         <source>sctime: Cannot start</source>
         <oldsource>sctime: cannot start</oldsource>
         <translation>sctime: kann nicht starten</translation>
@@ -585,6 +585,26 @@ Please see the Help menu for further information (F1)!</translation>
         <location filename="timemainwindow.cpp" line="366"/>
         <source>sctime: accounting stopped</source>
         <translation>sctime: Zeiterfassung gestoppt</translation>
+    </message>
+</context>
+<context>
+    <name>StatusBar</name>
+    <message>
+        <location filename="statusbar.h" line="19"/>
+        <location filename="statusbar.h" line="48"/>
+        <source>Overall time: </source>
+        <translation>Gesamtzeit: </translation>
+    </message>
+    <message>
+        <location filename="statusbar.h" line="60"/>
+        <source>Warning: Non-current date </source>
+        <oldsource>Warning: Past date </oldsource>
+        <translation>Warnung: Es wird der </translation>
+    </message>
+    <message>
+        <location filename="statusbar.h" line="62"/>
+        <source> is being edited.</source>
+        <translation> editiert.</translation>
     </message>
 </context>
 <context>
