@@ -70,7 +70,7 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
            "#!/bin/sh\n"
            "# -*- coding: "<<charmap()<<" -*-\n\n"
            "set -e\n"
-           "trap '[ $? -gt 0 ] && echo ABBRUCH in $0[$LINENO] - nicht alle Buchungen sind uebernommen >&2 && exit 1' 0"
+           "trap '[ $? -gt 0 ] && echo \"ABBRUCH in $PWD/$0 bei Zeile $LINENO - nicht alle Buchungen sind uebernommen\" >&2 && exit 1' 0"
            "\n\n"
            "# Zeit Aufrufe von sctime "<< qApp->applicationVersion() <<" generiert \n"
            "# Gesamtzeit: "<<tc.toString()<<"/"<<tcAbzur.toString()<<"\n"
