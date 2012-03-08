@@ -951,8 +951,8 @@ Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?
     </message>
     <message>
         <location filename="timemainwindow.cpp" line="900"/>
-        <source>Tag gesetzt auf: </source>
-        <translation>Day set to: </translation>
+        <source>Day set to: </source>
+        <translation>Tag gesetzt auf: </translation>
     </message>
     <message>
         <location filename="timemainwindow.cpp" line="906"/>
