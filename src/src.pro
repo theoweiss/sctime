@@ -1,8 +1,16 @@
 TEMPLATE = app
-CONFIG += warn_on qt uic precompile_header
+CONFIG += warn_on qt uic
 # you have to explicitly recompile sctime.cpp whenever you change this value
 VERSION = 0.73.9
-PRECOMPILED_HEADER = stable.h # grep -h "#include <Q" * */* | sort | uniq > stable.h
+!mac {
+	# precompiled headers do not interact well with universal binary builds
+	# on the Mac:
+	# lipo: can't figure out the architecture type of: blah.out
+	# http://qt.gitorious.org/qt/qt/merge_requests/2193
+	# https://bugreports.qt-project.org/browse/QTBUG-2113
+	CONFIG += precompile_header
+	PRECOMPILED_HEADER = stable.h # grep -h "#include <Q" * */* | sort | uniq > stable.h
+}
 DEFINES += APP_VERSION=$$VERSION
 QT += xml gui core network sql
 TARGET = sctime
