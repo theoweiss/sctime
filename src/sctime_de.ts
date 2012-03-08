@@ -578,6 +578,26 @@ Please see the Help menu for further information (F1)!</translation>
     </message>
 </context>
 <context>
+    <name>StatusBar</name>
+    <message>
+        <location filename="statusbar.h" line="19"/>
+        <location filename="statusbar.h" line="48"/>
+        <source>Overall time: </source>
+        <translation>Gesamtzeit: </translation>
+    </message>
+    <message>
+        <location filename="statusbar.h" line="60"/>
+        <source>Warning: Non-current date </source>
+        <oldsource>Warning: Past date </oldsource>
+        <translation>Warnung: Es wird der </translation>
+    </message>
+    <message>
+        <location filename="statusbar.h" line="62"/>
+        <source> is being edited.</source>
+        <translation> editiert.</translation>
+    </message>
+</context>
+<context>
     <name>TimeMainWindow</name>
     <message>
         <location filename="timemainwindow.cpp" line="81"/>
