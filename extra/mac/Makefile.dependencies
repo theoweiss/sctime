@@ -61,12 +61,15 @@ $(QT_DIR)/configured: $(QT_DIR)/patched $(PGSQL_DIR)/installed
 	cd "$(QT_SOURCE_DIR)" && \
 		./configure -release \
 			-opensource -confirm-license \
-			-arch "x86_64 x86 ppc" \
+			-arch "x86 ppc" \
 			-sdk "$(SDK)" \
 			-qt-sql-odbc -qt-sql-psql \
 			-prefix "$(PREFIX)" \
 			-no-exceptions \
+			-no-qt3support \
 			-verbose \
+			-optimized-qmake \
+			-fast \
 			-nomake examples \
 			-nomake demos \
 			-nomake docs \
@@ -107,7 +110,6 @@ $(PGSQL_DIR)/installed: $(PGSQL_DIR)/compiled
 	cd "$(PGSQL_SOURCE_DIR)" && \
 		$(MAKE) install && \
 		cp "$(PGSQL_SOURCE_DIR)"/src/include/pg_config_i386.h \
-			"$(PGSQL_SOURCE_DIR)"/src/include/pg_config_x86_64.h \
 			"$(PGSQL_SOURCE_DIR)"/src/include/pg_config_ppc.h \
 			"$(PREFIX)"/include \
 		&& touch "$@"
@@ -119,22 +121,20 @@ $(PGSQL_DIR)/compiled: $(PGSQL_DIR)/configured
 
 $(PGSQL_DIR)/configured: $(PGSQL_DIR)/configured.i386
 	cd "$(PGSQL_SOURCE_DIR)" && \
-		CFLAGS="-arch i386 -arch x86_64 -arch ppc $(PGSQL_COMMON_CFLAGS)" \
+		CFLAGS="-arch i386 -arch ppc $(PGSQL_COMMON_CFLAGS)" \
 			LDFLAGS="$(PGSQL_COMMON_LDFLAGS)" \
 			./configure --prefix="$(PREFIX)" \
 				$(PGSQL_CONFIGURE_FLAGS) && \
 		find . -name Makefile -print -exec perl -p -i.backup \
-			-e 's/\Q$$(LD) $$(LDREL) $$(LDOUT)\E (\S+) (.+)/\$$(LD) -arch ppc \$$(LDREL) \$$(LDOUT) $$1.ppc $$2; \$$(LD) -arch i386 \$$(LDREL) \$$(LDOUT) $$1.i386 $$2; \$$(LD) -arch x86_64 \$$(LDREL) \$$(LDOUT) $$1.x86_64 $$2; lipo -create -output $$1 $$1.ppc $$1.i386 $$1.x86_64/' {} \; && \
+			-e 's/\Q$$(LD) $$(LDREL) $$(LDOUT)\E (\S+) (.+)/\$$(LD) -arch ppc \$$(LDREL) \$$(LDOUT) $$1.ppc $$2; \$$(LD) -arch i386 \$$(LDREL) \$$(LDOUT) $$1.i386 $$2; lipo -create -output $$1 $$1.ppc $$1.i386/' {} \; && \
 		echo "#ifdef __BIG_ENDIAN__" > src/include/pg_config.h && \
 		echo "#include \"pg_config_ppc.h\"" >> src/include/pg_config.h && \
-		echo "#elif __x86_64__" >> src/include/pg_config.h && \
-		echo "#include \"pg_config_x86_64.h\"" >> src/include/pg_config.h && \
 		echo "#else" >> src/include/pg_config.h && \
 		echo "#include \"pg_config_i386.h\"" >> src/include/pg_config.h && \
 		echo "#endif" >> src/include/pg_config.h && \
 		touch "$@"
 
-$(PGSQL_DIR)/configured.i386: $(PGSQL_DIR)/configured.x86_64
+$(PGSQL_DIR)/configured.i386: $(PGSQL_DIR)/configured.ppc
 	cd "$(PGSQL_SOURCE_DIR)" && \
 		CFLAGS="-arch i386 $(PGSQL_COMMON_CFLAGS)" \
 			LDFLAGS="$(PGSQL_COMMON_LDFLAGS)" \
@@ -142,16 +142,6 @@ $(PGSQL_DIR)/configured.i386: $(PGSQL_DIR)/configured.x86_64
 				$(PGSQL_CONFIGURE_FLAGS) && \
 			mv src/include/pg_config.h src/include/pg_config_i386.h && \
 			make distclean  && \
-		touch "$@"
-
-$(PGSQL_DIR)/configured.x86_64: $(PGSQL_DIR)/configured.ppc
-	cd "$(PGSQL_SOURCE_DIR)" && \
-		CFLAGS="-arch x86_64 $(PGSQL_COMMON_CFLAGS)" \
-			LDFLAGS="$(PGSQL_COMMON_LDFLAGS)" \
-			./configure --prefix="$(PREFIX)" \
-				$(PGSQL_CONFIGURE_FLAGS) && \
-		mv src/include/pg_config.h src/include/pg_config_x86_64.h && \
-		make distclean  && \
 		touch "$@"
 
 $(PGSQL_DIR)/configured.ppc: $(PGSQL_DIR)/patched
@@ -186,7 +176,7 @@ $(PGSQL_DIR)/downloaded:
 
 pgsql.clean:
 	rm -rf "$(PGSQL_SOURCE_DIR)" \
-		"$(PGSQL_DIR)"/{unpacked,patched,configured{,.i386,.x86_64,.ppc},compiled,installed}
+		"$(PGSQL_DIR)"/{unpacked,patched,configured{,.i386,.ppc},compiled,installed}
 
 pgsql.mrproper:
 	rm -rf "$(PGSQL_DIR)"
