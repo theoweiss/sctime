@@ -103,6 +103,7 @@ QMAKE_EXTRA_COMPILERS += lrelease
 
 win32{
   CONFIG += embed_manifest_exe
+  RC_FILE += sctime.rc
   #QMAKE_CXXFLAGS += -EHsc # C++-Ausnahmen
   DEFINES += _CRT_SECURE_NO_WARNINGS
   # When using nmake, we need to add advapi32.lib (Visual Studio automatically

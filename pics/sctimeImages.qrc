@@ -10,7 +10,6 @@
         <file alias="hi22_action_1downarrow">hi22_action_1downarrow.xpm</file>
         <file alias="hi22_action_2uparrow">hi22_action_2uparrow.xpm</file>
         <file alias="hi22_action_2downarrow">hi22_action_2downarrow.xpm</file>
-        <file alias="window_icon">HorlogeDijon-16x16.JPG</file>
         <file alias="scLogo_15Farben">scLogo_15Farben.xpm</file>
         <file alias="hi22_action_1uparrow_half">hi22_action_1uparrow_half.xpm</file>
         <file alias="hi22_action_1downarrow_half">hi22_action_1downarrow_half.xpm</file>
@@ -20,5 +19,6 @@
         <file alias="hi16_action_apply">hi16_action_apply.xpm</file>
         <file alias="zero">zero.xpm</file>
         <file alias="cr16_action_bookmark">cr16-action-bookmark.xpm</file>
+        <file alias="window_icon">Uhr-16x16.ico</file>
     </qresource>
 </RCC>
