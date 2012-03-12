@@ -67,6 +67,9 @@ $(QT_DIR)/configured: $(QT_DIR)/patched $(PGSQL_DIR)/installed
 			-prefix "$(PREFIX)" \
 			-no-exceptions \
 			-verbose \
+			-nomake examples \
+			-nomake demos \
+			-nomake docs \
 			-I"$(PREFIX)"/include \
 			-L"$(PREFIX)"/lib \
 		&& touch "$@"
