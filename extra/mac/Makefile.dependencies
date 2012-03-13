@@ -68,7 +68,6 @@ $(QT_DIR)/configured: $(QT_DIR)/patched $(PGSQL_DIR)/installed
 			-no-exceptions \
 			-no-qt3support \
 			-verbose \
-			-optimized-qmake \
 			-fast \
 			-nomake examples \
 			-nomake demos \
