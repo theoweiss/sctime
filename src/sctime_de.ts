@@ -895,7 +895,7 @@ Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?
     <message>
         <location filename="timemainwindow.cpp" line="686"/>
         <location filename="timemainwindow.cpp" line="828"/>
-        <location filename="timemainwindow.cpp" line="1416"/>
+        <location filename="timemainwindow.cpp" line="1417"/>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
@@ -976,7 +976,7 @@ Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?
     </message>
     <message>
         <location filename="timemainwindow.cpp" line="1248"/>
-        <location filename="timemainwindow.cpp" line="1312"/>
+        <location filename="timemainwindow.cpp" line="1313"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -1002,48 +1002,48 @@ Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?
     </message>
     <message>
         <location filename="timemainwindow.cpp" line="1271"/>
-        <source>&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (development)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (runtime)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Developers:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Project page:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://sourceforge.net/projects/sctime/&apos;&gt;http://sourceforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This program is licensed under the GNU Public License v2.&lt;/p&gt;</source>
-        <oldsource>&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (Entwicklung)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (Laufzeit)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Entwickler:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Projektseite:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://sourceforge.net/projects/sctime/&apos;&gt;http://sourceforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;Dieses Programm ist unter der GNU Public License v2 lizenziert.&lt;/p&gt;</oldsource>
-        <translation>&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (Entwicklung)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (Laufzeit)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Entwickler:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Projektseite:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://translationforge.net/projects/sctime/&apos;&gt;http://translationforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;Dieses Programm ist unter der GNU Public License v2 lizenziert.&lt;/p&gt;</translation>
+        <source>&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (development)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (runtime)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Developers:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;New icons:&lt;/td&gt;&lt;td&gt;Mayra Delgado&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Project page:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://sourceforge.net/projects/sctime/&apos;&gt;http://sourceforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This program is licensed under the GNU Public License v2.&lt;/p&gt;</source>
+        <oldsource>&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (development)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (runtime)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Developers:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Project page:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://sourceforge.net/projects/sctime/&apos;&gt;http://sourceforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This program is licensed under the GNU Public License v2.&lt;/p&gt;</oldsource>
+        <translation type="unfinished">&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (Entwicklung)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (Laufzeit)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Entwickler:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Neue Icons:&lt;/td&gt;&lt;td&gt;Mayra Delgado&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Projektseite:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://translationforge.net/projects/sctime/&apos;&gt;http://translationforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;Dieses Programm ist unter der GNU Public License v2 lizenziert.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1287"/>
+        <location filename="timemainwindow.cpp" line="1288"/>
         <source>sctime: Messages</source>
         <translation>sctime: Meldungen</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1287"/>
+        <location filename="timemainwindow.cpp" line="1288"/>
         <source>sctime message log</source>
         <translation>sctime message log</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1301"/>
-        <location filename="timemainwindow.cpp" line="1306"/>
+        <location filename="timemainwindow.cpp" line="1302"/>
+        <location filename="timemainwindow.cpp" line="1307"/>
         <source>sctime: On-call times</source>
         <translation>sctime: Bereitschaftszeiten</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1301"/>
+        <location filename="timemainwindow.cpp" line="1302"/>
         <source>subaccount not found!</source>
         <translation>Unterkonto nicht gefunden!</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1307"/>
+        <location filename="timemainwindow.cpp" line="1308"/>
         <source>On-call times</source>
         <translation>Bereitschaftszeiten</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1314"/>
+        <location filename="timemainwindow.cpp" line="1315"/>
         <source>Cancel</source>
         <translation>Abbruch</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1319"/>
+        <location filename="timemainwindow.cpp" line="1320"/>
         <source>Please choose the rendered on-call times for this subaccount.</source>
         <translation>Bitte wählen Sie die geleisteten Bereitschaften für dieses Unterkonto aus.</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1417"/>
+        <location filename="timemainwindow.cpp" line="1418"/>
         <source>Warning: The entered comment contains a character that is not part of ISO-8859-1 and might not render correctly on some platforms. This may cause problems with custom reporting scripts.</source>
         <translation>Warnung: In dem von Ihnen eingegebenen Kommentar kommt ein Zeichen vor, das mit ISO-8859-1 und somit auf manchen Plattformen nicht darstellbar ist. Dies führt eventuell zu Problemen mit Auswerteskripten.</translation>
     </message>

@@ -1276,7 +1276,7 @@ void TimeMainWindow::callAboutBox() {
         "<tr><td>Developers:</td><td>Johannes Abt, Alexander Wütz, Florian Schmitt</td></tr>"
         "<tr><td>Patches:</td><td>Marcus Camen</td></tr>"
         "<tr><td>Mac:</td><td>Michael Weiser</td></tr>"
-        "<tr><td>Neue Icons:</td><td>Mayra Delgado</td></tr>"
+        "<tr><td>New icons:</td><td>Mayra Delgado</td></tr>"
         "<tr><td>Project page:</td><td><a href='http://sourceforge.net/projects/sctime/'>http://sourceforge.net/projects/sctime/</a></td></tr>"
         "</table><p>This program is licensed under the GNU Public License v2.</p>")
                    .arg(qApp->applicationVersion(), QT_VERSION_STR, qVersion()));
