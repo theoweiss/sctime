@@ -19,6 +19,6 @@
         <file alias="hi16_action_apply">hi16_action_apply.xpm</file>
         <file alias="zero">zero.xpm</file>
         <file alias="cr16_action_bookmark">cr16-action-bookmark.xpm</file>
-        <file alias="window_icon">Uhr-48-32-16.ico</file>
+        <file alias="window_icon">Uhr.ico</file>
     </qresource>
 </RCC>
