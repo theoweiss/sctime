@@ -1169,6 +1169,15 @@ void TimeMainWindow::callPreferenceDialog()
 {
   bool oldshowtypecolumn = settings->showTypeColumn();
 
+  /* no idea, why we need to do that, but otherwise QLabels and QPushButtons in
+   * the preference dialog won't use the custom font */
+  if (settings->useCustomFont())
+  {
+    QString custFont=settings->customFont();
+    int custFontSize=settings->customFontSize();
+    QApplication::setFont(QFont(custFont,custFontSize));
+  }
+
   PreferenceDialog preferenceDialog(settings, this);
   preferenceDialog.exec();
   showAdditionalButtons(settings->powerUserView());

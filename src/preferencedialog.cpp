@@ -47,13 +47,27 @@ PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent
     customFontCheckBox->setChecked(settings->useCustomFont());
     customFontSelectButton->setEnabled(settings->useCustomFont());
     QString custFont=settings->customFont();
-        int custFontSize=settings->customFontSize();
-        if (custFont.isEmpty()) {
-                selectedFont=this->font();
-        } else {
-                selectedFont=QFont(custFont, custFontSize);
-        }
-        fontPreview->setFont(selectedFont);
+    int custFontSize=settings->customFontSize();
+    if (custFont.isEmpty()) {
+            selectedFont=this->font();
+    } else {
+            selectedFont=QFont(custFont, custFontSize);
+    }
+    fontPreview->setFont(selectedFont);
+
+    /* make this a nice mainwindow-like looking preview */
+    fontPreview->header()->resizeSection(0, 200);
+    fontPreview->expandAll();
+    fontPreview->topLevelItem(1)->child(0)->child(0)->setSelected(true);
+#ifndef Q_WS_MAC
+    fontPreview->setSelectionMode(QTreeWidget::NoSelection);
+#else
+    /* On Mac OS X with NoSelection the TreeView gives no visual feedback, what
+     * the currently selected item is. So we have to switch on SingleSelection to
+     * avoid user confusion. */
+    fontPreview->setSelectionMode(QTreeWidget::SingleSelection);
+#endif
+
 }
 
 void PreferenceDialog::selectCustomFont() {
