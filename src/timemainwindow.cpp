@@ -1169,8 +1169,9 @@ void TimeMainWindow::callPreferenceDialog()
 {
   bool oldshowtypecolumn = settings->showTypeColumn();
 
-  /* no idea, why we need to do that, but otherwise QLabels and QPushButtons in
-   * the preference dialog won't use the custom font */
+  /* FIXME: no idea, why we need to do that, but otherwise QLabels and
+   * QPushButtons in the preference dialog won't use the custom font (at least
+   * on the Mac with Qt 4.8.0) */
   if (settings->useCustomFont())
   {
     QString custFont=settings->customFont();
@@ -1238,6 +1239,16 @@ void TimeMainWindow::setAktivesProjekt(QTreeWidgetItem * item)
  */
 void TimeMainWindow::callDateDialog()
 {
+  /* FIXME: no idea, why we need to do that, but otherwise QLabels and
+   * QPushButtons in the preference dialog won't use the custom font (at least
+   * on the Mac with Qt 4.8.0) */
+  if (settings->useCustomFont())
+  {
+    QString custFont=settings->customFont();
+    int custFontSize=settings->customFontSize();
+    QApplication::setFont(QFont(custFont,custFontSize));
+  }
+
   DateDialog * dateDialog=new DateDialog(abtList->getDatum(), this);
   connect(dateDialog, SIGNAL(dateChanged(const QDate&)), this, SLOT(changeDate(const QDate&)));
   dateDialog->show();
