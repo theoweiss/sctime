@@ -113,82 +113,212 @@
         <translation>Einstellungen</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="33"/>
         <source>General</source>
-        <translation>Allgemein</translation>
+        <translation type="obsolete">Allgemein</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="39"/>
+        <location filename="preferencedialogbase.ui" line="23"/>
+        <source>General Settings</source>
+        <translation>Allgemeine Einstellungen</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="29"/>
         <source>Re-use previous day&apos;s comments</source>
         <translation>Kommentare für nächsten Tag übernehmen</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="46"/>
+        <location filename="preferencedialogbase.ui" line="36"/>
         <source>Poweruser view</source>
         <translation>Poweruser Ansicht</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="53"/>
+        <location filename="preferencedialogbase.ui" line="43"/>
         <source>Activate account by single click</source>
         <translation>Konto durch Singleclick aktivieren</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="60"/>
+        <location filename="preferencedialogbase.ui" line="50"/>
         <source>Show account type</source>
         <translation>Kontotyp anzeigen</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="67"/>
+        <location filename="preferencedialogbase.ui" line="57"/>
         <source>Activate drag &apos;n&apos; drop</source>
         <translation>Drag &apos;n&apos; drop aktivieren</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="74"/>
+        <location filename="preferencedialogbase.ui" line="64"/>
         <source>Show sum in personal accounts</source>
         <translation>Summe in persönlichen Konten</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="94"/>
+        <location filename="preferencedialogbase.ui" line="137"/>
         <source>Fonts</source>
         <translation>Fonts</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="102"/>
+        <location filename="preferencedialogbase.ui" line="145"/>
         <source>Use custom font</source>
         <translation>Eigene Schrift verwenden</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="112"/>
+        <location filename="preferencedialogbase.ui" line="155"/>
         <source>Select Font</source>
         <translation>Schrift wählen</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="130"/>
         <source>AaBbCc</source>
-        <translation>AaBbCc</translation>
+        <translation type="obsolete">AaBbCc</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="163"/>
+        <location filename="preferencedialogbase.ui" line="86"/>
         <source>Increments</source>
         <translation>Zeitinkrement</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="177"/>
+        <location filename="preferencedialogbase.ui" line="94"/>
         <source>Basic time increment</source>
         <translation>Einfache Zeitinkrement Buttons</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="194"/>
+        <location filename="preferencedialogbase.ui" line="115"/>
         <source>Fast time increment</source>
         <translation>Schnelle Zeitinkrement Buttons</translation>
     </message>
     <message>
+        <location filename="preferencedialogbase.ui" line="174"/>
+        <source>Accounts</source>
+        <translation>Konten</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="179"/>
+        <source>Active</source>
+        <translation>Aktiv</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="184"/>
+        <source>Time</source>
+        <translation>Zeit</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="192"/>
+        <source>Accountable</source>
+        <translation>Abzur.</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="200"/>
+        <source>Comment</source>
+        <translation>Kommentar</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="205"/>
+        <source>All Accounts</source>
+        <translation>Alle Konten</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="210"/>
+        <source>Personal Accounts</source>
+        <translation>Persönliche Konten</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="214"/>
+        <source>Department</source>
+        <translation>Abteilung</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="221"/>
+        <source>management</source>
+        <translation>Verwaltung</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="236"/>
+        <location filename="preferencedialogbase.ui" line="239"/>
+        <source>0:30</source>
+        <translation>0:30</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="242"/>
+        <source>talked to boss about workload</source>
+        <translation>Mit Chef über Auslastung gesprochen</translation>
+    </message>
+    <message>
         <location filename="preferencedialogbase.ui" line="247"/>
+        <source>training</source>
+        <translation>Ausbildung</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="253"/>
+        <location filename="preferencedialogbase.ui" line="256"/>
+        <location filename="preferencedialogbase.ui" line="475"/>
+        <location filename="preferencedialogbase.ui" line="487"/>
+        <location filename="preferencedialogbase.ui" line="538"/>
+        <location filename="preferencedialogbase.ui" line="550"/>
+        <source>0:00</source>
+        <translation>0:00</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="262"/>
+        <source>Customer 1</source>
+        <translation>Kunde 1</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="266"/>
+        <source>project1</source>
+        <translation>projekt1</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="327"/>
+        <source>0</source>
+        <translation>0</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="351"/>
+        <source>2:00</source>
+        <translation>2:00</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="363"/>
+        <source>1:45</source>
+        <translation>1:45</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="375"/>
+        <source>web server setup: some work done, lots to do</source>
+        <translation>Webserver: einiges fertig aber noch viel zu tun</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="389"/>
+        <source>1</source>
+        <translation>1</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="413"/>
+        <location filename="preferencedialogbase.ui" line="425"/>
+        <source>0:15</source>
+        <translation>0:15</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="437"/>
+        <source>backup: tapes changed</source>
+        <translation>Backup: Bänder gewechselt</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="451"/>
+        <source>2</source>
+        <translation>2</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="514"/>
+        <source>project2</source>
+        <translation>projekt2</translation>
+    </message>
+    <message>
+        <location filename="preferencedialogbase.ui" line="602"/>
         <source>&amp;OK</source>
         <translation>&amp;OK</translation>
     </message>
     <message>
-        <location filename="preferencedialogbase.ui" line="263"/>
+        <location filename="preferencedialogbase.ui" line="618"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Abbrechen</translation>
     </message>
@@ -895,7 +1025,7 @@ Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?
     <message>
         <location filename="timemainwindow.cpp" line="686"/>
         <location filename="timemainwindow.cpp" line="828"/>
-        <location filename="timemainwindow.cpp" line="1417"/>
+        <location filename="timemainwindow.cpp" line="1437"/>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
@@ -975,75 +1105,75 @@ Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?
         <translation>sctime - </translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1248"/>
-        <location filename="timemainwindow.cpp" line="1313"/>
+        <location filename="timemainwindow.cpp" line="1268"/>
+        <location filename="timemainwindow.cpp" line="1333"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1262"/>
+        <location filename="timemainwindow.cpp" line="1282"/>
         <source>sctime: Help</source>
         <translation>sctime: Hilfe</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1262"/>
+        <location filename="timemainwindow.cpp" line="1282"/>
         <source>sctime help</source>
         <translation>sctime help</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1270"/>
+        <location filename="timemainwindow.cpp" line="1290"/>
         <source>About sctime</source>
         <translation>Über sctime</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1270"/>
+        <location filename="timemainwindow.cpp" line="1290"/>
         <source>sctime about</source>
         <translation>sctime about</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1271"/>
+        <location filename="timemainwindow.cpp" line="1291"/>
         <source>&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (development)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (runtime)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Developers:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;New icons:&lt;/td&gt;&lt;td&gt;Mayra Delgado&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Project page:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://sourceforge.net/projects/sctime/&apos;&gt;http://sourceforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This program is licensed under the GNU Public License v2.&lt;/p&gt;</source>
         <oldsource>&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (development)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (runtime)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Developers:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Project page:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://sourceforge.net/projects/sctime/&apos;&gt;http://sourceforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This program is licensed under the GNU Public License v2.&lt;/p&gt;</oldsource>
-        <translation type="unfinished">&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (Entwicklung)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (Laufzeit)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Entwickler:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Neue Icons:&lt;/td&gt;&lt;td&gt;Mayra Delgado&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Projektseite:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://translationforge.net/projects/sctime/&apos;&gt;http://translationforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;Dieses Programm ist unter der GNU Public License v2 lizenziert.&lt;/p&gt;</translation>
+        <translation>&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (Entwicklung)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (Laufzeit)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Entwickler:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Neue Icons:&lt;/td&gt;&lt;td&gt;Mayra Delgado&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Projektseite:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://translationforge.net/projects/sctime/&apos;&gt;http://translationforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;Dieses Programm ist unter der GNU Public License v2 lizenziert.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1288"/>
+        <location filename="timemainwindow.cpp" line="1308"/>
         <source>sctime: Messages</source>
         <translation>sctime: Meldungen</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1288"/>
+        <location filename="timemainwindow.cpp" line="1308"/>
         <source>sctime message log</source>
         <translation>sctime message log</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1302"/>
-        <location filename="timemainwindow.cpp" line="1307"/>
+        <location filename="timemainwindow.cpp" line="1322"/>
+        <location filename="timemainwindow.cpp" line="1327"/>
         <source>sctime: On-call times</source>
         <translation>sctime: Bereitschaftszeiten</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1302"/>
+        <location filename="timemainwindow.cpp" line="1322"/>
         <source>subaccount not found!</source>
         <translation>Unterkonto nicht gefunden!</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1308"/>
+        <location filename="timemainwindow.cpp" line="1328"/>
         <source>On-call times</source>
         <translation>Bereitschaftszeiten</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1315"/>
+        <location filename="timemainwindow.cpp" line="1335"/>
         <source>Cancel</source>
         <translation>Abbruch</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1320"/>
+        <location filename="timemainwindow.cpp" line="1340"/>
         <source>Please choose the rendered on-call times for this subaccount.</source>
         <translation>Bitte wählen Sie die geleisteten Bereitschaften für dieses Unterkonto aus.</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1418"/>
+        <location filename="timemainwindow.cpp" line="1438"/>
         <source>Warning: The entered comment contains a character that is not part of ISO-8859-1 and might not render correctly on some platforms. This may cause problems with custom reporting scripts.</source>
         <translation>Warnung: In dem von Ihnen eingegebenen Kommentar kommt ein Zeichen vor, das mit ISO-8859-1 und somit auf manchen Plattformen nicht darstellbar ist. Dies führt eventuell zu Problemen mit Auswerteskripten.</translation>
     </message>
