@@ -1287,7 +1287,7 @@ void TimeMainWindow::callHelpDialog() {
 void TimeMainWindow::callAboutBox() {
   QDialog *dialog;
   QTextBrowser *browser;
-  infoDialog(dialog, browser, tr("About sctime"), tr("sctime about"), 400, 300);
+  infoDialog(dialog, browser, tr("About sctime"), tr("sctime about"), 400, 350);
   browser->setHtml(tr(
         "<h1><img src=':/scLogo_15Farben' />sctime</h1>"
         "<table><tr><td>Version:</td><td>%1</td></tr>"
