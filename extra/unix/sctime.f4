@@ -7,10 +7,9 @@ default: owner="venus"
 default: group="admin"
 type=dir dest="zeit" source="." perm="mode:r-xr-xr-x"
 type=file dest="zeit/sctime" source="sctime" perm="mode:r-xr-xr-x"
-type=file dest="zeit/Uhr.svg" source="pics/Uhr.svg" perm="mode:r--r--r--"
+type=file dest="zeit/Uhr.svg" source="Uhr.svg" perm="mode:r--r--r--"
 
 type=dir dest="share" perm="mode:r-xr-xr-x"
 type=dir dest="share/applications" perm="mode:r-xr-xr-x"
-type=file dest="share/applications/sc-sctime.desktop
 type=file dest="share/applications/sc-sctime.desktop" source="sc-sctime.desktop"
 
