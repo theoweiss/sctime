@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG += warn_on qt uic
 # you have to explicitly recompile sctime.cpp whenever you change this value
-VERSION = 0.73.9
+VERSION = 0.73.10
 # only build with precompiled headers on something that's not a Mac or with a
 # Qt installation that identifies itself as supporting precompiled headers with
 # universal binaries (which is a custom patch found in the extra/mac directory
