@@ -156,7 +156,6 @@ public:
     void logDialog();
     void commitBereit(DSResult data);
     void driftKorrektur();
-
   protected:
     virtual void moveEvent( QMoveEvent *event);
   private:
@@ -177,7 +176,7 @@ public:
     QAction* bgColorChooseAction;
     QAction* bgColorRemoveAction;
     QAction* jumpAction;
-    const QDateTime startTime;
+    QDateTime startTime;
     QDateTime lastMinuteTick;
     QFont qtDefaultFont;
     AbteilungsListe* abtList;
@@ -196,10 +195,12 @@ public:
     bool inPersoenlicheKontenAllowed;
     int sekunden; // Minuten * 60 seit Beginn minus Pausen; zur Drift-Berechnung
     QTimer *minutenTimer;
+    QTimer *restTimer;
     QTimer *autosavetimer;
     void tageswechsel();
     void zeitKorrektur(int delta);
     bool paused;
-    void stopTimers(const QString& grund);
+    int stopTimers(const QString& grund); // rv: Sekunden seit letztem Tick
+    void resumeTimers(int secSinceTick, const QString& reason);
 };
 #endif

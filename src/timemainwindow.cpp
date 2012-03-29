@@ -144,6 +144,11 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   lastMinuteTick = startTime;
   minutenTimer->setInterval(60000); //Alle 60 Sekunden ticken
   minutenTimer->start();
+  // Timer für "angebrochene" Minuten nach einer Pause
+  restTimer = new QTimer(this);
+  restTimer->setSingleShot(true);
+  connect(restTimer, SIGNAL(timeout()), minutenTimer, SLOT(start()));
+  connect(restTimer, SIGNAL(timeout()), this, SLOT(minuteHochzaehlen()));
 
   autosavetimer=new QTimer(this);
   connect( autosavetimer,SIGNAL(timeout()), this, SLOT(save()));
@@ -686,36 +691,42 @@ void TimeMainWindow::showArbeitszeitwarning() {
   QMessageBox::warning(0, tr("Warning") ,tr("Warning: Legally allowed working time has been exceeded."));
 }
 
-void TimeMainWindow::stopTimers(const QString& grund) {
+int TimeMainWindow::stopTimers(const QString& grund) {
     minutenTimer->stop();
     autosavetimer->stop();
+    restTimer->stop();
     // die Sekunden seit dem letzten Tick speichern
     QDateTime now = QDateTime::currentDateTime();
     int secSeitTick = lastMinuteTick.secsTo(now);
-    if (secSeitTick > 60) 
-      logError(grund + tr(": will be ignored (%1)").arg(now.toString()));
     lastMinuteTick = now;
-    zeitKorrektur(secSeitTick);
     emit save();
     trace(tr("%1: Accounting stopped (%2, +%3s)").arg(grund, now.toString()).arg(secSeitTick));
+    return secSeitTick;
 }
+
 
 /** Ruft einen modalen Dialog auf, der eine Pause anzeigt, und setzt gleichzeitig
   *  paused auf true, um die Zeiten anzuhalten
   */
 void TimeMainWindow::pause() {
+    int drift =  sekunden - startTime.secsTo(lastMinuteTick);
     paused = true;
-    stopTimers(tr("Pause"));
-    QDateTime pauseBeginn = QDateTime::currentDateTime();
+    int secSinceTick = stopTimers(tr("Pause"));
+    if (secSinceTick > 60 || secSinceTick < 0) {
+        trace(tr("ERROR: seconds since tick: %1").arg(secSinceTick));
+        secSinceTick = 60;
+    }
     QMessageBox::warning(this, tr("sctime: Pause"), tr("Accounting has been stopped. Resume work with OK."));
     tageswechsel();
-    autosavetimer->start();
-    minutenTimer->start();
     paused = false;
     QDateTime now = QDateTime::currentDateTime();
-    sekunden += pauseBeginn.secsTo(now);
-    lastMinuteTick = now;
+    sekunden = drift;
     trace(tr("End of break: ") +now.toString());
+    autosavetimer->start();
+    // Tricks wegen der vor der Pause angebrochenen Minute
+    restTimer->start((60 - secSinceTick) * 1000);
+    startTime = now.addSecs(-secSinceTick);
+    lastMinuteTick = startTime;
 }
 
 
