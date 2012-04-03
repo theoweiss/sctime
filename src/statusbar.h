@@ -57,15 +57,9 @@ class StatusBar:public QStatusBar
     void dateWarning(bool on, QDate datum=QDate::currentDate())
     {
       if (on) {
-        datumsWarnung->setText(tr("Warning: Non-current date ") +
-          datum.toString(Qt::SystemLocaleShortDate) +
-          tr(" is being edited."));
+        datumsWarnung->setText(tr("Warning: Non-current date %1 is being edited.").arg(datum.toString(Qt::SystemLocaleShortDate)));
         datumsWarnung->setStyleSheet("color:#800000;");
-
-        //datumsWarnung->setPaletteForegroundColor(Qt::darkRed);
-      }
-      else
-      {
+      } else {
         datumsWarnung->setText("");
       }
 
