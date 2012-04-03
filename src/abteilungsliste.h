@@ -135,6 +135,7 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     void getAktiv(QString& abteilung, QString& konto, QString& unterkonto, int& idx);
 
     void setAsAktiv(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
+    bool ukHatMehrereEintrage(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
 
     bool isAktiv(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
 

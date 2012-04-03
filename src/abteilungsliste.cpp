@@ -709,6 +709,19 @@ void AbteilungsListe::setAsAktiv(const QString& abteilung, const QString& konto,
     }
 }
 
+/** mehrere Einträge für ein Unterkonto? */
+bool AbteilungsListe::ukHatMehrereEintrage(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx) {
+    UnterKontoListe::iterator uki;
+    UnterKontoListe* ukl;
+    EintragsListe::iterator eli;
+    if (!findUnterKonto(uki, ukl, abteilung, konto, unterkonto)) return false;
+    for (eli = uki->second.begin(); eli != uki->second.end(); eli++) {
+        if (eli->first != idx && !eli->second.sekundenAbzur > 0)
+            return true;
+    }
+    return false;
+}
+
 
 /** Liefert true, falls der uebergebene Eintrag mit index idx, Abteilung abteilung,... das aktive ist */
 bool AbteilungsListe::isAktiv(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx)

@@ -1242,6 +1242,10 @@ void TimeMainWindow::setAktivesProjekt(QTreeWidgetItem * item)
   kontoTree->refreshItem(oldabt,oldko,olduk,oldidx);
   kontoTree->refreshItem(abt,ko,uko,idx);
   kontoTree->setCurrentItem(item);
+  if (item->text(1) == "tageweise abrechnen (kd)" && abtList->ukHatMehrereEintrage(abt, ko, uko, idx)) {
+  //if (item->text(1) == "interne Projekte (ip)" && abtList->ukHatMehrereEintrage(abt, ko, uko, idx)) { // für Versuche
+      statusBar->showMessage(tr("Bitte nur einen Eintrag für Konten des Typs „%1”!").arg(item->text(1)), 10000);
+  }
   updateCaption();
 }
 
