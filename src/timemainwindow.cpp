@@ -717,7 +717,6 @@ void TimeMainWindow::pause() {
         secSinceTick = 60;
     }
     QMessageBox::warning(this, tr("sctime: Pause"), tr("Accounting has been stopped. Resume work with OK."));
-    tageswechsel();
     paused = false;
     QDateTime now = QDateTime::currentDateTime();
     sekunden = drift;
@@ -727,6 +726,7 @@ void TimeMainWindow::pause() {
     restTimer->start((60 - secSinceTick) * 1000);
     startTime = now.addSecs(-secSinceTick);
     lastMinuteTick = startTime;
+    tageswechsel();
 }
 
 
@@ -893,8 +893,10 @@ void TimeMainWindow::changeDate(const QDate& datum)
   }
   if (currentDateSel) {
     abtList=abtListToday;
-    if (abtListToday->getDatum()!=datum)
+    if (abtListToday->getDatum()!=datum) {
       abtListToday->setDatum(datum);
+      statusBar->showMessage(tr("new day"), 5000);
+    }
   }
   else {
     abtList=new AbteilungsListe(datum,abtListToday);
@@ -1245,6 +1247,7 @@ void TimeMainWindow::setAktivesProjekt(QTreeWidgetItem * item)
   if (item->text(1) == "tageweise abrechnen (kd)" && abtList->ukHatMehrereEintrage(abt, ko, uko, idx)) {
   //if (item->text(1) == "interne Projekte (ip)" && abtList->ukHatMehrereEintrage(abt, ko, uko, idx)) { // für Versuche
       statusBar->showMessage(tr("Bitte nur einen Eintrag für Konten des Typs „%1”!").arg(item->text(1)), 10000);
+      QApplication::beep();
   }
   updateCaption();
 }
