@@ -514,7 +514,7 @@ void TimeMainWindow::driftKorrektur() {
           : QMessageBox::question(
                 this, tr("sctime: system time set back"),
                 tr("The system's time has been set back by %1min to %2."
-                   "Should this time be subtracted from the active account?\n"),
+                   "Should this time be subtracted from the active account?\n").arg(drift/60).arg(lastMinuteTick.toString()),
                 QMessageBox::No, QMessageBox::Yes);
   if (answer == QMessageBox::Yes)
       zeitKorrektur(drift);
@@ -895,13 +895,11 @@ void TimeMainWindow::changeDate(const QDate& datum)
     abtList=abtListToday;
     if (abtListToday->getDatum()!=datum) {
       abtListToday->setDatum(datum);
-      statusBar->showMessage(tr("new day"), 5000);
     }
   }
   else {
     abtList=new AbteilungsListe(datum,abtListToday);
   }
-
   abtList->clearKonten();
   settings->readSettings(abtList);
 
