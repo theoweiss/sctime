@@ -64,7 +64,6 @@ static bool readFile(DSResult* const result, QTextStream &ts, const QString& sep
     for (int i = 0; i < columns - 1; i++) {
       int end = l.indexOf(sep, start);
       if (end == -1) {
-        delete result;
         logError(QObject::tr("Line %1 of '%2' has only %3 columns instead of %4").arg(lines).arg(path).arg(i + 1).arg(columns));
         return false;
       }
