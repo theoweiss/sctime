@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QSocketNotifier>
 
+// map unix signals to Qt signals
 class SignalHandler : public QObject {
     Q_OBJECT
 public:
@@ -12,10 +13,10 @@ public:
   const int signum;
 
 signals:
-  void received(int);
   void received();
+  void received(int);  // internal
 
-public slots:
+private slots:
   void handleAll();
   void handle(int sig);
 };

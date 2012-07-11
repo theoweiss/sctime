@@ -53,7 +53,7 @@
 #endif
 
 
-// transform the value a #define into a string in a portable way
+// transform the value of a #define into a string in a portable way
 #define QUOTE_(x) #x
 #define QUOTE(x) QUOTE_(x)
 
@@ -122,7 +122,6 @@ QString canonicalPath(QString path) {
 #else
 	QString homedir = QDir::homePath();
 #endif /* WIN32 */
-
 	return path.replace(0, 1, homedir);
     }
     return QFileInfo(path).canonicalFilePath();
@@ -133,8 +132,9 @@ QString canonicalPath(QString path) {
  * (Lockfiles,...), und falls ja, wird SCTimeApp initialisiert und
  ausgefuehrt */
 int main(int argc, char **argv ) {
-  //QApplication app(argc, argv);
-  SctimeApp app(argc, argv);
+  SctimeApp app(argc, argv);  // Qt initialization
+
+  // load translations
   QTranslator qtTranslator;
   qtTranslator.load("qt_" + QLocale::system().name(),
           QLibraryInfo::location(QLibraryInfo::TranslationsPath));
@@ -143,6 +143,8 @@ int main(int argc, char **argv ) {
   sctimeTranslator.load(":/translations/sctime");
   app.installTranslator(&sctimeTranslator);
   QTextCodec::setCodecForTr(QTextCodec::codecForName ("UTF-8"));
+
+  // necessary for XSM support
   app.setObjectName("sctime");
   app.setApplicationVersion(QUOTE(APP_VERSION));
 
@@ -179,6 +181,9 @@ int main(int argc, char **argv ) {
         QObject::tr("Cannot access configration directory %1.").arg(configdirstring));
   }
   configDir=directory.path();
+
+  // Locking: nur eine Instanz von sctime soll laufen
+
   // Ich lege eine lokale Sperre an, die vom Betriebssystem zuverlässig auch
   // nach einem Absturz aufgegeben wird. Außerdem lege ich noch ein globales
   // Lock mit dem Rechnernamen an.
@@ -186,13 +191,15 @@ int main(int argc, char **argv ) {
   // - Es gibt keine globalen Sperren (für SMB und NFS hinweg sichtbar), die
   //   nach einem Absturz automatisch entfernt werden.
   // - Das Programm kann ausgeben, auf welchem Rechner sctime noch läuft.
-  // - Nach einem Absturz kann ich auf dem gleichen Rechner neu starten,
-  //   ohne de Benutzer mit Warnungen wegen alter Sperren zu belästigen.
+  // - Nach einem Absturz kann ich zumindest auf dem gleichen Rechner neu starten,
+  //   ohne den Benutzer mit Warnungen wegen alter Sperren zu belästigen.
   LockLocal local("sctime", true);
   Lock *global = new Lockfile(configDir.filePath("LOCK"), true);
   local.setNext(global);
   if (!local.acquire()) fatal(QObject::tr("sctime: Cannot start"), local.errorString());
   lock = &local;
+
+
   SCTimeXMLSettings settings;
   settings.readSettings();
   if (dataSourceNames.isEmpty()) dataSourceNames = settings.backends.split(" ");

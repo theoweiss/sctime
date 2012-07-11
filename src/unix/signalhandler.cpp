@@ -6,6 +6,10 @@
 
 static int fds[2];
 
+// map unix signals to Qt signals by writing the signal number to an anonymous pipe and waiting for it with QSocketNotifier//
+
+// please look at the article "Calling Qt Functions From Unix Signal Handlers" in the Qt documentation
+// http://doc.qt.nokia.com/4.7-snapshot/unix-signals.html
 static void unixSignalHandler(int sig) {
   char a = sig & 255;
   ::write(fds[1], &a, 1);
