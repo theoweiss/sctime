@@ -1,0 +1,36 @@
+-*- mode: org; coding: utf-8 -*-
+
+* Verschiedene Zeitgeber
+
+  Sctime benutzt gleichzeitig zwei Arten, die Zeit zu erfassen, und kontrolliert
+  die Ergebnisse gegeneinander: ein 60-Sekunden-Signal und die Systemuhr
+  Die beiden haben Vor- und Nachteile:
+
+** 60-Sekunden-Signal
+   Solange der Rechner normal läuft, erhält das Programm jede Minute ein
+   Signal und zählt die Zeit hoch. Selbst wenn die Systemzeit verstellt wird
+   (zum Beispiel per "ntpdate" / bei Neustart des "ntpd"), wird das Signal
+   alle 60s zugestellt.
+
+   Außerdem ist dieses Signal praktisch, weil sowieso nur jede volle Minute
+   die Anzeige (geleistete Stunden etc.) geändert werden muss.
+
+   Allerdings ist es nicht möglich, mit diesem Signal Bruchteile einer Minute
+   zu erfassen. Diese wenigen Sekunden pro Tag können sich bei wiederholten
+   Pausen zu Minuten summieren.
+
+   Wenn der Rechner hohe Last hat, wird das Signal nicht unbedingt pünktlich
+   zugestellt.
+
+   Das Signal wird nicht zugestellt, wenn das Programm oder der Rechner nicht
+   laufen (Strg-Z, Standby-Modus etc.)
+
+** Systemuhr
+   Die Systemuhr läuft üblicherweise "richtig" völlig unabhängig von der Last
+   und bleibt auch nicht stehen, wenn Programm oder Rechner angehalten
+   werden.
+
+   Allerdings wird sie immer wieder im Betrieb verstellt, wenn die Systemzeit
+   schnell (z.B. per "ntpdate") an eine vorgegebene Zeitquelle angepasst
+   werden soll. Das können mehrere Minuten sein.
+
