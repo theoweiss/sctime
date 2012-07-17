@@ -90,6 +90,7 @@ static const QString help(QObject::tr(
 static TimeMainWindow* mainWindow = 0;
 
 #ifdef WIN32
+// catch suspend and resume events and handle them by calling "suspend()" or "resume()"
 class SctimeApp : public QApplication {
 public:
     SctimeApp(int &argc, char **argv):QApplication(argc, argv) {}
@@ -126,7 +127,6 @@ QString canonicalPath(QString path) {
     }
     return QFileInfo(path).canonicalFilePath();
 }
-
 
 /** main: hier wird ueberprueft, ob die Applikation ueberhaupt starten soll
  * (Lockfiles,...), und falls ja, wird SCTimeApp initialisiert und

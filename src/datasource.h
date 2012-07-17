@@ -9,7 +9,7 @@ class QStringList;
 
 typedef QList<QStringList> DSResult;
 
-/* represents a way of reading data (a list of a list of strings) */
+/* represents a way of reading data (a list of a list of strings); the base class of all data sources. */
 class Datasource
 {
 public:
