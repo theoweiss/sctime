@@ -1,2 +1,26 @@
-For installation and testing notes see README.SC
-For licensing information please see LICENSING
+sctime
+======
+
+sctime provides a graphical interface which allows users to record the time
+spent for specific projects.
+
+REQUIREMENTS (for running sctime):
+
+Qt 4.4 or newer
+
+Un Windows, you need "qsqlodbc4.dll" and/or "qsqlpsql4.dll" (%QTDIR%/plugins/sqldrivers).
+
+DOCUMENTATION:
+User documentation is in the menu entry "Help".
+
+Additional documentation for
+developers is in directory "doc/".
+
+MAILING LISTS:
+sctime-user@lists.sourceforge.net
+
+CUSTOMER:
+s+c and the public.
+
+COPYRIGHT:
+GNU Public License, see GPL
