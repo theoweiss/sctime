@@ -245,7 +245,7 @@
             }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_2FE5D15697C643B184355FFE26AA4852"
             {
-            "SourcePath" = "8:H:\\Sctime\\pics\\Uhr.ico"
+            "SourcePath" = "8:..\\pics\\Uhr.ico"
             "TargetName" = "8:Uhr.ico"
             "Tag" = "8:"
             "Folder" = "8:_DBD97915E0794422BE3DC9BB7455A267"
