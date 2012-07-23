@@ -140,7 +140,7 @@ Dieser Text enthält Informationen für Entwickler und ein wenig für Administra
 
 * Build für Windows mit Visual Studio 2008
 
-** Übersetzen
+** Build
 
    Vorwarnung: Visual Studio verträgt sich nicht immer gut mit
    Samba-Freigaben. Diese Probleme erspart sich womöglich, wer unter Windows
@@ -153,7 +153,6 @@ Dieser Text enthält Informationen für Entwickler und ein wenig für Administra
 
    $ qmake -tp vc -r PROJDIR\sctime.pro
    $ sctime.sln   => Visual Studio startet
-
 
    Danach unter "Build"/"Configuration Manager" auf "Release" umstellen! Für
    die Konfiguration "Debug" braucht man nämlich die Debug-Bibliotheken, die
