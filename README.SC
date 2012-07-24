@@ -115,9 +115,10 @@ Dieser Text enthält Informationen für Entwickler und ein wenig für Administra
   BUILDDIR spricht man übrigens von einem "out of source build" oder "shadow
   build".
 
-  Qt hat kein eigenes Build-System. Stattdessen muss man wie bei "cmake" mit
-  "qmake" erst mal eine Eingabedatei fürs eigene Buildsystem (make, .sln, ..)
-  erstellen.
+  Qt hat eine eigene "Vorstufe" fürs plattformspezifische Build-System (GNU
+  gmake, Visual Studio...). Deswegen muss man (ähnlich wie bei "cmake") erst
+  mal eine Eingabedatei für das "richtige" Buildsystem bauen ("Makefile",
+  ".sln"). Näheres dazu weiter unten.
 
   Mit QTDIR ist im folgenden das Installationsverzeichnis von Qt gemeint.
 
@@ -140,6 +141,19 @@ Dieser Text enthält Informationen für Entwickler und ein wenig für Administra
 
 * Build für Windows mit Visual Studio 2008
 
+** Allgemeines
+
+   Der im folgenden angesprochene "Qt Command Prompt" ist ein
+   Kommandozeilenfenster, in dem diverse Umgebungsvariablen (z.B. für
+   Bibliothekspfade) so gesetzt sind, dass man Qt-Programme compilieren,
+   linken und teilweise laufen lassen kann. Dieser "Qt Command Prompt" ist zu
+   finden im Startmenü "Qt...".
+
+   Auch Visual Studio sollte man wie unten angegeben aus dem "Qt Command
+   Prompt" heraus starten! Sonst findet es nachher die Qt-Bilbiotheken
+   nicht. Alternativ gibt's im Startmenü "Qt..." einen Eintrag, um Visual
+   Studio mit Qt-Einstellungen zu starten.
+
 ** Build
 
    Vorwarnung: Visual Studio verträgt sich nicht immer gut mit
@@ -148,11 +162,12 @@ Dieser Text enthält Informationen für Entwickler und ein wenig für Administra
 
    Zuerst bitte die Versionsbezeichung in "src\src.pro" setzen!
 
-   Man startet den "Qt Command Prompt", wechselt ins Buildverzeichnis (das man
-   ggf. vorher anlegt) und gibt ein:
+   Man startet den "Qt Command Prompt" (zu finden unterm Startmenü "Qt..."),
+   wechselt ins Buildverzeichnis (das man ggf. vorher anlegt, man darf aber
+   auch das Projektverzeichnis nehmen) und gibt ein:
 
-   $ qmake -tp vc -r PROJDIR\sctime.pro
-   $ sctime.sln   => Visual Studio startet
+   $ qmake -tp vc -r PROJDIR\sctime.pro 
+   $ sctime.sln => Visual Studio startet
 
    Danach unter "Build"/"Configuration Manager" auf "Release" umstellen! Für
    die Konfiguration "Debug" braucht man nämlich die Debug-Bibliotheken, die
@@ -162,13 +177,19 @@ Dieser Text enthält Informationen für Entwickler und ein wenig für Administra
    Einzeilschritt-Abarbeitung (Debuggen) scheint nicht möglich: "Access
    violation"
 
-   Wenn man bis hierher testen will: "Build Solution"
+   Wenn man den Build bis hierher testen will: "Build Solution"
 
-    Zum Testen muss man dass Programm meist erst mal packen und dann
-    installieren. Die ausführbare Datei (sctime.exe) direkt vom
-    Netzwerklaufwerk auszuführen, läuft Windows-Sicherheitsrichtlinien zuwider
-    -- und erst recht, wenn dann auch noch Bibliotheken (.dll) nachgeladen
-    werden sollen. Deswegen:
+*** Ausführen ohne Packen
+    Unter Windows kann oder wird es Probleme geben, wenn man
+    "BUILDDIR\src\sctime.exe" direkt ausführen will. So wird Windows
+    wahrscheinlich erst dann die notwendigen DLLs (siehe weiter unten) finden,
+    wenn man sie in das gleiche Verzeichnis wie das ausführbare Programm
+    legt. Das kann außerdem noch von Windows-Sicherheitsrichtlinien abhängen,
+    wo das Programm liegt und und ob man eine Debug-Version baut.
+
+    Und wenn man alles fertig hat, klickt man versehentlich auf "Rebuild", und
+    alles wird gelöscht, auch die DLLs. Deswegen sollte man es sich gut
+    überlegen, ob sich das antun will. Warum nicht gleich ein...
 
 ** MSI-Paket bauen
 
@@ -186,6 +207,9 @@ Dieser Text enthält Informationen für Entwickler und ein wenig für Administra
    draußen, doch dann kann man es mit Rechtsklick auf die Solution wieder
    hinzufügen: "Add Project -> "Existing Project"
 
+   Um sich ein paar Irritationen zu sparen, ist es geschickt, eventuell
+   vorhandene sctime-Installationen erst mal zu entfernen (z.B. Kommando "appwiz.cpl").
+   
 *** Projekt anlegen
 
     Im "Solution Explorer" auf die "Solution" Rechtsklick -> Add -> New
@@ -239,7 +263,7 @@ Dieser Text enthält Informationen für Entwickler und ein wenig für Administra
     - qsqlodbc4.dll
     - qsqlpsql4.dll
 
-*** Shortcut anlegen
+*** Eintrag fürs Startmenü anlegen
 
     In der "File System"-Ansicht (Menü View -> Editor -> File System)
     Klick auf "Application Folder".
