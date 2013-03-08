@@ -20,7 +20,8 @@ downloadsource.commands = rm -f patchqmake.c && \
 	cp $$PWD/patchqmake.c.orig patchqmake.c && \
 	patch patchqmake.c < $$PWD/patchqmake.c-mac.patch && \
 	patch patchqmake.c < $$PWD/patchqmake.c-multi.patch && \
-	patch patchqmake.c < $$PWD/patchqmake.c-speedup.patch || \
+	patch patchqmake.c < $$PWD/patchqmake.c-speedup.patch && \
+	patch patchqmake.c < $$PWD/patchqmake.c-size_t.patch || \
 	rm patchqmake.c
 downloadsource.target = patchqmake.c
 QMAKE_EXTRA_TARGETS += downloadsource
