@@ -2,11 +2,9 @@ BUILD_DIR=$(shell pwd)
 SRC_DIR=$(BUILD_DIR)
 PATCH_DIR=$(SRC_DIR)
 
-#HTTP_PROXY=http://http-proxy:3128
-#FTP_PROXY=http://http-proxy:3128
-
-WGET=http_proxy=$(HTTP_PROXY) ftp_proxy=$(FTP_PROXY) wget -Yon
-WGET_OPTS=-c
+CURL=curl
+CURL_OPTS=
+#CURL_OPTS=-x http://proxy:3128
 
 PREFIX=$(BUILD_DIR)/deps
 
@@ -94,7 +92,7 @@ $(QT_DIR)/unpacked: $(QT_DIR)/downloaded
 $(QT_DIR)/downloaded:
 	mkdir -p $(QT_DIR)
 	rm -f "$(QT_SOURCE)" && \
-		$(WGET) $(WGET_OPTS) -O "$(QT_SOURCE)" "$(QT_URL)" && \
+		$(CURL) $(CURL_OPTS) -o "$(QT_SOURCE)" "$(QT_URL)" && \
 		touch "$@"
 
 qt.clean:
@@ -141,7 +139,7 @@ $(PGSQL_DIR)/unpacked: $(PGSQL_DIR)/downloaded
 $(PGSQL_DIR)/downloaded:
 	mkdir -p $(PGSQL_DIR)
 	rm -f "$(PGSQL_SOURCE)" && \
-		$(WGET) $(WGET_OPTS) -O "$(PGSQL_SOURCE)" "$(PGSQL_URL)" && \
+		$(CURL) $(CURL_OPTS) -o "$(PGSQL_SOURCE)" "$(PGSQL_URL)" && \
 		touch "$@"
 
 pgsql.clean:
