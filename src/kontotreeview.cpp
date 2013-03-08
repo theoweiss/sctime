@@ -308,15 +308,9 @@ KontoTreeItem* KontoTreeView::sucheKontoItem(const QString& tops, const QString&
 
 KontoTreeItem* KontoTreeView::sucheUnterKontoItem(const QString& tops, const QString& abts, const QString& kos, const QString& ukos)
 {
-  KontoTreeItem *topi,*abti,*koi,*ukoi;
+  KontoTreeItem *koi,*ukoi;
 
-  for (topi=(KontoTreeItem*)topLevelItem(0); (topi!=NULL)&&(topi->text(0)!=tops); topi=(KontoTreeItem*)topi->nextSibling()) ;
-  if (topi==NULL) return NULL;
-
-  for (abti=(KontoTreeItem*)topi->child(0); (abti!=NULL)&&(abti->text(0)!=abts); abti=(KontoTreeItem*)abti->nextSibling()) ;
-  if (abti==NULL) return NULL;
-
-  for (koi=(KontoTreeItem*)abti->child(0); (koi!=NULL)&&(koi->text(0)!=kos); koi=(KontoTreeItem*)koi->nextSibling()) ;
+  koi = sucheKontoItem(tops, abts, kos);
   if (koi==NULL) return NULL;
 
   for (ukoi=(KontoTreeItem*)koi->child(0); (ukoi!=NULL)&&(ukoi->text(0)!=ukos); ukoi=(KontoTreeItem*)ukoi->nextSibling()) ;
@@ -325,19 +319,13 @@ KontoTreeItem* KontoTreeView::sucheUnterKontoItem(const QString& tops, const QSt
 
 KontoTreeItem* KontoTreeView::sucheKommentarItem(const QString& tops, const QString& abts, const QString& kos, const QString& ukos, const QString& koms)
 {
-  KontoTreeItem *topi,*abti,*koi,*ukoi;
+  KontoTreeItem *ukoi,*komi;
 
-  for (topi=(KontoTreeItem*)topLevelItem(0); (topi!=NULL)&&(topi->text(0)!=tops); topi=(KontoTreeItem*)topi->nextSibling()) ;
-  if (topi==NULL) return NULL;
+  ukoi = sucheUnterKontoItem(tops, abts, kos, ukos);
+  if (ukoi==NULL) return NULL;
 
-  for (abti=(KontoTreeItem*)topi->child(0); (abti!=NULL)&&(abti->text(0)!=abts); abti=(KontoTreeItem*)abti->nextSibling()) ;
-  if (abti==NULL) return NULL;
-
-  for (koi=(KontoTreeItem*)abti->child(0); (koi!=NULL)&&(koi->text(0)!=kos); koi=(KontoTreeItem*)koi->nextSibling()) ;
-  if (koi==NULL) return NULL;
-
-  for (ukoi=(KontoTreeItem*)koi->child(0); (ukoi!=NULL)&&(ukoi->text(0)!=ukos); ukoi=(KontoTreeItem*)ukoi->nextSibling()) ;
-  return ukoi;
+  for (komi=(KontoTreeItem*)ukoi->child(0); (komi!=NULL)&&(komi->text(5)!=koms); komi=(KontoTreeItem*)komi->nextSibling());
+  return komi;
 }
 
 int KontoTreeView::getItemDepth( QTreeWidgetItem* item )
