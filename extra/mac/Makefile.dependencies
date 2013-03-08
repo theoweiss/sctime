@@ -87,7 +87,7 @@ $(QT_DIR)/patched: $(QT_DIR)/unpacked
 $(QT_DIR)/unpacked: $(QT_DIR)/downloaded
 	cd "$(QT_DIR)" && \
 		rm -rf "$(QT_SOURCE_DIR)" && \
-		gtar -xzf "$(QT_SOURCE)" && \
+		gnutar -xzf "$(QT_SOURCE)" && \
 		touch "$@"
 
 $(QT_DIR)/downloaded:
@@ -134,7 +134,7 @@ $(PGSQL_DIR)/patched: $(PGSQL_DIR)/unpacked
 $(PGSQL_DIR)/unpacked: $(PGSQL_DIR)/downloaded
 	cd "$(PGSQL_DIR)" && \
 		rm -rf "$(PGSQL_SOURCE_DIR)" && \
-		gtar -xjf "$(PGSQL_SOURCE)" && \
+		gnutar -xjf "$(PGSQL_SOURCE)" && \
 		touch "$@"
 
 $(PGSQL_DIR)/downloaded:
