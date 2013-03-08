@@ -47,7 +47,7 @@ clean.destdir:
 
 $(QT_DIR)/installed: $(QT_DIR)/compiled
 	cd "$(QT_SOURCE_DIR)" && \
-		$(MAKE) install \
+		$(MAKE) -j1 install \
 		&& touch "$@"
 
 $(QT_DIR)/compiled: $(QT_DIR)/configured
