@@ -36,11 +36,7 @@ sctime build directory somewhere, change into it and run:
 <dependency build dir>/deps/bin/qmake -r <path to scTime source tree>/sctime.pro
 make (possibly again with the -j option)
 
-Building PostgreSQL and Qt outside of directory extra/mac of the source tree
-is not supported for now but shouldn't be hard to implement. Please holler if
-you really, really need this.
-
-1.2. Half-manually:
+1.2. Half-manually (outdated, for 10.5 and universal PPC builds):
 
 PostgreSQL:
 run postgres-universal-10.5.sh in a freshly unpacked PostgreSQL source directory
@@ -122,7 +118,7 @@ user@mac:/Volumes/scTime-0.72.2-20120209 # DYLD_PRINT_LIBRARIES=1 scTime.app/Con
 This will show all libraries as they're loaded. With this information in hand,
 you've got three choices:
 
-1. Tell the maintainer two bloody well fix his damned package for your
+1. Tell the maintainer to bloody well fix his damned package for your
    conditions and wait (possibly lots).
 2. Move your colliding installation out of the way.
 3. Roll your own scTime binary without private frameworks against your Qt
