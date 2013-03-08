@@ -1,0 +1,15 @@
+--- qtbase/src/plugins/platforms/cocoa/qcocoawindow.h.orig	2013-03-07 17:17:07.000000000 +0100
++++ qtbase/src/plugins/platforms/cocoa/qcocoawindow.h	2013-03-07 17:17:50.000000000 +0100
+@@ -49,10 +49,10 @@
+ 
+ #include "qcocoaglcontext.h"
+ #include "qnsview.h"
+-class QT_PREPEND_NAMESPACE(QCocoaWindow);
++QT_FORWARD_DECLARE_CLASS(QCocoaWindow);
+ 
+ @interface QNSWindow : NSWindow {
+-    @public QCocoaWindow *m_cocoaPlatformWindow;
++    @public QT_PREPEND_NAMESPACE(QCocoaWindow) *m_cocoaPlatformWindow;
+ }
+ 
+ - (void)clearPlatformWindow;

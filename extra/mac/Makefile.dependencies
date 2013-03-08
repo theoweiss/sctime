@@ -10,25 +10,25 @@ WGET_OPTS=-c
 
 PREFIX=$(BUILD_DIR)/deps
 
-SDK=/Developer/SDKs/MacOSX10.5.sdk
+SDK=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
 
-QT_VER=4.8.2
+QT_VER=5.0.1
 QT_BN=qt-everywhere-opensource-src-$(QT_VER)
 QT_SOURCE_FILE=$(QT_BN).tar.gz
-QT_URL=http://releases.qt-project.org/qt4/source/$(QT_SOURCE_FILE)
+QT_URL=http://releases.qt-project.org/qt5/$(QT_VER)/single/$(QT_SOURCE_FILE)
 QT_DIR=$(BUILD_DIR)/qt
 QT_SOURCE=$(QT_DIR)/$(QT_SOURCE_FILE)
 QT_SOURCE_DIR=$(QT_DIR)/$(QT_BN)
 
-PGSQL_VER=9.1.4
+PGSQL_VER=9.2.3
 PGSQL_BN=postgresql-$(PGSQL_VER)
 PGSQL_SOURCE_FILE=$(PGSQL_BN).tar.bz2
 PGSQL_URL=http://ftp.postgresql.org/pub/source/v$(PGSQL_VER)/$(PGSQL_SOURCE_FILE)
 PGSQL_DIR=$(BUILD_DIR)/postgres
 PGSQL_SOURCE=$(PGSQL_DIR)/$(PGSQL_SOURCE_FILE)
 PGSQL_SOURCE_DIR=$(PGSQL_DIR)/$(PGSQL_BN)
-PGSQL_COMMON_CFLAGS=-isysroot $(SDK) -mmacosx-version-min=10.5
-PGSQL_COMMON_LDFLAGS=-Wl,-syslibroot,$(SDK) -mmacosx-version-min=10.5
+PGSQL_COMMON_CFLAGS=-isysroot $(SDK) -mmacosx-version-min=10.7
+PGSQL_COMMON_LDFLAGS=-Wl,-syslibroot,$(SDK) -mmacosx-version-min=10.7
 PGSQL_CONFIGURE_FLAGS=--with-openssl --without-perl --without-python --without-tcl --without-bonjour --without-pam --with-krb5 --without-libxml
 
 .PHONY: all clean mrproper clean.destdir \
@@ -57,21 +57,22 @@ $(QT_DIR)/compiled: $(QT_DIR)/configured
 		$(MAKE) \
 		&& touch "$@"
 
+# needs to be debug-and-release build because 5.0.1 does not install header
+# files otherwise. Is of no consequence for release builds because it's a
+# combined release/debug build where the release version of frameworks is used
+# by default.
 $(QT_DIR)/configured: $(QT_DIR)/patched $(PGSQL_DIR)/installed
 	cd "$(QT_SOURCE_DIR)" && \
-		./configure -release \
+		./configure -debug-and-release \
 			-opensource -confirm-license \
-			-arch "x86" \
+			-platform macx-clang-libc++ \
+			-c++11 \
 			-sdk "$(SDK)" \
 			-qt-sql-odbc -qt-sql-psql \
 			-prefix "$(PREFIX)" \
-			-no-exceptions \
-			-no-qt3support \
 			-verbose \
-			-fast \
 			-nomake examples \
-			-nomake demos \
-			-nomake docs \
+			-nomake tests \
 			-I"$(PREFIX)"/include \
 			-L"$(PREFIX)"/lib \
 		&& touch "$@"
@@ -117,7 +118,7 @@ $(PGSQL_DIR)/compiled: $(PGSQL_DIR)/configured
 
 $(PGSQL_DIR)/configured: $(PGSQL_DIR)/patched
 	cd "$(PGSQL_SOURCE_DIR)" && \
-		CFLAGS="-arch i386 $(PGSQL_COMMON_CFLAGS)" \
+		CFLAGS="$(PGSQL_COMMON_CFLAGS)" \
 			LDFLAGS="$(PGSQL_COMMON_LDFLAGS)" \
 			./configure --prefix="$(PREFIX)" \
 				$(PGSQL_CONFIGURE_FLAGS) && \
