@@ -2,21 +2,10 @@ TEMPLATE = app
 CONFIG += warn_on qt uic
 # you have to explicitly recompile sctime.cpp whenever you change this value
 VERSION = 0.73.12
-# only build with precompiled headers on something that's not a Mac or with a
-# Qt installation that identifies itself as supporting precompiled headers with
-# universal binaries (which is a custom patch found in the extra/mac directory
-# and will therefore only be present with a custom built Qt)
-!mac|CONFIG(precompiled_headers_universal) {
-	# precompiled headers do not interact well with universal binary builds
-	# on the Mac:
-	# lipo: can't figure out the architecture type of: blah.out
-	# http://qt.gitorious.org/qt/qt/merge_requests/2193
-	# https://bugreports.qt-project.org/browse/QTBUG-2113
-	CONFIG += precompile_header
-	PRECOMPILED_HEADER = stable.h # grep -h "#include <Q" * */* | sort | uniq > stable.h
-}
+CONFIG += precompile_header
+PRECOMPILED_HEADER = stable.h # LANG=C LC_CTYPE=C grep -h "#include <Q" *{,/*}.{cpp,h} | sort | uniq > stable.h
 DEFINES += APP_VERSION=$$VERSION
-QT += xml gui core network sql
+QT += xml gui core network sql widgets
 TARGET = sctime
 CODECFORTR= UTF-8
 TRANSLATIONS = sctime_de.ts
@@ -131,11 +120,10 @@ irix-cc{
   QMAKE_LIBS_QT += -lGL
 }
 mac {
-  # with Qt-4.8.0 icon and Info.plist rules do not work with out-of-source
+  # with Qt-5.0 icon and Info.plist rules still do not work with out-of-source
   # builds. try again later... sctime-mac-dist does this for now
   #ICON = $$PWD/../pics/scTime.icns
   #QMAKE_INFO_PLIST = $$PWD/../extra/mac/Info.plist
   TARGET = scTime
-  QMAKE_MAC_SDK = /Developer/SDKs/MacOSX10.5.sdk
-  CONFIG += x86
+  QMAKE_MAC_SDK = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
 }

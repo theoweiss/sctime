@@ -33,6 +33,8 @@
 #include <QTreeWidgetItem>
 #include <QTextStream>
 #include <QToolTip>
+#include <QMimeData>
+#include <QDrag>
 
 #include "timecounter.h"
 #include "globals.h"
@@ -74,7 +76,7 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
   setContextMenuPolicy(Qt::CustomContextMenu);
 
 
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   setSelectionMode(QTreeWidget::NoSelection);
 #else
   /* On Mac OS X with NoSelection the TreeView gives no visual feedback, what
@@ -171,7 +173,7 @@ void KontoTreeView::dropEvent(QDropEvent *event)
     int idx;
 
     QString data;
-    data=data.fromLocal8Bit(event->encodedData(MIMETYPE_ACCOUNT));
+    data=data.fromLocal8Bit(event->mimeData()->data(MIMETYPE_ACCOUNT));
     QStringList datlist=data.split("|");
 
     UnterKontoEintrag eintrag;

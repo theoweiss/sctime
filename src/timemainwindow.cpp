@@ -119,7 +119,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   kontoTree=new KontoTreeView( this, abtList, columnwidthlist );
   kontoTree->closeFlaggedPersoenlicheItems();
   kontoTree->showPersoenlicheKontenSummenzeit(settings->persoenlicheKontensumme());
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
   setWindowIcon(QIcon(":/window_icon"));
 #endif
 
@@ -212,6 +212,11 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   QAction* preferenceAction = new QAction(tr("&Settings..."),this);
   preferenceAction->setMenuRole(QAction::PreferencesRole);
   connect(preferenceAction, SIGNAL(triggered()), this, SLOT(callPreferenceDialog()));
+#if defined(Q_OS_MAC) && QT_VERSION >= 0x050000
+  /* ugly workaround: Qt 5.0 does not automatically hide the menu emptied by
+   * merging the actions into the system menu */
+  settingsmenu->menuAction()->setVisible(false);
+#endif:
 
   QAction* helpAction = new QAction(tr("&Manual..."), this);
   helpAction->setShortcut(Qt::Key_F1);
@@ -770,7 +775,7 @@ void TimeMainWindow::checkLock() {
 }
 
 void TimeMainWindow::quit() {
-  _exit(1);
+  exit(1);
 }
 
 /**

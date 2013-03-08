@@ -59,7 +59,7 @@ PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent
     fontPreview->header()->resizeSection(0, 200);
     fontPreview->expandAll();
     fontPreview->topLevelItem(1)->child(0)->child(0)->setSelected(true);
-#ifndef Q_WS_MAC
+#ifndef Q_OS_MAC
     fontPreview->setSelectionMode(QTreeWidget::NoSelection);
 #else
     /* On Mac OS X with NoSelection the TreeView gives no visual feedback, what

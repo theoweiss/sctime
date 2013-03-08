@@ -65,7 +65,7 @@ void DateDialog::dateChangedSlot(QDate date)
       bool ok;
       QDate filedate;
       int day=QString(*it).section('-',3,3).section('.',0,0).toInt(&ok);
-      if ((ok)&&filedate.setYMD(date.year(),date.month(),day)) {
+      if ((ok)&&filedate.setDate(date.year(),date.month(),day)) {
         QTextCharFormat dtf=datePicker->dateTable()->dateTextFormat(filedate);
         dtf.setForeground(QBrush(Qt::red));
         dtf.setBackground(QBrush(Qt::red));

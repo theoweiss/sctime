@@ -142,7 +142,10 @@ int main(int argc, char **argv ) {
   QTranslator sctimeTranslator;
   sctimeTranslator.load(":/translations/sctime");
   app.installTranslator(&sctimeTranslator);
+#if QT_VERSION < 0x050000
+  /* no longer necessary with Qt >= 5.0 */
   QTextCodec::setCodecForTr(QTextCodec::codecForName ("UTF-8"));
+#endif
 
   // necessary for XSM support
   app.setObjectName("sctime");
