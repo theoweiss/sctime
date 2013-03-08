@@ -216,7 +216,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   /* ugly workaround: Qt 5.0 does not automatically hide the menu emptied by
    * merging the actions into the system menu */
   settingsmenu->menuAction()->setVisible(false);
-#endif:
+#endif
 
   QAction* helpAction = new QAction(tr("&Manual..."), this);
   helpAction->setShortcut(Qt::Key_F1);
