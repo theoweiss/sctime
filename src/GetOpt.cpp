@@ -73,42 +73,6 @@
    \author froglogic GbR <contact@froglogic.com>
 */
 
-
-/**
-   Constructs a command line parser from the arguments stored in a
-   previously created QApplication instance.
-
-   Example usage:
-   \code
-   QApplication a(argc, argv);
-
-   GetOpt opt;
-   \endcode
-
-   This constructor is probably the most convenient one to use in a
-   regular Qt application. Note that QApplication may already have
-   removed Qt (or X11) specific arguments. Also see
-   QApplication::argv() and QApplication::argc().
- */
-GetOpt::GetOpt()
-{
-    if ( !qApp )
-        qFatal( "GetOpt: requires a QApplication instance to be constructed first" );
-
-    init( qApp->argc(), qApp->argv(), 1 );
-}
-
-/**
-   \internal
- */
-GetOpt::GetOpt( int offset )
-{
-    if ( !qApp )
-        qFatal( "GetOpt: requires a QApplication instance to be constructed first" );
-
-    init( qApp->argc(), qApp->argv(), offset );
-}
-
 /**
    Construct a command line parser from the array \a argv of string
    pointers with the size \a argc. Those parameters have the form
