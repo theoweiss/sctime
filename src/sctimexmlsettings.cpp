@@ -226,8 +226,6 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
                    abtList->setBgColor(str2color(elem2.attribute("color")),abteilungstr,kontostr);
               }
 
-              bool kontoPers=((abtList->getKontoFlags(abteilungstr,kontostr))&UK_PERSOENLICH);
-
               for( QDomNode node3 = elem2.firstChild(); !node3.isNull(); node3 = node3.nextSibling() ) {
                 QDomElement elem3 = node3.toElement();
                 if( !elem3.isNull() ) {

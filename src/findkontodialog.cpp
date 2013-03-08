@@ -127,6 +127,8 @@ void FindKontoDialog::createConnects()
 
 void FindKontoDialog::toggleButton(QTreeWidgetItem* current, QTreeWidgetItem* previous)
 {
+  (void)previous; // unused
+
   if( !current ) return;
   if( current->childCount() == 0 )
   {

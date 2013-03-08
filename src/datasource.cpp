@@ -115,7 +115,7 @@ bool CommandReader::read(DSResult* const result) {
   if (!file) {
     logError(QObject::tr("Cannot run command '%1': %s2").arg(command, strerror(errno)));
     broken = true;
-    return NULL;
+    return false;
   }
   trace(QObject::tr("Running command: ") + command);
   QTextStream ts(file, QIODevice::ReadOnly);

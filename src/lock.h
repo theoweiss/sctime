@@ -5,6 +5,7 @@
 
 class Lock {
 public:
+  virtual ~Lock();
   inline void setNext(Lock *val) { this->next = val; }
   inline QString errorString() const { return errStr; }
   bool acquire();

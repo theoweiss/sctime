@@ -33,6 +33,8 @@
 
 Lock::Lock():next(NULL), acquired(false) {}
 
+Lock::~Lock() {}
+
 bool Lock::acquire() {
   if (acquired) return true;
   if (!_acquire()) return false;

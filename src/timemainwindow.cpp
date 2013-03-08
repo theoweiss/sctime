@@ -89,7 +89,6 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   settings=new SCTimeXMLSettings();
   settings->readSettings(abtList);
 
-  this->zk = zk;
   settings->getDefaultCommentFiles(xmlfilelist);
   qtDefaultFont=QApplication::font();
   if (settings->useCustomFont())
@@ -489,6 +488,8 @@ void TimeMainWindow::copyNameToClipboard()
 
 void TimeMainWindow::mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int column)
 {
+    (void)column; //unused
+
     if ( (kontoTree->getCurrentButton() == Qt::LeftButton) &&(item)) {
 
         setAktivesProjekt(item);
@@ -1463,6 +1464,7 @@ void TimeMainWindow::checkComment(const QString& abt, const QString& ko , const 
 }
 
 void TimeMainWindow::moveEvent(QMoveEvent *event) {
+  (void)event; // unused
   settings->setMainWindowGeometry(pos(),size());
 }
 

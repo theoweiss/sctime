@@ -147,13 +147,9 @@ bool GetOpt::parse( bool untilFirstSwitchOnly )
     QLinkedList<QString> stack;
     {
         QStringList::const_iterator it = args.begin();
-        const QStringList::const_iterator begin = args.begin();
         const QStringList::const_iterator end = args.end();
         while ( it!=end ) {
             stack.append( *it );
-            //BugFix: Not all the args were read
-            //if (it == begin)
-            //    break;
             it++;
         }
     }

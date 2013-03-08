@@ -10,11 +10,13 @@ BereitschaftsModel::BereitschaftsModel()
 
 int BereitschaftsModel::rowCount ( const QModelIndex & parent) const
 {
+  (void)parent; //unused
   return m_activatedList.size();
 }
 
 int BereitschaftsModel::columnCount ( const QModelIndex & parent) const
 {
+  (void)parent; //unused
   return 1;
 }
 
@@ -65,6 +67,8 @@ bool BereitschaftsModel::setData ( const QModelIndex & index, const QVariant & v
 
 QVariant BereitschaftsModel::headerData (int section, Qt::Orientation orientation, int role) const
 {
+  (void)section; //unused
+
   switch (role) {
     case Qt::DisplayRole:
       switch(orientation)
@@ -81,6 +85,7 @@ QVariant BereitschaftsModel::headerData (int section, Qt::Orientation orientatio
 
 Qt::ItemFlags BereitschaftsModel::flags ( const QModelIndex & index ) const
 {
+  (void)index; //unused
   return Qt::ItemIsEnabled|Qt::ItemIsUserCheckable;
 }
 

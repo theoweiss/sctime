@@ -57,7 +57,6 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   eintragIndex=idx;
   settings=NULL;
 
-  parent = parent;
   UnterKontoEintrag et;
   EintragsListe::iterator etiter;
 
