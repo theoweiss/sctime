@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 builddir="$1"
 srcdir="$2"
@@ -10,67 +10,63 @@ appqtdir="$approot"/Contents/Resources/Qt
 patchqmake="$builddir"/patchqmake
 patchqtdir="Resources/Qt"
 
-# patch qt library paths in binary itself (not known to exist, but might)
-echo "Patching Qt resource paths in $sctime..."
-"$patchqmake" "$sctime" "$patchqtdir"
-[ "$?" = 0 -o "$?" = "5" ] || exit 1
+echo "Copying qt plugins into application bundle..."
+rm -rf "$appqtdir"/plugins && \
+	mkdir -p "$appqtdir" && \
+	cp -R "$qtdir"/plugins "$appqtdir"/plugins && \
+	rm -f "$appqtdir"/plugins/*/*_debug.dylib || \
+	exit 1
 
-otool -L "$sctime" | \
-		grep "^[[:space:]]\+.*/\(Qt\|libpq\).*(compatibility" | \
-		grep -v "@executable_path/" | \
-		sed "s, (compatibility .*$,," | \
-	while read lib ; do
+echo "Determining and copying library dependencies and patching binaries for relocation..."
+binaries=$(eval ls -1 "$sctime" \"$appqtdir\"/plugins/*/*.dylib)
+while [ -n "$binaries" ] ; do
+	echo "binaries: $binaries"
 
-	libbase=`echo "$lib" | sed "s,^.*/lib/,,"`
-	privatelib="$approot"/Contents/Frameworks/"$libbase"
+	newbinaries=""
+	sep=""
+	while read binary ; do
+		# patch qt library paths in binary itself (not known to exist, but might)
+		echo "Patching Qt resource paths in $binary"
+		"$patchqmake" "$binary" "$patchqtdir"
+		[ "$?" = 0 -o "$?" = "5" ] || exit 1
 
-	# path path to library in main binary
-	echo "Patching library paths in $sctime for $libbase..."
-	install_name_tool -change "$lib" @executable_path/../Frameworks/"$libbase" "$sctime" || \
-		exit 1
-
-	# done already
-	[ -f "$privatelib" ] && continue
-
-	tdir=`dirname "$privatelib"`
-	mkdir -p "$tdir" && \
-		cp "$lib" "$privatelib" || \
-		exit 1
-
-	# path qt library paths in this library
-	echo "Patching Qt resource paths in $privatelib..."
-	"$patchqmake" "$privatelib" "$patchqtdir"
-	[ "$?" = 0 -o "$?" = "5" ] || exit 1
-
-	# newer QtGui needs some resources :-(
-	dir=`dirname "$lib"`
-	if [ -d "$dir"/Resources -a ! -d "$tdir"/Resources ] ; then
-		cp -R "$dir"/Resources "$tdir"/Resources || exit 1
-		#ln -s 4 "$tdir"/../Current
-		ln -s Versions/4/Resources "$tdir"/../.. || exit 1
-	fi
-
-	# change install name of this library
-	echo "Patching library ID in $privatelib..."
-	install_name_tool -id @executable_path/../Frameworks/"$libbase" "$privatelib"
-
-	otool -L $privatelib | \
+		libs=$(otool -L "$binary" | \
 			grep "^[[:space:]]\+.*/\(Qt\|libpq\).*(compatibility" | \
 			grep -v "@executable_path/" | \
-			sed "s, (compatibility .*$,," | \
-		while read sublib ; do
+			sed "s, (compatibility .*$,,")
+		[ -n "$libs" ] || continue
+		while read lib ; do
+			libbase=`echo "$lib" | sed "s,^.*/lib/,,"`
+			privatelib="$approot"/Contents/Frameworks/"$libbase"
 
-		sublibbase=`echo "$sublib" | sed "s,^.*/lib/,,"`
+			# path path to library in main binary
+			echo "Patching library paths in $binary for $libbase..."
+			install_name_tool -change "$lib" @executable_path/../Frameworks/"$libbase" "$binary" || \
+				exit 1
 
-		# patch path to dependency library in this library
-		echo "Patching library path in $privatelib for $sublibbase..."
-		install_name_tool \
-			-change "$sublib" @executable_path/../Frameworks/"$sublibbase" \
-			"$privatelib" || exit 1
-	done
+			# done already
+			[ -f "$privatelib" ] && continue
+
+			echo "Copying $privatelib into application bundle..."
+			tdir=`dirname "$privatelib"`
+			mkdir -p "$tdir" && \
+				cp "$lib" "$privatelib" || \
+				exit 1
+
+			# change install name of this library
+			echo "Patching library ID in $privatelib..."
+			install_name_tool -id @executable_path/../Frameworks/"$libbase" "$privatelib"
+
+			newbinaries="$newbinaries$sep$privatelib"
+			sep="
+"
+		done <<< "$libs"
+	done <<< "$binaries"
+
+	binaries="$newbinaries"
 done
 
-# adjust version number and build date in Info.plist
+echo "Adjusting version number and build date in Info.plist..."
 version=`grep ^VERSION $srcdir/../../src/src.pro | cut -d" " -f3`
 date=`date +"%Y%m%d"`
 sed -e "s,@VERSION@,$version,g" \
@@ -81,25 +77,30 @@ sed -e "s,@VERSION@,$version,g" \
 	"$srcdir"/Info.plist \
 	>"$approot"/Contents/Info.plist || exit 1
 
+echo "Installing Icons into application bundle..."
 cp "$srcdir"/../../pics/scTime.icns "$approot"/Contents/Resources || \
 	exit 1
 
-# copy over translations
-mkdir -p "$appqtdir"/translations && \
+echo "Copying Qt translations into application bundle..."
+rm -rf "$appqtdir"/translations && \
+	mkdir -p "$appqtdir"/translations && \
 	cp -R "$qtdir"/translations/qt_*.qm "$appqtdir"/translations || \
 	exit 1
 
 # because we patch Qt paths to be relative, some funny logic seems to concat
 # the install prefix and translations path ending up with Resources/Qt in the
 # file name twice - do some symlinking for that - morons
+echo "Creating Resources/Qt workaround symlink..."
 ln -sfn .. "$appqtdir"/Resources || exit 1
 
 # clean up
+echo "Cleaning up..."
 chmod -R go+r $approot && \
 	chmod 755 $approot/Contents/MacOS/* && \
 	find $approot -name "*.bak" -exec rm -f {} \; || \
 	exit 1
 
+echo "Creating distribution dmg..."
 dmgdir="$builddir"/dmg
 dmgname=scTime-"$version"-"$date"
 rm -rf "$dmgdir" && \
@@ -109,5 +110,7 @@ rm -rf "$dmgdir" && \
 	hdiutil create "$dmgname".dmg -volname "$dmgname" -srcfolder dmg && \
 	rm -rf dmg || \
 	exit 1
+
+echo "Done."
 
 exit 0
