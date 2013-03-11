@@ -12,8 +12,8 @@ patchqtdir="Resources/Qt"
 
 echo "Copying qt plugins into application bundle..."
 rm -rf "$appqtdir"/plugins && \
-	mkdir -p "$appqtdir" && \
-	cp -R "$qtdir"/plugins "$appqtdir"/plugins && \
+	mkdir -p "$appqtdir"/plugins && \
+	cp -R "$qtdir"/plugins/{platforms,accessible} "$appqtdir"/plugins && \
 	rm -f "$appqtdir"/plugins/*/*_debug.dylib || \
 	exit 1
 
