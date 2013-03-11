@@ -120,8 +120,8 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
 }
 
 // returns the encoding that the user has chosen by his locale settings
-char* SCTimeXMLSettings::charmap() {
-#ifdef WIN32
+const char* SCTimeXMLSettings::charmap() {
+#if defined(WIN32) || defined(Q_OS_MAC)
     return "UTF-8";
 #else
     return nl_langinfo(CODESET); // has same result as the command "locale charmap"

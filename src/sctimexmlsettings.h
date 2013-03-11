@@ -223,7 +223,7 @@ public:
         return m_zeitKontenKommando;
     }
 
-    char* charmap();
+    const char* charmap();
 
     void setZeitKontenKommando(const QString& command)
     {
