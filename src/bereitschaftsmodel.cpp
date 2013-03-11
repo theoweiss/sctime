@@ -8,15 +8,13 @@ BereitschaftsModel::BereitschaftsModel()
     m_activatedList.append(false);
 }
 
-int BereitschaftsModel::rowCount ( const QModelIndex & parent) const
+int BereitschaftsModel::rowCount ( const QModelIndex & ) const
 {
-  (void)parent; //unused
   return m_activatedList.size();
 }
 
-int BereitschaftsModel::columnCount ( const QModelIndex & parent) const
+int BereitschaftsModel::columnCount ( const QModelIndex & ) const
 {
-  (void)parent; //unused
   return 1;
 }
 
@@ -65,10 +63,8 @@ bool BereitschaftsModel::setData ( const QModelIndex & index, const QVariant & v
  // return false;
 }
 
-QVariant BereitschaftsModel::headerData (int section, Qt::Orientation orientation, int role) const
+QVariant BereitschaftsModel::headerData (int, Qt::Orientation orientation, int role) const
 {
-  (void)section; //unused
-
   switch (role) {
     case Qt::DisplayRole:
       switch(orientation)
@@ -83,9 +79,8 @@ QVariant BereitschaftsModel::headerData (int section, Qt::Orientation orientatio
   }
 }
 
-Qt::ItemFlags BereitschaftsModel::flags ( const QModelIndex & index ) const
+Qt::ItemFlags BereitschaftsModel::flags ( const QModelIndex & ) const
 {
-  (void)index; //unused
   return Qt::ItemIsEnabled|Qt::ItemIsUserCheckable;
 }
 

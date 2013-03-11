@@ -486,10 +486,8 @@ void TimeMainWindow::copyNameToClipboard()
     cb->setText( kontoTree->currentItem()->text(0), QClipboard::Clipboard );
 }
 
-void TimeMainWindow::mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int column)
+void TimeMainWindow::mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int)
 {
-    (void)column; //unused
-
     if ( (kontoTree->getCurrentButton() == Qt::LeftButton) &&(item)) {
 
         setAktivesProjekt(item);
@@ -1463,8 +1461,7 @@ void TimeMainWindow::checkComment(const QString& abt, const QString& ko , const 
   }
 }
 
-void TimeMainWindow::moveEvent(QMoveEvent *event) {
-  (void)event; // unused
+void TimeMainWindow::moveEvent(QMoveEvent *) {
   settings->setMainWindowGeometry(pos(),size());
 }
 

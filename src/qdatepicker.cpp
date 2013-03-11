@@ -69,7 +69,7 @@ QDateValidator::fixup( QString& ) const
 }
 
 QDateInternalWeekSelector::QDateInternalWeekSelector
-(QWidget* parent, const char* name)
+(QWidget* parent, const char*)
   : QLineEdit(parent),
     val(new QIntValidator(this)),
     result(0)
@@ -143,19 +143,19 @@ void QDatePicker::fillWeeksCombo(const QDate &date)
     d->selectWeek->insertItem(i, QString(tr("Week %1")).arg(i));
 }
 
-QDatePicker::QDatePicker(QWidget *parent, QDate dt, const char *name)
+QDatePicker::QDatePicker(QWidget *parent, QDate dt, const char *)
   : QFrame(parent)
 {
   init( dt );
 }
 
-QDatePicker::QDatePicker(QWidget *parent, QDate dt, const char *name, Qt::WindowFlags f)
+QDatePicker::QDatePicker(QWidget *parent, QDate dt, const char *, Qt::WindowFlags f)
   : QFrame(parent, f)
 {
   init( dt );
 }
 
-QDatePicker::QDatePicker( QWidget *parent, const char *name )
+QDatePicker::QDatePicker( QWidget *parent, const char *)
   : QFrame(parent)
 {
   init( QDate::currentDate() );

@@ -125,10 +125,8 @@ void FindKontoDialog::createConnects()
   connect (valueChoose,  SIGNAL(editTextChanged ( const QString & )), this, SLOT(setSearchFocus()));
 }
 
-void FindKontoDialog::toggleButton(QTreeWidgetItem* current, QTreeWidgetItem* previous)
+void FindKontoDialog::toggleButton(QTreeWidgetItem* current, QTreeWidgetItem*)
 {
-  (void)previous; // unused
-
   if( !current ) return;
   if( current->childCount() == 0 )
   {
