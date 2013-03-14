@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 builddir="$1"
 srcdir="$2"
@@ -18,13 +18,15 @@ rm -rf "$appqtdir"/plugins && \
 	exit 1
 
 echo "Determining and copying library dependencies and patching binaries for relocation..."
-binaries=$(eval ls -1 "$sctime" \"$appqtdir\"/plugins/*/*.dylib)
+binaries=`ls -1 "$sctime" "$appqtdir"/plugins/*/*.dylib`
+IFS='
+'
 while [ -n "$binaries" ] ; do
 	echo "binaries: $binaries"
 
 	newbinaries=""
 	sep=""
-	while read binary ; do
+	for binary in $binaries ; do
 		# patch qt library paths in binary itself (not known to exist, but might)
 		echo "Patching Qt resource paths in $binary"
 		"$patchqmake" "$binary" "$patchqtdir"
@@ -33,9 +35,10 @@ while [ -n "$binaries" ] ; do
 		libs=$(otool -L "$binary" | \
 			grep "^[[:space:]]\+.*/\(Qt\|libpq\).*(compatibility" | \
 			grep -v "@executable_path/" | \
-			sed "s, (compatibility .*$,,")
+			sed -e "s, (compatibility .*$,," \
+				-e "s,^[ 	]*,,")
 		[ -n "$libs" ] || continue
-		while read lib ; do
+		for lib in $libs ; do
 			libbase=`echo "$lib" | sed "s,^.*/lib/,,"`
 			privatelib="$approot"/Contents/Frameworks/"$libbase"
 
@@ -60,8 +63,8 @@ while [ -n "$binaries" ] ; do
 			newbinaries="$newbinaries$sep$privatelib"
 			sep="
 "
-		done <<< "$libs"
-	done <<< "$binaries"
+		done
+	done
 
 	binaries="$newbinaries"
 done
