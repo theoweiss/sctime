@@ -234,6 +234,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   connect(logAction, SIGNAL(triggered()), this, SLOT(logDialog()));
 
   editUnterKontoAction = new QAction(QIcon(":/hi22_action_edit" ), tr("&Edit..."), this);
+  editUnterKontoAction->setShortcut(Qt::Key_Return);
   editUnterKontoAction->setStatusTip(tr("Edit subaccount"));
   connect(editUnterKontoAction, SIGNAL(triggered()), this, SLOT(editUnterKontoPressed()));
 
@@ -243,6 +244,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
 
   QAction* eintragAddAction = new QAction(QIcon(":/hi22_action_queue" ),
                                              tr("Add &entry"), this);
+  eintragAddAction->setShortcut(Qt::CTRL+Qt::Key_Plus);
   connect(eintragAddAction, SIGNAL(triggered()), this, SLOT(eintragHinzufuegen()));
 
   eintragRemoveAction = new QAction(tr("&Delete entry"), this);
@@ -255,7 +257,9 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   connect(bereitschaftsAction, SIGNAL(triggered()), this, SLOT(editBereitschaftPressed()));
 
   bgColorChooseAction = new QAction(tr("Choose &background colour..."), this);
+  bgColorChooseAction->setShortcut(Qt::CTRL+Qt::Key_G);
   bgColorRemoveAction = new QAction(tr("&Remove background colour"), this);
+  bgColorRemoveAction->setShortcut(Qt::CTRL+Qt::Key_K);
 
   jumpAction = new QAction(tr("&Show selected account in 'all accounts'"), this);
 
