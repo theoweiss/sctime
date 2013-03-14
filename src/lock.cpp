@@ -128,6 +128,11 @@ bool Lockfile::_acquire() {
 #else
     fd = open(path.toLocal8Bit(), O_WRONLY | O_CREAT | O_EXCL, 0644);
 #endif
+
+    // save current hostname to put into lock file and later compare its
+    // content against
+    hostname = QHostInfo::localHostName();
+
     if (fd != -1 || errno != EEXIST) break;
       QFile f(path);
       if (f.open(QIODevice::ReadOnly)) {
@@ -135,9 +140,8 @@ bool Lockfile::_acquire() {
         QString line = in.readLine();
         if (!line.isEmpty()) {
           if (localExclusionProvided) {
-	    QString host(QHostInfo::localHostName());
             QStringList words = line.split(" ");
-            if (words.size() >= 1 && words[0].compare(host) == 0)
+            if (words.size() >= 1 && words[0].compare(hostname) == 0)
               return true; // Das Lockfile stammt von einem Absturz auf diesem Rechner. Wir übernehmen es.
           }
           errStr = QObject::tr("This Program is already running on another machine (%1: %2).\n").arg(path, line);
@@ -158,23 +162,33 @@ bool Lockfile::_acquire() {
     return false;
   }
   // Konnte das Lockfile anlegen
-  QFile f(path);
-  bool rv;
-  if (!f.open(fd, QFile::WriteOnly)) {
-      errStr = QObject::tr("lock file %1 could not be opened: %1").arg(path, f.errorString());
-      rv = false;
-  } else {
-    QTextStream out(&f);
-    out << QHostInfo::localHostName();
-    rv = true;
-    f.close();
-  }
+  bool rv = _update(fd);
 #ifdef WIN32
   _close(fd);
 #else
   close(fd);
 #endif
   return rv;
+}
+
+bool Lockfile::_update(const int fd = -1) {
+  QFile f(path);
+  bool rc = false;
+  if (fd == -1)
+    rc = f.open(QFile::WriteOnly);
+  else
+    rc = f.open(fd, QFile::WriteOnly);
+
+  if (!rc) {
+    errStr = QObject::tr("lock file %1 could not be opened for update: %1").arg(path, f.errorString());
+    return false;
+  }
+
+  QTextStream out(&f);
+  out << hostname;
+  f.close();
+
+  return true;
 }
 
 bool Lockfile::_release() {
@@ -189,10 +203,22 @@ bool Lockfile::_check() {
   if (f.open(QIODevice::ReadOnly)) {
     QTextStream in(&f);
     QString line = in.readLine();
-    if (line.compare(QHostInfo::localHostName()) == 0)  return true;
+    if (line.compare(hostname) == 0) {
+      // the lock file still contains what we wrote into it (our hostname at
+      // the time)
+
+      if (hostname.compare(QHostInfo::localHostName()) != 0) {
+        // our hostname has changed since we last looked at the lock file -
+        // update its contents
+        hostname = QHostInfo::localHostName();
+        return _update();
+      }
+
+      return true;
+    }
     errStr = QObject::tr("lock file %1 has been changed by someone else: %2").arg(path, line);
   }
   else
     errStr = QObject::tr("lock file %1 has been deleted by someone else.").arg(path);
-return false;
+  return false;
 }

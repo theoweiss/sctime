@@ -47,4 +47,7 @@ public:
   virtual bool _check();
   const QString path;
   const bool localExclusionProvided;
+private:
+  bool _update(const int);
+  QString hostname;
 };
