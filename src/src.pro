@@ -125,5 +125,5 @@ mac {
   #ICON = $$PWD/../pics/scTime.icns
   #QMAKE_INFO_PLIST = $$PWD/../extra/mac/Info.plist
   TARGET = scTime
-  QMAKE_MAC_SDK = /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.7.sdk
+  QMAKE_MAC_SDK = macosx10.7
 }
