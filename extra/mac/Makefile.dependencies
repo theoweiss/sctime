@@ -8,10 +8,10 @@ CURL_OPTS=-L
 
 PREFIX=$(BUILD_DIR)/deps
 
-SDK=macosx10.8
-SDK_PATH=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.8.sdk
+SDK=macosx10.9
+SDK_PATH=$(shell xcrun --sdk $(SDK) --show-sdk-path)
 
-QT_MINOR=5.2
+QT_MINOR=5.4
 QT_VER=$(QT_MINOR).1
 QT_BN=qt-everywhere-opensource-src-$(QT_VER)
 QT_SOURCE_FILE=$(QT_BN).tar.gz
@@ -20,15 +20,15 @@ QT_DIR=$(BUILD_DIR)/qt
 QT_SOURCE=$(QT_DIR)/$(QT_SOURCE_FILE)
 QT_SOURCE_DIR=$(QT_DIR)/$(QT_BN)
 
-PGSQL_VER=9.3.4
+PGSQL_VER=9.4.1
 PGSQL_BN=postgresql-$(PGSQL_VER)
 PGSQL_SOURCE_FILE=$(PGSQL_BN).tar.bz2
 PGSQL_URL=http://ftp.postgresql.org/pub/source/v$(PGSQL_VER)/$(PGSQL_SOURCE_FILE)
 PGSQL_DIR=$(BUILD_DIR)/postgres
 PGSQL_SOURCE=$(PGSQL_DIR)/$(PGSQL_SOURCE_FILE)
 PGSQL_SOURCE_DIR=$(PGSQL_DIR)/$(PGSQL_BN)
-PGSQL_COMMON_CFLAGS=-isysroot $(SDK_PATH) -mmacosx-version-min=10.8
-PGSQL_COMMON_LDFLAGS=-Wl,-syslibroot,$(SDK_PATH) -mmacosx-version-min=10.8
+PGSQL_COMMON_CFLAGS=-isysroot $(SDK_PATH) -mmacosx-version-min=10.9
+PGSQL_COMMON_LDFLAGS=-Wl,-syslibroot,$(SDK_PATH) -mmacosx-version-min=10.9
 PGSQL_CONFIGURE_FLAGS=--with-openssl --without-perl --without-python --without-tcl --without-bonjour --without-pam --with-krb5 --without-libxml
 
 .PHONY: all clean mrproper clean.destdir \
@@ -57,18 +57,15 @@ $(QT_DIR)/compiled: $(QT_DIR)/configured
 		$(MAKE) \
 		&& touch "$@"
 
-# needs to be debug-and-release build because 5.0.1 does not install header
-# files otherwise. Is of no consequence for release builds because it's a
-# combined release/debug build where the release version of frameworks is used
-# by default.
 $(QT_DIR)/configured: $(QT_DIR)/patched $(PGSQL_DIR)/installed
 	cd "$(QT_SOURCE_DIR)" && \
-		./configure -debug-and-release \
+		./configure -release \
 			-opensource -confirm-license \
 			-sdk "$(SDK)" \
-			-qt-sql-odbc -qt-sql-psql \
+			-qt-sql-psql \
 			-prefix "$(PREFIX)" \
 			-verbose \
+			-skip qtwebkit \
 			-nomake examples \
 			-nomake tests \
 			-I"$(PREFIX)"/include \
@@ -86,7 +83,7 @@ $(QT_DIR)/patched: $(QT_DIR)/unpacked
 $(QT_DIR)/unpacked: $(QT_DIR)/downloaded
 	cd "$(QT_DIR)" && \
 		rm -rf "$(QT_SOURCE_DIR)" && \
-		gnutar -xzf "$(QT_SOURCE)" && \
+		tar -xzf "$(QT_SOURCE)" && \
 		touch "$@"
 
 $(QT_DIR)/downloaded:
@@ -133,7 +130,7 @@ $(PGSQL_DIR)/patched: $(PGSQL_DIR)/unpacked
 $(PGSQL_DIR)/unpacked: $(PGSQL_DIR)/downloaded
 	cd "$(PGSQL_DIR)" && \
 		rm -rf "$(PGSQL_SOURCE_DIR)" && \
-		gnutar -xjf "$(PGSQL_SOURCE)" && \
+		tar -xjf "$(PGSQL_SOURCE)" && \
 		touch "$@"
 
 $(PGSQL_DIR)/downloaded:
