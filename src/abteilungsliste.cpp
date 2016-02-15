@@ -846,8 +846,9 @@ void AbteilungsListe::reload(const DSResult &data) {
     addOnce(verantwortlicher, ql[4]);
     addOnce(verantwortlicher, ql[8]);
     addOnce(verantwortlicher, ql[9]);
+    QString pspstr = ql[13];
     insertEintrag(abt,konto,unterkonto);
-    setDescription(abt,konto,unterkonto,DescData(beschreibung ,verantwortlicher, typ));
+    setDescription(abt,konto,unterkonto,DescData(beschreibung ,verantwortlicher, typ, pspstr));
     setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
     // Do not simplify comment to preserve intentional whitespace.
     QString commentstr = ql[12];
@@ -858,6 +859,7 @@ void AbteilungsListe::reload(const DSResult &data) {
       if (findUnterKonto(itUk,ukl,abt,konto,unterkonto))
         itUk->second.addDefaultComment(commentstr);
     }
+ 
   }
 }
 

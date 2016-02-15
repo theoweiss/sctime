@@ -59,6 +59,7 @@ public:
       unterKontoWindowPosition = QPoint(0,0);
       unterKontoWindowSize = QSize(10,10);
       m_showTypeColumn=false;
+      m_showPSPColumn=false;
       m_useCustomFont=false;
       m_dragNDrop=true;
       m_customFont="helvetica";
@@ -207,6 +208,16 @@ public:
     {
       m_showTypeColumn=showTypeColumn;
     }
+    
+    bool showPSPColumn()
+    {
+      return m_showPSPColumn;
+    }
+
+    void setShowPSPColumn(bool showPSPColumn)
+    {
+      m_showPSPColumn=showPSPColumn;
+    }
 
     bool dragNDrop()
     {
@@ -264,6 +275,7 @@ public:
     bool m_dragNDrop;
     bool m_useCustomFont;
     bool m_showTypeColumn;
+    bool m_showPSPColumn;
     bool m_persoenlicheKontensumme;
     int m_maxWorkingTime;
     QString m_customFont;

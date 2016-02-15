@@ -39,45 +39,31 @@ KontoTreeItem::KontoTreeItem ( QTreeWidgetItem * parent ): QTreeWidgetItem(paren
   setGray();
 }
 
-KontoTreeItem::KontoTreeItem ( QTreeWidget * parent, QString label1, QString label2, QString label3, QString label4, QString label5, QString label6, QString label7, QString label8)
+KontoTreeItem::KontoTreeItem ( QTreeWidget * parent, QString accountname) 
      :QTreeWidgetItem(parent,0)
 {
   isBold=false;
   setGray();
   m_bgColor=Qt::white;
 
-  this->setText(0, label1);
-  this->setText(1, label2);
-  this->setText(2, label3);
-  this->setText(3, label4);
-  this->setText(4, label5);
-  this->setText(5, label6);
-  this->setText(6, label7);
-  this->setText(7, label8);
+  this->setText(COL_ACCOUNTS, accountname);
 }
 
 
-KontoTreeItem::KontoTreeItem ( QTreeWidgetItem * parent, QString label1, QString label2, QString label3, QString label4, QString label5, QString label6, QString label7, QString label8 )
+KontoTreeItem::KontoTreeItem ( QTreeWidgetItem * parent, QString accountname) 
     :QTreeWidgetItem(parent)
 {
   isBold=false;
   setGray();
   m_bgColor=Qt::white;
 
-  this->setText(0, label1);
-  this->setText(1, label2);
-  this->setText(2, label3);
-  this->setText(3, label4);
-  this->setText(4, label5);
-  this->setText(5, label6);
-  this->setText(6, label7);
-  this->setText(7, label8);
+  this->setText(COL_ACCOUNTS, accountname);
 }
 
 void KontoTreeItem::setBold(bool bold)
 {
   isBold=bold;
-  QFont f = font(0);
+  QFont f = font(COL_ACCOUNTS);
 
   if( bold )
   {
@@ -88,14 +74,14 @@ void KontoTreeItem::setBold(bool bold)
     f.setWeight(QFont::Normal);
   }
 
-  setFont(0, f);
+  setFont(COL_ACCOUNTS, f);
 }
 
 void KontoTreeItem::setGray()
 {
   std::vector<int> columns;
-  columns.push_back(3);
-  columns.push_back(4);
+  columns.push_back(COL_TIME);
+  columns.push_back(COL_ACCOUNTABLE);
   QBrush brush;
   for(unsigned int i=0; i<columns.size(); i++)
   {
@@ -117,7 +103,7 @@ void KontoTreeItem::setBgColor(const QColor bgColor)
 {
   if (bgColor!=m_bgColor) {
     m_bgColor = bgColor;
-    for( int i=0; i<6; i++ )
+    for( int i=0; i<NUM_COLUMNS; i++ )
     {
       setBackgroundColor(i, bgColor);
     }

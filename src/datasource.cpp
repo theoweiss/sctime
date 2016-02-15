@@ -60,7 +60,7 @@ static bool readFile(DSResult* const result, QTextStream &ts, const QString& sep
     QStringList vl;
     int start = 0;
     // Der Separator soll in der letzten Spalte als einfaches Zeichen behandelt werden soll.
-    // Dafür gibt es keine Methode in QString. Deswegen hier per Hand:
+    // Dafuer gibt es keine Methode in QString. Deswegen hier per Hand:
     for (int i = 0; i < columns - 1; i++) {
       int end = l.indexOf(sep, start);
       if (end == -1) {
@@ -70,7 +70,7 @@ static bool readFile(DSResult* const result, QTextStream &ts, const QString& sep
       vl << l.mid(start, end - start);
       start = end + sep.length();
     }
-    vl << l.mid(start); // das letzte Element enthält den ganzen Rest
+    vl << l.mid(start); // das letzte Element enthaelt den ganzen Rest
     result->append(vl);
   }
   return true;

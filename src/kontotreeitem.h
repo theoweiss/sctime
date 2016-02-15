@@ -32,14 +32,16 @@ class QString;
 class KontoTreeItem: public QTreeWidgetItem
 {
   public:
+    enum Columns { COL_ACCOUNTS, COL_TYPE, COL_PSP, COL_ACTIVE, COL_TIME, COL_ACCOUNTABLE, COL_COMMENT };
+    const static int NUM_COLUMNS=7;
 
     KontoTreeItem ( QTreeWidget * parent );
     KontoTreeItem ( QTreeWidgetItem * parent );
 
 
-    KontoTreeItem ( QTreeWidget * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );
+    KontoTreeItem ( QTreeWidget * parent, QString accountname); 
 
-    KontoTreeItem ( QTreeWidgetItem * parent, QString label1, QString label2 = QString::null, QString label3 = QString::null, QString label4 = QString::null, QString label5 = QString::null, QString label6 = QString::null, QString label7 = QString::null, QString label8 = QString::null );
+    KontoTreeItem ( QTreeWidgetItem * parent, QString accountname); 
 
     void setBold(bool bold);
 

@@ -52,6 +52,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="showPSPCheckBox">
+        <property name="text">
+         <string>Show PSP element number</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="dragNDropCheckbox">
         <property name="text">
          <string>Activate drag 'n' drop</string>

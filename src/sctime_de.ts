@@ -142,6 +142,11 @@
         <translation>Kontotyp anzeigen</translation>
     </message>
     <message>
+        <location filename="preferencedialogbase.ui" line="50"/>
+        <source>Show PSP element number</source>
+        <translation>PSP Element anzeigen</translation>
+    </message>
+    <message>
         <location filename="preferencedialogbase.ui" line="57"/>
         <source>Activate drag &apos;n&apos; drop</source>
         <translation>Drag &apos;n&apos; drop aktivieren</translation>

@@ -125,7 +125,10 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   setCentralWidget(kontoTree);
 
   if (!settings->showTypeColumn()) {
-    kontoTree->hideColumn(1);
+    kontoTree->hideColumn(KontoTreeItem::COL_TYPE);
+  }
+  if (!settings->showPSPColumn()) {
+    kontoTree->hideColumn(KontoTreeItem::COL_PSP);
   }
 
   toolBar   = new QToolBar(tr("Main toolbar"), this);
@@ -487,7 +490,7 @@ void TimeMainWindow::zeitKorrektur(int delta) {
 void TimeMainWindow::copyNameToClipboard()
  {
     QClipboard *cb = QApplication::clipboard();
-    cb->setText( kontoTree->currentItem()->text(0), QClipboard::Clipboard );
+    cb->setText( kontoTree->currentItem()->text(KontoTreeItem::COL_ACCOUNTS), QClipboard::Clipboard );
 }
 
 void TimeMainWindow::mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int)
@@ -863,7 +866,7 @@ void TimeMainWindow::eintragEntfernen()
   int etiCurrent = 0;
   if (kontoTree->sucheItem(top,abt,ko,uko,idx,topi,abti,koi,ukoi,eti)) {
       for (eti=(KontoTreeItem*)(ukoi->child(0));
-           (eti!=NULL)&&(eti->text(0).toInt()<=idx);
+           (eti!=NULL)&&(eti->text(KontoTreeItem::COL_ACCOUNTS).toInt()<=idx);
            eti=(KontoTreeItem*)(eti->child(etiCurrent+=1))) ;
       if (eti!=NULL)
           kontoTree->setCurrentItem(eti);
@@ -1187,6 +1190,7 @@ void TimeMainWindow::openItem( QTreeWidgetItem *item )
 void TimeMainWindow::callPreferenceDialog()
 {
   bool oldshowtypecolumn = settings->showTypeColumn();
+  bool oldshowpspcolumn = settings->showPSPColumn();
 
   /* FIXME: no idea, why we need to do that, but otherwise QLabels and
    * QPushButtons in the preference dialog won't use the custom font (at least
@@ -1212,12 +1216,21 @@ void TimeMainWindow::callPreferenceDialog()
   }
   kontoTree->showPersoenlicheKontenSummenzeit(settings->persoenlicheKontensumme());
   if (!settings->showTypeColumn()) {
-    kontoTree->hideColumn(1);
+    kontoTree->hideColumn(KontoTreeItem::COL_TYPE);
   } else
   {
     if (!oldshowtypecolumn)
-      kontoTree->showColumn( 1 );
-      kontoTree->resizeColumnToContents( 1 );
+      kontoTree->showColumn(KontoTreeItem::COL_TYPE);
+      kontoTree->resizeColumnToContents(KontoTreeItem::COL_TYPE);
+
+  }
+  if (!settings->showPSPColumn()) {
+    kontoTree->hideColumn(KontoTreeItem::COL_PSP);
+  } else
+  {
+    if (!oldshowpspcolumn)
+      kontoTree->showColumn(KontoTreeItem::COL_PSP);
+      kontoTree->resizeColumnToContents(KontoTreeItem::COL_PSP);
 
   }
   //Needed if "Summe in pers. Konten" is (de-)selected
@@ -1250,9 +1263,9 @@ void TimeMainWindow::setAktivesProjekt(QTreeWidgetItem * item)
   kontoTree->refreshItem(oldabt,oldko,olduk,oldidx);
   kontoTree->refreshItem(abt,ko,uko,idx);
   kontoTree->setCurrentItem(item);
-  if (item->text(1) == "tageweise abrechnen (kd)" && abtList->ukHatMehrereEintrage(abt, ko, uko, idx)) {
+  if (item->text(KontoTreeItem::COL_TYPE) == "tageweise abrechnen (kd)" && abtList->ukHatMehrereEintrage(abt, ko, uko, idx)) {
   //if (item->text(1) == "interne Projekte (ip)" && abtList->ukHatMehrereEintrage(abt, ko, uko, idx)) { // für Versuche
-      statusBar->showMessage(tr("Bitte nur einen Eintrag für Konten des Typs „%1”!").arg(item->text(1)), 10000);
+      statusBar->showMessage(tr("Bitte nur einen Eintrag für Konten des Typs „%1”!").arg(item->text(KontoTreeItem::COL_TYPE)), 10000);
       QApplication::beep();
   }
   updateCaption();

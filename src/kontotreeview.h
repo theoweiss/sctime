@@ -50,7 +50,8 @@ class KontoTreeView: public QTreeWidget
   Q_OBJECT
 
   public:
-      KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const std::vector<int>& columnwidth);
+    
+    KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const std::vector<int>& columnwidth);
 
     bool sucheItem(const QString& tops, const QString& abts, const QString& kos, const QString& ukos, int idx,
          KontoTreeItem* &topi, KontoTreeItem* &abti, KontoTreeItem* &koi, KontoTreeItem* &ukoi, KontoTreeItem* &eti);

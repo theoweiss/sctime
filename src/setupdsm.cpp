@@ -111,7 +111,7 @@ void setupDatasources(const QStringList& datasourceNames,
 #ifdef WIN32
       logError(QObject::tr("data source 'command' is not available on Windows"));
 #else
-      kontenDSM->sources.append(new CommandReader("zeitkonten --mikrokonten --separator='|'", "|", 13));
+      kontenDSM->sources.append(new CommandReader("zeitkonten --mikrokonten --psp --separator='|'", "|", 14));
       bereitDSM->sources.append(new CommandReader("zeitbereitls --separator='|'", "|", 2));
 #endif
     } else {
