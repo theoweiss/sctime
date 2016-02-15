@@ -95,7 +95,7 @@ class SctimeApp : public QApplication {
 public:
     SctimeApp(int &argc, char **argv):QApplication(argc, argv) {}
     virtual bool SctimeApp::winEventFilter(MSG * msg, long * result) {
-      if (msg->message == WM_POWERBROADCAST && mainWindow && msg->hwnd == mainWindow->winId()) {
+      if (msg->message == WM_POWERBROADCAST && mainWindow && msg->hwnd == (HWND)mainWindow->winId()) {
         if (msg->wParam == PBT_APMRESUMEAUTOMATIC)
             QMetaObject::invokeMethod(mainWindow, "resume", Qt::QueuedConnection);
         else if (msg->wParam == PBT_APMSUSPEND)
