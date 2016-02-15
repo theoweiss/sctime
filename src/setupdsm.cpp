@@ -35,7 +35,8 @@ QString kontenQuery(
   "   f_username(coalesce(u.stellvertreter, u.verantwortlich, konto.verantwortlich)), " // 9
   "   coalesce(unterkonto_art.name || ' (' || u.art || ')', u.art), "
   "   coalesce(u.beschreibung, '') || coalesce('; noch nicht abgerechnet: ' || (get_budget_saldo(u.unterkonto_id)::numeric(8,2)), ''), "
-  "   coalesce(uk.kommentar, '') " // 12
+  "   coalesce(uk.kommentar, ''), " // 12
+  "   coalesce(u.intercompany_id, '(keine PSP)') "
   "From "
   "  gb "
   "  join konto on (gb.gb_id = konto.gb_id) "
