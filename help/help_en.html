@@ -143,7 +143,7 @@ order they are listed on the command line.</p>
 
 <a name="datasource_command"><h4>Data source <tt>command</tt></h4></a>
 <p>The commands called to obtain all the required information are:
-<pre>zeitkonten --mikrokonten --separator='|'
+<pre>zeitkonten --mikrokonten --psp --separator='|'
 zeitbereitls --separator='|'</pre>
 These can not be configured at the moment.</p>
 
@@ -242,7 +242,7 @@ locations. Default paths for these files are <tt>~/.sctime/zeitkonten.txt</tt> a
 <tt>~/.sctime/zeitbereitls.txt</tt>. These can be generated (possibly on a
 different machine with access to the database) using the following commands:
 
-<p><tt>zeitkonten --mikrokonten --separator='|' &gt; zeitkonten.txt</tt></p>
+<p><tt>zeitkonten --mikrokonten --psp --separator='|' &gt; zeitkonten.txt</tt></p>
 <p><tt>zeitbereitls --separator='|' &gt; zeitbereitls.txt</tt></p>
 
 <p>If the files are to be provided at a different location, the following
