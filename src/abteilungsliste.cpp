@@ -846,12 +846,12 @@ void AbteilungsListe::reload(const DSResult &data) {
     addOnce(verantwortlicher, ql[4]);
     addOnce(verantwortlicher, ql[8]);
     addOnce(verantwortlicher, ql[9]);
-    QString pspstr = ql[13];
+    QString pspstr = ql[12].simplified();
     insertEintrag(abt,konto,unterkonto);
     setDescription(abt,konto,unterkonto,DescData(beschreibung ,verantwortlicher, typ, pspstr));
     setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
     // Do not simplify comment to preserve intentional whitespace.
-    QString commentstr = ql[12];
+    QString commentstr = ql[13];
     if (!commentstr.isEmpty()) {
       if (commentstr.endsWith(":")) commentstr.append(" ");
       UnterKontoListe::iterator itUk;

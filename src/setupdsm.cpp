@@ -35,8 +35,8 @@ QString kontenQuery(
   "   f_username(coalesce(u.stellvertreter, u.verantwortlich, konto.verantwortlich)), " // 9
   "   coalesce(unterkonto_art.name || ' (' || u.art || ')', u.art), "
   "   coalesce(u.beschreibung, '') || coalesce('; noch nicht abgerechnet: ' || (get_budget_saldo(u.unterkonto_id)::numeric(8,2)), ''), "
-  "   coalesce(uk.kommentar, ''), " // 12
-  "   coalesce(u.intercompany_id, '(keine PSP)') "
+  "   coalesce(u.intercompany_id, '(keine PSP)'), "
+  "   coalesce(uk.kommentar, '') " // 12
   "From "
   "  gb "
   "  join konto on (gb.gb_id = konto.gb_id) "
@@ -100,13 +100,13 @@ void setupDatasources(const QStringList& datasourceNames,
   bereitDSM = new DatasourceManager(QObject::tr("On-call categories"));
   trace(QObject::tr("available database drivers: %1.").arg(QSqlDatabase::drivers().join(", ")));
   if (!kontenPath.isEmpty())
-    kontenDSM->sources.append(new FileReader(kontenPath, "|", 13));
+    kontenDSM->sources.append(new FileReader(kontenPath, "|", 14));
   if (!bereitPath.isEmpty())
     bereitDSM->sources.append(new FileReader(bereitPath, "|", 2));
   QString dsname;
   foreach (dsname, datasourceNames) {
     if (dsname.compare("file") == 0) {
-      kontenDSM->sources.append(new FileReader(configDir.filePath("zeitkonten.txt"), "|", 13));
+      kontenDSM->sources.append(new FileReader(configDir.filePath("zeitkonten.txt"), "|", 14));
       bereitDSM->sources.append(new FileReader(configDir.filePath("zeitbereitls.txt"), "|", 2));
     } else if (dsname.compare("command") == 0) {
 #ifdef WIN32
