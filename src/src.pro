@@ -1,7 +1,7 @@
 TEMPLATE = app
 CONFIG += warn_on qt uic
 # you have to explicitly recompile sctime.cpp whenever you change this value
-VERSION = 0.73.12
+VERSION = 0.74.0
 CONFIG += precompile_header
 PRECOMPILED_HEADER = stable.h # LANG=C LC_CTYPE=C grep -h "#include <Q" *{,/*}.{cpp,h} | sort | uniq > stable.h
 DEFINES += APP_VERSION=$$VERSION
