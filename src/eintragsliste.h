@@ -59,7 +59,11 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
 
     void addDefaultComment(const QString& comment)
     {
-      defaultCommentList.append(comment);
+      // ignore duplicates
+      if (!defaultCommentList.contains(comment))
+      {
+         defaultCommentList.append(comment);
+      }
     }
 
     void clearDefaultCommentList()
