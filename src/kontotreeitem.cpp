@@ -27,14 +27,16 @@
 
 KontoTreeItem::KontoTreeItem ( QTreeWidget * parent ): QTreeWidgetItem(parent)
 {
-  isBold=false;
+  isBoldAccount=false;
+  isMicroAccount=false;
   m_bgColor=Qt::white;
   setGray();
 }
 
 KontoTreeItem::KontoTreeItem ( QTreeWidgetItem * parent ): QTreeWidgetItem(parent)
 {
-  isBold=false;
+  isBoldAccount=false;
+  isMicroAccount=false;
   m_bgColor=Qt::white;
   setGray();
 }
@@ -42,7 +44,8 @@ KontoTreeItem::KontoTreeItem ( QTreeWidgetItem * parent ): QTreeWidgetItem(paren
 KontoTreeItem::KontoTreeItem ( QTreeWidget * parent, QString accountname) 
      :QTreeWidgetItem(parent,0)
 {
-  isBold=false;
+  isBoldAccount=false;
+  isMicroAccount=false;
   setGray();
   m_bgColor=Qt::white;
 
@@ -53,16 +56,17 @@ KontoTreeItem::KontoTreeItem ( QTreeWidget * parent, QString accountname)
 KontoTreeItem::KontoTreeItem ( QTreeWidgetItem * parent, QString accountname) 
     :QTreeWidgetItem(parent)
 {
-  isBold=false;
+  isBoldAccount=false;
+  isMicroAccount=false;
   setGray();
   m_bgColor=Qt::white;
 
   this->setText(COL_ACCOUNTS, accountname);
 }
 
-void KontoTreeItem::setBold(bool bold)
+void KontoTreeItem::setBoldAccount(bool bold)
 {
-  isBold=bold;
+  isBoldAccount=bold;
   QFont f = font(COL_ACCOUNTS);
 
   if( bold )
@@ -75,6 +79,23 @@ void KontoTreeItem::setBold(bool bold)
   }
 
   setFont(COL_ACCOUNTS, f);
+}
+
+void KontoTreeItem::setMicroAccount(bool microaccount)
+{
+  isMicroAccount=microaccount;
+  QFont f = font(COL_ACCOUNTS);
+
+  if( microaccount )
+  {
+    f.setWeight(QFont::Bold);
+  }
+  else
+  {
+    f.setWeight(QFont::Normal);
+  }
+
+  setFont(COL_COMMENT, f);
 }
 
 void KontoTreeItem::setGray()

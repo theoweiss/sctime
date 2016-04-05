@@ -82,7 +82,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
     cancelbutton->setDefault(true);
   }
 
-  QStringList* defaultcomments = m_unterkonto->getDefaultCommentList();
+  QVector<DefaultComment>* defaultcomments = m_unterkonto->getDefaultCommentList();
 
   // seufz, leider treffen sich QCombobox und QLineedit erst auf QWidget-Ebene
   if (defaultcomments->empty()) {
@@ -94,7 +94,10 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
     commentcombo = new QComboBox(this);
     commentcombo->setEditable(true);
     //commentcombo->insertStringList(*defaultcomments); //Qt3
-    commentcombo->insertItems(0, *defaultcomments);
+    QVector<DefaultComment>::iterator dclIt;
+    for (dclIt = defaultcomments->begin(); dclIt != defaultcomments->end(); ++dclIt ) {
+       commentcombo->insertItem(0, dclIt->getText());
+    }
     commentcombo->insertItem(0,et.kommentar);
     commentcombo->setCurrentIndex(0);
     commentcombo->setEditable(!readOnly);

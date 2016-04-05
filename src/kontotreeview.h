@@ -33,6 +33,7 @@ class QTextStream;
 class QToolTip;
 class AbteilungsListe;
 class TimeCounter;
+class EintragsListe;
 
 extern QString PERSOENLICHE_KONTEN_STRING;
 extern QString ALLE_KONTEN_STRING;
@@ -107,6 +108,7 @@ class KontoTreeView: public QTreeWidget
 
 
   private:
+    void refreshComment(const QString& comment, KontoTreeItem* item, EintragsListe* etl);
     bool m_showPersoenlicheKontenSummenzeit;
     AbteilungsListe* abtList;
     QPoint dragStartPosition;

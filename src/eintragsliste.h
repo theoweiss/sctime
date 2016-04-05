@@ -27,7 +27,9 @@
 #include <map>
 #include <QStringList>
 #include <QColor>
+#include <QVector>
 #include "descdata.h"
+#include "defaultcomment.h"
 #include "unterkontoeintrag.h"
 
 typedef std::map<int,UnterKontoEintrag> Map_Int_UnterKontoEintrag; // Visual-C-Workaround
@@ -52,12 +54,21 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
       return descData;
     }
 
-    QStringList* getDefaultCommentList()
+    QVector<DefaultComment>* getDefaultCommentList()
     {
       return &defaultCommentList;
     }
 
-    void addDefaultComment(const QString& comment)
+    void addDefaultComment(const QString& text, bool microaccount=false)
+    {
+      // ignore duplicates
+      if (!defaultCommentList.contains(DefaultComment(text)))
+      {
+         defaultCommentList.append(DefaultComment(text,microaccount));
+      }
+    }
+    
+    void addDefaultComment(const DefaultComment& comment)
     {
       // ignore duplicates
       if (!defaultCommentList.contains(comment))
@@ -121,7 +132,7 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
 
   private:
     DescData descData;
-    QStringList defaultCommentList;
+    QVector<DefaultComment> defaultCommentList;
     QStringList bereitschaft;
     int flags;
     QColor m_bgColor;

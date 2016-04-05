@@ -81,11 +81,11 @@ AbteilungsListe::AbteilungsListe(const QDate _datum, AbteilungsListe* abtlist): 
         setUnterKontoFlags(abt,konto,unterkonto,eintragsliste->getFlags(),FLAG_MODE_OVERWRITE);
 
         // Default Kommentare kopieren
-        QStringList* dcl=eintragsliste->getDefaultCommentList();
+        QVector<DefaultComment>* dcl=eintragsliste->getDefaultCommentList();
         UnterKontoListe *unterkontoliste;
         UnterKontoListe::iterator itUk;
         findUnterKonto(itUk,unterkontoliste,abt,konto,unterkonto);
-        QStringList::iterator dclIt;
+        QVector<DefaultComment>::iterator dclIt;
         for (dclIt = dcl->begin(); dclIt != dcl->end(); ++dclIt )
           itUk->second.addDefaultComment(*dclIt);
       }
@@ -857,7 +857,7 @@ void AbteilungsListe::reload(const DSResult &data) {
       UnterKontoListe::iterator itUk;
       UnterKontoListe* ukl;
       if (findUnterKonto(itUk,ukl,abt,konto,unterkonto))
-        itUk->second.addDefaultComment(commentstr);
+        itUk->second.addDefaultComment(commentstr, true);
     }
  
   }

@@ -615,6 +615,25 @@ int firstEintragWithFlags(EintragsListe* etl, int flags)
   return -1;
 }
 
+void KontoTreeView::refreshComment(const QString& comment, KontoTreeItem* item, EintragsListe* etl)
+{
+   item->setText(KontoTreeItem::COL_COMMENT,comment);
+   if (comment.isEmpty())
+   {
+      item->setMicroAccount(false);
+      return;
+   }
+   QVector<DefaultComment>* defaultCommentList = etl->getDefaultCommentList();
+   QVector<DefaultComment>::iterator dclIt;
+   for (dclIt = defaultCommentList->begin(); dclIt != defaultCommentList->end(); ++dclIt ) {
+     if (comment.startsWith(dclIt->getText()))
+     {
+       item->setMicroAccount(true);
+       return;
+     }
+   }
+   item->setMicroAccount(false);
+}
 
 /**
  * Sorgt dafuer, dass die Darstellung des in abt,ko,uko uebergebenen Unterkontos aktualisiert,
@@ -660,7 +679,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
   koi->setBgColor(abtList->getBgColor(abt,ko));
   abti->setBgColor(abtList->getBgColor(abt));
 
-  ukoi->setBold((etl->getFlags())&UK_PERSOENLICH);
+  ukoi->setBoldAccount((etl->getFlags())&UK_PERSOENLICH);
   ukoi->setBgColor(abtList->getBgColor(abt,ko,uko));
   ukoi->setGray();
   if ((etl->getFlags()&IS_DISABLED)!=0)
@@ -695,6 +714,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
         ukoi->setText(KontoTreeItem::COL_TIME,"");
         ukoi->setText(KontoTreeItem::COL_ACCOUNTABLE,"");
         ukoi->setText(KontoTreeItem::COL_COMMENT,"");
+        ukoi->setMicroAccount(false);
         ukoi->setGray();
         //ukoi->setDragEnabled(false);
         //ukoi->setDropEnabled(false);
@@ -725,10 +745,12 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       else {
         ukoi->setIcon(KontoTreeItem::COL_ACTIVE,QIcon());
         ukoi->setText(KontoTreeItem::COL_COMMENT,"");
+        ukoi->setMicroAccount(false);
       }
     }
 
-    eti->setText(KontoTreeItem::COL_COMMENT,etiter->second.kommentar);
+    QString comment=etiter->second.kommentar;
+    refreshComment(comment,eti,etl);
     TimeCounter tc(etiter->second.sekunden), tcAbzur(etiter->second.sekundenAbzur);
     eti->setText(KontoTreeItem::COL_TYPE,dd.type());
     eti->setText(KontoTreeItem::COL_PSP,"");
@@ -740,7 +762,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
     eti->setBgColor(abtList->getBgColor(abt,ko,uko));
     //eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
 
-    eti->setBold((etiter->second.flags)&UK_PERSOENLICH);
+    eti->setBoldAccount((etiter->second.flags)&UK_PERSOENLICH);
 
     if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
       {
@@ -799,7 +821,8 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       eti->setText(KontoTreeItem::COL_ACTIVE, "");
       eti->setText(KontoTreeItem::COL_TIME,tc.toString());
       eti->setText(KontoTreeItem::COL_ACCOUNTABLE, tcAbzur.toString());
-      eti->setText(KontoTreeItem::COL_COMMENT,etiter->second.kommentar);
+      QString comment=etiter->second.kommentar;
+      refreshComment(comment,eti,etl);
       //eti->setDragEnabled(true);
       //eti->setDropEnabled(true);
       topi->setExpanded(true); abti->setExpanded(true); koi->setExpanded(true); ukoi->setExpanded(true);
@@ -844,6 +867,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
             ukoi->setText(KontoTreeItem::COL_TIME,"");
             ukoi->setText(KontoTreeItem::COL_ACCOUNTABLE,"");
             ukoi->setText(KontoTreeItem::COL_COMMENT,"");
+            ukoi->setMicroAccount(false);
             //ukoi->setDragEnabled(false);
             //ukoi->setDropEnabled(false);
         }
@@ -866,6 +890,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
         else {
           ukoi->setIcon(KontoTreeItem::COL_ACTIVE,QIcon());
           ukoi->setText(KontoTreeItem::COL_COMMENT,"");
+          ukoi->setMicroAccount(false);
         }
       }
 
@@ -873,7 +898,8 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
         eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_action_apply"));
       else
         eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon());
-      eti->setText(KontoTreeItem::COL_COMMENT,etiter->second.kommentar);
+      QString comment=etiter->second.kommentar;
+      refreshComment(comment,eti,etl);
       eti->setText(KontoTreeItem::COL_TYPE,dd.type());
       eti->setText(KontoTreeItem::COL_PSP,dd.pspElem());
       eti->setText(KontoTreeItem::COL_ACTIVE, "");

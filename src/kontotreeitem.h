@@ -43,7 +43,9 @@ class KontoTreeItem: public QTreeWidgetItem
 
     KontoTreeItem ( QTreeWidgetItem * parent, QString accountname); 
 
-    void setBold(bool bold);
+    void setBoldAccount(bool bold);
+    
+    void setMicroAccount(bool microaccount);
 
     void setGray();
 
@@ -57,7 +59,8 @@ class KontoTreeItem: public QTreeWidgetItem
     void paintEvent(QPaintEvent *event);
 
   private:
-    bool isBold;
+    bool isBoldAccount;
+    bool isMicroAccount;
     bool isGray;
     QColor m_bgColor;
 };
