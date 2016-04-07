@@ -576,11 +576,9 @@ bool KontoTreeView::eventFilter ( QObject* obj, QEvent * e )
             int idx;
             itemInfo(item,top,abt,ko,uko,idx);
             QString beschreibung=abtList->getDescription(abt,ko,uko).description().simplified();
-            if (beschreibung!="") {
-               QToolTip::showText(qh->globalPos(),beschreibung,this);
-                qh->accept();
-                return true;
-            }
+            QToolTip::showText(qh->globalPos(),beschreibung,this);
+            qh->accept();
+            return true;
         }
   }
   return QTreeWidget::eventFilter(obj,e);
