@@ -1095,6 +1095,21 @@ void TimeMainWindow::showContextMenu(const QPoint& pos)
    }
 }
 
+void TimeMainWindow::resizeToIfSensible(QDialog* dialog, const QPoint& pos, const QSize& size)
+{
+  if (size.isNull())
+  {
+    return;
+  }
+  QRect screenGeometry(QApplication::desktop()->screenGeometry());
+  QPoint pos2=QPoint(pos.x()+size.width(), pos.y()+size.height());
+  if (screenGeometry.contains(pos)&&screenGeometry.contains(pos2))
+  {
+    dialog->resize(size);
+    dialog->move(pos);
+  } 
+}
+
 /**
  * Erzeugt einen UnterkontoDialog fuer item.
  */
@@ -1127,10 +1142,7 @@ void TimeMainWindow::callUnterKontoDialog(QTreeWidgetItem * item)
   QPoint pos;
   QSize size;
   settings->getUnterKontoWindowGeometry(pos, size);
-  if( !size.isNull() ){
-    unterKontoDialog->resize(size);
-    unterKontoDialog->move(pos);
-  }
+  resizeToIfSensible(unterKontoDialog,pos,size);
   unterKontoDialog->exec();
 }
 

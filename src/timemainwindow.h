@@ -163,6 +163,7 @@ public:
     void updateTaskbarTitle(int zeit);
     void closeEvent(QCloseEvent * event);
     void refreshAfterColorChange(QString&, QString&, QString&);
+    void resizeToIfSensible(QDialog* dialog, const QPoint& pos, const QSize& size);
     KontoTreeView* kontoTree;
     UnterKontoDialog* unterKontoDialog;
     QAction* editUnterKontoAction;
