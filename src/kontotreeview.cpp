@@ -751,7 +751,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
     refreshComment(comment,eti,etl);
     TimeCounter tc(etiter->second.sekunden), tcAbzur(etiter->second.sekundenAbzur);
     eti->setText(KontoTreeItem::COL_TYPE,dd.type());
-    eti->setText(KontoTreeItem::COL_PSP,"");
+    eti->setText(KontoTreeItem::COL_PSP,dd.pspElem());
     eti->setText(KontoTreeItem::COL_TIME,tc.toString());
     eti->setText(KontoTreeItem::COL_ACCOUNTABLE,tcAbzur.toString());
     //eti->setDragEnabled(true);
