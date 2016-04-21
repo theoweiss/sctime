@@ -59,6 +59,13 @@
        </widget>
       </item>
       <item>
+       <widget class="QCheckBox" name="useDefaultCommentIfUniqueCheckBox">
+        <property name="text">
+         <string>Automatically use default comment if it is unique</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QCheckBox" name="dragNDropCheckbox">
         <property name="text">
          <string>Activate drag 'n' drop</string>

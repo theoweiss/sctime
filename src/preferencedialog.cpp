@@ -43,6 +43,7 @@ PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent
     singleClickCheckbox->setChecked(settings->singleClickActivation());
     showTypeCheckBox->setChecked(settings->showTypeColumn());
     showPSPCheckBox->setChecked(settings->showPSPColumn());
+    useDefaultCommentIfUniqueCheckBox->setChecked(settings->useDefaultCommentIfUnique());
     dragNDropCheckbox->setChecked(settings->dragNDrop());
     persoenlicheKontensummeCheckbox->setChecked(settings->persoenlicheKontensumme());
     customFontCheckBox->setChecked(settings->useCustomFont());
@@ -94,6 +95,7 @@ void PreferenceDialog::accept()
     settings->setSingleClickActivation(singleClickCheckbox->isChecked());
     settings->setShowTypeColumn(showTypeCheckBox->isChecked());
     settings->setShowPSPColumn(showPSPCheckBox->isChecked());
+    settings->setUseDefaultCommentIfUnique(useDefaultCommentIfUniqueCheckBox->isChecked());
     settings->setUseCustomFont(customFontCheckBox->isChecked());
     settings->setCustomFont(selectedFont.family());
     settings->setDragNDrop(dragNDropCheckbox->isChecked());

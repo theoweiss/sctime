@@ -405,6 +405,9 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             if (elem2.tagName()=="pspcolumn") {
               m_showPSPColumn=(elem2.attribute("show")=="yes");
             }
+            if (elem2.tagName()=="usedefaultcommentifunique") {
+              m_useDefaultCommentIfUnique=(elem2.attribute("on")=="yes");
+            }
             if (elem2.tagName()=="poweruserview") {
               setPowerUserView((elem2.attribute("on")=="yes"));
             }
@@ -569,6 +572,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     if (showPSPColumn()) on="yes";
     pspcolumntag.setAttribute("show",on);
     generaltag.appendChild(pspcolumntag);
+    
+    QDomElement usedefaultcommentifuniquetag = doc.createElement("usedefaultcommentifunique");
+    on="no";
+    if (useDefaultCommentIfUnique()) on="yes";
+    usedefaultcommentifuniquetag.setAttribute("on",on);
+    generaltag.appendChild(usedefaultcommentifuniquetag);
 
     if (useCustomFont()) {
         QDomElement customfonttag = doc.createElement("customfont");

@@ -44,11 +44,10 @@ class UnterKontoDialog: public QDialog
   public:
     UnterKontoDialog(const QString& abt,const  QString& ko, const  QString& uko, int idx,
                      AbteilungsListe* abtlist,  QStringList* taglist,
-                     bool connectZeiten, QMainWindow * parent=0, bool readOnly=false);
+                     bool connectZeiten, SCTimeXMLSettings* s, QMainWindow * parent=0, bool readOnly=false);
     ZeitBox* getZeitAbzurBox();
     ZeitBox* getZeitBox();
     QString getComment();
-    void setSettings(SCTimeXMLSettings* s);
   public slots:
     virtual void accept();
     virtual void checkInput();

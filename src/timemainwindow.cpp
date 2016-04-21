@@ -1124,8 +1124,7 @@ void TimeMainWindow::callUnterKontoDialog(QTreeWidgetItem * item)
 
   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
 
-  unterKontoDialog=new UnterKontoDialog(abt,ko,uko,idx,abtList,&defaultTags, true ,this, abtList->checkInState());
-  unterKontoDialog->setSettings(settings);
+  unterKontoDialog=new UnterKontoDialog(abt,ko,uko,idx,abtList,&defaultTags, true, settings, this, abtList->checkInState());
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int )), kontoTree,
   SLOT(refreshItem(const QString&, const QString&, const QString&,int )));
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int )), this,

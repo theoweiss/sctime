@@ -147,6 +147,11 @@
         <translation>PSP Element anzeigen</translation>
     </message>
     <message>
+        <location filename="preferencedialogbase.ui" line="50"/>
+        <source>Automatically use default comment if it is unique</source>
+        <translation>Default Kommentar automatisch verwenden, wenn eindeutig</translation>
+    </message>
+    <message>
         <location filename="preferencedialogbase.ui" line="57"/>
         <source>Activate drag &apos;n&apos; drop</source>
         <translation>Drag &apos;n&apos; drop aktivieren</translation>

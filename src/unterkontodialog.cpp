@@ -45,7 +45,7 @@
  */
 UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  QString& uko, int idx,
                                    AbteilungsListe* abtlist, QStringList* taglist,
-                                   bool connectZeiten, QMainWindow * parent, bool readOnly)
+                                   bool connectZeiten, SCTimeXMLSettings* s, QMainWindow * parent, bool readOnly)
                                    :QDialog(parent, Qt::Dialog)
 {
   setModal(true);
@@ -55,7 +55,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   kontoName=ko;
   abteilungsName=abt;
   eintragIndex=idx;
-  settings=NULL;
+  settings=s;
 
   UnterKontoEintrag et;
   EintragsListe::iterator etiter;
@@ -98,7 +98,10 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
     for (dclIt = defaultcomments->begin(); dclIt != defaultcomments->end(); ++dclIt ) {
        commentcombo->insertItem(0, dclIt->getText());
     }
-    commentcombo->insertItem(0,et.kommentar);
+    if (readOnly||!settings->useDefaultCommentIfUnique()||defaultcomments->size()!=1||!et.kommentar.isEmpty())
+    {
+        commentcombo->insertItem(0,et.kommentar);
+    }
     commentcombo->setCurrentIndex(0);
     commentcombo->setEditable(!readOnly);
   }
@@ -246,10 +249,6 @@ void UnterKontoDialog::accept()
   QDialog::accept();
 };
 
-void UnterKontoDialog::setSettings(SCTimeXMLSettings* s)
-{
-  settings = s;
-}
 
 void UnterKontoDialog::projektAktivierenButtonClicked()
 {

@@ -61,6 +61,7 @@ public:
       m_showTypeColumn=false;
       m_showPSPColumn=false;
       m_useCustomFont=false;
+      m_useDefaultCommentIfUnique=false;
       m_dragNDrop=true;
       m_customFont="helvetica";
       m_customFontSize=10;
@@ -218,6 +219,17 @@ public:
     {
       m_showPSPColumn=showPSPColumn;
     }
+    
+    bool useDefaultCommentIfUnique()
+    {
+      return m_useDefaultCommentIfUnique;
+    }
+
+    void setUseDefaultCommentIfUnique(bool useDefaultCommentIfUnique)
+    {
+      m_useDefaultCommentIfUnique=useDefaultCommentIfUnique;
+    }
+    
 
     bool dragNDrop()
     {
@@ -276,6 +288,7 @@ public:
     bool m_useCustomFont;
     bool m_showTypeColumn;
     bool m_showPSPColumn;
+    bool m_useDefaultCommentIfUnique;
     bool m_persoenlicheKontensumme;
     int m_maxWorkingTime;
     QString m_customFont;
