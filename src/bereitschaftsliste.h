@@ -13,7 +13,7 @@ struct BereitschaftsEintrag
 class BereitschaftsListe: public QList<BereitschaftsEintrag>
 {
 public:
-  void insertEintrag(QString bezeichnung, QString beschreibung);
+  void insertEintrag(const QString& bezeichnung, const QString& beschreibung);
   static BereitschaftsListe* getInstance();
 private:
   BereitschaftsListe() {};
