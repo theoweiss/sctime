@@ -1,6 +1,6 @@
 #include "bereitschaftsliste.h"
 
-void BereitschaftsListe::insertEintrag(QString bezeichnung, QString beschreibung)
+void BereitschaftsListe::insertEintrag(const QString& bezeichnung, const QString& beschreibung)
 {
    BereitschaftsEintrag eintrag;
    eintrag.bezeichnung=bezeichnung;
