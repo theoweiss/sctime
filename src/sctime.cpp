@@ -85,6 +85,8 @@ static const QString help(QObject::tr(
 "			(default: output of 'zeitkonten'.\n\n"
 "--bereitschaftsfile=FILE	read the 'Bereitschaftsarten'' from file FILE\n"
 "				(default: output of 'zeitbereitls'.\n\n"
+"--specialremunfile=FILE       read the types of special remunerations from file FILE\n"
+"                               (default: output of 'sonderzeitls'.\n\n"
 "Please see the Help menu for further information (F1)!"));
 
 static TimeMainWindow* mainWindow = 0;
@@ -158,13 +160,14 @@ int main(int argc, char **argv ) {
     QMessageBox::information(NULL, QObject::tr("sctime ") + qApp->applicationVersion(), help);
     exit(0);
   }
-  QString configdirstring, zeitkontenfile, bereitschaftsfile;
+  QString configdirstring, zeitkontenfile, bereitschaftsfile, specialremunfile;
   QStringList dataSourceNames;
 
   GetOpt opts(argc, argv);
   opts.addOption('f',"configdir", &configdirstring);
   opts.addOption('f',"zeitkontenfile", &zeitkontenfile);
   opts.addOption('f',"bereitschaftsfile", &bereitschaftsfile);
+  opts.addOption('f',"specialremunfile", &specialremunfile);
   opts.addRepeatableOption("datasource", &dataSourceNames);
   opts.parse();
 
@@ -206,7 +209,7 @@ int main(int argc, char **argv ) {
   SCTimeXMLSettings settings;
   settings.readSettings();
   if (dataSourceNames.isEmpty()) dataSourceNames = settings.backends.split(" ");
-  setupDatasources(dataSourceNames, settings, zeitkontenfile, bereitschaftsfile);
+  setupDatasources(dataSourceNames, settings, zeitkontenfile, bereitschaftsfile, specialremunfile);
   mainWindow = new TimeMainWindow();
 #ifndef WIN32
   SignalHandler term(SIGTERM);

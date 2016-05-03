@@ -22,7 +22,6 @@
 #ifndef ABTEILUNGSLISTE_H
 #define  ABTEILUNGSLISTE_H
 
-
 #include <QDateTime>
 class QColor;
 
@@ -41,6 +40,7 @@ class QColor;
 #define FLAG_MODE_XOR 3
 
 class KontoDatenInfo;
+class SpecialRemunTypeList;
 
 /** AbteilungsListe ist eine map, die einem Abteilungsnamen eine KontoListe zuordnet.
  * Desweiteren finden sich hier Methoden zum Zugriff auf die zu darin gespeicherten
@@ -57,9 +57,9 @@ class AbteilungsListe: public std::map<QString,KontoListe>
 {
   public:
 
-    AbteilungsListe(const QDate _datum, KontoDatenInfo* ki);
+    AbteilungsListe(const QDate& _datum, KontoDatenInfo* ki);
 
-    AbteilungsListe(const QDate _datum, AbteilungsListe* abtlist);
+    AbteilungsListe(const QDate& _datum, AbteilungsListe* abtlist);
 
     bool findDepartment(KontoListe*&, const QString&);
 
@@ -166,9 +166,13 @@ class AbteilungsListe: public std::map<QString,KontoListe>
 
     void setCheckInState(bool state);
     bool kontoDatenInfoSuccess;
+    
+    const SpecialRemunTypeList& getGlobalSpecialRemunTypeList() const;
+    
+    void setGlobalSpecialRemunTypeList(const SpecialRemunTypeList& srtl);
 
   private:
-
+    SpecialRemunTypeList m_specialRemunTypeList;
     QString aktivAbteilung, aktivKonto, aktivUnterkonto;
     KontoDatenInfo* kontoDatenInfo;
     int aktivEintrag;

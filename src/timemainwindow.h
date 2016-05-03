@@ -75,6 +75,7 @@ public:
 
     void editUnterKontoPressed();
     void editBereitschaftPressed();
+    void specialRemunPressed();
     void changeDate(const QDate& datum);
     void setAktivesProjekt(QTreeWidgetItem * item);
     void showAdditionalButtons(bool show);
@@ -95,6 +96,7 @@ public:
     void callHelpDialog();
     void callPreferenceDialog();
     void callBereitschaftsDialog(QTreeWidgetItem * item);
+    void callSpecialRemunerationsDialog(QTreeWidgetItem * item);
     void callColorDialog();
     void removeBgColor();
     void jumpToAlleKonten();
@@ -155,7 +157,9 @@ public:
     void quit();
     void logDialog();
     void commitBereit(DSResult data);
+    void commitSpecialRemun(DSResult);
     void driftKorrektur();
+    void changeSpecialRemunerations(const QString& abt,const QString& ko, const QString& uko,int idx);
   protected:
     virtual void moveEvent( QMoveEvent *event);
   private:

@@ -32,11 +32,12 @@
 #include "globals.h"
 #include "unterkontoeintrag.h"
 #include "datasource.h"
+#include "abteilungsliste.h"
 
 
 /** Erzeugt eine Abteilungsliste fuer das angegebene Datum.
  */
-AbteilungsListe::AbteilungsListe(const QDate _datum, KontoDatenInfo* ki): std::map<QString,KontoListe>()
+AbteilungsListe::AbteilungsListe(const QDate& _datum, KontoDatenInfo* ki): std::map<QString,KontoListe>()
 {
   kontoDatenInfoSuccess = false;
   aktivAbteilung="";
@@ -52,7 +53,7 @@ AbteilungsListe::AbteilungsListe(const QDate _datum, KontoDatenInfo* ki): std::m
 /** Erzeugt eine Abteilungsliste fuer das angegebene Datum, und uebernimmt den Kontobaum der
     uebergebenen AbteilungsListe (ohne Eintraege).
  */
-AbteilungsListe::AbteilungsListe(const QDate _datum, AbteilungsListe* abtlist): std::map<QString,KontoListe>()
+AbteilungsListe::AbteilungsListe(const QDate& _datum, AbteilungsListe* abtlist): std::map<QString,KontoListe>()
 {
   kontoDatenInfoSuccess = abtlist->kontoDatenInfoSuccess;
   aktivAbteilung="";
@@ -974,4 +975,14 @@ bool AbteilungsListe::hasBgColor(const QString& abteilung, const QString& konto,
     }
   }
   return false;
+}
+
+const SpecialRemunTypeList& AbteilungsListe::getGlobalSpecialRemunTypeList() const
+{
+      return m_specialRemunTypeList;
+}
+    
+void AbteilungsListe::setGlobalSpecialRemunTypeList(const SpecialRemunTypeList& srtl)
+{
+      m_specialRemunTypeList=srtl;
 }

@@ -24,6 +24,8 @@
 #ifndef UNTERKONTOEINTRAG_H
 #define UNTERKONTOEINTRAG_H
 
+#include "specialremuntypelist.h"
+
 #include <QString>
 
 #define UK_PERSOENLICH 1
@@ -33,6 +35,8 @@
 
 class UnterKontoEintrag
 {
+private:
+  QSet<QString> m_achievedSpecialRemunSet;
   public:
     /** Erzeugt ein Unterkonto mit Namen _name, Kommenatr _kommentar, usw */
     UnterKontoEintrag(const QString& _kommentar="", int _sekunden=0, int _sekundenabzur=0, int _flags=0)
@@ -54,6 +58,7 @@ class UnterKontoEintrag
       sekunden=uk.sekunden;
       sekundenAbzur=uk.sekundenAbzur;
       flags=uk.flags;
+      m_achievedSpecialRemunSet=m_achievedSpecialRemunSet;
     }
 
     bool isEmpty()
@@ -66,6 +71,17 @@ class UnterKontoEintrag
       return ((kommentar==uk.kommentar)&&(sekunden==uk.sekunden)&&
               (sekundenAbzur==uk.sekundenAbzur)&&(flags==uk.flags));
     }
+    
+    const QSet<QString>& getAchievedSpecialRemunSet() const
+    {
+      return m_achievedSpecialRemunSet;
+    }
+    
+    void setAchievedSpecialRemunSet(const QSet<QString>& srtl)
+    {
+      m_achievedSpecialRemunSet=srtl;
+    }
+    
 };
 
 #endif

@@ -1,5 +1,6 @@
 TEMPLATE = app
 CONFIG += warn_on qt uic
+CONFIG += c++11
 # you have to explicitly recompile sctime.cpp whenever you change this value
 VERSION = 0.74.0
 CONFIG += precompile_header
@@ -9,11 +10,11 @@ QT += xml gui core network sql widgets
 TARGET = sctime
 CODECFORTR= UTF-8
 TRANSLATIONS = sctime_de.ts
-SOURCES = abteilungsliste.cpp bereitschaftsliste.cpp bereitschaftsmodel.cpp bereitschaftsview.cpp datasource.cpp datedialog.cpp defaultcomment.cpp defaultcommentreader.cpp defaulttagreader.cpp descdata.cpp findkontodialog.cpp GetOpt.cpp kontotreeitem.cpp kontotreeview.cpp lock.cpp preferencedialog.cpp qdatepicker.cpp sctime.cpp sctimexmlsettings.cpp setupdsm.cpp timemainwindow.cpp unterkontodialog.cpp
-HEADERS = abteilungsliste.h bereitschaftsliste.h bereitschaftsmodel.h bereitschaftsview.h datasource.h datedialog.h defaultcomment.h defaultcommentreader.h defaulttagreader.h descdata.h eintragsliste.h findkontodialog.h GetOpt.h globals.h kontodateninfo.h kontoliste.h kontotreeitem.h kontotreeview.h lock.h preferencedialog.h qcalendarsystem.h qdatepicker.h sctimexmlsettings.h setupdsm.h statusbar.h timecounter.h timeedit.h timemainwindow.h unterkontodialog.h unterkontoeintrag.h unterkontoliste.h
+SOURCES = abteilungsliste.cpp bereitschaftsliste.cpp bereitschaftsmodel.cpp bereitschaftsview.cpp datasource.cpp datedialog.cpp defaultcomment.cpp defaultcommentreader.cpp defaulttagreader.cpp descdata.cpp findkontodialog.cpp GetOpt.cpp kontotreeitem.cpp kontotreeview.cpp lock.cpp preferencedialog.cpp qdatepicker.cpp sctime.cpp sctimexmlsettings.cpp setupdsm.cpp timemainwindow.cpp unterkontodialog.cpp specialremunerationsdialog.cpp specialremuntypelist.cpp
+HEADERS = abteilungsliste.h bereitschaftsliste.h bereitschaftsmodel.h bereitschaftsview.h datasource.h datedialog.h defaultcomment.h defaultcommentreader.h defaulttagreader.h descdata.h eintragsliste.h findkontodialog.h GetOpt.h globals.h kontodateninfo.h kontoliste.h kontotreeitem.h kontotreeview.h lock.h preferencedialog.h qcalendarsystem.h qdatepicker.h sctimexmlsettings.h setupdsm.h statusbar.h timecounter.h timeedit.h timemainwindow.h unterkontodialog.h unterkontoeintrag.h unterkontoliste.h specialremunerationsdialog.h specialremuntypelist.h
 RESOURCES = ../pics/sctimeImages.qrc ../help/help.qrc
 GENERATED_RESOURCES = translations.qrc
-FORMS = datedialogbase.ui preferencedialogbase.ui
+FORMS = datedialogbase.ui preferencedialogbase.ui specialremunerationdialogbase.ui
 
 # just tell qmake that qrc_generated_translations.cpp depends on all
 # translations qm files - yes, this is somewhat bulky

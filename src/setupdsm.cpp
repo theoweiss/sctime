@@ -19,6 +19,7 @@
 
 DatasourceManager* kontenDSM;
 DatasourceManager* bereitDSM;
+DatasourceManager* specialRemunDSM;
 
 static const
 QString kontenQuery(
@@ -47,6 +48,15 @@ QString kontenQuery(
   "Where "
   " u.eintragbar "
   "Order By gb.name, konto.name, u.name, uk.kommentar ");
+
+static const QString bereitQuery("SELECT kategorie, beschreibung FROM v_bereitschaft_sctime");
+
+static const QString globalSpecialRemunQuery(
+  "Select "
+  "    ts.kategorie, "
+  "    ts.beschreibung "
+  "From "
+  "    v_sonderzeiten_global_sctime sz ");
 
 static QString username() {
   static QString result;
@@ -90,30 +100,33 @@ static QString password() {
   return result;
 }
 
-static const QString bereitQuery("SELECT kategorie, beschreibung FROM v_bereitschaft_sctime");
-
 void setupDatasources(const QStringList& datasourceNames,
                       const SCTimeXMLSettings& settings,
-                      const QString &kontenPath, const QString &bereitPath)
+                      const QString &kontenPath, const QString &bereitPath, const QString &specialremunPath)
 {
   kontenDSM = new DatasourceManager(QObject::tr("Accounts"));
   bereitDSM = new DatasourceManager(QObject::tr("On-call categories"));
+  specialRemunDSM = new DatasourceManager(QObject::tr("Special Remunerations"));
   trace(QObject::tr("available database drivers: %1.").arg(QSqlDatabase::drivers().join(", ")));
   if (!kontenPath.isEmpty())
     kontenDSM->sources.append(new FileReader(kontenPath, "|", 14));
   if (!bereitPath.isEmpty())
     bereitDSM->sources.append(new FileReader(bereitPath, "|", 2));
+  if (!specialremunPath.isEmpty())
+    specialRemunDSM->sources.append(new FileReader(specialremunPath, "|", 2));
   QString dsname;
   foreach (dsname, datasourceNames) {
     if (dsname.compare("file") == 0) {
       kontenDSM->sources.append(new FileReader(configDir.filePath("zeitkonten.txt"), "|", 14));
       bereitDSM->sources.append(new FileReader(configDir.filePath("zeitbereitls.txt"), "|", 2));
+      specialRemunDSM->sources.append(new FileReader(configDir.filePath("sonderzeitls.txt"), "|", 2));
     } else if (dsname.compare("command") == 0) {
 #ifdef WIN32
       logError(QObject::tr("data source 'command' is not available on Windows"));
 #else
       kontenDSM->sources.append(new CommandReader("zeitkonten --mikrokonten --psp --separator='|'", "|", 14));
       bereitDSM->sources.append(new CommandReader("zeitbereitls --separator='|'", "|", 2));
+      specialRemunDSM->sources.append(new CommandReader("sonderzeitls --separator='|'", "|", 2));
 #endif
     } else {
       if (!QSqlDatabase::drivers().contains(dsname)) {
@@ -142,7 +155,8 @@ void setupDatasources(const QStringList& datasourceNames,
       db.setPassword(pw);
 
       kontenDSM->sources.append(new SqlReader(db, kontenQuery));
-      bereitDSM->sources.append(new SqlReader(db,  bereitQuery));
+      bereitDSM->sources.append(new SqlReader(db, bereitQuery));
+      specialRemunDSM->sources.append(new SqlReader(db, globalSpecialRemunQuery));
     }
   }
 }

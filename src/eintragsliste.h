@@ -129,6 +129,16 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
     {
       m_hasColor=false;
     }
+    
+    const SpecialRemunTypeList& getSpecialRemunTypeList() const
+    {
+      return m_specialRemunTypeList;
+    }
+    
+    void setSpecialRemunTypeList(const SpecialRemunTypeList& srtl)
+    {
+      m_specialRemunTypeList=srtl;
+    }
 
   private:
     DescData descData;
@@ -137,6 +147,7 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
     int flags;
     QColor m_bgColor;
     bool m_hasColor;
+    SpecialRemunTypeList m_specialRemunTypeList;
 };
 
 #endif

@@ -59,6 +59,7 @@
 #include "lock.h"
 #include "datasource.h"
 #include "setupdsm.h"
+#include "specialremunerationsdialog.h"
 
 
 QTreeWidget* TimeMainWindow::getKontoTree() { return kontoTree; }
@@ -258,6 +259,11 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
                                             tr("Set &on-call times..."), this);
   bereitschaftsAction->setShortcut(Qt::CTRL+Qt::Key_B);
   connect(bereitschaftsAction, SIGNAL(triggered()), this, SLOT(editBereitschaftPressed()));
+  
+  QAction* specialRemunAction = new QAction(QIcon(":/hi16_action_stamp" ),
+                                            tr("Set &special remuneration times..."), this);
+  specialRemunAction->setShortcut(Qt::CTRL+Qt::Key_S);
+  connect(specialRemunAction, SIGNAL(triggered()), this, SLOT(specialRemunPressed()));
 
   bgColorChooseAction = new QAction(tr("Choose &background colour..."), this);
   bgColorChooseAction->setShortcut(Qt::CTRL+Qt::Key_G);
@@ -324,6 +330,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   kontomenu->addAction(saveAction);
   kontomenu->addAction(pauseAction);
   kontomenu->addAction(pauseAbzurAction);
+  kontomenu->addAction(specialRemunAction);
   kontomenu->addSeparator();
   kontomenu->addAction(findKontoAction);
   kontomenu->addAction(jumpAction);
@@ -359,10 +366,13 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   showAdditionalButtons(settings->powerUserView());
   connect(kontenDSM, SIGNAL(finished(DSResult)), this, SLOT(commitKontenliste(DSResult)));
   connect(bereitDSM, SIGNAL(finished(DSResult)), this, SLOT(commitBereit(DSResult)));
+  connect(specialRemunDSM, SIGNAL(finished(DSResult)), this, SLOT(commitSpecialRemun(DSResult)));
   connect(kontenDSM, SIGNAL(aborted()), this, SLOT(displayLastLogEntry()));
   connect(bereitDSM, SIGNAL(aborted()), this, SLOT(displayLastLogEntry()));
+  connect(specialRemunDSM, SIGNAL(aborted()), this, SLOT(displayLastLogEntry()));
   QMetaObject::invokeMethod(bereitDSM, "start", Qt::QueuedConnection);
   QMetaObject::invokeMethod(this, "refreshKontoListe", Qt::QueuedConnection);
+  QMetaObject::invokeMethod(specialRemunDSM, "start", Qt::QueuedConnection);
 }
 
 void TimeMainWindow::displayLastLogEntry(){
@@ -795,6 +805,11 @@ void TimeMainWindow::editUnterKontoPressed()
 void TimeMainWindow::editBereitschaftPressed()
 {
   emit callBereitschaftsDialog(kontoTree->currentItem());
+}
+
+void TimeMainWindow::specialRemunPressed()
+{
+  emit callSpecialRemunerationsDialog(kontoTree->currentItem());
 }
 
 
@@ -1418,6 +1433,16 @@ void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item) {
   }
 }
 
+void TimeMainWindow::callSpecialRemunerationsDialog(QTreeWidgetItem * item) {
+  QString top,uko,ko,abt;
+  int idx;
+  kontoTree->itemInfo(item,top,abt,ko,uko,idx);
+  SpecialRemunerationsDialog * srDialog=new SpecialRemunerationsDialog(abtList, abt,ko,uko,idx, this);
+  connect(srDialog, SIGNAL(specialRemunerationsChanged(QString,QString,QString,int)), this, SLOT(changeSpecialRemunerations(const QString&,const QString&, const QString&,int)));
+  srDialog->show();
+}
+
+
 void TimeMainWindow::refreshAfterColorChange(QString& abt, QString& ko, QString& uko) {
 	if (ko != "") {
 		if(uko != "") {
@@ -1503,4 +1528,20 @@ void TimeMainWindow::commitBereit(DSResult data) {
     if (beschreibung.isEmpty()) beschreibung = ""; // Leerer String, falls keine Beschr. vorhanden. //FIXME: notwendig?
     berListe->insertEintrag(name, beschreibung);
   }
+}
+
+void TimeMainWindow::commitSpecialRemun(DSResult data) {
+  SpecialRemunTypeList globalsrl;
+  QStringList ql;
+  foreach (ql, data){
+    if (ql.isEmpty()) continue;
+    QString category = ql[0].simplified();
+    QString description = ql[1].simplified();
+    globalsrl.push_back(SpecialRemunerationType(category,description));
+  }
+  abtList->setGlobalSpecialRemunTypeList(globalsrl);
+}
+
+void TimeMainWindow::changeSpecialRemunerations(const QString& abt,const QString& ko, const QString& uko,int idx)
+{
 }
