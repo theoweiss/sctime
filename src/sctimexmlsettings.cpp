@@ -104,7 +104,20 @@ void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)
                firstInBereich=false;
              }
              QString kommentar=etPos->second.kommentar.replace(apostrophExp,""); // Apostrophe nicht in Skript speichern!
-             stream<<zeitKommando<<" "<<
+             
+             QString srstr="";
+             QSet<QString> specialRemunSet = etPos->second.getAchievedSpecialRemunSet();
+             foreach (QString specialremun, specialRemunSet) {
+               if (srstr.isEmpty()) {
+                  srstr=specialremun;
+               } else {
+                  srstr+=","+specialremun;
+               }
+             }
+             if (!srstr.isEmpty()) {
+               srstr="--sonderzeiten='"+srstr+"' ";
+             }
+             stream<<zeitKommando<<" "<<srstr<<
                      abtList->getDatum().toString("dd.MM.yyyy")<<" "<<
                      kontPos->first<<" "<<ukontPos->first<<"\t"<<
                      roundTo(1.0/3600*etPos->second.sekunden,0.01)<<"/"<<
@@ -151,7 +164,6 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
 {
   QDomDocument doc("settings");
   QString filename;
-
   if (global)
     filename="settings.xml";
   else {
@@ -281,6 +293,18 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
                               }
                             abtList->insertEintrag(abteilungstr,kontostr,unterkontostr,idx);
                           }
+                          QSet<QString> specialRemunSet;
+                          for( QDomNode node5 = elem4.firstChild(); !node5.isNull(); node5 = node5.nextSibling() ) {
+                              QDomElement elem5 = node5.toElement();
+                              if (elem5.tagName()=="specialremun")
+                              {
+                                specialRemunSet.insert(elem5.attribute("name"));
+                              }
+                          }
+                          if (!specialRemunSet.isEmpty()) {
+                              abtList->findEintrag(eti,etl,abteilungstr,kontostr,unterkontostr,idx);
+                              eti->second.setAchievedSpecialRemunSet(specialRemunSet);
+                          }
                           if (elem4.attribute("persoenlich")=="yes")
                             abtList->setEintragFlags(abteilungstr,kontostr,unterkontostr,idx,
                                                      UK_PERSOENLICH,FLAG_MODE_OR);
@@ -306,6 +330,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
                                                   elem4.attribute("kommentar"));
                           }
                         }
+                        
                       }
                     }
                     if ((!dummydeleted)&&(ukontPers)) {
@@ -738,6 +763,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
                   ettag.setAttribute("sekunden",etPos->second.sekunden);
                 if (etPos->second.sekundenAbzur!=0)
                   ettag.setAttribute("abzurechnende_sekunden",etPos->second.sekundenAbzur);
+                QSet<QString> specialRemunSet = etPos->second.getAchievedSpecialRemunSet();
+                foreach (QString specialremun, specialRemunSet) {
+                  QDomElement srtag = doc.createElement( "specialremun" );
+                  srtag.setAttribute("name",specialremun);
+                  ettag.appendChild(srtag);
+                }
               }
               ukonttag.appendChild (ettag);
             }
