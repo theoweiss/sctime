@@ -24,7 +24,7 @@
 #ifndef UNTERKONTOEINTRAG_H
 #define UNTERKONTOEINTRAG_H
 
-#include "specialremuntypelist.h"
+#include "specialremuntypemap.h"
 
 #include <QString>
 

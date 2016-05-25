@@ -1,21 +1,20 @@
 #ifndef SPECIALREMUNERATIONLIST_H
 #define SPECIALREMUNERATIONLIST_H
 
-#include <QList>
+#include <QMap>
 #include <QString>
 
 class SpecialRemunerationType
 {
 public:
   SpecialRemunerationType();
-  SpecialRemunerationType(const QString& category, const QString& description, bool isvalid=true);
+  SpecialRemunerationType(const QString& description, bool isvalid=true);
   
-  QString category;
   QString description;
   bool isValid;
 };
 
-class SpecialRemunTypeList: public QList<SpecialRemunerationType>
+class SpecialRemunTypeMap: public QMap<QString,SpecialRemunerationType>
 {
 
 };

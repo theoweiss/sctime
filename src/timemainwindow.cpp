@@ -1531,15 +1531,20 @@ void TimeMainWindow::commitBereit(DSResult data) {
 }
 
 void TimeMainWindow::commitSpecialRemun(DSResult data) {
-  SpecialRemunTypeList globalsrl;
+  SpecialRemunTypeMap srmap;
+  QList<QString> global_srnames;
   QStringList ql;
   foreach (ql, data){
     if (ql.isEmpty()) continue;
     QString category = ql[0].simplified();
     QString description = ql[1].simplified();
-    globalsrl.push_back(SpecialRemunerationType(category,description));
+    srmap[category]=SpecialRemunerationType(description);
+    if (QString("1").compare(ql[2])==0) {
+      global_srnames.push_back(category);
+    }
   }
-  abtList->setGlobalSpecialRemunTypeList(globalsrl);
+  abtList->setSpecialRemunTypeMap(srmap);
+  abtList->setGlobalSpecialRemunNames(global_srnames);
 }
 
 void TimeMainWindow::changeSpecialRemunerations(const QString& abt,const QString& ko, const QString& uko,int idx)

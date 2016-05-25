@@ -130,14 +130,14 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
       m_hasColor=false;
     }
     
-    const SpecialRemunTypeList& getSpecialRemunTypeList() const
+    const QList<QString>& getSpecialRemunNames() const
     {
-      return m_specialRemunTypeList;
+      return m_specialRemunNames;
     }
     
-    void setSpecialRemunTypeList(const SpecialRemunTypeList& srtl)
+    void setSpecialRemunNames(const QList<QString>& srtn)
     {
-      m_specialRemunTypeList=srtl;
+      m_specialRemunNames=srtn;
     }
 
   private:
@@ -147,7 +147,7 @@ class EintragsListe: public Map_Int_UnterKontoEintrag
     int flags;
     QColor m_bgColor;
     bool m_hasColor;
-    SpecialRemunTypeList m_specialRemunTypeList;
+    QList<QString> m_specialRemunNames;
 };
 
 #endif

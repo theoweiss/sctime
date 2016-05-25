@@ -167,12 +167,18 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     void setCheckInState(bool state);
     bool kontoDatenInfoSuccess;
     
-    const SpecialRemunTypeList& getGlobalSpecialRemunTypeList() const;
+    const QList<QString>& getGlobalSpecialRemunNames() const;
     
-    void setGlobalSpecialRemunTypeList(const SpecialRemunTypeList& srtl);
+    void setGlobalSpecialRemunNames(const QList<QString>& srtl);
+    
+    const SpecialRemunTypeMap& getSpecialRemunTypeMap() const;
+    
+    void setSpecialRemunTypeMap(const SpecialRemunTypeMap& srtm);
+    
 
   private:
-    SpecialRemunTypeList m_specialRemunTypeList;
+    SpecialRemunTypeMap m_specialRemunTypeMap;
+    QList<QString> m_globalSpecialRemunNames;
     QString aktivAbteilung, aktivKonto, aktivUnterkonto;
     KontoDatenInfo* kontoDatenInfo;
     int aktivEintrag;

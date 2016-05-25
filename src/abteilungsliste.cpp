@@ -848,17 +848,22 @@ void AbteilungsListe::reload(const DSResult &data) {
     addOnce(verantwortlicher, ql[8]);
     addOnce(verantwortlicher, ql[9]);
     QString pspstr = ql[12].simplified();
+    QString srliststr = ql[13].simplified();
+    QList<QString> srlist=srliststr.split(",");
     insertEintrag(abt,konto,unterkonto);
     setDescription(abt,konto,unterkonto,DescData(beschreibung ,verantwortlicher, typ, pspstr));
     setUnterKontoFlags(abt,konto,unterkonto,IS_IN_DATABASE,FLAG_MODE_OR);
     // Do not simplify comment to preserve intentional whitespace.
-    QString commentstr = ql[13];
-    if (!commentstr.isEmpty()) {
+    QString commentstr = ql[14];
+    if (!commentstr.isEmpty()||!srlist.isEmpty()) {
       if (commentstr.endsWith(":")) commentstr.append(" ");
       UnterKontoListe::iterator itUk;
       UnterKontoListe* ukl;
-      if (findUnterKonto(itUk,ukl,abt,konto,unterkonto))
+      if (findUnterKonto(itUk,ukl,abt,konto,unterkonto)) {
         itUk->second.addDefaultComment(commentstr, true);
+        itUk->second.setSpecialRemunNames(srlist);
+      }
+      
     }
  
   }
@@ -977,12 +982,23 @@ bool AbteilungsListe::hasBgColor(const QString& abteilung, const QString& konto,
   return false;
 }
 
-const SpecialRemunTypeList& AbteilungsListe::getGlobalSpecialRemunTypeList() const
+const QList<QString>& AbteilungsListe::getGlobalSpecialRemunNames() const
 {
-      return m_specialRemunTypeList;
+  return m_globalSpecialRemunNames;
+}
+
+void AbteilungsListe::setGlobalSpecialRemunNames(const QList<QString>& gsrnl)
+{
+  m_globalSpecialRemunNames = gsrnl;
+}
+
+const SpecialRemunTypeMap& AbteilungsListe::getSpecialRemunTypeMap() const
+{
+      return m_specialRemunTypeMap;
 }
     
-void AbteilungsListe::setGlobalSpecialRemunTypeList(const SpecialRemunTypeList& srtl)
+void AbteilungsListe::setSpecialRemunTypeMap(const SpecialRemunTypeMap& srtm)
 {
-      m_specialRemunTypeList=srtl;
+      m_specialRemunTypeMap=srtm;
 }
+

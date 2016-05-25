@@ -23,7 +23,7 @@
 
 #include "specialremunerationsdialog.h"
 #include <QDialog>
-#include "specialremuntypelist.h"
+#include "specialremuntypemap.h"
 #include "abteilungsliste.h"
 #include "unterkontoliste.h"
 
@@ -45,17 +45,17 @@ SpecialRemunerationsDialog::SpecialRemunerationsDialog(AbteilungsListe* _abtlist
     unterkonto=uko;
     eintragsIdx=idx;
     QSet<QString> selection = ukiter->second[eintragsIdx].getAchievedSpecialRemunSet();
-    SpecialRemunTypeList ukosrl = ukiter->second.getSpecialRemunTypeList();
-    SpecialRemunTypeList globalsrl = abtlist->getGlobalSpecialRemunTypeList();
-    for (SpecialRemunTypeList::iterator srlIt = globalsrl.begin(); srlIt != globalsrl.end(); ++srlIt ) {
-       QListWidgetItem* item=new QListWidgetItem(srlIt->category,srListWidget);
+    QList<QString> ukosrl = ukiter->second.getSpecialRemunNames();
+    QList<QString> globalsrl = abtlist->getGlobalSpecialRemunNames();
+    for (QList<QString>::iterator srlIt = globalsrl.begin(); srlIt != globalsrl.end(); ++srlIt ) {
+       QListWidgetItem* item=new QListWidgetItem(*srlIt,srListWidget);
        srListWidget->addItem(item);
-       item->setSelected(selection.remove(srlIt->category));
+       item->setSelected(selection.remove(*srlIt));
     }
-    for (SpecialRemunTypeList::iterator srlIt = ukosrl.begin(); srlIt != ukosrl.end(); ++srlIt ) {
-       QListWidgetItem* item=new QListWidgetItem(srlIt->category,srListWidget);
+    for (QList<QString>::iterator srlIt = ukosrl.begin(); srlIt != ukosrl.end(); ++srlIt ) {
+       QListWidgetItem* item=new QListWidgetItem(*srlIt,srListWidget);
        srListWidget->addItem(item);
-       item->setSelected(selection.remove(srlIt->category));
+       item->setSelected(selection.remove(*srlIt));
     }
     // finally add already selected SpecialRemunTypes, which are no longer available 
     for (QSet<QString>::iterator selIt = selection.begin(); selIt != selection.end(); ++selIt ) {
