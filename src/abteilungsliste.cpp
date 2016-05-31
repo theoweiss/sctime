@@ -266,7 +266,6 @@ int AbteilungsListe::insertEintrag(const QString& abteilung, const QString& kont
   return idx;
 }
 
-
 void AbteilungsListe::setDescription(const QString& abteilung, const QString& konto, const QString& unterkonto, const DescData& descdata)
 {
   UnterKontoListe *unterkontoliste;
@@ -710,7 +709,7 @@ void AbteilungsListe::setAsAktiv(const QString& abteilung, const QString& konto,
     }
 }
 
-/** mehrere Einträge für ein Unterkonto? */
+/** mehrere Eintraege fuer ein Unterkonto? */
 bool AbteilungsListe::ukHatMehrereEintrage(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx) {
     UnterKontoListe::iterator uki;
     UnterKontoListe* ukl;
