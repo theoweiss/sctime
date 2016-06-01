@@ -17,6 +17,8 @@
         <file alias="hi22_action_2downarrow_half">hi22_action_2downarrow_half.xpm</file>
         <file alias="hi16_action_stamp">hi16_action_stamp.xpm</file>
         <file alias="hi16_action_apply">hi16_action_apply.xpm</file>
+        <file alias="hi16_moon_apply">hi16_moon_apply.xpm</file>
+        <file alias="hi16_moon">hi16_moon.xpm</file>
         <file alias="zero">zero.xpm</file>
         <file alias="cr16_action_bookmark">cr16-action-bookmark.xpm</file>
         <file alias="window_icon">Uhr.ico</file>

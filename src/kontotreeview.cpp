@@ -651,6 +651,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
   if (!abtList->findEintrag(etiter,etl,abt,ko,uko,idx)) return;
 
   QStringList bereitschaften=etl->getBereitschaft();
+  QSet<QString> srlist=etiter->second.getAchievedSpecialRemunSet();
 
   KontoTreeItem *topi,*abti,*koi,*ukoi,*eti;
   bool isExpandedAlleKonten = false, isExpandedPersonKonten = false;
@@ -764,11 +765,20 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
 
     if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
       {
-        eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_action_apply"));
+        if (srlist.isEmpty()) {
+          eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_action_apply"));
+        } else {
+          eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_moon_apply"));
+        }
+          
         //setCurrentItem(eti);
       }
     else{
-      eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon());
+      if (srlist.isEmpty()) {
+        eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon());
+      } else {
+        eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_moon"));
+      }
     }
     refreshParentSumTime(ukoi,"+");
     refreshParentSumTime(koi,"++");
@@ -826,10 +836,20 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       topi->setExpanded(true); abti->setExpanded(true); koi->setExpanded(true); ukoi->setExpanded(true);
      // eti->setBold((etiter->second.kommentar!="")||(etiter->second.sekunden!=0)||(etiter->second.sekundenAbzur!=0));
       //eti->setGray(abtList->checkInState());
-      if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
-        eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_action_apply"));
-      else
-        eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon());
+      if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate())) {
+        if (srlist.isEmpty()) {
+          eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_action_apply"));
+        } else {
+          eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_moon_apply"));
+        }
+      }
+      else {
+        if (srlist.isEmpty()) {
+          eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon());
+        } else {
+          eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_moon"));
+        }
+      }
       if (m_showPersoenlicheKontenSummenzeit) {
         refreshParentSumTime(ukoi,"+");
         refreshParentSumTime(koi,"++");
@@ -893,9 +913,20 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       }
 
       if ((abtList->isAktiv(abt,ko,uko,idx))&&(abtList->getDatum()==QDate::currentDate()))
-        eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_action_apply"));
-      else
-        eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon());
+      {
+        if (srlist.isEmpty()) {
+          eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_action_apply"));
+        } else {
+          eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_moon_apply"));
+        }
+      }
+      else {
+        if (srlist.isEmpty()) {
+          eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon());
+        } else {
+          eti->setIcon(KontoTreeItem::COL_ACTIVE,QIcon(":/hi16_moon"));
+        }
+      }
       QString comment=etiter->second.kommentar;
       refreshComment(comment,eti,etl);
       eti->setText(KontoTreeItem::COL_TYPE,dd.type());
