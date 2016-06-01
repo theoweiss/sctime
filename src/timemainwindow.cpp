@@ -260,9 +260,9 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   bereitschaftsAction->setShortcut(Qt::CTRL+Qt::Key_B);
   connect(bereitschaftsAction, SIGNAL(triggered()), this, SLOT(editBereitschaftPressed()));
   
-  QAction* specialRemunAction = new QAction(QIcon(":/hi16_action_stamp" ),
-                                            tr("Set &special remuneration times..."), this);
-  specialRemunAction->setShortcut(Qt::CTRL+Qt::Key_S);
+  specialRemunAction = new QAction(QIcon(":/hi16_moon" ),
+                                            tr("Set special remuneration &times..."), this);
+  specialRemunAction->setShortcut(Qt::CTRL+Qt::Key_T);
   connect(specialRemunAction, SIGNAL(triggered()), this, SLOT(specialRemunPressed()));
 
   bgColorChooseAction = new QAction(tr("Choose &background colour..."), this);
@@ -1043,6 +1043,7 @@ void TimeMainWindow::changeShortCutSettings(QTreeWidgetItem * item)
     flagsChanged(abt,ko,uko,idx);
     inPersKontAction->setEnabled(!abtList->checkInState());
     editUnterKontoAction->setEnabled(!abtList->checkInState());
+    specialRemunAction->setEnabled(!abtList->checkInState());
     /* Eigentlich sollte das Signal in editierbarerEintragSelected umbenannt werden... */
     emit eintragSelected(!abtList->checkInState());
     emit augmentableItemSelected(!abtList->checkInState());
@@ -1054,6 +1055,7 @@ void TimeMainWindow::changeShortCutSettings(QTreeWidgetItem * item)
     inPersKontAction->setChecked((item&&(top==PERSOENLICHE_KONTEN_STRING)&&(kontoTree->getItemDepth(item)>=2)&&(kontoTree->getItemDepth(item)<=3)));
     inPersKontAction->setEnabled((!abtList->checkInState())&&(item&&(kontoTree->getItemDepth(item)>=2)&&(kontoTree->getItemDepth(item)<=3)));
     editUnterKontoAction->setEnabled(false);
+    specialRemunAction->setEnabled(false);
     emit eintragSelected(false);
     emit augmentableItemSelected(!abtList->checkInState()&&isUnterkontoItem);
     emit aktivierbarerEintragSelected(false);
@@ -1437,9 +1439,12 @@ void TimeMainWindow::callSpecialRemunerationsDialog(QTreeWidgetItem * item) {
   QString top,uko,ko,abt;
   int idx;
   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
-  SpecialRemunerationsDialog * srDialog=new SpecialRemunerationsDialog(abtList, abt,ko,uko,idx, this);
-  connect(srDialog, SIGNAL(specialRemunerationsChanged(QString,QString,QString,int)), this, SLOT(changeSpecialRemunerations(const QString&,const QString&, const QString&,int)));
-  srDialog->show();
+  SpecialRemunerationsDialog srDialog(abtList, abt,ko,uko,idx, this);
+  srDialog.exec();
+  if (srDialog.result())
+  {
+      kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
+  }
 }
 
 
@@ -1545,8 +1550,4 @@ void TimeMainWindow::commitSpecialRemun(DSResult data) {
   }
   abtList->setSpecialRemunTypeMap(srmap);
   abtList->setGlobalSpecialRemunNames(global_srnames);
-}
-
-void TimeMainWindow::changeSpecialRemunerations(const QString& abt,const QString& ko, const QString& uko,int idx)
-{
 }

@@ -159,7 +159,6 @@ public:
     void commitBereit(DSResult data);
     void commitSpecialRemun(DSResult);
     void driftKorrektur();
-    void changeSpecialRemunerations(const QString& abt,const QString& ko, const QString& uko,int idx);
   protected:
     virtual void moveEvent( QMoveEvent *event);
   private:
@@ -181,6 +180,7 @@ public:
     QAction* bgColorChooseAction;
     QAction* bgColorRemoveAction;
     QAction* jumpAction;
+    QAction* specialRemunAction;
     QDateTime startTime;
     QDateTime lastMinuteTick;
     QFont qtDefaultFont;

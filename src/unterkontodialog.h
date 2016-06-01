@@ -27,6 +27,7 @@
 #include <QDialog>
 #include <QComboBox>
 #include <QCheckBox>
+#include <QListWidget>
 
 class AbteilungsListe;
 class EintragsListe;
@@ -63,6 +64,7 @@ class UnterKontoDialog: public QDialog
 
   private:
     QLineEdit* commentedit;
+    QListWidget* srListWidget;
     QComboBox* commentcombo;
     QComboBox* tagcombo;
     QString unterKontoName;

@@ -38,6 +38,7 @@
 #include "eintragsliste.h"
 #include "abteilungsliste.h"
 #include "sctimexmlsettings.h"
+#include "specialremunerationsdialog.h"
 
 /**
  * Baut den Dialog zum Aendern der Eigenschaften eines Unterkontos auf.
@@ -142,6 +143,18 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   layout->addWidget(zeitAbzurBox);
   layout->addSpacing(5);
   layout->addStretch(2);
+  
+  QGroupBox* srgroup = new QGroupBox(tr("Special Remuneration Categories"),this);
+  QHBoxLayout* hboxLayout = new QHBoxLayout(srgroup);
+  srListWidget=new QListWidget(this);
+  srListWidget->setSelectionMode(QAbstractItemView::MultiSelection);
+  SpecialRemunerationsDialog::fillListWidget(srListWidget, abtList, m_unterkonto, idx);
+  hboxLayout->addWidget(srListWidget);
+  hboxLayout->addSpacing(5);
+  hboxLayout->addStretch(2);
+  layout->addWidget(srgroup);
+  layout->addSpacing(5);
+  layout->addStretch(2);
 
   QString beschreibung = abtList->getDescription(abt,ko,uko).description().simplified();
   if (!beschreibung.isEmpty()) {
@@ -187,8 +200,9 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
     buttonlayout->addWidget(okbutton);
   buttonlayout->addWidget(cancelbutton);
   layout->addLayout(buttonlayout);
-  if (!readOnly)
+  if (!readOnly) {
     connect (okbutton, SIGNAL(clicked()), this, SLOT(checkInput()));
+  }
   connect (cancelbutton, SIGNAL(clicked()), this, SLOT(reject()));
   connect (projektAktivieren, SIGNAL(clicked()), this, SLOT(projektAktivierenButtonClicked()));
 
@@ -232,8 +246,17 @@ void UnterKontoDialog::accept()
 
   /*QStringList bereitschaften = bereitschaftsView->getSelectionList();
   m_unterkonto->setBereitschaft(bereitschaften);*/
+  
+  QList<QListWidgetItem *> selitems = srListWidget->selectedItems();
+  QSet<QString> selection;
+  for (QList<QListWidgetItem *>::iterator selIt = selitems.begin(); selIt != selitems.end(); ++selIt ) {
+    selection.insert((*selIt)->text());
+  }
+  (*m_unterkonto)[eintragIndex].setAchievedSpecialRemunSet(selection);
 
   emit entryChanged(abteilungsName,kontoName,unterKontoName,eintragIndex);
+  
+
 
   /*if (m_bereitschaften!=bereitschaften) {
      emit bereitschaftChanged(abteilungsName,kontoName,unterKontoName);
@@ -283,7 +306,7 @@ void UnterKontoDialog::checkInput()
   QTextCodec* codec=QTextCodec::codecForLocale();
   if (!codec->canEncode(getComment())) {
     QMessageBox::critical(0,tr("Error"),tr("Error: The entered "
-        "description contains a character Ihnen that cannot be displayed in "
+        "description contains a character that cannot be displayed in "
 	"your locale."),
             QMessageBox::Ok | QMessageBox::Default,0);
     reject();
