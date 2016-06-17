@@ -318,6 +318,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   toolBar->addAction(inPersKontAction);
   toolBar->addAction(eintragAddAction);
   toolBar->addAction(bereitschaftsAction);
+  toolBar->addAction(specialRemunAction);
   toolBar->addAction(pauseAction);
   toolBar->addAction(min5PlusAction);
   toolBar->addAction(min5MinusAction);
@@ -373,6 +374,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   QMetaObject::invokeMethod(bereitDSM, "start", Qt::QueuedConnection);
   QMetaObject::invokeMethod(this, "refreshKontoListe", Qt::QueuedConnection);
   QMetaObject::invokeMethod(specialRemunDSM, "start", Qt::QueuedConnection);
+  specialRemunAction->setEnabled(false);
 }
 
 void TimeMainWindow::displayLastLogEntry(){
