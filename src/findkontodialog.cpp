@@ -328,7 +328,7 @@ void FindKontoDialog::searchUnterKonto()
       UnterKontoListe* unterkontoliste =&(itKo->second);
       for(UnterKontoListe::iterator itUko=unterkontoliste->begin(); itUko!=unterkontoliste->end(); ++itUko)
       {
-        if(itUko->first.contains(chosenValueString, Qt::CaseInsensitive))
+        if(itUko->first.contains(chosenValueString, Qt::CaseInsensitive)&&((itUko->second.getFlags()&IS_DISABLED)==0))
         {
           if( posAbt->first != currentAbteilung )
           {
