@@ -78,8 +78,9 @@ static const QString bereitQuery("SELECT kategorie, beschreibung FROM v_bereitsc
 
 static const QString specialRemunQuery(
   "Select "
-  "    ts.kategorie, "
-  "    ts.beschreibung "
+  "    sz.kategorie, "
+  "    sz.beschreibung, "
+  "    sz.isglobal "
   "From "
   "    v_sonderzeiten_sctime sz ");
 
