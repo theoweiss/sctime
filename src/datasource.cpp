@@ -87,7 +87,7 @@ bool  SqlReader::read(DSResult* const result) {
   }
   QSqlQuery query(cmd, db);
   if (!query.isActive()) {
-    logError(QObject::tr("Error ('%1') when executing query: %2").arg(db.lastError().databaseText()));
+    logError(QObject::tr("Error ('%1') when executing query: %2").arg(db.lastError().databaseText()).arg(cmd));
     broken = true;
     db.close();
     return false;
