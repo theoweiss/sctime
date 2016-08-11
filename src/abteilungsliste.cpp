@@ -63,6 +63,9 @@ AbteilungsListe::AbteilungsListe(const QDate& _datum, AbteilungsListe* abtlist):
   zeitDifferenz=0;
   datum=_datum;
   kontoDatenInfo = abtlist->kontoDatenInfo;
+  
+  // Copy golbal special remunerations
+  setGlobalSpecialRemunNames(abtlist->getGlobalSpecialRemunNames());
 
   AbteilungsListe::iterator abtPos;
 
@@ -89,6 +92,9 @@ AbteilungsListe::AbteilungsListe(const QDate& _datum, AbteilungsListe* abtlist):
         QVector<DefaultComment>::iterator dclIt;
         for (dclIt = dcl->begin(); dclIt != dcl->end(); ++dclIt )
           itUk->second.addDefaultComment(*dclIt);
+
+        // Copy special remunerations
+        itUk->second.setSpecialRemunNames(eintragsliste->getSpecialRemunNames());
       }
     }
   }
