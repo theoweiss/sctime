@@ -87,7 +87,7 @@ static const QString help(QObject::tr(
 "				(default: output of 'zeitbereitls'). Obsolete.\n\n"
 "--specialremunfile=FILE       read the types of special remunerations from file FILE\n"
 "                               (default: output of 'sonderzeitls'. Obsolete.\n\n"
-"--jsonfile=FILE       read all needed data from FILE which must be of json format\n"
+"--offlinefile=FILE       read all needed data from FILE which must be of json format\n"
 "                      overides --zeitkontenfile --bereitschaftsfile and --specialremunfile\n\n"
 "Please see the Help menu for further information (F1)!"));
 
@@ -162,7 +162,7 @@ int main(int argc, char **argv ) {
     QMessageBox::information(NULL, QObject::tr("sctime ") + qApp->applicationVersion(), help);
     exit(0);
   }
-  QString configdirstring, zeitkontenfile, bereitschaftsfile, specialremunfile, jsonfile;
+  QString configdirstring, zeitkontenfile, bereitschaftsfile, specialremunfile, offlinefile;
   QStringList dataSourceNames;
 
   GetOpt opts(argc, argv);
@@ -170,7 +170,7 @@ int main(int argc, char **argv ) {
   opts.addOption('f',"zeitkontenfile", &zeitkontenfile);
   opts.addOption('f',"bereitschaftsfile", &bereitschaftsfile);
   opts.addOption('f',"specialremunfile", &specialremunfile);
-  opts.addOption('f',"jsonfile", &jsonfile);
+  opts.addOption('f',"offlinefile", &offlinefile);
   opts.addRepeatableOption("datasource", &dataSourceNames);
   opts.parse();
 
@@ -212,7 +212,7 @@ int main(int argc, char **argv ) {
   SCTimeXMLSettings settings;
   settings.readSettings();
   if (dataSourceNames.isEmpty()) dataSourceNames = settings.backends.split(" ");
-  setupDatasources(dataSourceNames, settings, zeitkontenfile, bereitschaftsfile, specialremunfile,jsonfile);
+  setupDatasources(dataSourceNames, settings, zeitkontenfile, bereitschaftsfile, specialremunfile,offlinefile);
   mainWindow = new TimeMainWindow();
 #ifndef WIN32
   SignalHandler term(SIGTERM);
