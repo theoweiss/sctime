@@ -31,7 +31,7 @@ class QString;
 class QStringList;
 void setupDatasources(const QStringList& datasourceNames,
                       const SCTimeXMLSettings& settings,
-                      const QString &kontenPath, const QString &bereitPath, const QString& specialremunfile);
+                      const QString &kontenPath, const QString &bereitPath, const QString& specialremunfile, const QString& jsonfile);
 extern DatasourceManager* kontenDSM;
 extern DatasourceManager* bereitDSM;
 extern DatasourceManager* specialRemunDSM;

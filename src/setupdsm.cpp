@@ -37,6 +37,7 @@
 #include <QFile>
 #include <QDir>
 #include <QTextStream>
+#include "JSONReader.h"
 #include "sctimexmlsettings.h"
 #include "datasource.h"
 #include "globals.h"
@@ -128,20 +129,30 @@ static QString password() {
 
 void setupDatasources(const QStringList& datasourceNames,
                       const SCTimeXMLSettings& settings,
-                      const QString &kontenPath, const QString &bereitPath, const QString &specialremunPath)
+                      const QString &kontenPath, const QString &bereitPath, const QString &specialremunPath, const QString &jsonPath)
 {
   kontenDSM = new DatasourceManager(QObject::tr("Accounts"));
   bereitDSM = new DatasourceManager(QObject::tr("On-call categories"));
   specialRemunDSM = new DatasourceManager(QObject::tr("Special Remunerations"));
   trace(QObject::tr("available database drivers: %1.").arg(QSqlDatabase::drivers().join(", ")));
+  JSONReader *jsonreader=NULL;
   if (!kontenPath.isEmpty())
     kontenDSM->sources.append(new FileReader(kontenPath, "|", 15));
   if (!bereitPath.isEmpty())
     bereitDSM->sources.append(new FileReader(bereitPath, "|", 2));
   if (!specialremunPath.isEmpty())
     specialRemunDSM->sources.append(new FileReader(specialremunPath, "|", 2));
+  if (!jsonPath.isEmpty()) {
+    trace(QObject::tr("adding jsonreader: %1.").arg(jsonPath));
+    jsonreader=new JSONReader(jsonPath);
+    kontenDSM->sources.append(new JSONAccountSource(jsonreader));
+  }
   QString dsname;
   foreach (dsname, datasourceNames) {
+    if (dsname.compare("json") == 0) {
+      jsonreader=new JSONReader(configDir.filePath("zeitkonten.json"));
+      kontenDSM->sources.append(new JSONAccountSource(jsonreader));
+    }
     if (dsname.compare("file") == 0) {
       kontenDSM->sources.append(new FileReader(configDir.filePath("zeitkonten.txt"), "|", 15));
       bereitDSM->sources.append(new FileReader(configDir.filePath("zeitbereitls.txt"), "|", 2));

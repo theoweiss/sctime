@@ -82,11 +82,13 @@ static const QString help(QObject::tr(
 "			(default: 'QPSQL'',' 'QODBC'', 'command' and 'file'');\n"
 "			overrides <backends/> in settings.xml\n"
 "--zeitkontenfile=FILE	read the accounts list from file FILE\n"
-"			(default: output of 'zeitkonten'.\n\n"
+"			(default: output of 'zeitkonten'). Obsolete.\n\n"
 "--bereitschaftsfile=FILE	read the 'Bereitschaftsarten'' from file FILE\n"
-"				(default: output of 'zeitbereitls'.\n\n"
+"				(default: output of 'zeitbereitls'). Obsolete.\n\n"
 "--specialremunfile=FILE       read the types of special remunerations from file FILE\n"
-"                               (default: output of 'sonderzeitls'.\n\n"
+"                               (default: output of 'sonderzeitls'. Obsolete.\n\n"
+"--jsonfile=FILE       read all needed data from FILE which must be of json format\n"
+"                      overides --zeitkontenfile --bereitschaftsfile and --specialremunfile\n\n"
 "Please see the Help menu for further information (F1)!"));
 
 static TimeMainWindow* mainWindow = 0;
@@ -160,7 +162,7 @@ int main(int argc, char **argv ) {
     QMessageBox::information(NULL, QObject::tr("sctime ") + qApp->applicationVersion(), help);
     exit(0);
   }
-  QString configdirstring, zeitkontenfile, bereitschaftsfile, specialremunfile;
+  QString configdirstring, zeitkontenfile, bereitschaftsfile, specialremunfile, jsonfile;
   QStringList dataSourceNames;
 
   GetOpt opts(argc, argv);
@@ -168,6 +170,7 @@ int main(int argc, char **argv ) {
   opts.addOption('f',"zeitkontenfile", &zeitkontenfile);
   opts.addOption('f',"bereitschaftsfile", &bereitschaftsfile);
   opts.addOption('f',"specialremunfile", &specialremunfile);
+  opts.addOption('f',"jsonfile", &jsonfile);
   opts.addRepeatableOption("datasource", &dataSourceNames);
   opts.parse();
 
@@ -209,7 +212,7 @@ int main(int argc, char **argv ) {
   SCTimeXMLSettings settings;
   settings.readSettings();
   if (dataSourceNames.isEmpty()) dataSourceNames = settings.backends.split(" ");
-  setupDatasources(dataSourceNames, settings, zeitkontenfile, bereitschaftsfile, specialremunfile);
+  setupDatasources(dataSourceNames, settings, zeitkontenfile, bereitschaftsfile, specialremunfile,jsonfile);
   mainWindow = new TimeMainWindow();
 #ifndef WIN32
   SignalHandler term(SIGTERM);
