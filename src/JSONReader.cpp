@@ -149,3 +149,35 @@ int JSONReader::loadDataNewerThan(int version)
   return currentversion;
 }
 
+JSONOnCallSource::JSONOnCallSource(JSONReader *jsonreader)
+  :JSONSource(jsonreader) {}
+  
+bool JSONOnCallSource::convertData(DSResult* const result) {
+  QJsonDocument doc=jsonreader->getData();
+  QJsonArray oncalltimes=doc.object()["OnCallTimes"].toArray();
+  foreach (auto oncalltimeVal, oncalltimes) {
+    QJsonObject oncalltime=oncalltimeVal.toObject();
+    QStringList row;
+    appendStringToRow(row,oncalltime,"Category");
+    appendStringToRow(row,oncalltime,"Description");
+    result->append(row);
+  }
+  return true;
+}
+
+JSONSpecialRemunSource::JSONSpecialRemunSource(JSONReader *jsonreader)
+  :JSONSource(jsonreader) {}
+  
+bool JSONSpecialRemunSource::convertData(DSResult* const result) {
+  QJsonDocument doc=jsonreader->getData();
+  QJsonArray specialremuns=doc.object()["SpecialRemunerations"].toArray();
+  foreach (auto specialremunVal, specialremuns) {
+    QJsonObject specialremun=specialremunVal.toObject();
+    QStringList row;
+    appendStringToRow(row,specialremun,"Category");
+    appendStringToRow(row,specialremun,"Description");
+    row.append(QString().setNum((int)specialremun["IsGlobal"].toDouble()));
+    result->append(row);
+  }
+  return true;
+}

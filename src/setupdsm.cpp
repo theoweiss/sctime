@@ -146,12 +146,16 @@ void setupDatasources(const QStringList& datasourceNames,
     trace(QObject::tr("adding jsonreader: %1.").arg(jsonPath));
     jsonreader=new JSONReader(jsonPath);
     kontenDSM->sources.append(new JSONAccountSource(jsonreader));
+    bereitDSM->sources.append(new JSONOnCallSource(jsonreader));
+    specialRemunDSM->sources.append(new JSONSpecialRemunSource(jsonreader));
   }
   QString dsname;
   foreach (dsname, datasourceNames) {
     if (dsname.compare("json") == 0) {
-      jsonreader=new JSONReader(configDir.filePath("zeitkonten.json"));
+      jsonreader=new JSONReader(configDir.filePath("zeitkonten.json")); 
       kontenDSM->sources.append(new JSONAccountSource(jsonreader));
+      bereitDSM->sources.append(new JSONOnCallSource(jsonreader));
+      specialRemunDSM->sources.append(new JSONSpecialRemunSource(jsonreader));
     }
     if (dsname.compare("file") == 0) {
       kontenDSM->sources.append(new FileReader(configDir.filePath("zeitkonten.txt"), "|", 15));

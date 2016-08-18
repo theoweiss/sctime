@@ -43,4 +43,22 @@ protected:
   virtual bool convertData(DSResult* const result);
 };
 
+class JSONSpecialRemunSource: public JSONSource
+{
+public:
+  JSONSpecialRemunSource(JSONReader *jsonreader);
+  virtual ~JSONSpecialRemunSource() {};
+protected:
+  virtual bool convertData(DSResult* const result);
+};
+
+class JSONOnCallSource: public JSONSource
+{
+public:
+  JSONOnCallSource(JSONReader *jsonreader);
+  virtual ~JSONOnCallSource() {};
+protected:
+  virtual bool convertData(DSResult* const result);
+};
+
 #endif // JSONREADER_H
