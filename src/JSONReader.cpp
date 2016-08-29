@@ -96,6 +96,7 @@ bool JSONAccountSource::convertData(DSResult* const result) {
         }
         else {
           row.append("");
+	  row.append("");
         }
         appendStringToRow(row,subaccount,"Category");
         appendStringToRow(row,subaccount,"Description");
