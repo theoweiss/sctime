@@ -1,4 +1,4 @@
-﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
 <html>
 <head>
         <meta HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=UTF-8">
@@ -133,7 +133,9 @@ einer der folgenden Methoden:</p>
   <li><tt>command</tt>: verwendet die Kommandos <tt>zeitkonten</tt> und <tt>zeitbereitls.</tt>
     Ist unter Windows wirkungslos, da hier die in notwendigen Befehle nicht zur
     Verf&uuml;gung stehen.
-  <li><tt>file</tt>: liest die Dateien <tt>zeitkonten.txt</tt> und <tt>zeitbereitls.txt</tt>
+  <li><tt>json</tt>: liest die Datei <tt>sctimeoffline.json</tt> 
+    aus dem Konfigurationsverzeichnis (&uuml;blicherweise <tt>~/.sctime</tt>)
+  <li><tt>file</tt>: Veraltet. Liest die Dateien <tt>zeitkonten.txt</tt>,  <tt>sonderzeitls.txt</tt> und <tt>zeitbereitls.txt</tt>
     aus dem Konfigurationsverzeichnis (&uuml;blicherweise <tt>~/.sctime</tt>)
 </ul>
 
@@ -157,13 +159,14 @@ ihrer Nennung abgearbeitet.</p>
 
 <a name="datasource_command"><h4>Datenquelle <tt>command</tt></h4></a>
 <p>Die aufgerufenen Befehle lauten:
-<pre>zeitkonten --mikrokonten --psp --separator='|'
-zeitbereitls --separator='|'</pre>
+<pre>zeitkonten --mikrokonten --psp --sonderzeiten --separator='|'
+zeitbereitls --separator='|'
+sonderzeitls --separator='|'</pre>
 Momentan k&ouml;nnen sie nicht konfiguriert werden.</p>
 
 <h4>Datenquelle <tt>file</tt></h4>
 
-<p>Die Dateien werden als <tt>~/.sctime/zeitkonten.txt</tt> und
+<p>Die Dateien werden als <tt>~/.sctime/zeitkonten.txt</tt>, <tt>~/.sctime/sonderzeiten.txt</tt> und
 <tt>~/.sctime/zeitbereitls.txt</tt> erwartet.</p>
 
 <p>Alternative Pfade  k&ouml;nnen mittels der Parameter
@@ -246,13 +249,15 @@ Da das Home des Anwenders auf dem Mac typischweise nicht dem Home auf der
 UNIX/Linux-Maschine entspricht, sind die Dateien z.B. per <tt>scp</tt>
 oder <tt>rsync</tt> manuell zu &uuml;bertragen.</pp>
 
-<p>Werden die Konten- und Bereitschaftsliste als Dateien bereitgestellt,
+<p>Werden die Konten- und Bereitschaftsliste als Einzel-Dateien bereitgestellt,
   m&uuml;ssen diese im Format UTF-8 sein. (Um genau zu sein: Das Programm
   erwartet, dass diese Dateien die Kodierung aufweisen, die von
   <tt>locale charmap</tt> angegeben wird.)
 Am besten erzeugt man sie mit einem Aufruf der folgenden Form:
-<pre>ssh user@linuxserver "LC_CTYPE=de_DE.UTF-8 zeitkonten --separator=\"|\" --mikrokonten" >$HOME/.sctime/zeitkonten.txt</pre>
-Dabei wird von passwortfreiem login ausgegangen.</p>
+<pre>ssh user@linuxserver "LC_CTYPE=de_DE.UTF-8 zeitkonten --separator=\"|\" --sonderzeiten --psp --mikrokonten" >$HOME/.sctime/zeitkonten.txt</pre>
+Dabei wird von passwortfreiem login ausgegangen. </p>
+<p>Die JSON-Datei ist automatisch immer UTF-8 kodiert, so dass keine weiteren Optionen zum Aufruf von <pre>zeit-sctime-offline</pre> ben&ouml;tigt werden.
+</p>
 
 <a name="misc"><h2>Weitere Hinweise</h2></a>
 
@@ -260,15 +265,33 @@ Dabei wird von passwortfreiem login ausgegangen.</p>
 
 <p>Wie schon in den vorigen Abschnitten angedeutet, kann sctime auch ohne
 Verbindung zur Datenbank betrieben werden.
-Hierzu m&uuml;ssen die notwendigen Daten (Zeitkonten und Bereitschaftszeiten)
+Hierzu m&uuml;ssen die notwendigen Daten (Zeitkonten, Sonderzeiten und Bereitschaftszeiten)
 in Dateien am richtigen Ort bereitgestellt werden.
-Die Standardpfade hierf&uuml;r sind <tt>~/.sctime/zeitkonten.txt</tt> und
+Dazu muss die Datei <tt>~/.sctime/sctimeoffline.json</tt> existieren.
+Diese Datei kann &uuml;ber folgendes Kommando erzeugt werden:
+<p><tt>zeit-sctime-offline &gt; ~/.sctime/sctimeoffline.json</tt></p>
+
+<p>Soll die Datei in einem anderen Pfad liegen, als es die Defaults
+vorsehen, stehen folgende Kommandozeilenoptionen zur Verf&uuml;gung:</p>
+
+<ul>
+<li><tt>--configdir DIRNAME</tt> erlaubt es das Konfigurationsverzeichnis
+umzusetzen (Default ist <tt>h:\.sctime</tt> unter Windows und
+<tt>~/.sctime</tt> unter *nix).
+<li><tt>--offlinefile FILENAME</tt>: Daten aus der genannten Datei lesen.
+</ul>
+
+<a name="offline-veraltet"><h3>Offline-Betrieb (veraltet)</h3></a>
+Alternativ kann auch bis jetzt noch der mittlerweile veraltete 
+Weg beschritten werden (nicht empfohlen, er wird zuk&uuml;nftig nicht mehr unterst&uuml;tzt).
+Die Pfade hierf&uuml;r sind <tt>~/.sctime/zeitkonten.txt</tt>,  <tt>~/.sctime/sonderzeitls.txt</tt> und
 <tt>~/.sctime/zeitbereitls.txt</tt>.
 Diese kann man mit folgenden Befehlsaufrufen (gegebenenfalls auf einem anderen
 Rechner mit Zugang zur Zeitdatenbank) erzeugen:
 
 <p><tt>zeitkonten --mikrokonten --psp --separator='|' &gt; zeitkonten.txt</tt></p>
 <p><tt>zeitbereitls --separator='|' &gt; zeitbereitls.txt</tt></p>
+<p><tt>sonderzeitls --separator='|' &gt; sonderzeitls.txt</tt></p>
 
 <p>Sollen die Dateien in einem anderen Pfad liegen, als es die Defaults
 vorsehen, stehen folgende Kommandozeilenoptionen zur Verf&uuml;gung:</p>
@@ -279,7 +302,8 @@ umzusetzen (Default ist <tt>h:\.sctime</tt> unter Windows und
 <tt>~/.sctime</tt> unter *nix).
 <li><tt>--zeitkontenfile FILENAME</tt>: Kontendaten aus der genannten Datei lesen.
 <li><tt>--bereitschaftsfile FILENAME</tt>: Bereitschaftskategorien aus der genannten Datei lesen.
-</ul>
+<li><tt>--sonderzeitenfile FILENAME</tt>: Bereitschaftskategorien aus der genannten Datei lesen.
+</ul> 
 
 <h3>Offline-Betrieb, portable Edition</h3>
 

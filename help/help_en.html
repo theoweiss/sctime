@@ -122,7 +122,9 @@ one of the following methods:</p>
   <li><tt>QODBC</tt>: Database driver of Qt for ODBC; uses ODBC-DSN <tt>postgres_zeit</tt>
   <li><tt>command</tt>: uses the commands <tt>zeitkonten</tt> and <tt>zeitbereitls.</tt>
     This data source is ignored on Windows because the necessary commands do not exist here.
-  <li><tt>file</tt>: reads the files <tt>zeitkonten.txt</tt> and <tt>zeitbereitls.txt</tt>
+  <li><tt>json</tt>: reads the file <tt>sctimeoffline.json</tt> 
+   in the configuration directory (usually <tt>~/.sctime</tt>)
+  <li><tt>file</tt>: Deprecated. Reads the files <tt>zeitkonten.txt</tt>, <tt>zeitbereitls.txt</tt> and <tt>zeitbereitls.txt</tt>
     inside the configuration directory (usually <tt>~/.sctime</tt>)
 </ul>
 
@@ -143,14 +145,15 @@ order they are listed on the command line.</p>
 
 <a name="datasource_command"><h4>Data source <tt>command</tt></h4></a>
 <p>The commands called to obtain all the required information are:
-<pre>zeitkonten --mikrokonten --psp --separator='|'
-zeitbereitls --separator='|'</pre>
+<pre>zeitkonten --mikrokonten --psp --sonderzeiten --separator='|'
+zeitbereitls --separator='|'
+sonderzeitls --separator='|'</pre>
 These can not be configured at the moment.</p>
 
 <h4>Data source <tt>file</tt></h4>
 
-<p>Two files <tt>~/.sctime/zeitkonten.txt</tt> and
-<tt>~/.sctime/zeitbereitls.txt</tt> are expected with these paths by
+<p>Three files <tt>~/.sctime/zeitkonten.txt</tt>,
+<tt>~/.sctime/zeitbereitls.txt</tt> and <tt>~/.sctime/zeitbereitls.txt</tt> are expected with these paths by
 default.</p>
 
 <p>Alternate paths can be provided using command line options
@@ -224,26 +227,28 @@ the user logs onto a UNIX/Linux machine and runs <tt>sctimeorg2</tt> there.
 Since the Mac's home is not normally the same as the UNIX home, the files need
 to be copied manually using <tt>scp</tt> or <tt>rsync</tt> first.</pp>
 
-<p>If account list and on-call categories are provided as files, they need to
+<p>If account list, on-call categories and special remuneration times are provided as txt-files, they need to
 use UTF-8 as text encoding. (More specifically, the program expects them to be
 in the format given by <tt>locale charmap</tt>.) They can be generated in the
 correct encoding on a Linux machine using a command such as this:
-<pre>ssh user@linuxserver "LC_CTYPE=de_DE.UTF-8 zeitkonten --separator=\"|\" --mikrokonten" >$HOME/.sctime/zeitkonten.txt</pre>
+<pre>ssh user@linuxserver "LC_CTYPE=de_DE.UTF-8 zeitkonten --separator=\"|\" --sonderzeiten --psp --mikrokonten" >$HOME/.sctime/zeitkonten.txt</pre>
 This assumes a password-free login to the server.</p>
-
+<p>The JSON-File is always automatically UTF-8 encoded. Therefore no further options need to be provided when calling <pre>zeit-sctime-offline</pre>.
+</p>
 <a name="misc"><h2>Additional Notes</h2></a>
 
 <a name="offline"><h3>Offline usage</h3></a>
 
 <p>As hinted in the previous sections, sctime can be used without a direct
 connection to the database. For this to work, all necessary data (time
-accounts and on-call categories) needs to be provided as files in the expected
-locations. Default paths for these files are <tt>~/.sctime/zeitkonten.txt</tt> and
+accounts, special remuneration times and on-call categories) needs to be provided as files in the expected
+locations. Default paths for these files are <tt>~/.sctime/zeitkonten.txt</tt>, <tt>~/.sctime/sonderzeitls.txt</tt> and
 <tt>~/.sctime/zeitbereitls.txt</tt>. These can be generated (possibly on a
 different machine with access to the database) using the following commands:
 
 <p><tt>zeitkonten --mikrokonten --psp --separator='|' &gt; zeitkonten.txt</tt></p>
 <p><tt>zeitbereitls --separator='|' &gt; zeitbereitls.txt</tt></p>
+<p><tt>sonderzeitls --separator='|' &gt; sonderzeitls.txt</tt></p>
 
 <p>If the files are to be provided at a different location, the following
 command line options can be used to override the defaults:</p>
@@ -256,6 +261,8 @@ command line options can be used to override the defaults:</p>
 list file. (default is <tt>~/.sctime/zeitkonten.txt</tt>)
 <li><tt>--bereitschaftsfile FILENAME</tt> overrides the path to the on-call
 categories file (default is <tt>~/.sctime/zeitbereitls.txt</tt>)
+<li><tt>--sonderzeitenfile FILENAME</tt> overrides the path to the special remunerations
+categories file (default is <tt>~/.sctime/sonderzeitls.txt</tt>)
 </ul>
 
 <h3>Offline usage, portable edition</h3>
