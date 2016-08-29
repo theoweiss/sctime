@@ -152,16 +152,17 @@ void setupDatasources(const QStringList& datasourceNames,
   QString dsname;
   foreach (dsname, datasourceNames) {
     if (dsname.compare("json") == 0) {
-      jsonreader=new JSONReader(configDir.filePath("zeitkonten.json")); 
+      jsonreader=new JSONReader(configDir.filePath("sctime-offline.json")); 
       kontenDSM->sources.append(new JSONAccountSource(jsonreader));
       bereitDSM->sources.append(new JSONOnCallSource(jsonreader));
       specialRemunDSM->sources.append(new JSONSpecialRemunSource(jsonreader));
-    }
+    } else
     if (dsname.compare("file") == 0) {
       kontenDSM->sources.append(new FileReader(configDir.filePath("zeitkonten.txt"), "|", 15));
       bereitDSM->sources.append(new FileReader(configDir.filePath("zeitbereitls.txt"), "|", 2));
       specialRemunDSM->sources.append(new FileReader(configDir.filePath("sonderzeitls.txt"), "|", 3));
-    } else if (dsname.compare("command") == 0) {
+    } 
+    else if (dsname.compare("command") == 0) {
 #ifdef WIN32
       logError(QObject::tr("data source 'command' is not available on Windows"));
 #else

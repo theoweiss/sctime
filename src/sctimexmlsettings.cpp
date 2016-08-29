@@ -156,6 +156,25 @@ void SCTimeXMLSettings::readSettings()
   readSettings(true, NULL);
 }
 
+int SCTimeXMLSettings::compVersion(const QString& version1, const QString& version2)
+{
+  QStringList v1list=version1.split(".");
+  QStringList v2list=version2.split(".");
+  for (int i=0; i<v1list.size(); i++) {
+     if (i>=v2list.size())
+	return 1;
+     int v1=v1list[i].toInt();
+     int v2=v2list[i].toInt();
+     if (v1>v2) {
+	return 1;
+     } else
+     if (v1<v2) {
+	return -1;
+     } 
+  }
+  return 0; 
+}
+
 /**
  * Liest alle Einstellungen.
  */
@@ -201,6 +220,7 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
   f.close();
   QDomElement aktiveskontotag;
   QDomElement docElem = doc.documentElement();
+  QString lastVersion=docElem.attribute("version");
   if (global) {
     defaultcommentfiles.clear();
     columnwidth.clear();
@@ -470,6 +490,10 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             }
             if (global && elem2.tagName() == "backends") {
               backends = elem2.attribute("names", defaultbackends);
+	      if (compVersion("0.80.1", lastVersion)!=-1) // in case of upgrade add new backend
+	      {
+		  backends.replace("file", "json file");
+	      }
 
               for( QDomNode node3 = elem2.firstChild(); !node3.isNull(); node3 = node3.nextSibling() ) {
                 QDomElement elem3 = node3.toElement();

@@ -40,7 +40,7 @@ public:
 
     SCTimeXMLSettings():backupSettingsXml(true)
     {
-      defaultbackends = "QPSQL QODBC command file";
+      defaultbackends = "QPSQL QODBC command json file";
       defaultdatabaseserver = "zeitdabaserv";
       defaultdatabase = "zeit";
       timeInc = 5*60;
@@ -265,6 +265,8 @@ public:
     void writeSettings(bool global, AbteilungsListe* abtList);
 
     void readSettings(bool global, AbteilungsListe* abtList);
+    
+    int compVersion(const QString& version1, const QString& version2);
 
     QString color2str(const QColor& color);
 
