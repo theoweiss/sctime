@@ -624,7 +624,8 @@ void KontoTreeView::refreshComment(const QString& comment, KontoTreeItem* item, 
    QVector<DefaultComment>* defaultCommentList = etl->getDefaultCommentList();
    QVector<DefaultComment>::iterator dclIt;
    for (dclIt = defaultCommentList->begin(); dclIt != defaultCommentList->end(); ++dclIt ) {
-     if (comment.startsWith(dclIt->getText()))
+     QString matext=dclIt->getText();
+     if ((comment.startsWith(matext))&&(!matext.isEmpty()))
      {
        item->setMicroAccount(true);
        return;
