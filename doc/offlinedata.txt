@@ -1,0 +1,59 @@
+offline data is stored in the following json-format:
+
+{
+  "AccountTree": {    # required
+    "Departments": [  #required
+       {   
+          "Name": "Abteilungsname" #required
+          "Accounts": [ #required
+             {
+                 "Name": "Kontoname",         #required
+                 "CostCenter": "Kostenstelle",  # not for external use
+                 "ResponsiblePersons": [
+                     "Verantwortlicher fuers Konto", 
+                     "Stellvertretender Verantwortlicher fuers Konto"
+                  ],
+                  "InvoicedUntil": "YYYY-MM-DD",   # not for external use
+                  "NoEntriesBefore": "YYYY-MM-DD",   # not for external use
+                  "SubAccounts": [ #required
+                     {
+                        "Name": "Unterkontoname",         #required
+                        "ResponsiblePersons": [
+                            "Verantwortlicher fuers Unterkonto", 
+                            "Stellvertretender Verantwortlicher fuers Unterkonto"
+                        ],
+                        "Category": "TAV-Kategory",
+                        "Description": "Beschreibung",
+                        "PSP": PSP-Element,       # not for external use
+                        "SpecialRemunerations": [ # atm not for external use
+                          "Sonderzeitkategorie1", "Sonderzeitkategorie1", ...
+                        ]
+                        "MicroAccounts": [
+                           "Mikroaccount1", "Mikroaccount2", ...
+                        ]
+                     },
+                     ... # further subaccounts
+                  ]
+             }, 
+             ... # further accounts
+          ],
+       },
+       ... # further departments
+    ]
+  },
+  "OnCallTimes": [
+    {
+       "Category" : "Kategorie", #required
+       "Description" : "Beschreibung"
+    },
+    ... # further On Call Times
+  ],
+  "SpecialRemunerations" : [
+    {
+       "Category" : "Kategorie",       # required
+       "IsGlobal" : 1,                 # required
+       "Description" : "Beschreibung"
+    },
+    ... # further special Remunerations
+  ]
+}
