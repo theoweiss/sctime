@@ -1546,7 +1546,7 @@ void TimeMainWindow::commitSpecialRemun(DSResult data) {
     QString category = ql[0].simplified();
     QString description = ql[1].simplified();
     srmap[category]=SpecialRemunerationType(description);
-    if (QString("1").compare(ql[2])==0) {
+    if ((QString("1").compare(ql[2])==0)||(QString("true").compare(ql[2])==0)) {
       global_srnames.push_back(category);
     }
   }
