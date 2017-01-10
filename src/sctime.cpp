@@ -190,7 +190,17 @@ int main(int argc, char **argv ) {
         QObject::tr("Cannot access configration directory %1.").arg(configdirstring));
   }
   configDir=directory.path();
+  
+  if (!zeitkontenfile.isEmpty())
+      zeitkontenfile=canonicalPath(zeitkontenfile);
+  if (!bereitschaftsfile.isEmpty())
+      bereitschaftsfile=canonicalPath(bereitschaftsfile);
+  if (!specialremunfile.isEmpty())
+      specialremunfile=canonicalPath(specialremunfile);
+  if (!offlinefile.isEmpty())
+      offlinefile=canonicalPath(offlinefile);
 
+      
   // Locking: nur eine Instanz von sctime soll laufen
 
   // Ich lege eine lokale Sperre an, die vom Betriebssystem zuverlässig auch
