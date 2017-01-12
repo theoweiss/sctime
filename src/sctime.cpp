@@ -213,9 +213,17 @@ int main(int argc, char **argv ) {
   // - Nach einem Absturz kann ich zumindest auf dem gleichen Rechner neu starten,
   //   ohne den Benutzer mit Warnungen wegen alter Sperren zu belästigen.
   LockLocal local("sctime", true);
-  Lock *global = new Lockfile(configDir.filePath("LOCK"), true);
+  bool oldgloballockexists=configDir.exists("LOCK");
+  Lockfile *global = new Lockfile(configDir.filePath("LOCK"), true);
   local.setNext(global);
   if (!local.acquire()) fatal(QObject::tr("sctime: Cannot start"), local.errorString());
+  if (oldgloballockexists) {
+      QFileInfo info(configDir,"settings.xml");
+      if (info.exists()) {
+        QDateTime lasttime=info.lastModified();
+        QMessageBox::critical(NULL, QObject::tr("Unclean state"), QObject::tr("It looks like the last instance of sctime might have crashed, probably at %1. Please check if the recorded times of that date are correct.").arg(lasttime.toLocalTime().toString()), QMessageBox::Ok);
+      }
+  }
   lock = &local;
 
 

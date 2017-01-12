@@ -132,13 +132,13 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
      layout->addStretch(2);
   } else tagcombo=NULL;
 
-  zeitBox=new ZeitBox(tr("Time:"), et.sekunden, this );
+  zeitBox=new ZeitBox(tr("Time"), et.sekunden, this );
   zeitBox->setReadOnly(readOnly);
   layout->addWidget(zeitBox);
   layout->addSpacing(5);
   layout->addStretch(2);
 
-  zeitAbzurBox=new ZeitBox(tr("Accountable time:"), et.sekundenAbzur, this );
+  zeitAbzurBox=new ZeitBox(tr("Accountable time"), et.sekundenAbzur, this );
   zeitAbzurBox->setReadOnly(readOnly);
   layout->addWidget(zeitAbzurBox);
   layout->addSpacing(5);

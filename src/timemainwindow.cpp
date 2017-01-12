@@ -1295,7 +1295,7 @@ void TimeMainWindow::setAktivesProjekt(QTreeWidgetItem * item)
   kontoTree->setCurrentItem(item);
   if (item->text(KontoTreeItem::COL_TYPE) == "tageweise abrechnen (kd)" && abtList->ukHatMehrereEintrage(abt, ko, uko, idx)) {
   //if (item->text(1) == "interne Projekte (ip)" && abtList->ukHatMehrereEintrage(abt, ko, uko, idx)) { // für Versuche
-      statusBar->showMessage(tr("Bitte nur einen Eintrag für Konten des Typs „%1”!").arg(item->text(KontoTreeItem::COL_TYPE)), 10000);
+      statusBar->showMessage(tr("Please specify only one entry for accounts of type \"%1\"!").arg(item->text(KontoTreeItem::COL_TYPE)), 10000);
       QApplication::beep();
   }
   updateCaption();

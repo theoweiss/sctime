@@ -140,7 +140,7 @@ int JSONReader::loadDataNewerThan(int version)
   QFile loadFile(path);
 
   if (!loadFile.open(QIODevice::ReadOnly)) {
-      trace(QObject::tr("Couldn't open json file %1").arg(path));
+      trace(QObject::tr("Couldn't open json file %1.").arg(path));
       return INVALIDDATA;
   }
 

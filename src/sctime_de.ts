@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
 <TS version="2.0" language="de_DE">
-<defaultcodec>UTF-8</defaultcodec>
 <context>
     <name>DateDialogBase</name>
     <message>
@@ -359,7 +358,7 @@
 <context>
     <name>QObject</name>
     <message>
-        <location filename="abteilungsliste.cpp" line="429"/>
+        <location filename="abteilungsliste.cpp" line="435"/>
         <source>Unknown Mode in applyFlagMode</source>
         <translation>Unbekannter Modus in applyFlagMode</translation>
     </message>
@@ -523,7 +522,7 @@ Eine gefährliche Alternative ist, die Datei „%1“  zu löschen.</translation
     <message>
         <location filename="lock.cpp" line="183"/>
         <source>lock file %1 could not be opened for update: %1</source>
-        <translation type="unfinished">Lock-Datei %1 konnte nicht zum schreiben geöffnet werden: %1</translation>
+        <translation>Lock-Datei %1 konnte nicht zum schreiben geöffnet werden: %1</translation>
     </message>
     <message>
         <source>lock file %1 could not be opened: %1</source>
@@ -553,13 +552,16 @@ Eine gefährliche Alternative ist, die Datei „%1“  zu löschen.</translation
 			(default: &apos;QPSQL&apos;&apos;,&apos; &apos;QODBC&apos;&apos;, &apos;command&apos; and &apos;file&apos;&apos;);
 			overrides &lt;backends/&gt; in settings.xml
 --zeitkontenfile=FILE	read the accounts list from file FILE
-			(default: output of &apos;zeitkonten&apos;.
+			(default: output of &apos;zeitkonten&apos;). Obsolete.
 
 --bereitschaftsfile=FILE	read the &apos;Bereitschaftsarten&apos;&apos; from file FILE
-				(default: output of &apos;zeitbereitls&apos;.
+				(default: output of &apos;zeitbereitls&apos;). Obsolete.
 
 --specialremunfile=FILE       read the types of special remunerations from file FILE
-                               (default: output of &apos;sonderzeitls&apos;.
+                               (default: output of &apos;sonderzeitls&apos;. Obsolete.
+
+--offlinefile=FILE       read all needed data from FILE which must be of json format
+                      overides --zeitkontenfile --bereitschaftsfile and --specialremunfile
 
 Please see the Help menu for further information (F1)!</source>
         <oldsource>Available Options:
@@ -574,59 +576,74 @@ Please see the Help menu for further information (F1)!</source>
 --bereitschaftsfile=FILE	read the &apos;Bereitschaftsarten&apos;&apos; from file FILE
 				(default: output of &apos;zeitbereitls&apos;.
 
+--specialremunfile=FILE       read the types of special remunerations from file FILE
+                               (default: output of &apos;sonderzeitls&apos;.
+
 Please see the Help menu for further information (F1)!</oldsource>
-        <translation type="unfinished">Verfügbare Optionen:
+        <translation>Verfügbare Optionen:
 --configdir=DIR		Verzeichnis, in dem alle Dateien abgelegt werden
 			(Standard: ~/.sctime)
---datatranslation=	(wiederholbar) diese Datenquellen benutzen
-			(Standard: &apos;QPSQL&apos;&apos;,&apos; &apos;QODBC&apos;&apos;, &apos;command&apos; and &apos;file&apos;&apos;);
-			hat Vorrang vor Wert von &lt;backends/&gt; in settings.xml
---zeitkontenfile=FILE	lese Kontenliste aus Datei FILE
-			(Standard: Ausgabe des Befehls &apos;zeitkonten&apos;.
---bereitschaftsfile=FILE	lese Bereitschaftsarten aus Datei FILE
-				(Standard: Ausgabe des Befehls &apos;zeitbereitls&apos;
---specialremunfile=FILE	Liest die Kategorien von globalen Sonderzeiten aus der Datei FILE
-			(Standard: Ausgabe von &apos;sonderzeitls&apos;.
+--datasource=		(wiederholbar) diese Datenquellen benutzen
+			(Standard: &apos;QPSQL&apos;&apos;,&apos; &apos;QODBC&apos;&apos;, &apos;command&apos; und &apos;file&apos;&apos;);
+			überschreibt den Wert von &lt;backends/&gt; in settings.xml
+--zeitkontenfile=FILE		lese Kontenliste aus Datei FILE
+			(Standard: Ausgabe des Befehls &apos;zeitkonten&apos;). Veraltet.
+--bereitschaftsfile=FILE		lese Bereitschaftsarten aus Datei FILE
+				(Standard: Ausgabe des Befehls &apos;zeitbereitls&apos;). Veraltet.
+--specialremunfile=FILE		Liest die Kategorien von globalen Sonderzeiten aus der Datei FILE
+			(Standard: Ausgabe von &apos;sonderzeitls&apos;). Veraltet.
+--offlinefile=FILE		Liest alle benötigten Daten aus FILE, welches im JSON Format vorliegen muss.
+			überschreibt --zeitkontenfile --bereitschaftsfile and --specialremunfile
 
-Please see the Help menu for further information (F1)!</translation>
+Beachten Sie bittte die Hilfefunktion für weitere Informationen (F1)!</translation>
     </message>
     <message>
-        <location filename="sctime.cpp" line="156"/>
+        <location filename="sctime.cpp" line="158"/>
         <source>Personal accounts</source>
         <translation>Persönliche Konten</translation>
     </message>
     <message>
-        <location filename="sctime.cpp" line="157"/>
+        <location filename="sctime.cpp" line="159"/>
         <source>All accounts</source>
         <translation>Alle Konten</translation>
     </message>
     <message>
-        <location filename="sctime.cpp" line="160"/>
+        <location filename="sctime.cpp" line="162"/>
         <source>sctime </source>
         <translation>sctime </translation>
     </message>
     <message>
-        <location filename="sctime.cpp" line="186"/>
+        <location filename="sctime.cpp" line="189"/>
         <source>sctime: Configuration problem</source>
         <oldsource>sctime: configuration problem</oldsource>
         <translation>sctime: Konfigurationsproblem</translation>
     </message>
     <message>
-        <location filename="sctime.cpp" line="187"/>
+        <location filename="sctime.cpp" line="190"/>
         <source>Cannot access configration directory %1.</source>
         <oldsource>Cannot access conigration directory %1.</oldsource>
         <translation>Kann nicht auf %1 zugreifen.</translation>
     </message>
     <message>
-        <location filename="sctime.cpp" line="205"/>
+        <location filename="sctime.cpp" line="219"/>
         <source>sctime: Cannot start</source>
         <oldsource>sctime: cannot start</oldsource>
         <translation>sctime: kann nicht starten</translation>
     </message>
     <message>
+        <location filename="sctime.cpp" line="224"/>
+        <source>Unclean state</source>
+        <translation>Unklarer Zustand</translation>
+    </message>
+    <message>
+        <location filename="sctime.cpp" line="224"/>
+        <source>It looks like the last instance of sctime might have crashed, probably at %1. Please check if the recorded times of that date are correct.</source>
+        <translation>Die letzte Instanz von sctime scheint abgestürzt zu sein (wahrscheinlich um %1). Bitte überprüfen Sie die aufgezeichneten Zeiten dieses Datums.</translation>
+    </message>
+    <message>
         <location filename="sctimexmlsettings.cpp" line="52"/>
         <source>Shell script not written because it has already been checked in.</source>
-        <translation>Shell-Skript nicht geschrieben, da bereits eingecheckt</translation>
+        <translation>Shell-Skript nicht geschrieben, da bereits eingecheckt.</translation>
     </message>
     <message>
         <location filename="sctimexmlsettings.cpp" line="59"/>
@@ -634,96 +651,101 @@ Please see the Help menu for further information (F1)!</translation>
         <translation>sctime: Shell-Skript schreiben</translation>
     </message>
     <message>
-        <location filename="sctimexmlsettings.cpp" line="187"/>
+        <location filename="sctimexmlsettings.cpp" line="206"/>
         <source>sctime: opening configuration file</source>
         <translation>sctime: Konfigurationsdatei öffnen</translation>
     </message>
     <message>
-        <location filename="sctimexmlsettings.cpp" line="188"/>
+        <location filename="sctimexmlsettings.cpp" line="207"/>
         <source>%1 : %2</source>
         <translation>%1 : %2</translation>
     </message>
     <message>
-        <location filename="sctimexmlsettings.cpp" line="196"/>
+        <location filename="sctimexmlsettings.cpp" line="215"/>
         <source>sctime: reading configuration file</source>
         <translation>sctime: Konfigurationsdatei lesen</translation>
     </message>
     <message>
-        <location filename="sctimexmlsettings.cpp" line="197"/>
+        <location filename="sctimexmlsettings.cpp" line="216"/>
         <source>error in %1, line %2, column %3: %4.</source>
         <translation>Fehler in %1, Zeile %2, Spalte %3: %4.</translation>
     </message>
     <message>
-        <location filename="sctimexmlsettings.cpp" line="518"/>
+        <location filename="sctimexmlsettings.cpp" line="542"/>
         <source>zeit-DAY.sh not written because it has already been checked in</source>
         <translation>zeit-TAG.sh nicht geschrieben, da bereits eingecheckt</translation>
     </message>
     <message>
-        <location filename="sctimexmlsettings.cpp" line="802"/>
-        <location filename="sctimexmlsettings.cpp" line="819"/>
-        <location filename="sctimexmlsettings.cpp" line="828"/>
-        <location filename="sctimexmlsettings.cpp" line="833"/>
+        <location filename="sctimexmlsettings.cpp" line="826"/>
+        <location filename="sctimexmlsettings.cpp" line="843"/>
+        <location filename="sctimexmlsettings.cpp" line="852"/>
+        <location filename="sctimexmlsettings.cpp" line="857"/>
         <source>sctime: saving settings</source>
         <translation>sctime: Einstellungen speichern</translation>
     </message>
     <message>
-        <location filename="sctimexmlsettings.cpp" line="802"/>
+        <location filename="sctimexmlsettings.cpp" line="826"/>
         <source>opening file %1 for writing: %2</source>
         <translation>Datei %1 zum Schreiben öffnen: %2</translation>
     </message>
     <message>
-        <location filename="sctimexmlsettings.cpp" line="820"/>
+        <location filename="sctimexmlsettings.cpp" line="844"/>
         <source>%1 cannot be copied to %2: %3</source>
         <translation>Kann nicht %1 kopieren nach %2: %3</translation>
     </message>
     <message>
-        <location filename="sctimexmlsettings.cpp" line="829"/>
-        <location filename="sctimexmlsettings.cpp" line="834"/>
+        <location filename="sctimexmlsettings.cpp" line="853"/>
+        <location filename="sctimexmlsettings.cpp" line="858"/>
         <source>%1 cannot be renamed to %2: %3</source>
         <translation>Kann nicht %1 umbenennen zu %2: %3</translation>
     </message>
     <message>
-        <location filename="setupdsm.cpp" line="78"/>
+        <location filename="setupdsm.cpp" line="104"/>
         <source>user name cannot be determined.</source>
         <translation>Der Benutzername kann nicht festgestellt werden.</translation>
     </message>
     <message>
-        <location filename="setupdsm.cpp" line="99"/>
+        <location filename="setupdsm.cpp" line="125"/>
         <source>Error when reading from file %1: %2</source>
         <translation>Beim Lesen aus Datei %1: %2</translation>
     </message>
     <message>
-        <location filename="setupdsm.cpp" line="108"/>
+        <location filename="setupdsm.cpp" line="134"/>
         <source>Accounts</source>
         <translation>Konten</translation>
     </message>
     <message>
-        <location filename="setupdsm.cpp" line="109"/>
+        <location filename="setupdsm.cpp" line="135"/>
         <source>On-call categories</source>
         <translation>Bereitschaftsarten</translation>
     </message>
     <message>
-        <location filename="setupdsm.cpp" line="110"/>
+        <location filename="setupdsm.cpp" line="136"/>
         <source>Special Remunerations</source>
-        <translation type="unfinished">Sonderzeiten</translation>
+        <translation>Sonderzeiten</translation>
     </message>
     <message>
-        <location filename="setupdsm.cpp" line="111"/>
+        <location filename="setupdsm.cpp" line="137"/>
         <source>available database drivers: %1.</source>
         <translation>verfügbare Datenbanktreiber: %1.</translation>
     </message>
     <message>
-        <location filename="setupdsm.cpp" line="126"/>
+        <location filename="setupdsm.cpp" line="146"/>
+        <source>adding jsonreader: %1.</source>
+        <translation>Füge JsonReader hinzu: %1.</translation>
+    </message>
+    <message>
+        <location filename="setupdsm.cpp" line="167"/>
         <source>data source &apos;command&apos; is not available on Windows</source>
         <translation>Datenquelle &apos;command&apos; ist unter Windows nicht verfügbar</translation>
     </message>
     <message>
-        <location filename="setupdsm.cpp" line="134"/>
+        <location filename="setupdsm.cpp" line="175"/>
         <source>database driver or data source not available: </source>
         <translation>Datenbanktreiber oder Datenquelle nicht verfügbar: </translation>
     </message>
     <message>
-        <location filename="setupdsm.cpp" line="139"/>
+        <location filename="setupdsm.cpp" line="180"/>
         <source>data source &apos;%1&apos; not working: %2</source>
         <translation>data translation &apos;%1&apos;not working: %2</translation>
     </message>
@@ -733,9 +755,15 @@ Please see the Help menu for further information (F1)!</translation>
         <translation>-- Start --</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="392"/>
+        <location filename="timemainwindow.cpp" line="394"/>
         <source>sctime: accounting stopped</source>
         <translation>sctime: Zeiterfassung gestoppt</translation>
+    </message>
+    <message>
+        <location filename="JSONReader.cpp" line="143"/>
+        <source>Couldn&apos;t open json file %1.</source>
+        <oldsource>Couldn&apos;t open json file %1</oldsource>
+        <translation>Konnte JSON-Datei nicht öffnen.</translation>
     </message>
 </context>
 <context>
@@ -743,7 +771,7 @@ Please see the Help menu for further information (F1)!</translation>
     <message>
         <location filename="specialremunerationdialogbase.ui" line="14"/>
         <source>Please choose applicable type of special remuneration</source>
-        <translation type="unfinished">Bitte wählen Sie die gewünschten Sonderzeitkategorien</translation>
+        <translation>Bitte wählen Sie die gewünschten Sonderzeitkategorien</translation>
     </message>
 </context>
 <context>
@@ -751,12 +779,12 @@ Please see the Help menu for further information (F1)!</translation>
     <message>
         <location filename="specialremunerationsdialog.cpp" line="40"/>
         <source>sctime: Special Remuneration times</source>
-        <translation type="unfinished">sctime: Sonderzeiten</translation>
+        <translation>sctime: Sonderzeiten</translation>
     </message>
     <message>
         <location filename="specialremunerationsdialog.cpp" line="40"/>
         <source>No subaccount selected!</source>
-        <translation type="unfinished">Kein Unterkonto ausgewählt!</translation>
+        <translation>Kein Unterkonto ausgewählt!</translation>
     </message>
 </context>
 <context>
@@ -771,7 +799,7 @@ Please see the Help menu for further information (F1)!</translation>
         <location filename="statusbar.h" line="60"/>
         <source>Warning: Non-current date %1 is being edited.</source>
         <oldsource>Warning: Non-current date </oldsource>
-        <translation type="unfinished">Warnung: Es wird das nicht aktuelle Datum %1 editiert. </translation>
+        <translation>Warnung: Es wird das nicht aktuelle Datum %1 editiert. </translation>
     </message>
     <message>
         <source> is being edited.</source>
@@ -945,7 +973,7 @@ Please see the Help menu for further information (F1)!</translation>
     <message>
         <location filename="timemainwindow.cpp" line="264"/>
         <source>Set special remuneration &amp;times...</source>
-        <translation type="unfinished">Setze Sonderzei&amp;t Kategorien...</translation>
+        <translation>Setze Sonderzei&amp;t Kategorien...</translation>
     </message>
     <message>
         <location filename="timemainwindow.cpp" line="268"/>
@@ -1003,58 +1031,58 @@ Please see the Help menu for further information (F1)!</translation>
         <translation>Abrechenbare Zeit schnell verringern</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="393"/>
+        <location filename="timemainwindow.cpp" line="395"/>
         <source>The last active account was %1/%2. It seems to have been closed or renamed. Please activate a new account to start time accounting!</source>
         <translation>Ihr zuletzt aktives Konto war %1/%2. Wahrscheinlich wurde es geschlossen oder umbenannt. Bitte wählen Sie nun ein neues Konto aus, damit die Zeiterfassung beginnt!</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="416"/>
+        <location filename="timemainwindow.cpp" line="418"/>
         <source>Power Buttons</source>
         <translation>Power Buttons</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="460"/>
+        <location filename="timemainwindow.cpp" line="462"/>
         <source>suspend</source>
         <translation>Anhalten</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="470"/>
+        <location filename="timemainwindow.cpp" line="472"/>
         <source>resume</source>
         <translation>Fortsetzen</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="471"/>
+        <location filename="timemainwindow.cpp" line="473"/>
         <source>resume %2; suspend was %1</source>
         <translation>Fortsetzen %2; Angehalten bei %1</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="477"/>
-        <location filename="timemainwindow.cpp" line="483"/>
+        <location filename="timemainwindow.cpp" line="479"/>
+        <location filename="timemainwindow.cpp" line="485"/>
         <source>sctime: resume</source>
         <translation>sctime: fortsetzen</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="478"/>
+        <location filename="timemainwindow.cpp" line="480"/>
         <source>The machine was suspended from %1 until %2. Please check and adjust accounted time if necessary!</source>
         <translation>Der Rechner war von %1 bis %2 angehalten. Bitte die Arbeitszeiten gegebenenfalls überarbeiten!</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="484"/>
+        <location filename="timemainwindow.cpp" line="486"/>
         <source>The machine was suspended from %1 until %2. Should this time be added to the active account?</source>
         <translation>Der Rechner war von %1 bis %2 angehalten. Soll diese Zeit auf dem aktiven Konto gutgeschrieben werden?</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="517"/>
+        <location filename="timemainwindow.cpp" line="519"/>
         <source>Drift is %2s (%1)</source>
         <translation>Drift ist %2s (%1)</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="530"/>
+        <location filename="timemainwindow.cpp" line="532"/>
         <source>sctime: Programm was frozen</source>
         <translation>sctime: Programm war stehen geblieben</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="531"/>
+        <location filename="timemainwindow.cpp" line="533"/>
         <source>The program (or whole system) seems to have hung for %1min or system time was changed.
 Should the time difference be added to the active account?
 (current system time: %2)</source>
@@ -1063,182 +1091,186 @@ Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?
 (Aktuelle Systemzeit: %2)</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="536"/>
+        <location filename="timemainwindow.cpp" line="538"/>
         <source>sctime: system time set back</source>
         <translation>sctime: Systemzeit zurückgestellt</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="537"/>
+        <location filename="timemainwindow.cpp" line="539"/>
         <source>The system&apos;s time has been set back by %1min to %2.Should this time be subtracted from the active account?
 </source>
         <translation>Die Systemzeit wurde um %1min auf %2 zurückgestellt. Soll die Arbeitszeit auf dem aktiven Unterkonto um diesen Betrag verringert werden?</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="565"/>
+        <location filename="timemainwindow.cpp" line="567"/>
         <source>Minute-signal %1s arrived late (%2)</source>
         <translation>Minuten-Signal %1s verspätet (%2)</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="712"/>
-        <location filename="timemainwindow.cpp" line="865"/>
-        <location filename="timemainwindow.cpp" line="1513"/>
+        <location filename="timemainwindow.cpp" line="714"/>
+        <location filename="timemainwindow.cpp" line="867"/>
+        <location filename="timemainwindow.cpp" line="1517"/>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="712"/>
+        <location filename="timemainwindow.cpp" line="714"/>
         <source>Warning: Legally allowed working time has been exceeded.</source>
         <translation>Warnung: die gesetzlich zulässige Arbeitszeit wurde überschritten.</translation>
+    </message>
+    <message>
+        <location filename="timemainwindow.cpp" line="1298"/>
+        <source>Please specify only one entry for accounts of type &quot;%1&quot;!</source>
+        <translation>Bitte nur einen Eintrag für Konten des Typs „%1”!</translation>
     </message>
     <message>
         <source>: will be ignored (%1)</source>
         <translation type="obsolete">: wird ignoriert (%1)</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="724"/>
+        <location filename="timemainwindow.cpp" line="726"/>
         <source>%1: Accounting stopped (%2, +%3s)</source>
         <translation>%1: Erfassung angehalten (%2, +%3s)</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="735"/>
+        <location filename="timemainwindow.cpp" line="737"/>
         <source>Pause</source>
         <translation>Pause</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="737"/>
+        <location filename="timemainwindow.cpp" line="739"/>
         <source>ERROR: seconds since tick: %1</source>
-        <translation type="unfinished">Fehler: Sekunden seit Tick: %1</translation>
+        <translation>Fehler: Sekunden seit Tick: %1</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="740"/>
+        <location filename="timemainwindow.cpp" line="742"/>
         <source>sctime: Pause</source>
         <translation>sctime: Pause</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="740"/>
+        <location filename="timemainwindow.cpp" line="742"/>
         <source>Accounting has been stopped. Resume work with OK.</source>
         <translation>Die Zeiterfassung wurde angehalten. Ende der Pause mit OK.</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="744"/>
+        <location filename="timemainwindow.cpp" line="746"/>
         <source>End of break: </source>
         <translation>Ende der Pause: </translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="785"/>
+        <location filename="timemainwindow.cpp" line="787"/>
         <source>The program will quit in a few seconds without saving.</source>
         <translation>Das Programm beendet sich in wenigen Sekunden ohne zu speichern.</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="787"/>
+        <location filename="timemainwindow.cpp" line="789"/>
         <source>The program will now quit without saving.</source>
         <translation>Das Programm beendet sich ohne zu speichern.</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="865"/>
+        <location filename="timemainwindow.cpp" line="867"/>
         <source>Cannot delete active entry</source>
         <translation>Kann aktiven Eintrag nicht löschen</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="937"/>
+        <location filename="timemainwindow.cpp" line="939"/>
         <source>Day set to: </source>
         <translation>Tag gesetzt auf: </translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="943"/>
+        <location filename="timemainwindow.cpp" line="945"/>
         <source> -- This day has already been checked in!</source>
         <translation> -- Dieser Tag ist bereits eingecheckt!</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="949"/>
+        <location filename="timemainwindow.cpp" line="951"/>
         <source>Reading account list...</source>
         <translation>Kontenliste laden...</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="972"/>
+        <location filename="timemainwindow.cpp" line="974"/>
         <source>Account list successfully read.</source>
-        <translation type="unfinished">Kontenliste geladen.</translation>
+        <translation>Kontenliste geladen.</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1074"/>
+        <location filename="timemainwindow.cpp" line="1078"/>
         <source>sctime - </source>
         <translation>sctime - </translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1294"/>
         <source>Bitte nur einen Eintrag für Konten des Typs „%1”!</source>
-        <translation type="unfinished">Bitte nur einen Eintrag für Konten des Typs „%1”!</translation>
+        <translation type="obsolete">Bitte nur einen Eintrag für Konten des Typs „%1”!</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1331"/>
-        <location filename="timemainwindow.cpp" line="1396"/>
+        <location filename="timemainwindow.cpp" line="1335"/>
+        <location filename="timemainwindow.cpp" line="1400"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1345"/>
+        <location filename="timemainwindow.cpp" line="1349"/>
         <source>sctime: Help</source>
         <translation>sctime: Hilfe</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1345"/>
+        <location filename="timemainwindow.cpp" line="1349"/>
         <source>sctime help</source>
         <translation>sctime help</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1353"/>
+        <location filename="timemainwindow.cpp" line="1357"/>
         <source>About sctime</source>
         <translation>Über sctime</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1353"/>
+        <location filename="timemainwindow.cpp" line="1357"/>
         <source>sctime about</source>
         <translation>sctime about</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1354"/>
+        <location filename="timemainwindow.cpp" line="1358"/>
         <source>&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (development)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (runtime)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Developers:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;New icons:&lt;/td&gt;&lt;td&gt;Mayra Delgado&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Project page:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://sourceforge.net/projects/sctime/&apos;&gt;http://sourceforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This program is licensed under the GNU Public License v2.&lt;/p&gt;</source>
         <oldsource>&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (development)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (runtime)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Developers:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Project page:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://sourceforge.net/projects/sctime/&apos;&gt;http://sourceforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;This program is licensed under the GNU Public License v2.&lt;/p&gt;</oldsource>
         <translation>&lt;h1&gt;&lt;img src=&apos;:/scLogo_15Farben&apos; /&gt;sctime&lt;/h1&gt;&lt;table&gt;&lt;tr&gt;&lt;td&gt;Version:&lt;/td&gt;&lt;td&gt;%1&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Qt-Version:&lt;/td&gt;&lt;td&gt;%2 (Entwicklung)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;&lt;/td&gt;&lt;td&gt;%3 (Laufzeit)&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Entwickler:&lt;/td&gt;&lt;td&gt;Johannes Abt, Alexander Wütz, Florian Schmitt&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Patches:&lt;/td&gt;&lt;td&gt;Marcus Camen&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Mac:&lt;/td&gt;&lt;td&gt;Michael Weiser&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Neue Icons:&lt;/td&gt;&lt;td&gt;Mayra Delgado&lt;/td&gt;&lt;/tr&gt;&lt;tr&gt;&lt;td&gt;Projektseite:&lt;/td&gt;&lt;td&gt;&lt;a href=&apos;http://sourceforge.net/projects/sctime/&apos;&gt;http://sourceforge.net/projects/sctime/&lt;/a&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;p&gt;Dieses Programm ist unter der GNU Public License v2 lizenziert.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1371"/>
+        <location filename="timemainwindow.cpp" line="1375"/>
         <source>sctime: Messages</source>
         <translation>sctime: Meldungen</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1371"/>
+        <location filename="timemainwindow.cpp" line="1375"/>
         <source>sctime message log</source>
         <translation>sctime message log</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1385"/>
-        <location filename="timemainwindow.cpp" line="1390"/>
+        <location filename="timemainwindow.cpp" line="1389"/>
+        <location filename="timemainwindow.cpp" line="1394"/>
         <source>sctime: On-call times</source>
         <translation>sctime: Bereitschaftszeiten</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1385"/>
+        <location filename="timemainwindow.cpp" line="1389"/>
         <source>subaccount not found!</source>
         <translation>Unterkonto nicht gefunden!</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1391"/>
+        <location filename="timemainwindow.cpp" line="1395"/>
         <source>On-call times</source>
         <translation>Bereitschaftszeiten</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1398"/>
+        <location filename="timemainwindow.cpp" line="1402"/>
         <source>Cancel</source>
         <translation>Abbruch</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1403"/>
+        <location filename="timemainwindow.cpp" line="1407"/>
         <source>Please choose the rendered on-call times for this subaccount.</source>
         <translation>Bitte wählen Sie die geleisteten Bereitschaften für dieses Unterkonto aus.</translation>
     </message>
     <message>
-        <location filename="timemainwindow.cpp" line="1514"/>
+        <location filename="timemainwindow.cpp" line="1518"/>
         <source>Warning: The entered comment contains a character that is not part of ISO-8859-1 and might not render correctly on some platforms. This may cause problems with custom reporting scripts.</source>
         <translation>Warnung: In dem von Ihnen eingegebenen Kommentar kommt ein Zeichen vor, das mit ISO-8859-1 und somit auf manchen Plattformen nicht darstellbar ist. Dies führt eventuell zu Problemen mit Auswerteskripten.</translation>
     </message>
@@ -1287,18 +1319,20 @@ Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?
     </message>
     <message>
         <location filename="unterkontodialog.cpp" line="135"/>
-        <source>Time:</source>
+        <source>Time</source>
+        <oldsource>Time:</oldsource>
         <translation>Zeit</translation>
     </message>
     <message>
         <location filename="unterkontodialog.cpp" line="141"/>
-        <source>Accountable time:</source>
+        <source>Accountable time</source>
+        <oldsource>Accountable time:</oldsource>
         <translation>Abzurechnende Zeit</translation>
     </message>
     <message>
         <location filename="unterkontodialog.cpp" line="147"/>
         <source>Special Remuneration Categories</source>
-        <translation type="unfinished">Sonderzeitkategorien</translation>
+        <translation>Sonderzeitkategorien</translation>
     </message>
     <message>
         <location filename="unterkontodialog.cpp" line="161"/>
