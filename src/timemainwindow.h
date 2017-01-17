@@ -41,7 +41,6 @@ class QTextBrowser;
 #include "defaultcommentreader.h"
 #include "datasource.h"
 
-
 /** Diese Klasse implementiert das Hauptfenster des Programms,
     und sorgt zudem fuer das Fortschreiten der Zeit.
 */
@@ -105,6 +104,7 @@ public:
     void configClickMode(bool singleClickActivation);
     void mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int column );
     void copyNameToClipboard();
+    void copyEntryAsText();
     void showContextMenu(const QPoint& pos);
     void showArbeitszeitwarning();
     void checkComment(const QString& abt, const QString& ko , const QString& uko,int idx);

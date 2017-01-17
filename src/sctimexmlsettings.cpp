@@ -41,9 +41,7 @@
 #include "timecounter.h"
 #define WIN_CODEC "utf8"
 #include "globals.h"
-
-float roundTo(float f, float step) { return int(f/step+0.5)*step; }
-double roundTo(double f, double step){ return int(f/step+0.5)*step;}
+#include "util.h"
 
 /** Schreibt die Eintraege in ein Shellskript */
 void SCTimeXMLSettings::writeShellSkript(AbteilungsListe* abtList)

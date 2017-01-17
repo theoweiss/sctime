@@ -60,6 +60,7 @@
 #include "datasource.h"
 #include "setupdsm.h"
 #include "specialremunerationsdialog.h"
+#include "util.h"
 
 
 QTreeWidget* TimeMainWindow::getKontoTree() { return kontoTree; }
@@ -172,10 +173,10 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   saveAction->setShortcut(Qt::CTRL+Qt::Key_S);
   connect(saveAction, SIGNAL(triggered()), this, SLOT(save()));
 
-  QAction* copyAction = new QAction(tr("&Copy"), this);
+  QAction* copyAction = new QAction(tr("&Copy as text"), this);
   copyAction->setShortcut(Qt::CTRL+Qt::Key_C);
-  copyAction->setStatusTip(tr("Copy name to clipboard"));
-  connect(copyAction, SIGNAL(triggered()), this, SLOT(copyNameToClipboard()));
+  copyAction->setStatusTip(tr("Copy infos about account and entry as text to clipboard"));
+  connect(copyAction, SIGNAL(triggered()), this, SLOT(copyEntryAsText()));
 
   QAction* changeDateAction = new QAction(tr("C&hoose Date..."), this);
   changeDateAction->setShortcut(Qt::CTRL+Qt::Key_D);
@@ -335,6 +336,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   kontomenu->addSeparator();
   kontomenu->addAction(findKontoAction);
   kontomenu->addAction(jumpAction);
+  kontomenu->addAction(copyAction);
   kontomenu->addAction(refreshAction);
   kontomenu->addSeparator();
   kontomenu->addAction(bgColorChooseAction);
@@ -814,6 +816,24 @@ void TimeMainWindow::specialRemunPressed()
   emit callSpecialRemunerationsDialog(kontoTree->currentItem());
 }
 
+/**
+ * Copies a new Entry as text to the clipboard
+ */
+void TimeMainWindow::copyEntryAsText()
+{
+  QTreeWidgetItem * item=kontoTree->currentItem();
+  QString top,uko,ko,abt;
+  int idx;
+  kontoTree->itemInfo(item,top,abt,ko,uko,idx);
+  QString text;
+  text=abt+"|"+ko+"|"+uko+"|";
+  if (kontoTree->isEintragsItem(item)) {
+        UnterKontoEintrag eintrag;
+        abtList->getEintrag(eintrag,abt,ko,uko,idx);
+        QTextStream(&text) << roundTo(1.0/3600*eintrag.sekunden,0.01) << "|" << roundTo(1.0/3600*eintrag.sekundenAbzur,0.01) << "|" << eintrag.kommentar ;
+  }
+  QApplication::clipboard()->setText(text, QClipboard::Clipboard);
+}
 
 /**
  * Aktiviert einen Eintrag
