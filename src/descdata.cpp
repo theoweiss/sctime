@@ -1,4 +1,5 @@
 #include "descdata.h"
+#include <QRegularExpression>
 
 DescData::DescData()
 {
@@ -62,4 +63,11 @@ void DescData::setType(const QString& type)
 void DescData::setPSPElem(const QString& pspelem)
 {
     m_pspelem=pspelem;
+}
+
+bool DescData::supportsSpecialRemuneration()
+{
+    QRegularExpression re("\\((x|o)\\)$");
+    QRegularExpressionMatch match = re.match(m_type);
+    return ! match.hasMatch();
 }

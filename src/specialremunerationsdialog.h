@@ -46,7 +46,7 @@ public:
   ~SpecialRemunerationsDialog();
   /*$PUBLIC_FUNCTIONS$*/
 
-  static void fillListWidget(QListWidget* widget, AbteilungsListe* abtlist, EintragsListe* etl, int eintragsIdx);
+  static void fillListWidget(QListWidget* widget, AbteilungsListe* abtlist, EintragsListe* etl, int eintragsIdx, const QString& abteilung, const QString& konto,const QString& unterkonto);
   
 protected:
   AbteilungsListe* abtlist;

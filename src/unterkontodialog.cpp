@@ -148,7 +148,7 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   QHBoxLayout* hboxLayout = new QHBoxLayout(srgroup);
   srListWidget=new QListWidget(this);
   srListWidget->setSelectionMode(QAbstractItemView::MultiSelection);
-  SpecialRemunerationsDialog::fillListWidget(srListWidget, abtList, m_unterkonto, idx);
+  SpecialRemunerationsDialog::fillListWidget(srListWidget, abtList, m_unterkonto, idx, abt, ko, uko);
   hboxLayout->addWidget(srListWidget);
   hboxLayout->addSpacing(5);
   hboxLayout->addStretch(2);

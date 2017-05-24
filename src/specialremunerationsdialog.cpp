@@ -44,29 +44,32 @@ SpecialRemunerationsDialog::SpecialRemunerationsDialog(AbteilungsListe* _abtlist
     konto=ko;
     unterkonto=uko;
     eintragsIdx=idx;
-    fillListWidget(srListWidget, abtlist, &(ukiter->second), eintragsIdx);
+    fillListWidget(srListWidget, abtlist, &(ukiter->second), eintragsIdx,abt, ko, uko);
 }
 
-void SpecialRemunerationsDialog::fillListWidget(QListWidget* widget, AbteilungsListe* abtlist, EintragsListe* etl, int eintragsIdx)
+void SpecialRemunerationsDialog::fillListWidget(QListWidget* widget, AbteilungsListe* abtlist, EintragsListe* etl, int eintragsIdx, const QString& abteilung, const QString& konto, const QString& unterkonto)
 {
-    QSet<QString> selection = (*etl)[eintragsIdx].getAchievedSpecialRemunSet();
-    QList<QString> ukosrl = etl->getSpecialRemunNames();
-    QList<QString> globalsrl = abtlist->getGlobalSpecialRemunNames();
-    for (QList<QString>::iterator srlIt = globalsrl.begin(); srlIt != globalsrl.end(); ++srlIt ) {
-       QListWidgetItem* item=new QListWidgetItem(*srlIt,widget);
-       widget->addItem(item);
-       item->setSelected(selection.remove(*srlIt));
-    }
-    for (QList<QString>::iterator srlIt = ukosrl.begin(); srlIt != ukosrl.end(); ++srlIt ) {
-       QListWidgetItem* item=new QListWidgetItem(*srlIt,widget);
-       widget->addItem(item);
-       item->setSelected(selection.remove(*srlIt));
-    }
-    // finally add already selected SpecialRemunTypes, which are no longer available 
-    for (QSet<QString>::iterator selIt = selection.begin(); selIt != selection.end(); ++selIt ) {
-       QListWidgetItem* item=new QListWidgetItem(*selIt,widget);
-       widget->addItem(item);
-       item->setSelected(true);
+    DescData desc = abtlist->getDescription(abteilung,konto, unterkonto);
+    if(desc.supportsSpecialRemuneration() ){
+        QSet<QString> selection = (*etl)[eintragsIdx].getAchievedSpecialRemunSet();
+        QList<QString> ukosrl = etl->getSpecialRemunNames();
+        QList<QString> globalsrl = abtlist->getGlobalSpecialRemunNames();
+        for (QList<QString>::iterator srlIt = globalsrl.begin(); srlIt != globalsrl.end(); ++srlIt ) {
+           QListWidgetItem* item=new QListWidgetItem(*srlIt,widget);
+           widget->addItem(item);
+           item->setSelected(selection.remove(*srlIt));
+        }
+        for (QList<QString>::iterator srlIt = ukosrl.begin(); srlIt != ukosrl.end(); ++srlIt ) {
+           QListWidgetItem* item=new QListWidgetItem(*srlIt,widget);
+           widget->addItem(item);
+           item->setSelected(selection.remove(*srlIt));
+        }
+        // finally add already selected SpecialRemunTypes, which are no longer available
+        for (QSet<QString>::iterator selIt = selection.begin(); selIt != selection.end(); ++selIt ) {
+           QListWidgetItem* item=new QListWidgetItem(*selIt,widget);
+           widget->addItem(item);
+           item->setSelected(true);
+        }
     }
 }
 

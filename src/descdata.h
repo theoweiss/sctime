@@ -13,6 +13,7 @@ class DescData
         QString responsible();
         QString type();
         QString pspElem();
+        bool supportsSpecialRemuneration();
         void setDescription(const QString& description);
         void setResponsible(const QString&);
         void setType(const QString&);
