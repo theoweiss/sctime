@@ -1065,7 +1065,7 @@ void TimeMainWindow::changeShortCutSettings(QTreeWidgetItem * item)
     flagsChanged(abt,ko,uko,idx);
     inPersKontAction->setEnabled(!abtList->checkInState());
     editUnterKontoAction->setEnabled(!abtList->checkInState());
-    specialRemunAction->setEnabled(!abtList->checkInState());
+    specialRemunAction->setEnabled(!abtList->checkInState() && abtList->getDescription(abt,ko,uko).supportsSpecialRemuneration());
     /* Eigentlich sollte das Signal in editierbarerEintragSelected umbenannt werden... */
     emit eintragSelected(!abtList->checkInState());
     emit augmentableItemSelected(!abtList->checkInState());
