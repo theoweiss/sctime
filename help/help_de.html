@@ -73,6 +73,8 @@ Hier k&ouml;nnen eine oder mehrere Kategorien ausgew&auml;hlt werden.
 Anschlie&szlig;end ist "Ok" zu klicken.</p>
 <p>Zum L&ouml;schen klickt man wieder auf den Mond, w&auml;hlt angew&auml;hlte Kategorien
 ab, und best&auml;tigt mit "Ok".</p>
+<p>Es ist zu beachten, dass Sonderzeiteins&auml;tze auf Konten der Kategorien 'x' und 'o' nicht m&ouml;glich sind.</p>
+
 
 <h3>Drag'n'Drop </h3>
 <p>Mittels Drag 'n' Drop lassen sich die Zeiten zwischen Unterkonten und
@@ -142,7 +144,7 @@ einer der folgenden Methoden:</p>
   <li><tt>command</tt>: verwendet die Kommandos <tt>zeitkonten</tt> und <tt>zeitbereitls.</tt>
     Ist unter Windows wirkungslos, da hier die in notwendigen Befehle nicht zur
     Verf&uuml;gung stehen.
-  <li><tt>json</tt>: liest die Datei <tt>sctimeoffline.json</tt> 
+  <li><tt>json</tt>: liest die Datei <tt>sctime-offline.json</tt>
     aus dem Konfigurationsverzeichnis (&uuml;blicherweise <tt>~/.sctime</tt>)
   <li><tt>file</tt>: Veraltet. Liest die Dateien <tt>zeitkonten.txt</tt>,  <tt>sonderzeitls.txt</tt> und <tt>zeitbereitls.txt</tt>
     aus dem Konfigurationsverzeichnis (&uuml;blicherweise <tt>~/.sctime</tt>)
@@ -276,9 +278,9 @@ Dabei wird von passwortfreiem login ausgegangen. </p>
 Verbindung zur Datenbank betrieben werden.
 Hierzu m&uuml;ssen die notwendigen Daten (Zeitkonten, Sonderzeiten und Bereitschaftszeiten)
 in Dateien am richtigen Ort bereitgestellt werden.
-Dazu muss die Datei <tt>~/.sctime/sctimeoffline.json</tt> existieren.
+Dazu muss die Datei <tt>~/.sctime/sctime-offline.json</tt> existieren.
 Diese Datei kann &uuml;ber folgendes Kommando erzeugt werden:
-<p><tt>zeit-sctime-offline &gt; ~/.sctime/sctimeoffline.json</tt></p>
+<p><tt>zeit-sctime-offline &gt; ~/.sctime/sctime-offline.json</tt></p>
 
 <p>Soll die Datei in einem anderen Pfad liegen, als es die Defaults
 vorsehen, stehen folgende Kommandozeilenoptionen zur Verf&uuml;gung:</p>

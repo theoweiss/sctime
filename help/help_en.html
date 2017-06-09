@@ -68,6 +68,8 @@ category, a click on OK activates the special remuneration indication.
 <p>To remove a special remuneration selection, the stamp is clicked again and the
 superfluous categories can be deselected.</p>
 
+<p>Please note that it is not possible to record special remuneration times on accounts with category 'x' or 'o'.</p>
+
 <h3>Drag'n'Drop </h3>
 <p>Times can be moved between accounts using Drag 'n' Drop.
 By holding down the &bdquo;shift&ldquo; key, comments are transferred as
@@ -131,7 +133,7 @@ one of the following methods:</p>
   <li><tt>QODBC</tt>: Database driver of Qt for ODBC; uses ODBC-DSN <tt>postgres_zeit</tt>
   <li><tt>command</tt>: uses the commands <tt>zeitkonten</tt> and <tt>zeitbereitls.</tt>
     This data source is ignored on Windows because the necessary commands do not exist here.
-  <li><tt>json</tt>: reads the file <tt>sctimeoffline.json</tt> 
+  <li><tt>json</tt>: reads the file <tt>sctime-offline.json</tt>
    in the configuration directory (usually <tt>~/.sctime</tt>)
   <li><tt>file</tt>: Deprecated. Reads the files <tt>zeitkonten.txt</tt>, <tt>zeitbereitls.txt</tt> and <tt>zeitbereitls.txt</tt>
     inside the configuration directory (usually <tt>~/.sctime</tt>)
