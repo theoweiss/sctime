@@ -98,7 +98,7 @@ static TimeMainWindow* mainWindow = 0;
 class SctimeApp : public QApplication {
 public:
     SctimeApp(int &argc, char **argv):QApplication(argc, argv) {}
-    virtual bool SctimeApp::winEventFilter(MSG * msg, long * result) {
+    virtual bool winEventFilter(MSG * msg, long * result) {
       if (msg->message == WM_POWERBROADCAST && mainWindow && msg->hwnd == (HWND)mainWindow->winId()) {
         if (msg->wParam == PBT_APMRESUMEAUTOMATIC)
             QMetaObject::invokeMethod(mainWindow, "resume", Qt::QueuedConnection);
@@ -119,7 +119,7 @@ QString canonicalPath(QString path) {
     if (path == "~" || path.startsWith("~/") || path.startsWith(QString("~") +
 		QDir::separator())) {
 #ifdef WIN32
-	QString homedir = "H:";
+	QString homedir = getenv("HOMEDRIVE");
 	// append a separator if only the homedir is requested so that the
 	// drive's root is addressed reliably
 	if (path == "~")

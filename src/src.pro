@@ -91,7 +91,7 @@ lrelease.variable_out = RELEASED_TRANSLATIONS
 lrelease.CONFIG += no_link
 QMAKE_EXTRA_COMPILERS += lrelease
 
-win32{
+win32-msvc*{
   CONFIG += embed_manifest_exe
   RC_FILE += sctime.rc
   #QMAKE_CXXFLAGS += -EHsc # C++-Ausnahmen
@@ -103,6 +103,12 @@ win32{
   # username(void)" (?username@@YA?AVQString@@XZ)
   LIBS += advapi32.lib
 }
+win32-g++*{
+  CONFIG += embed_manifest_exe
+  RC_FILE += sctime.rc
+  LIBS += -ladvapi32
+}
+
 !win32{
   SOURCES += unix/signalhandler.cpp
   HEADERS += unix/signalhandler.h
