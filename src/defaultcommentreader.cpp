@@ -81,7 +81,7 @@ bool DefaultCommentReader::read(AbteilungsListe* abtList, const std::vector<QStr
                                               if( !elem4.isNull() ) {
                                                   if (elem4.tagName()=="kommentar") {
                                                       QString commentstr=elem4.attribute("text");
-                                                      if (commentstr.isNull()) continue;
+                                                      if (commentstr.isNull()||commentstr.isEmpty()) continue;
                                                       UnterKontoListe::iterator itUk;
                                                       UnterKontoListe* ukl;
                                                       if (abtList->findUnterKonto(itUk,ukl,abteilungstr,kontostr,unterkontostr)) {

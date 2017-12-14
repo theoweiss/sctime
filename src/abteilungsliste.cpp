@@ -865,8 +865,10 @@ void AbteilungsListe::reload(const DSResult &data) {
       UnterKontoListe::iterator itUk;
       UnterKontoListe* ukl;
       if (findUnterKonto(itUk,ukl,abt,konto,unterkonto)) {
-        itUk->second.addDefaultComment(commentstr, true);
-        itUk->second.setSpecialRemunNames(srlist);
+          if (!commentstr.isEmpty()) {
+             itUk->second.addDefaultComment(commentstr, true);
+          }
+          itUk->second.setSpecialRemunNames(srlist);
       }
       
     }
