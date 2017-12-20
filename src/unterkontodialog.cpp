@@ -144,17 +144,21 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   layout->addSpacing(5);
   layout->addStretch(2);
   
-  QGroupBox* srgroup = new QGroupBox(tr("Special Remuneration Categories"),this);
-  QHBoxLayout* hboxLayout = new QHBoxLayout(srgroup);
-  srListWidget=new QListWidget(this);
-  srListWidget->setSelectionMode(QAbstractItemView::MultiSelection);
-  SpecialRemunerationsDialog::fillListWidget(srListWidget, abtList, m_unterkonto, idx, abt, ko, uko);
-  hboxLayout->addWidget(srListWidget);
-  hboxLayout->addSpacing(5);
-  hboxLayout->addStretch(2);
-  layout->addWidget(srgroup);
-  layout->addSpacing(5);
-  layout->addStretch(2);
+  if (settings->showSpecialRemunSelector()) {
+    QGroupBox* srgroup = new QGroupBox(tr("Special Remuneration Categories"),this);
+    QHBoxLayout* hboxLayout = new QHBoxLayout(srgroup);
+    srListWidget=new QListWidget(this);
+    srListWidget->setSelectionMode(QAbstractItemView::MultiSelection);
+    SpecialRemunerationsDialog::fillListWidget(srListWidget, abtList, m_unterkonto, idx, abt, ko, uko);
+    hboxLayout->addWidget(srListWidget);
+    hboxLayout->addSpacing(5);
+    hboxLayout->addStretch(2);
+    layout->addWidget(srgroup);
+    layout->addSpacing(5);
+    layout->addStretch(2);
+  } else {
+      srListWidget=NULL;
+  }
 
   QString beschreibung = abtList->getDescription(abt,ko,uko).description().simplified();
   if (!beschreibung.isEmpty()) {
@@ -247,12 +251,14 @@ void UnterKontoDialog::accept()
   /*QStringList bereitschaften = bereitschaftsView->getSelectionList();
   m_unterkonto->setBereitschaft(bereitschaften);*/
   
-  QList<QListWidgetItem *> selitems = srListWidget->selectedItems();
-  QSet<QString> selection;
-  for (QList<QListWidgetItem *>::iterator selIt = selitems.begin(); selIt != selitems.end(); ++selIt ) {
-    selection.insert((*selIt)->text());
+  if (srListWidget) {
+    QList<QListWidgetItem *> selitems = srListWidget->selectedItems();
+    QSet<QString> selection;
+    for (QList<QListWidgetItem *>::iterator selIt = selitems.begin(); selIt != selitems.end(); ++selIt ) {
+      selection.insert((*selIt)->text());
+    }
+    (*m_unterkonto)[eintragIndex].setAchievedSpecialRemunSet(selection);
   }
-  (*m_unterkonto)[eintragIndex].setAchievedSpecialRemunSet(selection);
 
   emit entryChanged(abteilungsName,kontoName,unterKontoName,eintragIndex);
   

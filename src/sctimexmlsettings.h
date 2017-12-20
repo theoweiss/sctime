@@ -65,6 +65,7 @@ public:
       m_dragNDrop=true;
       m_customFont="helvetica";
       m_customFontSize=10;
+      m_showSpecialRemunSelector=false;
       backends = defaultbackends;
       databaseserver = defaultdatabaseserver;
       database = defaultdatabase;
@@ -240,6 +241,16 @@ public:
     {
         m_dragNDrop=on;
     }
+    
+     bool showSpecialRemunSelector()
+    {
+        return m_showSpecialRemunSelector;
+    }
+
+    void setShowSpecialRemunSelector(bool on)
+    {
+        m_showSpecialRemunSelector=on;
+    }
 
     QString zeitKontenKommando()
     {
@@ -292,6 +303,7 @@ public:
     bool m_showPSPColumn;
     bool m_useDefaultCommentIfUnique;
     bool m_persoenlicheKontensumme;
+    bool m_showSpecialRemunSelector;
     int m_maxWorkingTime;
     QString m_customFont;
     int m_customFontSize;

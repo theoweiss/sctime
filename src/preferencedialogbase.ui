@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>428</width>
-    <height>523</height>
+    <height>537</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,6 +76,13 @@
        <widget class="QCheckBox" name="persoenlicheKontensummeCheckbox">
         <property name="text">
          <string>Show sum in personal accounts</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="showSpecialRemunSelector">
+        <property name="text">
+         <string>Show special remuneration selector</string>
         </property>
        </widget>
       </item>

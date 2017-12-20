@@ -448,6 +448,9 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             if (elem2.tagName()=="pspcolumn") {
               m_showPSPColumn=(elem2.attribute("show")=="yes");
             }
+            if (elem2.tagName()=="specialremunselector") {
+                setShowSpecialRemunSelector(elem2.attribute("show")=="yes");
+            }
             if (elem2.tagName()=="usedefaultcommentifunique") {
               m_useDefaultCommentIfUnique=(elem2.attribute("on")=="yes");
             }
@@ -619,6 +622,12 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     if (showPSPColumn()) on="yes";
     pspcolumntag.setAttribute("show",on);
     generaltag.appendChild(pspcolumntag);
+    
+    QDomElement srseltag = doc.createElement("specialremunselector");
+    on="no";
+    if (showSpecialRemunSelector()) on="yes";
+    srseltag.setAttribute("show",on);
+    generaltag.appendChild(srseltag);
     
     QDomElement usedefaultcommentifuniquetag = doc.createElement("usedefaultcommentifunique");
     on="no";
