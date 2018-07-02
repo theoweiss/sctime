@@ -20,7 +20,16 @@
    <string>Select date</string>
   </property>
   <layout class="QGridLayout">
-   <property name="margin">
+   <property name="leftMargin">
+    <number>11</number>
+   </property>
+   <property name="topMargin">
+    <number>11</number>
+   </property>
+   <property name="rightMargin">
+    <number>11</number>
+   </property>
+   <property name="bottomMargin">
     <number>11</number>
    </property>
    <item row="0" column="0">
@@ -29,9 +38,6 @@
       <string>Date to edit:</string>
      </property>
     </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QDatePicker" name="datePicker" native="true"/>
    </item>
    <item row="2" column="0">
     <layout class="QHBoxLayout">
@@ -64,16 +70,12 @@
      </item>
     </layout>
    </item>
+   <item row="1" column="0">
+    <widget class="QCalendarWidget" name="datePicker"/>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
- <customwidgets>
-  <customwidget>
-   <class>QDatePicker</class>
-   <extends></extends>
-   <header>qdatepicker.h</header>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections/>
 </ui>

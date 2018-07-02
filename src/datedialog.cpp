@@ -28,7 +28,6 @@
 #include <QStringList>
 #include <QTextCharFormat>
 #include "globals.h"
-#include "qdatepicker.h"
 
 DateDialog::DateDialog(const QDate& datum, QWidget *parent)
 : QDialog(parent)
@@ -43,7 +42,7 @@ DateDialog::DateDialog(const QDate& datum, QWidget *parent)
   connect(okbutton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(cancelbutton, SIGNAL(clicked()), this, SLOT(reject()));
 
-  datePicker->setDate(datum);
+  datePicker->setSelectedDate(datum);
 
   // wird durch setDate nicht ausgeloest, muss aber zur initialisierung
   // aufgerufen werden.
@@ -66,10 +65,10 @@ void DateDialog::dateChangedSlot(QDate date)
       QDate filedate;
       int day=QString(*it).section('-',3,3).section('.',0,0).toInt(&ok);
       if ((ok)&&filedate.setDate(date.year(),date.month(),day)) {
-        QTextCharFormat dtf=datePicker->dateTable()->dateTextFormat(filedate);
+        QTextCharFormat dtf=datePicker->dateTextFormat(filedate);
         dtf.setForeground(QBrush(Qt::red));
         dtf.setBackground(QBrush(Qt::red));
-        datePicker->dateTable()->setDateTextFormat(filedate, dtf);
+        datePicker->setDateTextFormat(filedate, dtf);
       }
     }
     currentMonth = date.month();
@@ -79,12 +78,12 @@ void DateDialog::dateChangedSlot(QDate date)
 
 void DateDialog::apply()
 {
-   emit dateChanged(datePicker->date());
+   emit dateChanged(datePicker->selectedDate());
 }
 
 /*$SPECIALIZATION$*/
 void DateDialog::accept()
 {
-  emit dateChanged(datePicker->date());
+  emit dateChanged(datePicker->selectedDate());
   QDialog::accept();
 }
