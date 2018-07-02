@@ -29,6 +29,8 @@
 #include <QString>
 #include <QTranslator>
 #include <QSqlDatabase>
+#include <QCommandLineParser>
+#include <QCommandLineOption>
 
 #ifdef WIN32
 #include <windows.h>
@@ -39,7 +41,6 @@
 #include "unix/signalhandler.h"
 #endif
 
-#include "GetOpt.h"
 #include "lock.h"
 #include "timemainwindow.h"
 #include "sctimexmlsettings.h"
@@ -153,26 +154,40 @@ int main(int argc, char **argv ) {
 
   // necessary for XSM support
   app.setObjectName("sctime");
+  app.setApplicationName("sctime");
   app.setApplicationVersion(QUOTE(APP_VERSION));
 
   PERSOENLICHE_KONTEN_STRING = QObject::tr("Personal accounts");
   ALLE_KONTEN_STRING = QObject::tr("All accounts");
 
+  // FIXME: use QCommandLineParser for display of help too
   if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1],"--help") == 0 || strcmp(argv[1], "/h") == 0||strcmp(argv[1],"/help") == 0)) {
     QMessageBox::information(NULL, QObject::tr("sctime ") + qApp->applicationVersion(), help);
     exit(0);
   }
-  QString configdirstring, zeitkontenfile, bereitschaftsfile, specialremunfile, offlinefile;
-  QStringList dataSourceNames;
+  
+  QCommandLineParser parser;
 
-  GetOpt opts(argc, argv);
-  opts.addOption('f',"configdir", &configdirstring);
-  opts.addOption('f',"zeitkontenfile", &zeitkontenfile);
-  opts.addOption('f',"bereitschaftsfile", &bereitschaftsfile);
-  opts.addOption('f',"specialremunfile", &specialremunfile);
-  opts.addOption('f',"offlinefile", &offlinefile);
-  opts.addRepeatableOption("datasource", &dataSourceNames);
-  opts.parse();
+  QCommandLineOption configdiropt("configdir","",QObject::tr("directory"));
+  parser.addOption(configdiropt);
+  QCommandLineOption zeitkontenfileopt("zeitkontenfile","",QObject::tr("file"));
+  parser.addOption(zeitkontenfileopt);
+  QCommandLineOption bereitschaftsfileopt("bereitschaftsfile","",QObject::tr("file"));
+  parser.addOption(bereitschaftsfileopt);
+  QCommandLineOption specialremunfileopt("specialremunfile","",QObject::tr("file"));
+  parser.addOption(specialremunfileopt);
+  QCommandLineOption offlinefileopt("offlinefile","",QObject::tr("file"));
+  parser.addOption(offlinefileopt);
+  QCommandLineOption datasourceopt("datasource","", QObject::tr("source"));
+  parser.addOption(datasourceopt);
+  parser.process(app);
+  
+  QString configdirstring=parser.value(configdiropt);
+  QString zeitkontenfile=parser.value(zeitkontenfileopt);
+  QString bereitschaftsfile=parser.value(bereitschaftsfileopt);
+  QString specialremunfile=parser.value(specialremunfileopt);
+  QString offlinefile=parser.value(offlinefileopt);
+  QStringList dataSourceNames=parser.values(datasourceopt);
 
   if (configdirstring.isEmpty()) {
     char *envpointer = getenv("SCTIME_CONFIG_DIR");
