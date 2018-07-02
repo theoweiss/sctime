@@ -1,11 +1,10 @@
 /*
-    Copyright (C) 2003 Florian Schmitt, Science and Computing AG
-                       f.schmitt@science-computing.de
+    Copyright (C) 2018 science+computing ag
+       Authors: Florian Schmitt et al.
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License Version 3 as published by
+    the Free Software Foundation.
 
     This program is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -13,9 +12,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 #include "timemainwindow.h"
@@ -1380,13 +1377,13 @@ void TimeMainWindow::callAboutBox() {
         "<table><tr><td>Version:</td><td>%1</td></tr>"
         "<tr><td>Qt-Version:</td><td>%2 (development)</td></tr>"
         "<tr><td></td><td>%3 (runtime)</td></tr>"
-        "<tr><td>Developers:</td><td>Johannes Abt, Alexander Wütz, Florian Schmitt</td></tr>"
+        "<tr><td>Developers:</td><td>Johannes Abt, Alexander Wuetz, Florian Schmitt</td></tr>"
         "<tr><td>Patches:</td><td>Marcus Camen</td></tr>"
         "<tr><td>Mac:</td><td>Michael Weiser</td></tr>"
         "<tr><td>New icons:</td><td>Mayra Delgado</td></tr>"
         "<tr><td>RT:</td><td><a href='mailto:zeittools-rt@science-computing.de'>zeittools-rt@science-computing.de</a></td></tr>"
-        "<tr><td>Project page:</td><td><a href='http://sourceforge.net/projects/sctime/'>http://sourceforge.net/projects/sctime/</a></td></tr>"
-        "</table><p>This program is licensed under the GNU Public License v2.</p>")
+        "<tr><td>Project page:</td><td><a href='http://github.com/scVENUS/sctime/'>http://github.com/scVENUS/sctime/</a></td></tr>"
+        "</table><p>This program is licensed under the GNU Public License v3.</p>")
                    .arg(qApp->applicationVersion(), QT_VERSION_STR, qVersion()));
 }
 
