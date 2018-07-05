@@ -115,15 +115,19 @@ QString canonicalPath(QString path) {
     if (path == "~" || path.startsWith("~/") || path.startsWith(QString("~") +
 		QDir::separator())) {
 #ifdef WIN32
-	QString homedir = getenv("HOMEDRIVE");
-	// append a separator if only the homedir is requested so that the
-	// drive's root is addressed reliably
-	if (path == "~")
-		homedir.append(QDir::separator());
+      
+      QString homedir = getenv("SCTIME_HOMEDRIVE");
+	    if (homedir.isNull()) {
+          homedir = getenv("HOMEDRIVE");
+      }
+	    // append a separator if only the homedir is requested so that the
+	    // drive's root is addressed reliably
+	    if (path == "~")
+		    homedir.append(QDir::separator());
 #else
-	QString homedir = QDir::homePath();
+	    QString homedir = QDir::homePath();
 #endif /* WIN32 */
-	return path.replace(0, 1, homedir);
+	    return path.replace(0, 1, homedir);
     }
     return QFileInfo(path).canonicalFilePath();
 }
