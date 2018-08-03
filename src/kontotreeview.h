@@ -81,19 +81,22 @@ class KontoTreeView: public QTreeWidget
 
     int getItemDepth( QTreeWidgetItem* );
 
-    Qt::MouseButton getCurrentButton();
-
     void updateColumnWidth();
+
   public slots:
     virtual void refreshItem(const QString& abt, const QString& ko,const QString& uko, int idx);
     void refreshAllItemsInUnterkonto(const QString& abt, const QString& ko,const QString& uko);
     void refreshAllItemsInKonto(const QString& abt, const QString& ko);
     void refreshAllItemsInDepartment(const QString&);
 
+  signals:
+    void itemRightClicked(QTreeWidgetItem *item);
+
   protected:
     virtual bool eventFilter ( QObject* obj, QEvent * e );
     virtual void mouseMoveEvent(QMouseEvent *event);
     virtual void mousePressEvent(QMouseEvent *event);
+    virtual void mouseReleaseEvent(QMouseEvent *event);
     virtual void dragEnterEvent(QDragEnterEvent *event);
     virtual void dropEvent(QDropEvent *event);
     virtual void dragMoveEvent(QDragMoveEvent *event);
@@ -106,8 +109,8 @@ class KontoTreeView: public QTreeWidget
     bool m_showPersoenlicheKontenSummenzeit;
     AbteilungsListe* abtList;
     QPoint dragStartPosition;
-    Qt::MouseButton currentButton;
     Qt::KeyboardModifiers keyboardModifier;
+    QPersistentModelIndex rightPressedIndex;
 };
 
 #endif

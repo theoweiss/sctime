@@ -304,7 +304,6 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   connect(this,SIGNAL(unterkontoSelected(bool)), bereitschaftsAction, SLOT(setEnabled(bool)));
 
   connect(this,SIGNAL(aktivierbarerEintragSelected(bool)), eintragActivateAction, SLOT(setEnabled(bool)));
-  connect(kontoTree,SIGNAL(customContextMenuRequested(const QPoint & )), this, SLOT(showContextMenu( const QPoint & )));
 
   toolBar->addAction(editUnterKontoAction);
   toolBar->addAction(saveAction);
@@ -432,20 +431,23 @@ void TimeMainWindow::showAdditionalButtons(bool show)
 
 void TimeMainWindow::configClickMode(bool singleClickActivation)
 {
-  disconnect(kontoTree, SIGNAL(itemClicked ( QTreeWidgetItem * , int )),
-               this, SLOT(mouseButtonInKontoTreeClicked(QTreeWidgetItem * , int )));
     disconnect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
                this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)) );
+    disconnect(kontoTree, SIGNAL(itemRightClicked(QTreeWidgetItem *)),
+               this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)));
+    disconnect(kontoTree, SIGNAL(itemClicked(QTreeWidgetItem *, int )),
+               this, SLOT(setAktivesProjekt(QTreeWidgetItem *)));
     disconnect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
                this, SLOT(setAktivesProjekt(QTreeWidgetItem *)));
 
     if (!singleClickActivation) {
       connect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
               this, SLOT(setAktivesProjekt(QTreeWidgetItem *)));
-    }
-    else {
+      connect(kontoTree, SIGNAL(itemRightClicked(QTreeWidgetItem *)),
+              this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)) );
+    } else {
       connect(kontoTree, SIGNAL(itemClicked ( QTreeWidgetItem * , int )),
-              this, SLOT(mouseButtonInKontoTreeClicked(QTreeWidgetItem * , int )));
+              this, SLOT(setAktivesProjekt(QTreeWidgetItem *)));
       connect(kontoTree, SIGNAL(itemDoubleClicked(QTreeWidgetItem *, int )),
               this, SLOT(callUnterKontoDialog(QTreeWidgetItem *)) );
     }
@@ -497,14 +499,6 @@ void TimeMainWindow::copyNameToClipboard()
  {
     QClipboard *cb = QApplication::clipboard();
     cb->setText( kontoTree->currentItem()->text(KontoTreeItem::COL_ACCOUNTS), QClipboard::Clipboard );
-}
-
-void TimeMainWindow::mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int)
-{
-    if ( (kontoTree->getCurrentButton() == Qt::LeftButton) &&(item)) {
-
-        setAktivesProjekt(item);
-    }
 }
 
 void TimeMainWindow::driftKorrektur() {
@@ -1116,14 +1110,6 @@ void TimeMainWindow::flagsChanged(const QString& abt, const QString& ko, const Q
   }
 
   updateCaption();
-}
-
-void TimeMainWindow::showContextMenu(const QPoint& pos)
-{
-   if (!settings->singleClickActivation())
-   {
-     callUnterKontoDialog(kontoTree->itemAt(pos));
-   }
 }
 
 void TimeMainWindow::resizeToIfSensible(QDialog* dialog, const QPoint& pos, const QSize& size)
