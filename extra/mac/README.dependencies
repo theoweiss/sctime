@@ -13,7 +13,7 @@ Content:
 
 Create a build directory for the dependencies, go there and run:
 
-make -f <path to sctime source tree>/extra/mac/Makefile.dependencies SRC_DIR=<path to sctime source tree>/extra/mac/
+make -f <path to sctime source tree>/extra/mac/Makefile.dependencies
 
 You can also build directly inside the sctime source tree by changing into
 extra/mac and running:
