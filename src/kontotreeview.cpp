@@ -68,8 +68,9 @@ KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const st
   setDropIndicatorShown( true );
   setSortingEnabled( true );
   sortItems(0,Qt::AscendingOrder);
-  setContextMenuPolicy(Qt::CustomContextMenu);
 
+  // make sure we see all right mouse button events
+  setContextMenuPolicy(Qt::PreventContextMenu);
 
 #ifndef Q_OS_MAC
   setSelectionMode(QTreeWidget::NoSelection);
@@ -101,17 +102,30 @@ void KontoTreeView::keyPressEvent(QKeyEvent *event)
 
 void KontoTreeView::mousePressEvent(QMouseEvent * event)
 {
-  //Only to detect in timemainwindow.cpp which mousebutton was clicked.
-  currentButton = event->button();
+  QPoint pos = event->pos();
 
-  //Do only Drag n Drop if a time column is selected
-  if( currentButton == Qt::LeftButton )//&& currentColumn() == 3 || currentColumn() == 4)
-  {
-    dragStartPosition = event->pos();
-  }
+  if (event->button() == Qt::LeftButton)
+    dragStartPosition = pos;
+
+  // signal itemClicked() of QTreeWidget only fires on left button clicks
+  // (based on QAbstractItemView's clicked() signal). Track right clicks as
+  // well to implement our own itemRightClicked() signal
+  if (event->button() == Qt::RightButton)
+    rightPressedIndex = indexAt(pos);
 
   //Put event to the parentwidget
   QTreeWidget::mousePressEvent(event);
+}
+
+void KontoTreeView::mouseReleaseEvent(QMouseEvent *event) {
+  QTreeWidget::mouseReleaseEvent(event);
+
+  // emit itemRightClicked if we saw a right button press matching this release
+  QModelIndex index = indexAt(event->pos());
+  if (event->button() == Qt::RightButton &&
+		  index == rightPressedIndex &&
+		  index.isValid())
+    emit itemRightClicked(itemFromIndex(index));
 }
 
 void KontoTreeView::mouseMoveEvent(QMouseEvent *  event )
@@ -1040,9 +1054,4 @@ void KontoTreeView::refreshAllItemsInDepartment(const QString& department)
 			++subAccountPos) {
 		refreshAllItemsInKonto(department, subAccountPos->first);
 	}
-}
-
-Qt::MouseButton KontoTreeView::getCurrentButton()
-{
-  return currentButton;
 }

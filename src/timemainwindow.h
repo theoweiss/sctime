@@ -100,10 +100,8 @@ public:
 
     void refreshKontoListe();
     void configClickMode(bool singleClickActivation);
-    void mouseButtonInKontoTreeClicked(QTreeWidgetItem * item, int column );
     void copyNameToClipboard();
     void copyEntryAsText();
-    void showContextMenu(const QPoint& pos);
     void showArbeitszeitwarning();
     void checkComment(const QString& abt, const QString& ko , const QString& uko,int idx);
     void commitKontenliste(DSResult data);
