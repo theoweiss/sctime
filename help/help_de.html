@@ -177,17 +177,22 @@ zeitbereitls --separator='|'
 sonderzeitls --separator='|'</pre>
 Momentan k&ouml;nnen sie nicht konfiguriert werden.</p>
 
+<h4>Data source <tt>json</tt></h4>
+
+<p>Alle notwendigen Daten sind in einer einzelnen JSON-Datei enthalten.
+Der Standardpfad zur Datei ist <tt>~/.sctime/sctime-offline.json</tt>.
+Dieser kann mittels der Option <tt>--offlinefile</tt> geaendert werden.
+Weitere Informationen, wie der Inhalt der Datei erzeugt werden kann ist unter
+<a href="#offline">offline usage</a> zu finden.</p>
+
 <h4>Datenquelle <tt>file</tt></h4>
 
 <p>Die Dateien werden als <tt>~/.sctime/zeitkonten.txt</tt>, <tt>~/.sctime/sonderzeiten.txt</tt> und
 <tt>~/.sctime/zeitbereitls.txt</tt> erwartet.</p>
 
 <p>Alternative Pfade  k&ouml;nnen mittels der Parameter
-<tt>--zeitkontenfile</tt> und <tt>--bereitschaftsfile</tt> beim Aufruf
-angegeben werden.
-Hierdurch &auml;ndert sich als Nebeneffekt automatisch auch die Reihenfolge, in
-der die Datenquellen abgefragt werden, soda&szlig; zuerst versucht wird, die
-genannten Dateien zu &ouml;ffnen.</p>
+<tt>--zeitkontenfile</tt>, <tt>--sonderzeitenfile</tt> und
+<tt>--bereitschaftsfile</tt> beim Aufruf angegeben werden.</p>
 
 <p>Um die Dateien mit dem erforderlichen Inhalt bereitzustellen, bietet sich
 der manuelle Aufruf der unter <a href="#datasource_command">Datenquelle
@@ -254,14 +259,6 @@ werden.
 Weitere Hinweise hierzu unter <a href="#datasource_database">Datenquellen
 Datenbanken</a>.</p>
 
-<p>Die <tt>zeittools</tt>, die Skripte zum &Uuml;bertragen der Zeiten in die
-Zeitdatenbank, stehen auch f&uuml;r Macs nicht zur Verf&uuml;gung. Es wird davon
-ausgegangen, da&szlig; der Anwender sich auf einem UNIX/Linux-Rechner anmeldet
-und <tt>sctimeorg2</tt> dort aufruft.
-Da das Home des Anwenders auf dem Mac typischweise nicht dem Home auf der
-UNIX/Linux-Maschine entspricht, sind die Dateien z.B. per <tt>scp</tt>
-oder <tt>rsync</tt> manuell zu &uuml;bertragen.</pp>
-
 <p>Werden die Konten- und Bereitschaftsliste als Einzel-Dateien bereitgestellt,
   m&uuml;ssen diese im Format UTF-8 sein. (Um genau zu sein: Das Programm
   erwartet, dass diese Dateien die Kodierung aufweisen, die von
@@ -302,7 +299,7 @@ Die Pfade hierf&uuml;r sind <tt>~/.sctime/zeitkonten.txt</tt>,  <tt>~/.sctime/so
 Diese kann man mit folgenden Befehlsaufrufen (gegebenenfalls auf einem anderen
 Rechner mit Zugang zur Zeitdatenbank) erzeugen:
 
-<p><tt>zeitkonten --mikrokonten --psp --separator='|' &gt; zeitkonten.txt</tt></p>
+<p><tt>zeitkonten --mikrokonten --sonderzeiten --psp --separator='|' &gt; zeitkonten.txt</tt></p>
 <p><tt>zeitbereitls --separator='|' &gt; zeitbereitls.txt</tt></p>
 <p><tt>sonderzeitls --separator='|' &gt; sonderzeitls.txt</tt></p>
 

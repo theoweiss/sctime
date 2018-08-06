@@ -34,7 +34,7 @@ is provided externally and obtained from a database using one of the available
 <a href="#datasources">data sources</a> at program launch.</p>
 
 <p>Recorded times are not written directly to the database. Instead, they're
-saved locally as explained under <a href="#data">Datenhaltung</a> and checked
+saved locally as explained under <a href="#data">Data storage</a> and checked
 into the database using a separate set of scripts called "zeittools".</p>
 
 <a name="usage"><h2>Usage</h2></a>
@@ -162,16 +162,24 @@ zeitbereitls --separator='|'
 sonderzeitls --separator='|'</pre>
 These can not be configured at the moment.</p>
 
+<h4>Data source <tt>json</tt></h4>
+
+<p>All data is provided by a file in JSON format.
+Its default path is <tt>~/.sctime/sctime-offline.json</tt>.
+It can be overridden using command line option
+<tt>--offlinefile</tt>.
+Detailed information on how to generate the file's content is given under <a
+href="#offline">offline usage</a>.</p>
+
 <h4>Data source <tt>file</tt></h4>
 
 <p>Three files <tt>~/.sctime/zeitkonten.txt</tt>,
-<tt>~/.sctime/zeitbereitls.txt</tt> and <tt>~/.sctime/zeitbereitls.txt</tt> are expected with these paths by
+<tt>~/.sctime/sonderzeiten.txt</tt> and <tt>~/.sctime/zeitbereitls.txt</tt> are expected with these paths by
 default.</p>
 
 <p>Alternate paths can be provided using command line options
-<tt>--zeitkontenfile</tt> and <tt>--bereitschaftsfile</tt> when running the
-program. As a side-effect this automatically changes the data source order so
-that the <tt>files</tt> data source is tried before all others.</p>
+<tt>--zeitkontenfile</tt>, <tt>--sonderzeitenfile</tt> and
+<tt>--bereitschaftsfile</tt> when running the program.</p>
 
 <p>To provide the files with the proper content, the commands given under <a
 href="#datasource_command">data source command</a> can be called
@@ -233,12 +241,6 @@ has to be configured with the correct database user name in
 <tt>settings.xml</tt>. See <a href="#datasource_database">data sources
 databases</a> for further instructions.</p>
 
-<p><tt>zeittools</tt>, the scripts for transferring recorded times into the
-database, aren't available for Macs either. As with Windows, it is assumed that
-the user logs onto a UNIX/Linux machine and runs <tt>sctimeorg2</tt> there.
-Since the Mac's home is not normally the same as the UNIX home, the files need
-to be copied manually using <tt>scp</tt> or <tt>rsync</tt> first.</pp>
-
 <p>If account list, on-call categories and special remuneration times are provided as txt-files, they need to
 use UTF-8 as text encoding. (More specifically, the program expects them to be
 in the format given by <tt>locale charmap</tt>.) They can be generated in the
@@ -252,13 +254,34 @@ This assumes a password-free login to the server.</p>
 <a name="offline"><h3>Offline usage</h3></a>
 
 <p>As hinted in the previous sections, sctime can be used without a direct
-connection to the database. For this to work, all necessary data (time
-accounts, special remuneration times and on-call categories) needs to be provided as files in the expected
-locations. Default paths for these files are <tt>~/.sctime/zeitkonten.txt</tt>, <tt>~/.sctime/sonderzeitls.txt</tt> and
+connection to the database.
+For this to work, all necessary data (time accounts, special remuneration times
+and on-call categories) needs to be provided as files in the expected
+locations.
+This is done via a single file <tt>~/.sctime/sctime-offline.json</tt>.
+It can be created using the following command:
+<p><tt>zeit-sctime-offline &gt; ~/.sctime/sctime-offline.json</tt></p>
+
+<p>The default path to this file can be overridden using the following
+options:</p>
+
+<ul>
+<li><tt>--configdir DIRNAME</tt> changes the path to the configuration
+directory as a whole (default: <tt>h:\.sctime</tt> on Windows and
+<tt>~/.sctime</tt> on *nix).
+<li><tt>--offlinefile FILENAME</tt>: read offline data from the named file.
+</ul>
+
+<a name="offline-deprecated"><h3>Offline usage (deprecated)</h3></a>
+
+<p>Alternatively, legacy options and files can be used to achive the same as
+above.
+This is deprecated and to be removed in a future release.
+Default paths for these files are <tt>~/.sctime/zeitkonten.txt</tt>, <tt>~/.sctime/sonderzeitls.txt</tt> and
 <tt>~/.sctime/zeitbereitls.txt</tt>. These can be generated (possibly on a
 different machine with access to the database) using the following commands:
 
-<p><tt>zeitkonten --mikrokonten --psp --separator='|' &gt; zeitkonten.txt</tt></p>
+<p><tt>zeitkonten --mikrokonten --sonderzeiten --psp --separator='|' &gt; zeitkonten.txt</tt></p>
 <p><tt>zeitbereitls --separator='|' &gt; zeitbereitls.txt</tt></p>
 <p><tt>sonderzeitls --separator='|' &gt; sonderzeitls.txt</tt></p>
 
