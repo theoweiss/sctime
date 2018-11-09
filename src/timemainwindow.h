@@ -39,6 +39,8 @@ class QTextBrowser;
 #include "defaultcommentreader.h"
 #include "datasource.h"
 
+class TextViewerDialog;
+
 /** Diese Klasse implementiert das Hauptfenster des Programms,
     und sorgt zudem fuer das Fortschreiten der Zeit.
 */
@@ -50,7 +52,7 @@ public:
     QTreeWidget* getKontoTree();
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;
-    void infoDialog(QDialog *&dialog, QTextBrowser *&browser, const QString& title, const QString& name, int x, int y);
+    void infoDialog(TextViewerDialog *&dialog, const QString& title, const QString& name, int x, int y, bool plaintext_links=false);
     
   public slots:
 
@@ -95,6 +97,7 @@ public:
     void callBereitschaftsDialog(QTreeWidgetItem * item);
     void callSpecialRemunerationsDialog(QTreeWidgetItem * item);
     void callColorDialog();
+    void callAdditionalLicenseDialog();
     void removeBgColor();
     void jumpToAlleKonten();
 
@@ -189,6 +192,7 @@ public:
     QToolBar* toolBar;
     QStringList defaultTags;
     KontoDatenInfo* zk;
+    QString additionalLicensesFile;
     bool pausedAbzur;
     void openItem( QTreeWidgetItem *item );
     // Workaround, um beim Setzen der Voreinstellung fuer den inPersoenlicheKonten-Button nicht das zugehoerige

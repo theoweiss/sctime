@@ -58,6 +58,7 @@
 #include "setupdsm.h"
 #include "specialremunerationsdialog.h"
 #include "util.h"
+#include "textviewerdialog.h"
 
 
 QTreeWidget* TimeMainWindow::getKontoTree() { return kontoTree; }
@@ -96,6 +97,10 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
     int custFontSize=settings->customFontSize();
     QApplication::setFont(QFont(custFont,custFontSize));
   }
+
+  additionalLicensesFile = QCoreApplication::applicationDirPath()+
+                           "/licenses/overview.html";
+  QFileInfo infofile(additionalLicensesFile);
 
   defaultCommentReader.read(abtList,xmlfilelist);
   DefaultTagReader defaulttagreader;
@@ -226,6 +231,9 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   QAction* qtAction = new QAction(tr("About &Qt..."), this);
   qtAction->setMenuRole(QAction::AboutQtRole);
   connect(qtAction, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+  
+  QAction* addlicAction = new QAction(tr("Additional &License Information..."), this);
+  connect(addlicAction, SIGNAL(triggered()), this, SLOT(callAdditionalLicenseDialog()));
 
   QAction* logAction = new QAction(tr("&Messages..."), this);
   connect(logAction, SIGNAL(triggered()), this, SLOT(logDialog()));
@@ -342,6 +350,9 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   hilfemenu->addAction(helpAction);
   hilfemenu->addAction(aboutAction);
   hilfemenu->addAction(qtAction);
+  if (infofile.exists()) {
+    hilfemenu->addAction(addlicAction);
+  }
   hilfemenu->addSeparator();
   hilfemenu->addAction(logAction);
 
@@ -1319,41 +1330,23 @@ void TimeMainWindow::callDateDialog()
   dateDialog->show();
 }
 
-void TimeMainWindow::infoDialog(QDialog *&dialog, QTextBrowser *&browser, const QString& title, const QString& name, int x, int y) {
-  dialog = new QDialog(this);
-  dialog->setObjectName(name);
-  dialog->setWindowTitle(title);
-  QVBoxLayout *layout = new QVBoxLayout(dialog);
-  browser = new QTextBrowser(this);
-  browser->setOpenExternalLinks(true);
-  layout->addWidget(browser);
-  layout->addSpacing(7);
-  QHBoxLayout* buttonlayout=new QHBoxLayout();
-  buttonlayout->setContentsMargins(3,3,3,3);
-  QPushButton * okbutton=new QPushButton( tr("OK"), dialog);
-  buttonlayout->addStretch(1);
-  buttonlayout->addWidget(okbutton);
-  buttonlayout->addStretch(1);
-  layout->addLayout(buttonlayout);
-  layout->addSpacing(4);
-  connect (okbutton, SIGNAL(clicked()), dialog, SLOT(close()));
+void TimeMainWindow::infoDialog(TextViewerDialog *&dialog, const QString& title, const QString& name, int x, int y, bool plaintext_links) {
+  dialog = new TextViewerDialog(this,title,name, plaintext_links);
   dialog->resize(x, y);
   dialog->show();
 }
 
 void TimeMainWindow::callHelpDialog() {
-  QDialog *dialog;
-  QTextBrowser *browser;
-  infoDialog(dialog, browser, tr("sctime: Help"), tr("sctime help"), 600, 450);
-  browser->setSource(QUrl("qrc:/help"));
+  TextViewerDialog* dialog;
+  infoDialog(dialog, tr("sctime: Help"), tr("sctime help"), 600, 450);
+  dialog->browser()->setSource(QUrl("qrc:/help"));
 }
 
 
 void TimeMainWindow::callAboutBox() {
-  QDialog *dialog;
-  QTextBrowser *browser;
-  infoDialog(dialog, browser, tr("About sctime"), tr("sctime about"), 400, 350);
-  browser->setHtml(tr(
+  TextViewerDialog* dialog;
+  infoDialog(dialog, tr("About sctime"), tr("sctime about"), 400, 350);
+  dialog->browser()->setHtml(tr(
         "<h1><img src=':/scLogo_15Farben' />sctime</h1>"
         "<table><tr><td>Version:</td><td>%1</td></tr>"
         "<tr><td>Qt-Version:</td><td>%2 (development)</td></tr>"
@@ -1369,10 +1362,9 @@ void TimeMainWindow::callAboutBox() {
 }
 
 void TimeMainWindow::logDialog() {
-  QDialog *dialog;
-  QTextBrowser *browser;
-  infoDialog(dialog, browser, tr("sctime: Messages"), tr("sctime message log"), 700, 300);
-  browser->setPlainText(logText);
+  TextViewerDialog* dialog;
+  infoDialog(dialog, tr("sctime: Messages"), tr("sctime message log"), 700, 300);
+  dialog->browser()->setPlainText(logText);
 }
 
 void TimeMainWindow::callBereitschaftsDialog(QTreeWidgetItem * item) {
@@ -1552,3 +1544,10 @@ void TimeMainWindow::commitSpecialRemun(DSResult data) {
   abtList->setSpecialRemunTypeMap(srmap);
   abtList->setGlobalSpecialRemunNames(global_srnames);
 }
+
+void TimeMainWindow::callAdditionalLicenseDialog() {
+  TextViewerDialog* dialog;
+  infoDialog(dialog, tr("sctime: Additional Information about Licensing"), tr("sctime licensing"), 600, 450, true);
+  dialog->browser()->setSource(QUrl::fromLocalFile(additionalLicensesFile));
+}
+
