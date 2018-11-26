@@ -26,7 +26,7 @@
 
 
  /**
-  * Der Dialog zum Eingeben eines Datums
+  * Dialog to read a date
   */
 class DateDialog : public QDialog, private Ui::DateDialogBase
 {
@@ -47,14 +47,15 @@ protected slots:
   /*$PROTECTED_SLOTS$*/
   virtual void          accept();
   virtual void          apply();
-  virtual void          dateChangedSlot(QDate date);
+  virtual void          setSelectedDate(const QDate& date);
+  virtual void          todaySelected();
+  virtual void          weekSelected(int week);
 
 signals:
-  void dateChanged(const QDate& datum);
+  void dateChanged(const QDate& date);
 
 private:
-  int currentMonth;
-  int currentYear;
+  QDate selectedDate;
 };
 
 #endif

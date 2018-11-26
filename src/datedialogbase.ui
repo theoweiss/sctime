@@ -39,7 +39,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
+   <item row="5" column="0">
     <layout class="QHBoxLayout">
      <item>
       <widget class="QPushButton" name="okbutton">
@@ -72,6 +72,27 @@
    </item>
    <item row="1" column="0">
     <widget class="QCalendarWidget" name="datePicker"/>
+   </item>
+   <item row="2" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QToolButton" name="todayButton">
+       <property name="text">
+        <string>today</string>
+       </property>
+       <property name="icon">
+        <iconset>
+         <normaloff>:/cr16_action_bookmark</normaloff>:/cr16_action_bookmark</iconset>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QDateEdit" name="dateEdit"/>
+     </item>
+     <item>
+      <widget class="QComboBox" name="weekSelector"/>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

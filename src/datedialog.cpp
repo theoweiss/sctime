@@ -23,36 +23,34 @@
 #include <QTextCharFormat>
 #include "globals.h"
 
-DateDialog::DateDialog(const QDate& datum, QWidget *parent)
+DateDialog::DateDialog(const QDate& date, QWidget *parent)
 : QDialog(parent)
 {
   setupUi(this);
-  // to make sure month gets updated
-  currentMonth=-1;
-  currentYear=-1;
-  connect(datePicker, SIGNAL(dateChanged(QDate)), this, SLOT(dateChangedSlot(QDate)));
+  selectedDate=QDate();
+  connect(datePicker, SIGNAL(clicked(const QDate&)), this, SLOT(setSelectedDate(const QDate&)));
   connect(applyButton, SIGNAL(clicked()), this, SLOT(apply()));
-  connect(datePicker, SIGNAL(tableClicked()), this, SLOT(apply()));
+  connect(this, SIGNAL(dateChanged(const QDate&)), this, SLOT(setSelectedDate(const QDate&)));
   connect(okbutton, SIGNAL(clicked()), this, SLOT(accept()));
   connect(cancelbutton, SIGNAL(clicked()), this, SLOT(reject()));
-
-  datePicker->setSelectedDate(datum);
-
-  // wird durch setDate nicht ausgeloest, muss aber zur initialisierung
-  // aufgerufen werden.
-  dateChangedSlot(datum);
+  connect(todayButton, SIGNAL(clicked()), this, SLOT(todaySelected()));
+  connect(dateEdit,SIGNAL(dateChanged(const QDate&)), this, SLOT(setSelectedDate(const QDate&)));
+  weekSelector->setEditable(false);
+  setSelectedDate(date);
+  connect(weekSelector,SIGNAL(currentIndexChanged(int)), this, SLOT(weekSelected(int)));
 }
 
 DateDialog::~DateDialog()
 {
 }
 
-void DateDialog::dateChangedSlot(QDate date)
+void DateDialog::setSelectedDate(const QDate& date)
 {
-  if ((date.month()!=currentMonth)||(date.year()!=currentYear)) {
+  //int prevweek=datePicker->selectedDate().weekNumber();
+  if ((date.month()!=selectedDate.month())||(date.year()!=selectedDate.year())) {
     QDir qd(configDir.filePath("checkedin"));
     QStringList dateList;
-    dateList << "zeit-" << date.toString("yyyy-MM") << "-*.xml"; //Since Qt4
+    dateList << "zeit-" << date.toString("yyyy-MM") << "-*.xml";
     QStringList files=qd.entryList(dateList);
     for ( QStringList::Iterator it = files.begin(); it != files.end(); ++it ) {
       bool ok;
@@ -65,19 +63,53 @@ void DateDialog::dateChangedSlot(QDate date)
         datePicker->setDateTextFormat(filedate, dtf);
       }
     }
-    currentMonth = date.month();
-    currentYear  = date.year();
   }
+  if (selectedDate.year()!=date.year()) {
+    QDate yearend=QDate(date.year(),12,31);
+    // determine if we have 52 or 53 weeks
+    int lastweek=yearend.weekNumber();
+    if (lastweek==1) {
+      lastweek=52;
+    }
+    weekSelector->clear();
+    for (int i=0; i<lastweek; i++) {
+      weekSelector->insertItem(i,QObject::tr("Week %1").arg(i+1));
+    }
+  }
+  datePicker->setSelectedDate(date);
+  dateEdit->setDate(date);
+  selectedDate=date;
+  weekSelector->setCurrentIndex(date.weekNumber()-1);
 }
 
 void DateDialog::apply()
 {
-   emit dateChanged(datePicker->selectedDate());
+   emit dateChanged(selectedDate);
 }
 
 /*$SPECIALIZATION$*/
 void DateDialog::accept()
 {
-  emit dateChanged(datePicker->selectedDate());
+  emit dateChanged(selectedDate);
   QDialog::accept();
+}
+
+void DateDialog::todaySelected()
+{
+  QDate today=QDate::currentDate();
+  if (selectedDate!=today) {
+    emit dateChanged(today);
+  }
+}
+
+void DateDialog::weekSelected(int week)
+{
+  // week starts with 0 we want to have it started with 1
+  week=week+1;
+  QDate prevdate=selectedDate;
+  int currentweek=prevdate.weekNumber();
+  QDate date = prevdate.addDays((week-currentweek)*7);
+  if ((week>0) && (prevdate!=date)) {
+    emit dateChanged(date);
+  }
 }
