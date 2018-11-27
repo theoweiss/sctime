@@ -73,7 +73,7 @@ void DateDialog::setSelectedDate(const QDate& date)
     }
     weekSelector->clear();
     for (int i=0; i<lastweek; i++) {
-      weekSelector->insertItem(i,QObject::tr("Week %1").arg(i+1));
+      weekSelector->insertItem(i,tr("Week %1").arg(i+1));
     }
   }
   datePicker->setSelectedDate(date);
