@@ -98,7 +98,7 @@ void DateDialog::todaySelected()
 {
   QDate today=QDate::currentDate();
   if (selectedDate!=today) {
-    emit dateChanged(today);
+    setSelectedDate(today);
   }
 }
 
@@ -110,6 +110,6 @@ void DateDialog::weekSelected(int week)
   int currentweek=prevdate.weekNumber();
   QDate date = prevdate.addDays((week-currentweek)*7);
   if ((week>0) && (prevdate!=date)) {
-    emit dateChanged(date);
+    setSelectedDate(date);
   }
 }
