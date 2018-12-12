@@ -48,13 +48,16 @@ void SpecialRemunerationsDialog::fillListWidget(QListWidget* widget, AbteilungsL
         QSet<QString> selection = (*etl)[eintragsIdx].getAchievedSpecialRemunSet();
         QList<QString> ukosrl = etl->getSpecialRemunNames();
         QList<QString> globalsrl = abtlist->getGlobalSpecialRemunNames();
+        SpecialRemunTypeMap srtypemap = abtlist->getSpecialRemunTypeMap();
         for (QList<QString>::iterator srlIt = globalsrl.begin(); srlIt != globalsrl.end(); ++srlIt ) {
            QListWidgetItem* item=new QListWidgetItem(*srlIt,widget);
+           item->setToolTip(srtypemap[*srlIt].description);
            widget->addItem(item);
            item->setSelected(selection.remove(*srlIt));
         }
         for (QList<QString>::iterator srlIt = ukosrl.begin(); srlIt != ukosrl.end(); ++srlIt ) {
            QListWidgetItem* item=new QListWidgetItem(*srlIt,widget);
+           item->setToolTip(srtypemap[*srlIt].description);
            widget->addItem(item);
            item->setSelected(selection.remove(*srlIt));
         }
