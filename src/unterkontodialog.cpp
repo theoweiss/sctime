@@ -240,13 +240,12 @@ void UnterKontoDialog::accept()
 
   QString comment=getComment();
 
-
-  abtList->setEintrag(abteilungsName,kontoName,unterKontoName,eintragIndex,
-    UnterKontoEintrag(comment,zeitBox->getSekunden(),
-    zeitAbzurBox->getSekunden(), flags));
-
-  abtList->moveEintragPersoenlich(abteilungsName,kontoName,unterKontoName,eintragIndex,
-    (persoenlichesKonto->isChecked()));
+  UnterKontoEintrag entry;
+  abtList->getEintrag(entry, abteilungsName,kontoName,unterKontoName,eintragIndex);
+  entry.kommentar=comment;
+  entry.sekunden=zeitBox->getSekunden();
+  entry.sekundenAbzur=zeitAbzurBox->getSekunden();
+  entry.flags=flags;
 
   /*QStringList bereitschaften = bereitschaftsView->getSelectionList();
   m_unterkonto->setBereitschaft(bereitschaften);*/
@@ -257,8 +256,13 @@ void UnterKontoDialog::accept()
     for (QList<QListWidgetItem *>::iterator selIt = selitems.begin(); selIt != selitems.end(); ++selIt ) {
       selection.insert((*selIt)->text());
     }
-    (*m_unterkonto)[eintragIndex].setAchievedSpecialRemunSet(selection);
+    entry.setAchievedSpecialRemunSet(selection);
   }
+
+  abtList->setEintrag(abteilungsName,kontoName,unterKontoName,eintragIndex,
+    entry);
+  abtList->moveEintragPersoenlich(abteilungsName,kontoName,unterKontoName,eintragIndex,
+    (persoenlichesKonto->isChecked()));
 
   emit entryChanged(abteilungsName,kontoName,unterKontoName,eintragIndex);
   
