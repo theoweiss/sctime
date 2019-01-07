@@ -269,7 +269,6 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   bgColorChooseAction = new QAction(tr("Choose &background colour..."), this);
   bgColorChooseAction->setShortcut(Qt::CTRL+Qt::Key_G);
   bgColorRemoveAction = new QAction(tr("&Remove background colour"), this);
-  bgColorRemoveAction->setShortcut(Qt::CTRL+Qt::Key_K);
 
   jumpAction = new QAction(tr("&Show selected account in 'all accounts'"), this);
 
@@ -331,6 +330,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   kontomenu->addAction(saveAction);
   kontomenu->addAction(pauseAction);
   kontomenu->addAction(pauseAbzurAction);
+  kontomenu->addAction(inPersKontAction);
   kontomenu->addAction(specialRemunAction);
   kontomenu->addSeparator();
   kontomenu->addAction(findKontoAction);
