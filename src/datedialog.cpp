@@ -64,6 +64,9 @@ void DateDialog::setSelectedDate(const QDate& date)
       }
     }
   }
+  /* avoid triggering the weekSelected slot, as this might cause endless loops. There might be a
+     more elegant solution for this, but for now it works fine this way */
+  disconnect(weekSelector,SIGNAL(currentIndexChanged(int)), this, SLOT(weekSelected(int)));
   if (selectedDate.year()!=date.year()) {
     QDate yearend=QDate(date.year(),12,31);
     // determine if we have 52 or 53 weeks
@@ -80,6 +83,7 @@ void DateDialog::setSelectedDate(const QDate& date)
   dateEdit->setDate(date);
   selectedDate=date;
   weekSelector->setCurrentIndex(date.weekNumber()-1);
+  connect(weekSelector,SIGNAL(currentIndexChanged(int)), this, SLOT(weekSelected(int)));
 }
 
 void DateDialog::apply()
@@ -109,6 +113,7 @@ void DateDialog::weekSelected(int week)
   QDate prevdate=selectedDate;
   int currentweek=prevdate.weekNumber();
   QDate date = prevdate.addDays((week-currentweek)*7);
+
   if ((week>0) && (prevdate!=date)) {
     setSelectedDate(date);
   }
