@@ -147,12 +147,10 @@ UnterKontoDialog::UnterKontoDialog(const QString& abt,const QString& ko, const  
   if (settings->showSpecialRemunSelector()) {
     QGroupBox* srgroup = new QGroupBox(tr("Special Remuneration Categories"),this);
     QHBoxLayout* hboxLayout = new QHBoxLayout(srgroup);
-    srListWidget=new QListWidget(this);
+    srListWidget=new QListWidget(srgroup);
     srListWidget->setSelectionMode(QAbstractItemView::MultiSelection);
     SpecialRemunerationsDialog::fillListWidget(srListWidget, abtList, m_unterkonto, idx, abt, ko, uko);
     hboxLayout->addWidget(srListWidget);
-    hboxLayout->addSpacing(5);
-    hboxLayout->addStretch(2);
     layout->addWidget(srgroup);
     layout->addSpacing(5);
     layout->addStretch(2);
