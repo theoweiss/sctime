@@ -29,6 +29,7 @@ DateDialog::DateDialog(const QDate& date, QWidget *parent)
   setupUi(this);
   selectedDate=QDate();
   connect(datePicker, SIGNAL(clicked(const QDate&)), this, SLOT(setSelectedDate(const QDate&)));
+  connect(datePicker, SIGNAL(activated(const QDate&)), this, SLOT(setSelectedDateAndClose(const QDate&)));
   connect(applyButton, SIGNAL(clicked()), this, SLOT(apply()));
   connect(this, SIGNAL(dateChanged(const QDate&)), this, SLOT(setSelectedDate(const QDate&)));
   connect(okbutton, SIGNAL(clicked()), this, SLOT(accept()));
@@ -104,6 +105,12 @@ void DateDialog::todaySelected()
   if (selectedDate!=today) {
     setSelectedDate(today);
   }
+}
+
+void DateDialog::setSelectedDateAndClose(const QDate& date)
+{
+  setSelectedDate(date);
+  accept();
 }
 
 void DateDialog::weekSelected(int week)

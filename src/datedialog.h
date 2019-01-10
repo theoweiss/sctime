@@ -50,6 +50,7 @@ protected slots:
   virtual void          setSelectedDate(const QDate& date);
   virtual void          todaySelected();
   virtual void          weekSelected(int week);
+  virtual void          setSelectedDateAndClose(const QDate& date);
 
 signals:
   void dateChanged(const QDate& date);

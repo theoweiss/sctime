@@ -97,6 +97,15 @@
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>datePicker</tabstop>
+  <tabstop>todayButton</tabstop>
+  <tabstop>dateEdit</tabstop>
+  <tabstop>weekSelector</tabstop>
+  <tabstop>okbutton</tabstop>
+  <tabstop>applyButton</tabstop>
+  <tabstop>cancelbutton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
