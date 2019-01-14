@@ -8,11 +8,11 @@ CURL_OPTS=-L
 
 PREFIX=$(BUILD_DIR)/deps
 
-SDK=macosx10.13
+SDK=macosx10.12
 SDK_PATH=$(shell xcrun --sdk $(SDK) --show-sdk-path)
 
-QT_MINOR=5.11
-QT_VER=$(QT_MINOR).1
+QT_MINOR=5.12
+QT_VER=$(QT_MINOR).0
 QT_BN=qt-everywhere-src-$(QT_VER)
 QT_SOURCE_FILE=$(QT_BN).tar.xz
 QT_URL=http://download.qt.io/official_releases/qt/$(QT_MINOR)/$(QT_VER)/single/$(QT_SOURCE_FILE)
@@ -20,15 +20,15 @@ QT_DIR=$(BUILD_DIR)/qt
 QT_SOURCE=$(QT_DIR)/$(QT_SOURCE_FILE)
 QT_SOURCE_DIR=$(QT_DIR)/$(QT_BN)
 
-PGSQL_VER=10.4
+PGSQL_VER=11.1
 PGSQL_BN=postgresql-$(PGSQL_VER)
 PGSQL_SOURCE_FILE=$(PGSQL_BN).tar.bz2
 PGSQL_URL=http://ftp.postgresql.org/pub/source/v$(PGSQL_VER)/$(PGSQL_SOURCE_FILE)
 PGSQL_DIR=$(BUILD_DIR)/postgres
 PGSQL_SOURCE=$(PGSQL_DIR)/$(PGSQL_SOURCE_FILE)
 PGSQL_SOURCE_DIR=$(PGSQL_DIR)/$(PGSQL_BN)
-PGSQL_COMMON_CFLAGS=-isysroot $(SDK_PATH) -mmacosx-version-min=10.13
-PGSQL_COMMON_LDFLAGS=-Wl,-syslibroot,$(SDK_PATH) -mmacosx-version-min=10.13
+PGSQL_COMMON_CFLAGS=-mmacosx-version-min=10.12
+PGSQL_COMMON_LDFLAGS=-mmacosx-version-min=10.12
 PGSQL_CONFIGURE_FLAGS=--without-openssl --without-perl --without-python --without-tcl --without-bonjour --without-pam --with-gssapi --without-libxml
 
 .PHONY: all clean mrproper clean.destdir \
@@ -109,15 +109,18 @@ $(PGSQL_DIR)/installed: $(PGSQL_DIR)/compiled
 		$(MAKE) install && \
 		touch "$@"
 
+# pgsql build system needs MAKELEVEL reset to zero because its generated header
+# logic depends on detecting the level 0 make
 $(PGSQL_DIR)/compiled: $(PGSQL_DIR)/configured
 	cd "$(PGSQL_SOURCE_DIR)" && \
-		$(MAKE) && \
+		$(MAKE) MAKELEVEL=0 && \
 		touch "$@"
 
 $(PGSQL_DIR)/configured: $(PGSQL_DIR)/patched
 	cd "$(PGSQL_SOURCE_DIR)" && \
 		CFLAGS="$(PGSQL_COMMON_CFLAGS)" \
 			LDFLAGS="$(PGSQL_COMMON_LDFLAGS)" \
+			PG_SYSROOT="$(SDK_PATH)" \
 			./configure --prefix="$(PREFIX)" \
 				$(PGSQL_CONFIGURE_FLAGS) && \
 		touch "$@"
