@@ -77,7 +77,8 @@ static const QString specialRemunQuery(
   "    sz.beschreibung, "
   "    sz.isglobal "
   "From "
-  "    v_sonderzeiten_sctime sz ");
+  "    v_sonderzeiten_sctime sz "
+  "    order by sz.kategorie");
 
 static QString username() {
   static QString result;
