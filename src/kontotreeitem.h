@@ -19,6 +19,7 @@
 #define KONTOTREE_ITEM_H
 
 #include <QTreeWidgetItem>
+#include "sctimexmlsettings.h"
 class QTreeWidget;
 class QPaintEvent;
 class QString;
@@ -29,17 +30,19 @@ class KontoTreeItem: public QTreeWidgetItem
     enum Columns { COL_ACCOUNTS, COL_TYPE, COL_PSP, COL_ACTIVE, COL_TIME, COL_ACCOUNTABLE, COL_COMMENT };
     const static int NUM_COLUMNS=7;
 
-    KontoTreeItem ( QTreeWidget * parent );
-    KontoTreeItem ( QTreeWidgetItem * parent );
+    KontoTreeItem (QTreeWidget * parent, SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode);
+    KontoTreeItem (QTreeWidgetItem * parent, SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode);
 
 
-    KontoTreeItem ( QTreeWidget * parent, QString accountname); 
+    KontoTreeItem (QTreeWidget * parent, SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode, QString accountname); 
 
-    KontoTreeItem ( QTreeWidgetItem * parent, QString accountname); 
+    KontoTreeItem (QTreeWidgetItem * parent, SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode, QString accountname); 
 
     void setBoldAccount(bool bold);
     
     void setMicroAccount(bool microaccount);
+
+    void setHasSelectableMicroAccounts(bool hasselectablema);
 
     void setGray();
 
@@ -55,7 +58,10 @@ class KontoTreeItem: public QTreeWidgetItem
   private:
     bool isBoldAccount;
     bool isMicroAccount;
+    bool hasSelectableMicroAccounts;
+    SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode;
     bool isGray;
+    SCTimeXMLSettings* settings;
     QColor m_bgColor;
 };
 

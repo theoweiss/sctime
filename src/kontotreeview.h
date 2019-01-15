@@ -20,6 +20,7 @@
 
 #include <QTreeWidget>
 #include <QString>
+#include "sctimexmlsettings.h"
 
 class KontoTreeItem;
 class QString;
@@ -46,7 +47,7 @@ class KontoTreeView: public QTreeWidget
 
   public:
     
-    KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const std::vector<int>& columnwidth);
+    KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const std::vector<int>& columnwidth, SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode);
 
     bool sucheItem(const QString& tops, const QString& abts, const QString& kos, const QString& ukos, int idx,
          KontoTreeItem* &topi, KontoTreeItem* &abti, KontoTreeItem* &koi, KontoTreeItem* &ukoi, KontoTreeItem* &eti);
@@ -83,6 +84,8 @@ class KontoTreeView: public QTreeWidget
 
     void updateColumnWidth();
 
+    void setDisplayMode(SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode);
+
   public slots:
     virtual void refreshItem(const QString& abt, const QString& ko,const QString& uko, int idx);
     void refreshAllItemsInUnterkonto(const QString& abt, const QString& ko,const QString& uko);
@@ -111,6 +114,7 @@ class KontoTreeView: public QTreeWidget
     QPoint dragStartPosition;
     Qt::KeyboardModifiers keyboardModifier;
     QPersistentModelIndex rightPressedIndex;
+    SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode;
 };
 
 #endif

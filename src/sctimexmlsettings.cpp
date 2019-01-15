@@ -404,6 +404,18 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
               if (zeitkontenkommandostr.isNull()) continue;
               setZeitKontenKommando(zeitkontenkommandostr);
             }
+            if (elem2.tagName()=="defcommentdisplay") {
+              QString dmstring=elem2.attribute("mode");
+              if (dmstring.isNull()) continue;
+              DefCommentDisplayModeEnum dm=DM_BOLD;
+              if (dmstring=="DefaultCommentsNotUsedBold") {
+                dm=DM_NOTUSEDBOLD;
+              } else
+              if (dmstring=="NotBold") {
+                dm=DM_NOTBOLD;
+              }
+              setDefCommentDisplayMode(dm);
+            }
             if (elem2.tagName()=="dragndrop") {
               setDragNDrop(elem2.attribute("on")=="yes");
             }
@@ -589,6 +601,16 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
         columnwidthtag.setAttribute("width",columnwidth[i]);
         generaltag.appendChild(columnwidthtag);
     }
+
+    QDomElement defcommentdm = doc.createElement("defcommentdisplay");
+    QString dm;
+    switch(defCommentDisplayMode()) {
+      case DM_NOTUSEDBOLD: dm="DefaultCommentsNotUsedBold"; break;
+      case DM_NOTBOLD: dm="NotBold"; break;
+      default: dm ="DefaultCommentsBold"; break;
+    }
+    defcommentdm.setAttribute("mode",dm);
+    generaltag.appendChild(defcommentdm);
 
     QDomElement saveeintragtag = doc.createElement("saveeintrag");
     QString always="no";

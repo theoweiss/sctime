@@ -41,9 +41,9 @@
 /**
  * Erzeugt ein neues Objekt zur Anzeige des Kontobaums. Seine Daten bezieht es aus abtlist.
  */
-KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const std::vector<int>& columnwidth): QTreeWidget(parent)
+KontoTreeView::KontoTreeView(QWidget *parent, AbteilungsListe* abtlist, const std::vector<int>& columnwidth, SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode): QTreeWidget(parent)
 {
-
+  this->displaymode=displaymode;
   setColumnCount(7);
   QTreeWidgetItem * header = new QTreeWidgetItem;
   header->setText(KontoTreeItem::COL_ACCOUNTS, tr("Accounts") );
@@ -505,9 +505,9 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
     topi=next;
   }
 
-  KontoTreeItem* allekonten=new KontoTreeItem(this);
+  KontoTreeItem* allekonten=new KontoTreeItem(this, displaymode);
   allekonten->setText(KontoTreeItem::COL_ACCOUNTS, ALLE_KONTEN_STRING);
-  KontoTreeItem* perskonten=new KontoTreeItem(this);
+  KontoTreeItem* perskonten=new KontoTreeItem(this, displaymode);
   perskonten->setText(KontoTreeItem::COL_ACCOUNTS, PERSOENLICHE_KONTEN_STRING);
 
   this->addTopLevelItem(allekonten);
@@ -520,12 +520,12 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
     AbteilungsListe::iterator abtPos;
 
     for (abtPos=abtList->begin(); abtPos!=abtList->end(); ++abtPos) {
-      KontoTreeItem* abteilungsitem=new KontoTreeItem( allekonten );
+      KontoTreeItem* abteilungsitem=new KontoTreeItem(allekonten, displaymode);
       abteilungsitem->setText(KontoTreeItem::COL_ACCOUNTS, abtPos->first);
       abteilungsitem->setBgColor(abtList->getBgColor(abtPos->first));
       KontoListe* kontoliste=&(abtPos->second);
       for (KontoListe::iterator kontPos=kontoliste->begin(); kontPos!=kontoliste->end(); ++kontPos) {
-        KontoTreeItem* kontoitem= new KontoTreeItem( abteilungsitem);
+        KontoTreeItem* kontoitem= new KontoTreeItem(abteilungsitem, displaymode);
         kontoitem->setText(KontoTreeItem::COL_ACCOUNTS, kontPos->first);
         kontoitem->setBgColor(abtList->getBgColor(abtPos->first,kontPos->first));        
         UnterKontoListe* unterkontoliste=&(kontPos->second);
@@ -540,7 +540,7 @@ void KontoTreeView::load(AbteilungsListe* abtlist)
             if (etPos==eintragsliste->begin()) {
                 //KontoTreeItem* newItem=new KontoTreeItem( kontoitem, ukontPos->first, dd.type(), "", tc.toString(),
                                                       //tcAbzur.toString() , etPos->second.kommentar);
-                KontoTreeItem* newItem=new KontoTreeItem( kontoitem);
+                KontoTreeItem* newItem=new KontoTreeItem(kontoitem, displaymode);
                 newItem->setText( KontoTreeItem::COL_ACCOUNTS, ukontPos->first);
                 newItem->setText( KontoTreeItem::COL_TYPE, dd.type());
                 newItem->setText( KontoTreeItem::COL_PSP, dd.pspElem());
@@ -624,12 +624,14 @@ int firstEintragWithFlags(EintragsListe* etl, int flags)
 void KontoTreeView::refreshComment(const QString& comment, KontoTreeItem* item, EintragsListe* etl)
 {
    item->setText(KontoTreeItem::COL_COMMENT,comment);
+   QVector<DefaultComment>* defaultCommentList = etl->getDefaultCommentList();
+   item->setHasSelectableMicroAccounts(!defaultCommentList->isEmpty());
+
    if (comment.isEmpty())
    {
       item->setMicroAccount(false);
       return;
    }
-   QVector<DefaultComment>* defaultCommentList = etl->getDefaultCommentList();
    QVector<DefaultComment>::iterator dclIt;
    for (dclIt = defaultCommentList->begin(); dclIt != defaultCommentList->end(); ++dclIt ) {
      QString matext=dclIt->getText();
@@ -680,7 +682,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
   bool itemFound=(sucheItem(ALLE_KONTEN_STRING,abt,ko,uko,idx,topi,abti,koi,ukoi,eti));
 
   if ((koi)&&(!ukoi)) {
-    ukoi=new KontoTreeItem(koi,uko);
+    ukoi=new KontoTreeItem(koi, displaymode, uko);
     itemFound=true;
   }
 
@@ -714,7 +716,9 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
 
         QString qs;
         qs.setNum(etl->begin()->first);
-        eti=new KontoTreeItem(ukoi,qs);
+        QVector<DefaultComment>* defaultCommentList = etl->getDefaultCommentList();
+        ukoi->setHasSelectableMicroAccounts(!defaultCommentList->isEmpty());
+        eti=new KontoTreeItem(ukoi, displaymode, qs);
         //std::cout << "ukoi->child(0)=" << ukoi->child(0)->text(0).toStdString()<<std::endl;
         ukoi->setIcon(KontoTreeItem::COL_ACTIVE,QIcon());
         ukoi->setText(KontoTreeItem::COL_PSP,"");
@@ -737,7 +741,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       if (!etiFound) {
         QString qs;
         qs.setNum(idx);
-        eti=new KontoTreeItem(ukoi,qs);
+        eti=new KontoTreeItem(ukoi, displaymode, qs);
         //ukoi->setExpanded(true);
       }
       ukoi->setText(KontoTreeItem::COL_TYPE,"");
@@ -753,6 +757,8 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       else {
         ukoi->setIcon(KontoTreeItem::COL_ACTIVE,QIcon());
         ukoi->setText(KontoTreeItem::COL_COMMENT,"");
+        QVector<DefaultComment>* defaultCommentList = etl->getDefaultCommentList();
+        ukoi->setHasSelectableMicroAccounts(!defaultCommentList->isEmpty());
         ukoi->setMicroAccount(false);
       }
     }
@@ -819,19 +825,19 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       }
     }
     if ((!inPersKontenGefunden)&&((etiter->second.flags)&UK_PERSOENLICH)) {
-      if (!topi) topi=new KontoTreeItem(this,PERSOENLICHE_KONTEN_STRING);
-      if (!abti) abti=new KontoTreeItem(topi,abt);
-      if (!koi) koi=new KontoTreeItem(abti,ko);
+      if (!topi) topi=new KontoTreeItem(this, displaymode, PERSOENLICHE_KONTEN_STRING);
+      if (!abti) abti=new KontoTreeItem(topi,displaymode, abt);
+      if (!koi) koi=new KontoTreeItem(abti, displaymode, ko);
       if (!ukoi) {
         if (!ukHasSubTree) {
-            eti=new KontoTreeItem(koi,uko);
+            eti=new KontoTreeItem(koi, displaymode, uko);
             ukoi=eti;
         }
         else
-          ukoi=new KontoTreeItem(koi,uko);
+          ukoi=new KontoTreeItem(koi, displaymode, uko);
       }
       if (!eti) {
-            eti=new KontoTreeItem(ukoi,QString().setNum(idx));
+            eti=new KontoTreeItem(ukoi, displaymode, QString().setNum(idx));
       }
       eti->setText(KontoTreeItem::COL_TYPE,dd.type());
       eti->setText(KontoTreeItem::COL_PSP,dd.pspElem());
@@ -885,6 +891,8 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
       }
       else {
         etiFound=(eti!=NULL);
+        QVector<DefaultComment>* defaultCommentList = etl->getDefaultCommentList();
+        ukoi->setHasSelectableMicroAccounts(!defaultCommentList->isEmpty());
         if (newUkSubTreeOpened)
         { 
             ukoi->setIcon(KontoTreeItem::COL_ACTIVE,QIcon());
@@ -901,7 +909,7 @@ void KontoTreeView::refreshItem(const QString& abt, const QString& ko,const QStr
         if (!etiFound) {
           QString qs;
           qs.setNum(idx);
-          eti=new KontoTreeItem(ukoi,qs);
+          eti=new KontoTreeItem(ukoi, displaymode, qs);
           ukoi->setExpanded(true);
         }
         ukoi->setText(KontoTreeItem::COL_TYPE,"");
@@ -1054,4 +1062,10 @@ void KontoTreeView::refreshAllItemsInDepartment(const QString& department)
 			++subAccountPos) {
 		refreshAllItemsInKonto(department, subAccountPos->first);
 	}
+}
+
+void KontoTreeView::setDisplayMode(SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode)
+{
+  this->displaymode=displaymode;
+  load(abtList);
 }

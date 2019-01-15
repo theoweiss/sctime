@@ -53,6 +53,12 @@ PreferenceDialog::PreferenceDialog(SCTimeXMLSettings* _settings, QWidget *parent
     }
     fontPreview->setFont(selectedFont);
 
+    switch(settings->defCommentDisplayMode()) {
+        case SCTimeXMLSettings::DM_BOLD: radioDefCommBold->setChecked(true) ; break;
+        case SCTimeXMLSettings::DM_NOTUSEDBOLD: radioAvailabeDefCommNotSelectedBold->setChecked(true); break;
+        case SCTimeXMLSettings::DM_NOTBOLD: radioNoBold->setChecked(true); break;
+    }
+
     /* make this a nice mainwindow-like looking preview */
     fontPreview->header()->resizeSection(0, 200);
     fontPreview->expandAll();
@@ -98,4 +104,12 @@ void PreferenceDialog::accept()
     settings->setPersoenlicheKontensumme(persoenlicheKontensummeCheckbox->isChecked());
     settings->setCustomFontSize(selectedFont.pointSize());
     settings->setShowSpecialRemunSelector(showSpecialRemunSelector->isChecked());
+    SCTimeXMLSettings::DefCommentDisplayModeEnum dm=SCTimeXMLSettings::DM_BOLD;
+    if (radioAvailabeDefCommNotSelectedBold->isChecked()) {
+        dm = SCTimeXMLSettings::DM_NOTUSEDBOLD;
+    } else
+    if (radioNoBold->isChecked()) {
+        dm = SCTimeXMLSettings::DM_NOTBOLD;
+    }
+    settings->setDefCommentDisplayMode(dm);
 }

@@ -119,7 +119,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
 
   settings->getColumnWidthList(columnwidthlist);
 
-  kontoTree=new KontoTreeView( this, abtList, columnwidthlist );
+  kontoTree=new KontoTreeView(this, abtList, columnwidthlist, settings->defCommentDisplayMode());
   kontoTree->closeFlaggedPersoenlicheItems();
   kontoTree->showPersoenlicheKontenSummenzeit(settings->persoenlicheKontensumme());
 #ifndef Q_OS_MAC
@@ -1230,6 +1230,7 @@ void TimeMainWindow::callPreferenceDialog()
 {
   bool oldshowtypecolumn = settings->showTypeColumn();
   bool oldshowpspcolumn = settings->showPSPColumn();
+  SCTimeXMLSettings::DefCommentDisplayModeEnum olddisplaymode = settings->defCommentDisplayMode();
 
   /* FIXME: no idea, why we need to do that, but otherwise QLabels and
    * QPushButtons in the preference dialog won't use the custom font (at least
@@ -1272,8 +1273,10 @@ void TimeMainWindow::callPreferenceDialog()
       kontoTree->resizeColumnToContents(KontoTreeItem::COL_PSP);
 
   }
-  //Needed if "Summe in pers. Konten" is (de-)selected
   kontoTree->flagClosedPersoenlicheItems();
+  if (settings->defCommentDisplayMode()!=olddisplaymode) {
+      kontoTree->setDisplayMode(settings->defCommentDisplayMode());
+  }
   kontoTree->closeFlaggedPersoenlicheItems();
   
 }

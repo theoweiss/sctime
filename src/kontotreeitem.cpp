@@ -19,27 +19,33 @@
 #include "kontotreeitem.h"
 
 
-KontoTreeItem::KontoTreeItem ( QTreeWidget * parent ): QTreeWidgetItem(parent)
+KontoTreeItem::KontoTreeItem (QTreeWidget * parent, SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode): QTreeWidgetItem(parent)
 {
   isBoldAccount=false;
   isMicroAccount=false;
+  hasSelectableMicroAccounts=false;
+  this->displaymode=displaymode;
   m_bgColor=Qt::white;
   setGray();
 }
 
-KontoTreeItem::KontoTreeItem ( QTreeWidgetItem * parent ): QTreeWidgetItem(parent)
+KontoTreeItem::KontoTreeItem (QTreeWidgetItem * parent, SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode): QTreeWidgetItem(parent)
 {
   isBoldAccount=false;
   isMicroAccount=false;
+  hasSelectableMicroAccounts=false;
+  this->displaymode=displaymode;
   m_bgColor=Qt::white;
   setGray();
 }
 
-KontoTreeItem::KontoTreeItem ( QTreeWidget * parent, QString accountname) 
+KontoTreeItem::KontoTreeItem (QTreeWidget * parent, SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode, QString accountname) 
      :QTreeWidgetItem(parent,0)
 {
   isBoldAccount=false;
   isMicroAccount=false;
+  hasSelectableMicroAccounts=false;
+  this->displaymode=displaymode;
   setGray();
   m_bgColor=Qt::white;
 
@@ -47,11 +53,13 @@ KontoTreeItem::KontoTreeItem ( QTreeWidget * parent, QString accountname)
 }
 
 
-KontoTreeItem::KontoTreeItem ( QTreeWidgetItem * parent, QString accountname) 
+KontoTreeItem::KontoTreeItem (QTreeWidgetItem *parent, SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode, QString accountname) 
     :QTreeWidgetItem(parent)
 {
   isBoldAccount=false;
   isMicroAccount=false;
+  hasSelectableMicroAccounts=false;
+  this->displaymode=displaymode;
   setGray();
   m_bgColor=Qt::white;
 
@@ -80,7 +88,15 @@ void KontoTreeItem::setMicroAccount(bool microaccount)
   isMicroAccount=microaccount;
   QFont f = font(COL_ACCOUNTS);
 
-  if( microaccount )
+  bool bold=false;
+ 
+  switch(displaymode) {
+      case SCTimeXMLSettings::DM_BOLD: bold=microaccount; break;
+      case SCTimeXMLSettings::DM_NOTUSEDBOLD: bold=(!microaccount&&hasSelectableMicroAccounts); break;
+      case SCTimeXMLSettings::DM_NOTBOLD: bold=false; break;
+  }
+
+  if(bold)
   {
     f.setWeight(QFont::Bold);
   }
@@ -88,8 +104,12 @@ void KontoTreeItem::setMicroAccount(bool microaccount)
   {
     f.setWeight(QFont::Normal);
   }
-
   setFont(COL_COMMENT, f);
+}
+
+void KontoTreeItem::setHasSelectableMicroAccounts(bool hasselectablema)
+{
+  hasSelectableMicroAccounts=hasselectablema;
 }
 
 void KontoTreeItem::setGray()
