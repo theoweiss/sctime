@@ -279,6 +279,9 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   QAction* min5MinusAction = new QAction(QIcon(":/hi22_action_1downarrow" ),
                                             tr("Decrease time"), this);
 
+  QAction* min1MinusAction = new QAction(tr("Minimal decrease time"), this);
+  min1MinusAction->setShortcut(Qt::CTRL+Qt::Key_Comma);
+
   QAction* fastPlusAction = new QAction(QIcon(":/hi22_action_2uparrow" ),
                                            tr("Increase time fast"), this);
   QAction* fastMinusAction = new QAction(QIcon(":/hi22_action_2downarrow" ),
@@ -313,6 +316,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
 
   connect(min5PlusAction, SIGNAL(triggered()), this, SLOT(addTimeInc()));
   connect(min5MinusAction, SIGNAL(triggered()), this, SLOT(subTimeInc()));
+  connect(min1MinusAction, SIGNAL(triggered()), this, SLOT(subMinimalTimeInc()));
   connect(fastPlusAction, SIGNAL(triggered()), this, SLOT(addFastTimeInc()));
   connect(fastMinusAction, SIGNAL(triggered()), this, SLOT(subFastTimeInc()));
 
@@ -385,7 +389,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
 
   updateCaption();
   kontoTree->setAcceptDrops(settings->dragNDrop());
-
+  kontoTree->addAction(min1MinusAction);
   kontoTree->showAktivesProjekt();
   kontoTree->updateColumnWidth();
   //close the flagged items, needed if "Summe in pers. Konten" is 
@@ -613,6 +617,11 @@ void TimeMainWindow::subTimeInc()
   addDeltaToZeit(-settings->timeIncrement());
 }
 
+/** subtracts one minute from the selected entry */
+void TimeMainWindow::subMinimalTimeInc()
+{
+  addDeltaToZeit(-60);
+}
 
 /**
   * Addiert fastTimeIncrement auf die Zeiten des selktierten Unterkontos.

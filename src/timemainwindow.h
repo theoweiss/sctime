@@ -85,6 +85,7 @@ public:
     void addDeltaToZeit(int delta, bool abzurOnly=false);
     void addTimeInc();
     void subTimeInc();
+    void subMinimalTimeInc();
     void addFastTimeInc();
     void subFastTimeInc();
     void addAbzurTimeInc();
