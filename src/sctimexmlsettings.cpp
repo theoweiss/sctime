@@ -466,6 +466,22 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
             if (elem2.tagName()=="poweruserview") {
               setPowerUserView((elem2.attribute("on")=="yes"));
             }
+            if (elem2.tagName()=="overtimeregulatedmode") {
+              setOvertimeRegulatedModeActive((elem2.attribute("on")=="yes"));
+            }
+            if (elem2.tagName()=="overtimeothermode") {
+              setOvertimeOtherModeActive((elem2.attribute("on")=="yes"));
+            }
+            if (elem2.tagName()=="nightmode") {
+              setNightModeActive((elem2.attribute("on")=="yes"));
+            }
+            if (elem2.tagName()=="publicholidaymode") {
+              setPublicHolidayModeActive((elem2.attribute("on")=="yes"));
+            }
+            if (elem2.tagName()=="lastrecordedtimestamp") {
+              QDateTime ts = QDateTime::fromString(elem2.attribute("value"), timestampFormat());
+              setLastRecordedTimestamp(ts);
+            }
             if (elem2.tagName()=="customfont") {
               setUseCustomFont(true);
               setCustomFont(elem2.attribute("family"));
@@ -674,6 +690,31 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     if (dragNDrop()) on="yes";
     dragndroptag.setAttribute("on",on);
     generaltag.appendChild(dragndroptag);
+
+    QDomElement overtimeregulatedmodetag = doc.createElement("overtimeregulatedmode");
+    on =overtimeRegulatedModeActive() ? "yes" : "no";
+    overtimeregulatedmodetag.setAttribute("on",on);
+    generaltag.appendChild(overtimeregulatedmodetag);
+
+    QDomElement overtimeothermodetag = doc.createElement("overtimeothermode");
+    on =overtimeOtherModeActive() ? "yes" : "no";
+    overtimeothermodetag.setAttribute("on",on);
+    generaltag.appendChild(overtimeothermodetag);
+
+    QDomElement nightmodetag = doc.createElement("nightmode");
+    on =nightModeActive() ? "yes" : "no";
+    nightmodetag.setAttribute("on",on);
+    generaltag.appendChild(nightmodetag);
+
+    QDomElement lastrecordedtimestamptag = doc.createElement("lastrecordedtimestamp");
+    QString ts = lastRecordedTimestamp().toString(timestampFormat());
+    lastrecordedtimestamptag.setAttribute("value",ts);
+    generaltag.appendChild(lastrecordedtimestamptag);
+
+    QDomElement publicholidaymodetag = doc.createElement("publicholidaymode");
+    on =publicHolidayModeActive() ? "yes" : "no";
+    publicholidaymodetag.setAttribute("on",on);
+    generaltag.appendChild(publicholidaymodetag);
 
     QDomElement kontodlgwindowpositiontag = doc.createElement( "kontodlgwindowposition" );
     kontodlgwindowpositiontag.setAttribute("x",unterKontoWindowPosition.x());

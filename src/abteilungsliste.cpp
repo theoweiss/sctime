@@ -101,7 +101,8 @@ AbteilungsListe::AbteilungsListe(const QDate& _datum, AbteilungsListe* abtlist):
   * zurueckgegebene unterkontoliste gueltig ist.
   * Der return-Wert ist genau dann true, falls das Konto gefunden wurde.
   */
-bool AbteilungsListe::findEintrag(EintragsListe::iterator& itEt, EintragsListe* &eintragsliste, const QString& abteilung, const QString& konto, const QString& unterkonto, int idx)
+bool AbteilungsListe::findEintrag(EintragsListe::iterator& itEt, EintragsListe* &eintragsliste, 
+                                  const QString& abteilung, const QString& konto, const QString& unterkonto, int idx)
 {
 
   UnterKontoListe *unterkontoliste;
@@ -120,6 +121,34 @@ bool AbteilungsListe::findEintrag(EintragsListe::iterator& itEt, EintragsListe* 
   if (itEt==eintragsliste->end())
     return false;
   return true;
+}
+
+/** looks for an entry with the given special remuneration categories and comment.
+*/
+bool AbteilungsListe::findEntryWithSpecialRemunsAndComment(EintragsListe::iterator& itEt, EintragsListe* &eintragsliste, int &idx, 
+                                                const QString& abteilung, const QString& konto, 
+                                                const QString& unterkonto, const QString& comment, const QSet<QString>& specialRemuns)
+{
+
+  UnterKontoListe *unterkontoliste;
+  UnterKontoListe::iterator itUk;
+
+  eintragsliste=NULL;
+
+  if (!findUnterKonto(itUk,unterkontoliste,abteilung,konto,unterkonto)) return false;
+
+  if (itUk==unterkontoliste->end())
+    return false;
+
+  eintragsliste=&(itUk->second);
+
+  for (itEt=eintragsliste->begin(); itEt!=eintragsliste->end(); ++itEt) {
+    if ((itEt->second.getAchievedSpecialRemunSet()==specialRemuns)&&(comment==itEt->second.kommentar)) {
+      idx=itEt->first;
+      return true;
+    }
+  }
+  return false;
 }
 
 
@@ -384,9 +413,9 @@ bool AbteilungsListe::setSekundenAbzur(const QString& abteilung, const QString& 
 }
 
 
-/** Veraendert die Zeiten fuer das angegebene Konto um delta Sekunden
+/** Changes the times on the given account
  */
-void AbteilungsListe::changeZeit(const QString& Abteilung,const QString& Konto,const QString& Unterkonto,int Eintrag, int delta, bool abzurOnly, bool regular )
+void AbteilungsListe::changeZeit(const QString& Abteilung,const QString& Konto,const QString& Unterkonto,int Eintrag, int delta, bool abzurOnly, bool regular, bool workedOnly )
 {
     EintragsListe::iterator eti;
     EintragsListe* etl;
@@ -401,8 +430,10 @@ void AbteilungsListe::changeZeit(const QString& Abteilung,const QString& Konto,c
         eti->second.sekunden+=delta;
         if (eti->second.sekunden<0) eti->second.sekunden=0;
       }
-      eti->second.sekundenAbzur+=delta;
-      if (eti->second.sekundenAbzur<0) eti->second.sekundenAbzur=0;
+      if (!workedOnly) {
+        eti->second.sekundenAbzur+=delta;
+        if (eti->second.sekundenAbzur<0) eti->second.sekundenAbzur=0;
+      }
     }
 }
 
@@ -1005,3 +1036,30 @@ void AbteilungsListe::setSpecialRemunTypeMap(const SpecialRemunTypeMap& srtm)
       m_specialRemunTypeMap=srtm;
 }
 
+/** returns true if any overtime mode is active, false otherwise */
+bool AbteilungsListe::overTimeModeActive()
+{
+      return !m_activeOverTimeModes.isEmpty();
+}
+
+/** sets the state of overtimemode identified by the string*/
+void AbteilungsListe::setOverTimeModeState(bool active, const QString& srname)
+{
+      if (active) {
+        m_activeOverTimeModes.insert(srname);
+      } else {
+        m_activeOverTimeModes.remove(srname);
+      }  
+}
+
+/** returns the state of overtimemode identified by the string. A return value of true means active.*/
+bool AbteilungsListe::overTimeModeState(const QString& srname)
+{
+      return m_activeOverTimeModes.contains(srname);
+}
+
+/** returns the set of active overtime modes*/
+QSet<QString> AbteilungsListe::getActiveOverTimeModes()
+{
+      return m_activeOverTimeModes;
+}

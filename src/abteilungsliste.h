@@ -67,6 +67,8 @@ class AbteilungsListe: public std::map<QString,KontoListe>
 
     bool findEintrag(EintragsListe::iterator& itEt, EintragsListe* &eintragsliste, const QString& abteilung, const QString& konto, const QString& unterkonto, int idx);
 
+    bool findEntryWithSpecialRemunsAndComment(EintragsListe::iterator& itEt, EintragsListe* &eintragsliste, int & idx, const QString& abteilung, const QString& konto, const QString& unterkonto, const QString& comment, const QSet<QString>& specialRemuns);
+
     QString findAbteilungOfKonto(const QString& konto);
 
     KontoListe* insertAbteilung(const QString& abteilung);
@@ -100,7 +102,7 @@ class AbteilungsListe: public std::map<QString,KontoListe>
 
     void minuteVergangen(bool abzur);
 
-    void changeZeit(const QString& Abteilung,const QString& Konto,const QString& Unterkonto,int Eintrag, int delta, bool abzurOnly=false, bool regular=false);
+    void changeZeit(const QString& Abteilung,const QString& Konto,const QString& Unterkonto,int Eintrag, int delta, bool abzurOnly=false, bool regular=false, bool workedOnly=true);
 
     bool setEintragFlags(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, int flags, int mode=FLAG_MODE_OVERWRITE);
 
@@ -172,6 +174,14 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     const SpecialRemunTypeMap& getSpecialRemunTypeMap() const;
     
     void setSpecialRemunTypeMap(const SpecialRemunTypeMap& srtm);
+
+    bool overTimeModeActive();
+
+    void setOverTimeModeState(bool active, const QString& srname);
+
+    bool overTimeModeState(const QString& srname);
+    
+    QSet<QString> getActiveOverTimeModes();
     
 
   private:
@@ -183,6 +193,7 @@ class AbteilungsListe: public std::map<QString,KontoListe>
     int zeitDifferenz;
     bool checkedIn;
     QDate datum;
+    QSet<QString> m_activeOverTimeModes;
 
 };
 

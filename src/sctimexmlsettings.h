@@ -51,6 +51,7 @@ public:
       m_singleClickActivation = false;
       m_maxWorkingTime=MAX_WORKTIME_DEFAULT;
       m_persoenlicheKontensumme=false;
+      m_lastRecordedTimestamp=QDateTime();
       defaultcommentfiles.clear();
       defaultcommentfiles.push_back("defaultcomments.xml");
       columnwidth.clear();
@@ -70,6 +71,30 @@ public:
       m_defCommentDisplayMode = DM_BOLD;
       // databaseuser - empty means "use system username"
       // databasepassword - empty means "try to read from file"
+
+      m_overtimeRegulatedSR = "regulated_overtime";
+      m_overtimeOtherSR = "other_overtime";
+      m_publicHolidaySR = "public_holiday";
+      m_nightSR = "night";
+      m_nightModeBegin = QTime();
+      m_nightModeAdditionalDialogTimes=QList<QTime>();
+      m_nightModeEnd=QTime();
+
+      m_nightModeActive = false;
+      m_overtimeRegulatedModeActive = false;
+      m_overtimeOtherModeActive = false;
+      m_publicHolidayModeActive = false;
+
+#ifdef ATHOS_ETV_2018
+      m_overtimeRegulatedSR = "sc_angeordnete_regulierte_mehrarbeit";
+      m_overtimeOtherSR = "sc_angeordnete_sonstige_mehrarbeit";
+      m_publicHolidaySR = "sc_feiertagsarbeit";
+      m_nightSR = "sc_nachtarbeit";
+      m_nightModeBegin=QTime(20,00);
+      m_nightModeAdditionalDialogTimes.append(QTime(22,00));
+      m_nightModeEnd=QTime(6,00);
+#endif
+     
     }
 
     void writeSettings(AbteilungsListe* abtList);
@@ -271,6 +296,107 @@ public:
     {
         m_zeitKontenKommando=command;
     }
+
+    /** returns true, if the night mode is active */
+    bool nightModeActive()
+    {
+        return m_nightModeActive;
+    }
+
+    /** sets the night mode active/inactive) */
+    void setNightModeActive(bool active)
+    {
+        m_nightModeActive=active;
+    }
+
+    /** returns true, if the regulated overtime mode is active */
+    bool overtimeRegulatedModeActive()
+    {
+        return m_overtimeRegulatedModeActive;
+    }
+
+    /** sets the regulated overtime mode active/inactive) */
+    void setOvertimeRegulatedModeActive(bool active)
+    {
+        m_overtimeRegulatedModeActive=active;
+    }
+
+    /** returns true, if the other overtime mode is active */
+    bool overtimeOtherModeActive()
+    {
+        return m_overtimeOtherModeActive;
+    }
+
+    /** sets the other overtime mode active/inactive) */
+    void setOvertimeOtherModeActive(bool active)
+    {
+        m_overtimeOtherModeActive=active;
+    }
+
+    /** returns true, if the public holiday mode is active */
+    bool publicHolidayModeActive()
+    {
+        return m_publicHolidayModeActive;
+    }
+
+    /** sets the public holiday mode active/inactive) */
+    void setPublicHolidayModeActive(bool active)
+    {
+        m_publicHolidayModeActive=active;
+    }
+
+    /* returns the global identification string for regulated overtime special remunerations */
+    QString overtimeRegulatedSR() {
+        return m_overtimeRegulatedSR;
+    }
+
+    /* returns the global identification string for other overtime special remunerations */
+    QString overtimeOtherSR() {
+        return m_overtimeOtherSR;
+    }
+
+    /* returns the global identification string for other overtime special remunerations */
+    QString publicHolidaySR() {
+        return m_publicHolidaySR;
+    }
+
+    /* returns the global identification string for night time special remunerations */
+    QString nightSR() {
+        return m_nightSR;
+    }
+
+    /* returns the time when night mode should start */
+    QTime nightModeBegin() {
+        return m_nightModeBegin;
+    }
+
+    /* returns the last time stamp sctime has registered (possibly in a previous run) */
+    QDateTime lastRecordedTimestamp() {
+        return m_lastRecordedTimestamp;
+    }
+
+    /* sets the last time stamp sctime has registered */
+    void setLastRecordedTimestamp(const QDateTime& timestamp) {
+        m_lastRecordedTimestamp = timestamp;
+    }
+    
+    /* additional times when the night mode dialog should be shown */
+    QList<QTime> nightModeAdditionalDialogTimes()
+    {
+        return m_nightModeAdditionalDialogTimes;
+    }
+
+    /* returns the time when night mode should end */
+    QTime nightModeEnd() {
+        return m_nightModeEnd;
+    };
+
+    /* the format in which timestamps are written into the configuration file */
+    QString timestampFormat() {
+        return "yyyy-MM-dd HH:mm:ss";
+    }
+
+
     QString backends;
 
     // database backend
@@ -302,6 +428,8 @@ public:
     std::vector<QString> defaultcommentfiles;
     std::vector<int> columnwidth;
 
+    QDateTime m_lastRecordedTimestamp;
+
     bool alwaysSaveEintrag;
     bool m_powerUserView;
     bool m_singleClickActivation;
@@ -320,6 +448,19 @@ public:
     QPoint unterKontoWindowPosition;
     QSize unterKontoWindowSize;
     QString defaultbackends;
+
+    QString m_overtimeRegulatedSR;
+    QString m_overtimeOtherSR;
+    QString m_publicHolidaySR;
+    QString m_nightSR;
+    QTime m_nightModeBegin;
+    QList<QTime> m_nightModeAdditionalDialogTimes;
+    QTime m_nightModeEnd;
+
+    bool m_nightModeActive;
+    bool m_overtimeRegulatedModeActive;
+    bool m_overtimeOtherModeActive;
+    bool m_publicHolidayModeActive;
 
     // database backend
     QString defaultdatabaseserver;

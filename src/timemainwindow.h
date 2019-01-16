@@ -59,6 +59,7 @@ public:
     void callUnterKontoDialog(QTreeWidgetItem * item);
     void callDateDialog();
     void callAboutBox();
+    void callNightTimeDialog(bool isnight);
     void minuteHochzaehlen();
     void pause();
     void pauseAbzur(bool on);
@@ -111,6 +112,13 @@ public:
     void displayLastLogEntry();
     void resume(); // APM event
     void suspend(); // APM event
+    void switchOvertimeRegulatedMode(bool enabled);
+    void switchOvertimeOtherMode(bool enabled);
+    void switchPublicHolidayMode(bool enabled);
+    void switchNightMode(bool enabled);
+
+    void updateSpecialModesAfterPause();
+
 
   signals:        
     /** Wird ausgeloest, falls sich die Gesamtzeit geaendert hat. Uebergeben wird die neue Gesamtzahl der Sekunden. */
@@ -158,6 +166,8 @@ public:
     void commitBereit(DSResult data);
     void commitSpecialRemun(DSResult);
     void driftKorrektur();
+    void callNightTimeBeginDialog();
+    void callNightTimeEndDialog();
   protected:
     virtual void moveEvent( QMoveEvent *event);
   private:
@@ -166,6 +176,9 @@ public:
     void closeEvent(QCloseEvent * event);
     void refreshAfterColorChange(QString&, QString&, QString&);
     void resizeToIfSensible(QDialog* dialog, const QPoint& pos, const QSize& size);
+    bool checkAndChangeSREntry(int& idx, const QString& abt, const QString& ko , const QString& uko, const QSet<QString>& specialRemuns);
+    void switchOvertimeMode(bool enabled, QString otmSR);
+    void cantMoveTimeDialog(int delta);
     KontoTreeView* kontoTree;
     UnterKontoDialog* unterKontoDialog;
     QAction* editUnterKontoAction;
@@ -180,6 +193,10 @@ public:
     QAction* bgColorRemoveAction;
     QAction* jumpAction;
     QAction* specialRemunAction;
+    QAction* overtimeRegulatedModeAction;
+    QAction* overtimeOtherModeAction;
+    QAction* nightModeAction;
+    QAction* publicHolidayModeAction;
     QDateTime startTime;
     QDateTime lastMinuteTick;
     QFont qtDefaultFont;

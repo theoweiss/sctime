@@ -34,6 +34,7 @@
 #include <QColorDialog>
 #include <QTextBrowser>
 #include <QAction>
+#include <QMutex>
 
 #include "globals.h"
 #include "time.h"
@@ -142,6 +143,7 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
 
   QMenu * kontomenu = menuBar()->addMenu(tr("&Account"));
   QMenu * zeitmenu = menuBar()->addMenu(tr("&Time"));
+  QMenu * remunmenu = menuBar()->addMenu(tr("&Remuneration"));
   QMenu * settingsmenu = menuBar()->addMenu(tr("&Settings"));
   QMenu * hilfemenu = menuBar()->addMenu(tr("&Help"));
 
@@ -292,6 +294,21 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   fastAbzurMinusAction = new QAction(QIcon(":/hi22_action_2downarrow_half" ),
                                        tr("Decrease accountable time fast"), this);
 
+  overtimeRegulatedModeAction = new QAction(tr("Toggle regulated overtime mode"), this);
+  overtimeRegulatedModeAction->setCheckable(true);
+  connect(overtimeRegulatedModeAction, SIGNAL(toggled(bool)), this, SLOT(switchOvertimeRegulatedMode(bool)));
+  overtimeOtherModeAction = new QAction(tr("Toggle other overtime mode"), this);
+  overtimeOtherModeAction->setCheckable(true);
+  connect(overtimeOtherModeAction, SIGNAL(toggled(bool)), this, SLOT(switchOvertimeOtherMode(bool)));
+
+  nightModeAction = new QAction(tr("Toggle night mode"), this);
+  nightModeAction->setCheckable(true);
+  connect(nightModeAction, SIGNAL(toggled(bool)), this, SLOT(switchNightMode(bool)));
+
+  publicHolidayModeAction = new QAction(tr("Toggle public holiday mode"), this);
+  publicHolidayModeAction->setCheckable(true);
+  connect(publicHolidayModeAction, SIGNAL(toggled(bool)), this, SLOT(switchPublicHolidayMode(bool)));
+
   connect(kontoTree, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem * )), this, SLOT(changeShortCutSettings(QTreeWidgetItem * ) ));
 
   connect(min5PlusAction, SIGNAL(triggered()), this, SLOT(addTimeInc()));
@@ -312,6 +329,8 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
 
   connect(this,SIGNAL(aktivierbarerEintragSelected(bool)), eintragActivateAction, SLOT(setEnabled(bool)));
 
+  updateSpecialModesAfterPause();
+
   toolBar->addAction(editUnterKontoAction);
   toolBar->addAction(saveAction);
   toolBar->addAction(inPersKontAction);
@@ -331,7 +350,11 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   kontomenu->addAction(pauseAction);
   kontomenu->addAction(pauseAbzurAction);
   kontomenu->addAction(inPersKontAction);
-  kontomenu->addAction(specialRemunAction);
+  remunmenu->addAction(specialRemunAction);
+  remunmenu->addAction(overtimeRegulatedModeAction);
+  remunmenu->addAction(overtimeOtherModeAction);
+  remunmenu->addAction(nightModeAction);
+  remunmenu->addAction(publicHolidayModeAction);
   kontomenu->addSeparator();
   kontomenu->addAction(findKontoAction);
   kontomenu->addAction(jumpAction);
@@ -340,8 +363,8 @@ TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDate
   kontomenu->addSeparator();
   kontomenu->addAction(bgColorChooseAction);
   kontomenu->addAction(bgColorRemoveAction);
-  kontomenu->addSeparator();
-  kontomenu->addAction(bereitschaftsAction);
+  remunmenu->addSeparator();
+  remunmenu->addAction(bereitschaftsAction);
   kontomenu->addSeparator();
   kontomenu->addAction(quitAction);
   zeitmenu->addAction(changeDateAction);
@@ -560,8 +583,9 @@ void TimeMainWindow::minuteHochzaehlen() {
   kontoTree->refreshItem(abt,ko,uko,idx);
   zeitChanged();
   // <- notwendig?
-  if (lastMinuteTick.time().secsTo(QTime(0,2)) > 0)
+  if (lastMinuteTick.time().secsTo(QTime(0,2)) > 0) {
     tageswechsel();
+  }
   if (abs(delta) >= 5)
       logError(tr("Minute-signal %1s arrived late (%2)").arg(delta).arg(now.toString()));
   QMetaObject::invokeMethod(this, "driftKorrektur", Qt::QueuedConnection);
@@ -667,28 +691,50 @@ void TimeMainWindow::addDeltaToZeit(int delta, bool abzurOnly)
  */
 void TimeMainWindow::zeitChanged()
 {
-  static int last=0;
-  int zeitAbzur, zeit;
+  static int lastworkedtime=0;
+  static QTime lastclocktime = QTime::currentTime();
+  int zeitAbzur, workedtime;
   int max_working_time=settings->maxWorkingTime();
-  abtList->getGesamtZeit(zeit, zeitAbzur);
+  QTime clocktime = QTime::currentTime();
+  abtList->getGesamtZeit(workedtime, zeitAbzur);
   statusBar->setDiff(abtList->getZeitDifferenz());
-  emit gesamtZeitChanged(zeit);
+  emit gesamtZeitChanged(workedtime);
   emit gesamtZeitAbzurChanged(zeitAbzur);
+
+  // remember the last workedtime for the next call, which might happen while
+  // we do further stuff inside this function. Also remember the old lastworkedtime
+  // in the local variable oldlast
+  int oldlastworkedtime=lastworkedtime;
+  lastworkedtime=workedtime;
+
+  // do the same for clocktime
+  QTime oldlastclocktime = lastclocktime;
+  lastclocktime = clocktime;
+
   // Beim ersten ueberschreiten von MAX_WORKTIME
-  if ((zeit>max_working_time)&&(last<=max_working_time)) {
-    // last muss _vor_ dem oeffnen der Messagebox gesetzt werden,
-    // da es andernfalls erst nach dem Schliessen der Box gesetzt wird, was bedeuten wuerde,
-    // dass (falls der user nicht sofort reagiert), jede Minute eine neue Box aufpoppt
-    // => nix gut am naechsten morgen, wenn man das ausloggen vergisst :-)
-    last=zeit;
+  if ((workedtime>max_working_time)&&(oldlastworkedtime<=max_working_time)) {
     // OK, QTimer erwartet nun, dass der letzte aufruf zurueckgekehrt ist, bevor
     // der nächste kommen kann. Da wir ueber einen QTimer aufgerufen wurden,
     // und wir weiter Tick-Events bekommen muessen, muessen wir den Arbeitszeitdialog asynchron starten.
     // Das tun wir ueber einen weiteren QTimer (das klappt, weil wir hier einen Wegwerftimer benutzen.
     QTimer::singleShot(0, this, SLOT(showArbeitszeitwarning()));
   }
-  else
-    last=zeit;
+  if ((clocktime>settings->nightModeBegin())&&(oldlastclocktime<=settings->nightModeBegin())) {
+    QTimer::singleShot(0, this, SLOT(callNightTimeBeginDialog()));
+  } else {
+    foreach (QTime t, settings->nightModeAdditionalDialogTimes()) {
+      if ((clocktime>t) && (oldlastclocktime<=t)) {
+        QTimer::singleShot(0, this, SLOT(callNightTimeBeginDialog()));
+        break;
+      }
+    }
+  }
+
+  if ((clocktime>settings->nightModeEnd())&&(oldlastclocktime<=settings->nightModeEnd())) {
+    QTimer::singleShot(0, this, SLOT(callNightTimeEndDialog()));
+  }
+
+  
     
 #ifdef WIN32
 	updateTaskbarTitle(zeit);
@@ -738,6 +784,7 @@ void TimeMainWindow::pause() {
         trace(tr("ERROR: seconds since tick: %1").arg(secSinceTick));
         secSinceTick = 60;
     }
+    settings->setLastRecordedTimestamp(lastMinuteTick);
     QMessageBox::warning(this, tr("sctime: Pause"), tr("Accounting has been stopped. Resume work with OK."));
     paused = false;
     QDateTime now = QDateTime::currentDateTime();
@@ -749,6 +796,7 @@ void TimeMainWindow::pause() {
     startTime = now.addSecs(-secSinceTick);
     lastMinuteTick = startTime;
     tageswechsel();
+    updateSpecialModesAfterPause();
 }
 
 
@@ -770,6 +818,7 @@ void TimeMainWindow::save()
   std::vector<int> columnwidthlist;
   kontoTree->getColumnWidthList(columnwidthlist);
   settings->setColumnWidthList(columnwidthlist);
+  settings->setLastRecordedTimestamp(lastMinuteTick);
   checkLock();
   settings->setMainWindowGeometry(pos(),size());
   settings->writeSettings(abtListToday);
@@ -951,6 +1000,9 @@ void TimeMainWindow::changeDate(const QDate& datum)
   kontoTree->load(abtList);
   kontoTree->closeFlaggedPersoenlicheItems();
   kontoTree->showAktivesProjekt();
+  if (currentDateSel) {
+     updateSpecialModesAfterPause();
+  }
   zeitChanged();
   emit (currentDateSelected(currentDateSel));
   trace(tr("Day set to: ") + datum.toString());
@@ -1301,6 +1353,26 @@ void TimeMainWindow::setAktivesProjekt(QTreeWidgetItem * item)
   QString oldabt, oldko, olduk;
   int oldidx;
   abtList->getAktiv(oldabt, oldko, olduk,oldidx);
+
+  if (abtList->overTimeModeActive()) {
+    UnterKontoEintrag entry;
+    abtList->getEintrag(entry,abt,ko,uko,idx);
+    QSet<QString> existingRS = entry.getAchievedSpecialRemunSet();
+    QSet<QString> otmRS = abtList->getActiveOverTimeModes();
+    if (!existingRS.contains(otmRS)) {
+       existingRS.unite(otmRS);
+       if (!checkAndChangeSREntry(idx,abt,ko,uko,existingRS)) {
+          if (entry.sekunden!=0 || entry.sekundenAbzur!=0) {
+            idx=abtList->insertEintrag(abt,ko,uko);
+            entry.sekunden=0;
+            entry.sekundenAbzur=0;
+          }
+          entry.setAchievedSpecialRemunSet(existingRS);
+          abtList->setEintrag(abt, ko, uko, idx, entry);
+       }
+       kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
+    }
+  }
   abtList->setAsAktiv(abt,ko,uko,idx);
   kontoTree->refreshItem(oldabt,oldko,olduk,oldidx);
   kontoTree->refreshItem(abt,ko,uko,idx);
@@ -1554,3 +1626,224 @@ void TimeMainWindow::callAdditionalLicenseDialog() {
   dialog->browser()->setSource(QUrl::fromLocalFile(additionalLicensesFile));
 }
 
+/** checks if a new time entry should be generated for the given set of special remunerations.
+ * this functions potentially asks the user what to do, and returns true iff an existing entry can be
+ * recycled (in this case the index of this entry is also returned in the parameter idx)
+  */
+bool TimeMainWindow::checkAndChangeSREntry(int& idx, const QString& abt, const QString& ko , const QString& uko, const QSet<QString>& specialRemuns) {
+  UnterKontoEintrag entry;
+  abtListToday->getEintrag(entry,abt,ko,uko,idx);
+
+  if (entry.getAchievedSpecialRemunSet()!=specialRemuns) {
+     int correctidx=idx;
+     EintragsListe::iterator itEt;
+     EintragsListe* entrylist;
+  
+     if (abtListToday->findEntryWithSpecialRemunsAndComment(itEt, entrylist, correctidx, abt, ko, uko, entry.kommentar, specialRemuns)) {
+        int result=QMessageBox::question(
+                  this, tr("sctime: wrong special remunerations"),
+                  tr("There is another entry with the same comment and the correct special remunerations. Do you want to switch to this entry? "
+                     "Otherwise a new entry will be created."),
+                  QMessageBox::Yes, QMessageBox::No);
+        if (result==QMessageBox::Yes) {
+          idx=correctidx;
+          return true;
+        }
+     }
+     return false;
+  }
+  return true;
+}
+
+/**
+ * switches the overtimemode identified by the given special remun to the given state*/
+void TimeMainWindow::switchOvertimeMode(bool enabled, QString specialremun) {
+  abtListToday->setOverTimeModeState(enabled,specialremun);
+  QString abt, ko, uko;
+  int oldidx;
+  abtListToday->getAktiv(abt, ko, uko,oldidx);
+  UnterKontoEintrag entry;
+  abtListToday->getEintrag(entry,abt,ko,uko,oldidx);
+  QSet<QString> existingRS = entry.getAchievedSpecialRemunSet();
+  if (existingRS.contains(specialremun)!=enabled) {
+    QSet<QString> desiredRemuns = existingRS;
+    if (enabled) {
+       desiredRemuns.insert(specialremun);
+    } else {
+       desiredRemuns.remove(specialremun);
+    }
+    int newidx=oldidx;
+    if (!checkAndChangeSREntry(newidx,abt,ko,uko,desiredRemuns)) {
+      if (entry.sekunden!=0 || entry.sekundenAbzur!=0) {
+        newidx=abtListToday->insertEintrag(abt,ko,uko);
+        entry.sekunden=0;
+        entry.sekundenAbzur=0;
+      }
+      
+      entry.setAchievedSpecialRemunSet(desiredRemuns);
+      abtListToday->setEintrag(abt, ko, uko, newidx, entry);
+    }
+    abtListToday->setAsAktiv(abt,ko,uko,newidx);
+    /*kontoTree->refreshItem(abt,ko,uko,oldidx);
+    kontoTree->refreshItem(abt,ko,uko,newidx);*/
+    kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
+  }
+}
+
+/**
+ * switches the regulated overtime mode to the given state*/
+void TimeMainWindow::switchOvertimeRegulatedMode(bool enabled) {
+    settings->setOvertimeRegulatedModeActive(enabled);
+    if (enabled) {
+      settings->setOvertimeOtherModeActive(false);
+      overtimeOtherModeAction->setChecked(false);
+      statusBar->setMode(tr("Unregulated OT"),false);
+    }
+    statusBar->setMode(tr("Regulated OT"),enabled);
+    switchOvertimeMode(enabled, settings->overtimeRegulatedSR());
+}
+
+/**
+ * switches the other overtime mode to the given state*/
+void TimeMainWindow::switchOvertimeOtherMode(bool enabled) {
+    settings->setOvertimeOtherModeActive(enabled);
+    if (enabled) {
+      settings->setOvertimeRegulatedModeActive(false);
+      overtimeRegulatedModeAction->setChecked(false);
+      statusBar->setMode(tr("Regulated OT"),false);
+    }
+    statusBar->setMode(tr("Unregulated OT"),enabled);
+    switchOvertimeMode(enabled, settings->overtimeOtherSR());
+}
+
+/**
+ * switches the public holiday mode to the given state*/
+void TimeMainWindow::switchPublicHolidayMode(bool enabled) {
+    settings->setPublicHolidayModeActive(enabled);
+    statusBar->setMode(tr("Holiday"),enabled);
+    switchOvertimeMode(enabled, settings->publicHolidaySR());
+}
+
+/**
+ * switches the night mode to the given state*/
+void TimeMainWindow::switchNightMode(bool enabled) {
+    settings->setNightModeActive(enabled);
+    statusBar->setMode(tr("Night"),enabled);
+    switchOvertimeMode(enabled, settings->nightSR());
+}
+
+/**
+ * opens a dialog asking if nightmode should be switched on, or off, depending
+ * on the given parameter and the current state of the mode (isnight=true means
+ * nighttime should be enabled, if that is not already the case)*/
+void TimeMainWindow::callNightTimeDialog(bool isnight) 
+{
+    static QMutex mutex;
+    // we only want one instamnce of this dialog
+    if (!mutex.tryLock()) {
+      return;
+    }
+    if (isnight==settings->nightModeActive()) {
+      mutex.unlock();
+      return;
+    }
+    QDateTime beforeOpen=QDateTime::currentDateTime();
+    bool shouldswitch=false;
+    if (isnight) {
+       int result=QMessageBox::question(
+            this, tr("sctime: switch nightmode on?"),
+                  tr("It is %1. Should I switch to night mode, so you get special "
+                  "remuneration for working late? Please also check your companies "
+                  "regulations before enabling nightmode.").arg(beforeOpen.time().toString("hh:mm")),
+                  QMessageBox::Yes, QMessageBox::No);
+       shouldswitch = (result==QMessageBox::Yes);
+    } else {
+       int result=QMessageBox::question(
+            this, tr("sctime: switch nightmode off?"),
+                  tr("It is %1. Should I switch night mode off? "
+                  "Otherwise you apply for further special remuneration. Please also check your companies "
+                  "regulations when keeping nightmode enabled.").arg(beforeOpen.time().toString("hh:mm")),
+                  QMessageBox::Yes, QMessageBox::No);
+       shouldswitch = (result==QMessageBox::Yes);
+    }
+    if (shouldswitch) {
+        QString abt, ko, uko;
+        int oldidx;
+        abtListToday->getAktiv(abt, ko, uko,oldidx);
+        // this might change the current entry as a side effect
+        nightModeAction->setChecked(isnight);
+        switchNightMode(isnight);
+        int newidx;
+        abtListToday->getAktiv(abt, ko, uko,newidx);
+        // its probable that the user noticed the previous dialog only after some minutes.
+        // we give him a chance to move the accrued times to the correct entry
+        auto delta=beforeOpen.secsTo(QDateTime::currentDateTime());
+        if (beforeOpen.daysTo(QDateTime::currentDateTime())>=1) {
+          cantMoveTimeDialog(delta);
+          mutex.unlock();
+          return;
+        }
+        if ((!paused)&&(newidx!=oldidx)&&(delta>=60)) {
+          int result=QMessageBox::question(
+            this, tr("sctime: move worked time to new entry"),
+                  tr("Should %1 minutes be moved to the new selected entry?").arg(int(delta/60)),
+                  QMessageBox::Yes, QMessageBox::No);
+          if (result==QMessageBox::Yes) {
+            if (beforeOpen.daysTo(QDateTime::currentDateTime())>=1) {
+              cantMoveTimeDialog(delta);
+              mutex.unlock();
+              return;
+            }
+            abtListToday->changeZeit(abt, ko, uko, oldidx, -delta, false, true, pausedAbzur);
+            abtListToday->changeZeit(abt, ko, uko, newidx, delta, false, true, pausedAbzur);
+            
+            kontoTree->refreshAllItemsInUnterkonto(abt,ko,uko);
+          }
+        }
+    }
+    mutex.unlock();
+}
+
+/** shows an error message if worked times could not be moved to another entry */
+void TimeMainWindow::cantMoveTimeDialog(int delta)
+{
+  int result=QMessageBox::warning(
+            this, tr("sctime: could not move worked time to new entry"),
+                  tr("A date change has occurrred - therefore %1 minutes of work time won't be moved automatically to the new entry. Please check your entries manually.").arg(int(delta/60)),
+                  QMessageBox::Ok);
+}
+
+/**
+ * checks and updates overtime modes after a pause (they might not be valid anymore)*/
+void TimeMainWindow::updateSpecialModesAfterPause() {
+  QDateTime timestamp = QDateTime::currentDateTime();
+  QDateTime lastts = settings->lastRecordedTimestamp();
+  if (lastts.isValid()) {
+    bool sameday=(lastts.date()==timestamp.date());
+    switchOvertimeOtherMode(settings->overtimeOtherModeActive() && sameday);
+    switchOvertimeRegulatedMode(settings->overtimeRegulatedModeActive() && sameday);
+    switchPublicHolidayMode(settings->publicHolidayModeActive() && sameday);
+    if ((lastts.secsTo(timestamp)>60*60*12)) {
+      switchNightMode(false);
+    } else {
+      switchNightMode(settings->nightModeActive());
+    }
+    overtimeRegulatedModeAction->setChecked(settings->overtimeRegulatedModeActive());
+    overtimeOtherModeAction->setChecked(settings->overtimeOtherModeActive());
+    publicHolidayModeAction->setChecked(settings->publicHolidayModeActive());
+    nightModeAction->setChecked(settings->nightModeActive());
+  }
+  callNightTimeDialog(timestamp.time()>settings->nightModeBegin()||timestamp.time()<settings->nightModeEnd());
+}
+
+/**
+ * slot to open a dialog asking to switch nightmode on, if necessary */
+void TimeMainWindow::callNightTimeBeginDialog(){
+  callNightTimeDialog(true);
+}
+
+/**
+ * slot to open a dialog asking to switch nightmode off, if necessary */
+void TimeMainWindow::callNightTimeEndDialog(){
+  callNightTimeDialog(false);
+}
