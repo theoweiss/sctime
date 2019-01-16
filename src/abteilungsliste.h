@@ -102,7 +102,7 @@ class AbteilungsListe: public std::map<QString,KontoListe>
 
     void minuteVergangen(bool abzur);
 
-    void changeZeit(const QString& Abteilung,const QString& Konto,const QString& Unterkonto,int Eintrag, int delta, bool abzurOnly=false, bool regular=false, bool workedOnly=true);
+    void changeZeit(const QString& Abteilung,const QString& Konto,const QString& Unterkonto,int Eintrag, int delta, bool abzurOnly=false, bool regular=false, bool workedOnly=false);
 
     bool setEintragFlags(const QString& abteilung, const QString& konto, const QString& unterkonto, int idx, int flags, int mode=FLAG_MODE_OVERWRITE);
 
