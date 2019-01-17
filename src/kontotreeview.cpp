@@ -107,11 +107,17 @@ void KontoTreeView::mousePressEvent(QMouseEvent * event)
   if (event->button() == Qt::LeftButton)
     dragStartPosition = pos;
 
+  QModelIndex index = indexAt(event->pos());
+  if (index.isValid())
+     dragStartItem = (KontoTreeItem *)(itemFromIndex(index));
+  else
+     dragStartItem = NULL;
+
   // signal itemClicked() of QTreeWidget only fires on left button clicks
   // (based on QAbstractItemView's clicked() signal). Track right clicks as
   // well to implement our own itemRightClicked() signal
   if (event->button() == Qt::RightButton)
-    rightPressedIndex = indexAt(pos);
+    rightPressedIndex = index;
 
   //Put event to the parentwidget
   QTreeWidget::mousePressEvent(event);
@@ -124,8 +130,9 @@ void KontoTreeView::mouseReleaseEvent(QMouseEvent *event) {
   QModelIndex index = indexAt(event->pos());
   if (event->button() == Qt::RightButton &&
 		  index == rightPressedIndex &&
-		  index.isValid())
+		  index.isValid()) {
     emit itemRightClicked(itemFromIndex(index));
+  }
 }
 
 void KontoTreeView::mouseMoveEvent(QMouseEvent *  event )
@@ -135,12 +142,10 @@ void KontoTreeView::mouseMoveEvent(QMouseEvent *  event )
   if ((event->pos() - dragStartPosition).manhattanLength()
         < QApplication::startDragDistance())
     return;
-
   //Get the current Item
-  KontoTreeItem * item=(KontoTreeItem *)(currentItem());
+  KontoTreeItem * item=dragStartItem;
   if( !item ) return;
   if (isEintragsItem(item)) {
-
       QString top,uko,ko,abt;
       int idx;
       itemInfo(item,top,abt,ko,uko,idx);
@@ -222,30 +227,17 @@ void KontoTreeView::dropEvent(QDropEvent *event)
 
 void KontoTreeView::dragEnterEvent(QDragEnterEvent *event)
 {
-  if ((event->pos() - dragStartPosition).manhattanLength()
-          < QApplication::startDragDistance())
-         return;
-  if (event->mimeData()->hasFormat(MIMETYPE_ACCOUNT) &&
-      event->mimeData()->hasFormat(MIMETYPE_SECONDS) &&
-      event->dropAction()==Qt::MoveAction) {
-    QPoint contpos(event->pos());
-    KontoTreeItem * item=(KontoTreeItem *)(itemAt(contpos));
-    if (isEintragsItem(item)) {
-      event->accept();
-    }
-    else
-    {
-      event->ignore();
-    }
+  if (isEintragsItem(dragStartItem)) {
+    event->accept();
+  }
+  else
+  {
+    event->ignore();
   }
 }
 
 void KontoTreeView::dragMoveEvent(QDragMoveEvent *event)
 {
-  if ((event->pos() - dragStartPosition).manhattanLength()
-          < QApplication::startDragDistance())
-         return;
-
   if (event->mimeData()->hasFormat(MIMETYPE_ACCOUNT) &&
       event->mimeData()->hasFormat(MIMETYPE_SECONDS) &&
       event->dropAction()==Qt::MoveAction) {

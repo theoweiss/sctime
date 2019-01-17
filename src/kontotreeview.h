@@ -112,6 +112,7 @@ class KontoTreeView: public QTreeWidget
     bool m_showPersoenlicheKontenSummenzeit;
     AbteilungsListe* abtList;
     QPoint dragStartPosition;
+    KontoTreeItem* dragStartItem;
     Qt::KeyboardModifiers keyboardModifier;
     QPersistentModelIndex rightPressedIndex;
     SCTimeXMLSettings::DefCommentDisplayModeEnum displaymode;
