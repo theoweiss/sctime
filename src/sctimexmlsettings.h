@@ -85,7 +85,7 @@ public:
       m_overtimeOtherModeActive = false;
       m_publicHolidayModeActive = false;
 
-#ifdef ATHOS_ETV_2018
+#ifdef ATOS_ETV_2018
       m_overtimeRegulatedSR = "sc_angeordnete_regulierte_mehrarbeit";
       m_overtimeOtherSR = "sc_angeordnete_sonstige_mehrarbeit";
       m_publicHolidaySR = "sc_feiertagsarbeit";
