@@ -1842,7 +1842,9 @@ void TimeMainWindow::updateSpecialModesAfterPause() {
     publicHolidayModeAction->setChecked(settings->publicHolidayModeActive());
     nightModeAction->setChecked(settings->nightModeActive());
   }
-  callNightTimeDialog(timestamp.time()>settings->nightModeBegin()||timestamp.time()<settings->nightModeEnd());
+  if (!settings->nightModeBegin().isNull() && !settings->nightModeEnd().isNull()) {
+    callNightTimeDialog(timestamp.time()>settings->nightModeBegin()||timestamp.time()<settings->nightModeEnd());
+  }
 }
 
 /**
