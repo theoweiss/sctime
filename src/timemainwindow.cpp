@@ -746,7 +746,7 @@ void TimeMainWindow::zeitChanged()
   
     
 #ifdef WIN32
-	updateTaskbarTitle(zeit);
+	updateTaskbarTitle(workedtime);
 #endif
 }
 
@@ -1816,7 +1816,7 @@ void TimeMainWindow::callNightTimeDialog(bool isnight)
 /** shows an error message if worked times could not be moved to another entry */
 void TimeMainWindow::cantMoveTimeDialog(int delta)
 {
-  int result=QMessageBox::warning(
+  QMessageBox::warning(
             this, tr("sctime: could not move worked time to new entry"),
                   tr("A date change has occurrred - therefore %1 minutes of work time won't be moved automatically to the new entry. Please check your entries manually.").arg(int(delta/60)),
                   QMessageBox::Ok);
