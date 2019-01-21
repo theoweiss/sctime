@@ -1213,7 +1213,7 @@ void TimeMainWindow::callUnterKontoDialog(QTreeWidgetItem * item)
 
   kontoTree->itemInfo(item,top,abt,ko,uko,idx);
 
-  unterKontoDialog=new UnterKontoDialog(abt,ko,uko,idx,abtList,&defaultTags, true, settings, this, abtList->checkInState());
+  UnterKontoDialog* unterKontoDialog=new UnterKontoDialog(abt,ko,uko,idx,abtList,&defaultTags, true, settings, this, abtList->checkInState());
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int )), kontoTree,
   SLOT(refreshItem(const QString&, const QString&, const QString&,int )));
   connect(unterKontoDialog, SIGNAL(entryChanged(const QString&, const QString&, const QString&, int )), this,
@@ -1224,14 +1224,18 @@ void TimeMainWindow::callUnterKontoDialog(QTreeWidgetItem * item)
   connect(unterKontoDialog, SIGNAL(entryActivated()), this, SLOT(eintragAktivieren()));
   connect(unterKontoDialog, SIGNAL(bereitschaftChanged(const QString&, const QString&, const QString&)),
           kontoTree, SLOT(refreshAllItemsInUnterkonto(const QString&, const QString&, const QString&)));
+  QMetaObject::Connection timerconn;
   if (abtList->isAktiv(abt,ko,uko,idx) && (abtList->getDatum()==QDate::currentDate()))
-    connect(minutenTimer, SIGNAL(timeout()),unterKontoDialog->getZeitBox(),SLOT(incrMin()));
+    timerconn=connect(minutenTimer, SIGNAL(timeout()),unterKontoDialog->getZeitBox(),SLOT(incrMin()));
 
   QPoint pos;
   QSize size;
   settings->getUnterKontoWindowGeometry(pos, size);
   resizeToIfSensible(unterKontoDialog,pos,size);
   unterKontoDialog->exec();
+  unterKontoDialog->disconnect();
+  QObject::disconnect(timerconn);
+  delete unterKontoDialog;
 }
 
 /**

@@ -181,7 +181,6 @@ public:
     void switchOvertimeMode(bool enabled, QString otmSR);
     void cantMoveTimeDialog(int delta);
     KontoTreeView* kontoTree;
-    UnterKontoDialog* unterKontoDialog;
     QAction* editUnterKontoAction;
     QAction* inPersKontAction;
     QAction* abzurMin5PlusAction;
