@@ -54,6 +54,8 @@ QVariant BereitschaftsModel::data ( const QModelIndex & index, int role) const
               return QVariant(eintrag.bezeichnung);
             /*case 1:
               return QVariant(eintrag.aktiviert);*/
+            default:
+              return QVariant();
         }
     }
     case Qt::CheckStateRole:

@@ -1324,19 +1324,19 @@ void TimeMainWindow::callPreferenceDialog()
     kontoTree->hideColumn(KontoTreeItem::COL_TYPE);
   } else
   {
-    if (!oldshowtypecolumn)
+    if (!oldshowtypecolumn) {
       kontoTree->showColumn(KontoTreeItem::COL_TYPE);
       kontoTree->resizeColumnToContents(KontoTreeItem::COL_TYPE);
-
+    }
   }
   if (!settings->showPSPColumn()) {
     kontoTree->hideColumn(KontoTreeItem::COL_PSP);
   } else
   {
-    if (!oldshowpspcolumn)
+    if (!oldshowpspcolumn) {
       kontoTree->showColumn(KontoTreeItem::COL_PSP);
       kontoTree->resizeColumnToContents(KontoTreeItem::COL_PSP);
-
+    }
   }
   kontoTree->flagClosedPersoenlicheItems();
   if (settings->defCommentDisplayMode()!=olddisplaymode) {

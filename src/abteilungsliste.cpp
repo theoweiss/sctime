@@ -749,7 +749,7 @@ bool AbteilungsListe::ukHatMehrereEintrage(const QString& abteilung, const QStri
     EintragsListe::iterator eli;
     if (!findUnterKonto(uki, ukl, abteilung, konto, unterkonto)) return false;
     for (eli = uki->second.begin(); eli != uki->second.end(); eli++) {
-        if (eli->first != idx && !eli->second.sekundenAbzur > 0)
+        if (eli->first != idx && !(eli->second.sekundenAbzur > 0))
             return true;
     }
     return false;
