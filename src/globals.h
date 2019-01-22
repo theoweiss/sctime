@@ -24,7 +24,6 @@ class DatasourceManager;
 class Lock;
 extern QDir configDir;
 extern QString lockfilePath;
-extern Lock *lock;
 void logError(const QString& msg);
 void trace(const QString& msg);
 QString canonicalPath(QString);

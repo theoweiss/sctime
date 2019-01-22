@@ -40,6 +40,7 @@ class QTextBrowser;
 #include "datasource.h"
 
 class TextViewerDialog;
+class Lock;
 
 /** Diese Klasse implementiert das Hauptfenster des Programms,
     und sorgt zudem fuer das Fortschreiten der Zeit.
@@ -48,7 +49,7 @@ class TimeMainWindow: public QMainWindow
 {
     Q_OBJECT
 public:
-    TimeMainWindow();
+    TimeMainWindow(Lock* lock);
     QTreeWidget* getKontoTree();
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;
@@ -172,6 +173,7 @@ public:
   protected:
     virtual void moveEvent( QMoveEvent *event);
   private:
+    TimeMainWindow() {};
     void checkLock();
     void updateTaskbarTitle(int zeit);
     void closeEvent(QCloseEvent * event);
@@ -181,6 +183,7 @@ public:
     void switchOvertimeMode(bool enabled, QString otmSR);
     void cantMoveTimeDialog(int delta);
     KontoTreeView* kontoTree;
+    Lock *m_lock;
     QAction* editUnterKontoAction;
     QAction* inPersKontAction;
     QAction* abzurMin5PlusAction;

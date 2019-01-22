@@ -13,7 +13,10 @@ static int fds[2];
 
 static void unixSignalHandler(int sig) {
   char a = sig & 255;
-  ::write(fds[1], &a, 1);
+  ssize_t bytes = ::write(fds[1], &a, 1);
+  if (bytes<=0) {
+    // we could't use the signal, we ignore that for now
+  }
 }
 
 static QSocketNotifier *notifier;
@@ -41,9 +44,11 @@ SignalHandler::SignalHandler(int sig, QObject *parent):QObject(parent),signum(si
 void SignalHandler::handleAll() {
   notifier->setEnabled(false);
   char tmp;
-  ::read(fds[0], &tmp, sizeof(tmp));
-  emit received((int) tmp);
-  notifier->setEnabled(true);
+  ssize_t bytes=::read(fds[0], &tmp, sizeof(tmp));
+  if (bytes>0) {
+    emit received((int) tmp);
+    notifier->setEnabled(true);
+  }
 }
 
 void SignalHandler::handle(int sig) {

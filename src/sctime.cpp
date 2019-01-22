@@ -27,31 +27,21 @@
 #include <QCommandLineParser>
 #include <QCommandLineOption>
 
-#ifdef WIN32
-#include <windows.h>
-#else
+#ifndef WIN32
 #include <assert.h>
 #include <locale.h>
-#include <signal.h>
-#include "unix/signalhandler.h"
 #endif
 
 #include "lock.h"
 #include "timemainwindow.h"
-#include "sctimexmlsettings.h"
 #include "globals.h"
 #include "kontotreeview.h"
 #include "datasource.h"
-#include "setupdsm.h"
+#include "sctimeapp.h"
 
 #ifndef CONFIGDIR
 #define CONFIGDIR "~/.sctime"
 #endif
-
-
-// transform the value of a #define into a string in a portable way
-#define QUOTE_(x) #x
-#define QUOTE(x) QUOTE_(x)
 
 #ifdef __GNUC__
 static void fatal(const QString& title, const QString& body) __attribute__ ((noreturn));
@@ -63,7 +53,6 @@ QDir configDir;
 QString lockfilePath;
 QString PERSOENLICHE_KONTEN_STRING;
 QString ALLE_KONTEN_STRING;
-Lock *lock;
 
 static void fatal(const QString& title, const QString& body) {
   QMessageBox::critical(NULL, title, body, QMessageBox::Ok);
@@ -86,30 +75,6 @@ static const QString help(QObject::tr(
 "--offlinefile=FILE       read all needed data from FILE which must be of json format\n"
 "                      overides --zeitkontenfile --bereitschaftsfile and --specialremunfile\n\n"
 "Please see the Help menu for further information (F1)!"));
-
-static TimeMainWindow* mainWindow = 0;
-
-#ifdef WIN32
-// catch suspend and resume events and handle them by calling "suspend()" or "resume()"
-class SctimeApp : public QApplication {
-public:
-    SctimeApp(int &argc, char **argv):QApplication(argc, argv) {}
-    virtual bool winEventFilter(MSG * msg, long * result) {
-      if (msg->message == WM_POWERBROADCAST && mainWindow && msg->hwnd == (HWND)mainWindow->winId()) {
-        if (msg->wParam == PBT_APMRESUMEAUTOMATIC)
-            QMetaObject::invokeMethod(mainWindow, "resume", Qt::QueuedConnection);
-        else if (msg->wParam == PBT_APMSUSPEND)
-            QMetaObject::invokeMethod(mainWindow, "suspend", Qt::QueuedConnection);
-        else return false;
-	*result = TRUE;
-	return true;
-      }
-      return false;
-    }
-};
-#else
-#define SctimeApp QApplication
-#endif
 
 QString canonicalPath(QString path) {
     if (path == "~" || path.startsWith("~/") || path.startsWith(QString("~") +
@@ -136,25 +101,20 @@ QString canonicalPath(QString path) {
  * (Lockfiles,...), und falls ja, wird SCTimeApp initialisiert und
  ausgefuehrt */
 int main(int argc, char **argv ) {
-  SctimeApp app(argc, argv);  // Qt initialization
+  SctimeApp* app = new SctimeApp(argc, argv);  // Qt initialization
 
   // load translations
   QTranslator qtTranslator;
   qtTranslator.load("qt_" + QLocale::system().name(),
           QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-  app.installTranslator(&qtTranslator);
+  app->installTranslator(&qtTranslator);
   QTranslator sctimeTranslator;
   sctimeTranslator.load(":/translations/sctime");
-  app.installTranslator(&sctimeTranslator);
+  app->installTranslator(&sctimeTranslator);
 #if QT_VERSION < 0x050000
   /* no longer necessary with Qt >= 5.0 */
   QTextCodec::setCodecForTr(QTextCodec::codecForName ("UTF-8"));
 #endif
-
-  // necessary for XSM support
-  app.setObjectName("sctime");
-  app.setApplicationName("sctime");
-  app.setApplicationVersion(QUOTE(APP_VERSION));
 
   PERSOENLICHE_KONTEN_STRING = QObject::tr("Personal accounts");
   ALLE_KONTEN_STRING = QObject::tr("All accounts");
@@ -179,7 +139,7 @@ int main(int argc, char **argv ) {
   parser.addOption(offlinefileopt);
   QCommandLineOption datasourceopt("datasource","", QObject::tr("source"));
   parser.addOption(datasourceopt);
-  parser.process(app);
+  parser.process(*app);
   
   QString configdirstring=parser.value(configdiropt);
   QString zeitkontenfile=parser.value(zeitkontenfileopt);
@@ -238,30 +198,11 @@ int main(int argc, char **argv ) {
         QMessageBox::critical(NULL, QObject::tr("Unclean state"), QObject::tr("It looks like the last instance of sctime might have crashed, probably at %1. Please check if the recorded times of that date are correct.").arg(lasttime.toLocalTime().toString()), QMessageBox::Ok);
       }
   }
-  lock = &local;
-
-
-  SCTimeXMLSettings settings;
-  settings.readSettings();
-  if (dataSourceNames.isEmpty()) dataSourceNames = settings.backends.split(" ");
-  setupDatasources(dataSourceNames, settings, zeitkontenfile, bereitschaftsfile, specialremunfile,offlinefile);
-  mainWindow = new TimeMainWindow();
-#ifndef WIN32
-  SignalHandler term(SIGTERM);
-  app.connect(&term, SIGNAL(received()), &app, SLOT(closeAllWindows()));
-  SignalHandler hup(SIGHUP);
-  app.connect(&hup, SIGNAL(received()), &app, SLOT(closeAllWindows()));
-  SignalHandler int_(SIGINT);
-  app.connect(&int_, SIGNAL(received()), &app, SLOT(closeAllWindows()));
-  SignalHandler cont(SIGCONT);
-  app.connect(&cont, SIGNAL(received()), mainWindow, SLOT(resume()));
-#endif
-  mainWindow->show();
-  app.exec();
-  delete mainWindow;
-  local.release();
+  app->init(&local, dataSourceNames, zeitkontenfile, bereitschaftsfile, specialremunfile, offlinefile);
+  app->exec();
+  
+  // warning: dont rely on anything being executed beyond that point
+  delete app;
   delete global;
-  delete kontenDSM;
-  delete bereitDSM;
   return 0;
 }
