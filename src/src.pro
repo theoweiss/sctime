@@ -10,8 +10,18 @@ QT += xml gui core network sql widgets
 TARGET = sctime
 CODECFORTR= UTF-8
 TRANSLATIONS = sctime_de.ts
-SOURCES = abteilungsliste.cpp bereitschaftsliste.cpp bereitschaftsmodel.cpp bereitschaftsview.cpp datasource.cpp datedialog.cpp defaultcomment.cpp defaultcommentreader.cpp defaulttagreader.cpp descdata.cpp findkontodialog.cpp kontotreeitem.cpp kontotreeview.cpp lock.cpp preferencedialog.cpp sctime.cpp sctimexmlsettings.cpp setupdsm.cpp timemainwindow.cpp unterkontodialog.cpp specialremunerationsdialog.cpp specialremuntypemap.cpp statusbar.cpp JSONReader.cpp textviewerdialog.cpp
-HEADERS = abteilungsliste.h bereitschaftsliste.h bereitschaftsmodel.h bereitschaftsview.h datasource.h datedialog.h defaultcomment.h defaultcommentreader.h defaulttagreader.h descdata.h eintragsliste.h findkontodialog.h globals.h kontodateninfo.h kontoliste.h kontotreeitem.h kontotreeview.h lock.h preferencedialog.h sctimexmlsettings.h setupdsm.h statusbar.h timecounter.h timeedit.h timemainwindow.h unterkontodialog.h unterkontoeintrag.h unterkontoliste.h specialremunerationsdialog.h specialremuntypemap.h JSONReader.h util.h textviewerdialog.h
+SOURCES = abteilungsliste.cpp bereitschaftsliste.cpp bereitschaftsmodel.cpp bereitschaftsview.cpp\
+          datasource.cpp datedialog.cpp defaultcomment.cpp defaultcommentreader.cpp defaulttagreader.cpp\
+          descdata.cpp findkontodialog.cpp kontotreeitem.cpp kontotreeview.cpp lock.cpp preferencedialog.cpp\
+          sctime.cpp sctimexmlsettings.cpp setupdsm.cpp timemainwindow.cpp unterkontodialog.cpp\
+          specialremunerationsdialog.cpp specialremuntypemap.cpp statusbar.cpp JSONReader.cpp\
+          textviewerdialog.cpp sctimeapp.cpp
+HEADERS = abteilungsliste.h bereitschaftsliste.h bereitschaftsmodel.h bereitschaftsview.h datasource.h\
+          datedialog.h defaultcomment.h defaultcommentreader.h defaulttagreader.h descdata.h eintragsliste.h\
+          findkontodialog.h globals.h kontodateninfo.h kontoliste.h kontotreeitem.h kontotreeview.h lock.h\
+          preferencedialog.h sctimexmlsettings.h setupdsm.h statusbar.h timecounter.h timeedit.h timemainwindow.h\
+          unterkontodialog.h unterkontoeintrag.h unterkontoliste.h specialremunerationsdialog.h\
+          specialremuntypemap.h JSONReader.h util.h textviewerdialog.h sctimeapp.h
 RESOURCES = ../pics/sctimeImages.qrc ../help/help.qrc
 GENERATED_RESOURCES = translations.qrc
 FORMS = datedialogbase.ui preferencedialogbase.ui specialremunerationdialogbase.ui

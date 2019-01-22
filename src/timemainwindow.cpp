@@ -76,7 +76,8 @@ void logError(const QString &msg) {
 }
 
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
-TimeMainWindow::TimeMainWindow():QMainWindow(), startTime(QDateTime::currentDateTime()) {
+TimeMainWindow::TimeMainWindow(Lock* lock):QMainWindow(), startTime(QDateTime::currentDateTime()) {
+  m_lock = lock;
   paused = false;
   sekunden = 0;
   setObjectName(tr("sctime"));
@@ -839,11 +840,11 @@ void TimeMainWindow::save()
 }
 
 void TimeMainWindow::checkLock() {
-  if (!lock->check()) {
+  if (!m_lock->check()) {
     QMessageBox msg;
     msg.setText(tr("The program will quit in a few seconds without saving."));
-    msg.setInformativeText(lock->errorString());
-    qDebug() << tr("The program will now quit without saving.") << lock->errorString();
+    msg.setInformativeText(m_lock->errorString());
+    qDebug() << tr("The program will now quit without saving.") << m_lock->errorString();
     QTimer::singleShot(10000, this, SLOT(quit()));
     msg.exec();
   }
