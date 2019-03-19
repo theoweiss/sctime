@@ -19,34 +19,65 @@
 #define JSONREADER_H
 
 #include <QString>
+#include <QException>
 
 #include <QJsonDocument>
 #include "datasource.h"
 
-class JSONReader 
+class JSONReaderException : public QException
+{
+public:
+    void raise() const override { throw *this; }
+    JSONReaderException *clone() const override { return new JSONReaderException(*this); }
+};
+
+class JSONReaderBase
 {
 public:
   const static int INVALIDDATA=-1;
-  JSONReader(const QString& path);
-  virtual ~JSONReader() {};
+  virtual ~JSONReaderBase() {};
   virtual int loadDataNewerThan(int version);
+  virtual QByteArray getByteArray()=0;
   virtual QJsonDocument& getData();
 private:
   QJsonDocument data;
   int currentversion;
+protected:
+  JSONReaderBase();
+};
+
+class JSONReaderFile: public JSONReaderBase
+{
+public:
+  JSONReaderFile(const QString& path);
+  virtual QByteArray getByteArray();
+  virtual ~JSONReaderFile() {};
+private:
   const QString path;
+};
+
+class JSONReaderCommand: public JSONReaderBase
+{
+public:
+  const static int INVALIDDATA=-1;
+  JSONReaderCommand(const QString& command, QObject* parent);
+  virtual QByteArray getByteArray();
+  virtual ~JSONReaderCommand() {};
+private:
+  const QString command;
+  QObject* parent;
 };
 
 class JSONSource: public Datasource
 {
 public:
-  JSONSource(JSONReader *jsonreader);
+  JSONSource(JSONReaderBase *jsonreader);
   virtual ~JSONSource() {};
   virtual bool read(DSResult* const result);
 private: 
   int currentversion;
 protected:
-  JSONReader* jsonreader;
+  JSONReaderBase* jsonreader;
   void appendStringToRow(QStringList& row, const QJsonObject& object, const QString& field);
   virtual bool convertData(DSResult* const result)=0;
 };
@@ -54,7 +85,7 @@ protected:
 class JSONAccountSource: public JSONSource
 {
 public:
-  JSONAccountSource(JSONReader *jsonreader);
+  JSONAccountSource(JSONReaderBase *jsonreader);
   virtual ~JSONAccountSource() {};
 protected:
   virtual bool convertData(DSResult* const result);
@@ -63,7 +94,7 @@ protected:
 class JSONSpecialRemunSource: public JSONSource
 {
 public:
-  JSONSpecialRemunSource(JSONReader *jsonreader);
+  JSONSpecialRemunSource(JSONReaderBase *jsonreader);
   virtual ~JSONSpecialRemunSource() {};
 protected:
   virtual bool convertData(DSResult* const result);
@@ -72,7 +103,7 @@ protected:
 class JSONOnCallSource: public JSONSource
 {
 public:
-  JSONOnCallSource(JSONReader *jsonreader);
+  JSONOnCallSource(JSONReaderBase *jsonreader);
   virtual ~JSONOnCallSource() {};
 protected:
   virtual bool convertData(DSResult* const result);

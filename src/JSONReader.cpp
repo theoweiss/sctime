@@ -24,9 +24,13 @@
 #include <QJsonObject>
 #include <QJsonArray>
 #include <QStringList>
+#include <QTextStream>
+#include <QProcess>
 
-JSONSource::JSONSource(JSONReader *jsonreader)
-  :Datasource(), currentversion(JSONReader::INVALIDDATA), jsonreader(jsonreader) {}
+
+
+JSONSource::JSONSource(JSONReaderBase *jsonreader)
+  :Datasource(), currentversion(JSONReaderBase::INVALIDDATA), jsonreader(jsonreader) {}
 
 void JSONSource::appendStringToRow(QStringList& row, const QJsonObject& object, const QString& field) {
   row.append(object[field].toString());
@@ -34,7 +38,7 @@ void JSONSource::appendStringToRow(QStringList& row, const QJsonObject& object, 
 
 bool JSONSource::read(DSResult* const result) {
   currentversion=jsonreader->loadDataNewerThan(currentversion);
-  if (currentversion==JSONReader::INVALIDDATA) 
+  if (currentversion==JSONReaderBase::INVALIDDATA)
     return false;
   return convertData(result);
 }
@@ -48,7 +52,7 @@ bool JSONSource::read(DSResult* const result) {
  * be refactored one day.
  * 
  */
-JSONAccountSource::JSONAccountSource(JSONReader *jsonreader)
+JSONAccountSource::JSONAccountSource(JSONReaderBase *jsonreader)
   :JSONSource(jsonreader) {}
   
 bool JSONAccountSource::convertData(DSResult* const result) {
@@ -121,33 +125,32 @@ bool JSONAccountSource::convertData(DSResult* const result) {
   return true;
 }
 
-JSONReader::JSONReader(const QString& path)
-  : currentversion(INVALIDDATA),path(path) {}
+JSONReaderBase::JSONReaderBase()
+  : currentversion(INVALIDDATA) {}
   
-QJsonDocument &JSONReader::getData()
+QJsonDocument &JSONReaderBase::getData()
 {
   return data;
 }
 
-int JSONReader::loadDataNewerThan(int version)
+
+
+int JSONReaderBase::loadDataNewerThan(int version)
 {
   if ((version<=currentversion)&&(currentversion!=INVALIDDATA))
      return currentversion;
   currentversion=version+1;
-  QFile loadFile(path);
-
-  if (!loadFile.open(QIODevice::ReadOnly)) {
-      trace(QObject::tr("Couldn't open json file %1.").arg(path));
-      return INVALIDDATA;
+  QByteArray byteData;
+  try {
+     byteData = getByteArray();
+  } catch (JSONReaderException &e) {
+    return INVALIDDATA;
   }
-
-  QByteArray byteData = loadFile.readAll();
-  loadFile.close();
   data=QJsonDocument::fromJson(byteData);
   return currentversion;
 }
 
-JSONOnCallSource::JSONOnCallSource(JSONReader *jsonreader)
+JSONOnCallSource::JSONOnCallSource(JSONReaderBase *jsonreader)
   :JSONSource(jsonreader) {}
   
 bool JSONOnCallSource::convertData(DSResult* const result) {
@@ -163,7 +166,7 @@ bool JSONOnCallSource::convertData(DSResult* const result) {
   return true;
 }
 
-JSONSpecialRemunSource::JSONSpecialRemunSource(JSONReader *jsonreader)
+JSONSpecialRemunSource::JSONSpecialRemunSource(JSONReaderBase *jsonreader)
   :JSONSource(jsonreader) {}
   
 bool JSONSpecialRemunSource::convertData(DSResult* const result) {
@@ -179,3 +182,44 @@ bool JSONSpecialRemunSource::convertData(DSResult* const result) {
   }
   return true;
 }
+
+
+QByteArray JSONReaderFile::getByteArray()
+{
+  QFile loadFile(path);
+
+  if (!loadFile.open(QIODevice::ReadOnly)) {
+      trace(QObject::tr("Couldn't open json file %1.").arg(path));
+      loadFile.close();
+      throw(new JSONReaderException());
+  }
+
+  QByteArray byteData = loadFile.readAll();
+  loadFile.close();
+  return byteData;
+}
+
+JSONReaderFile::JSONReaderFile(const QString& _path): JSONReaderBase(), path(_path) {};
+
+QByteArray JSONReaderCommand::getByteArray()
+{
+  QProcess* process = new QProcess(parent);
+  process->start(command,QIODevice::ReadOnly);
+  trace(QObject::tr("Running command: ") + command);
+  if (!process->waitForFinished(-1)) {
+    logError(QObject::tr("Cannot run command '%1': %2").arg(command).arg(process->error()));
+    delete process;
+    throw(new JSONReaderException());
+  }
+  if (process->exitCode()) {
+    logError(QObject::tr("Command '%1' has non-zero exitcode: %s2").arg(command, process->exitCode()));
+    delete process;
+    throw(new JSONReaderException());
+  }
+  QByteArray byteData = process->readAllStandardOutput();
+  delete process;
+
+  return byteData;
+}
+
+JSONReaderCommand::JSONReaderCommand(const QString& _command, QObject* _parent): JSONReaderBase(), command(_command), parent(_parent) {};

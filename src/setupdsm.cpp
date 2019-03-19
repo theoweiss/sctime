@@ -130,7 +130,7 @@ void setupDatasources(const QStringList& datasourceNames,
   bereitDSM = new DatasourceManager(QObject::tr("On-call categories"));
   specialRemunDSM = new DatasourceManager(QObject::tr("Special Remunerations"));
   trace(QObject::tr("available database drivers: %1.").arg(QSqlDatabase::drivers().join(", ")));
-  JSONReader *jsonreader=NULL;
+  JSONReaderBase *jsonreader=NULL;
   if (!kontenPath.isEmpty())
     kontenDSM->sources.append(new FileReader(kontenPath, "|", 15));
   if (!bereitPath.isEmpty())
@@ -139,7 +139,7 @@ void setupDatasources(const QStringList& datasourceNames,
     specialRemunDSM->sources.append(new FileReader(specialremunPath, "|", 2));
   if (!jsonPath.isEmpty()) {
     trace(QObject::tr("adding jsonreader: %1.").arg(jsonPath));
-    jsonreader=new JSONReader(jsonPath);
+    jsonreader=new JSONReaderFile(jsonPath);
     kontenDSM->sources.append(new JSONAccountSource(jsonreader));
     bereitDSM->sources.append(new JSONOnCallSource(jsonreader));
     specialRemunDSM->sources.append(new JSONSpecialRemunSource(jsonreader));
@@ -147,7 +147,7 @@ void setupDatasources(const QStringList& datasourceNames,
   QString dsname;
   foreach (dsname, datasourceNames) {
     if (dsname.compare("json") == 0) {
-      jsonreader=new JSONReader(configDir.filePath("sctime-offline.json")); 
+      jsonreader=new JSONReaderFile(configDir.filePath("sctime-offline.json"));
       kontenDSM->sources.append(new JSONAccountSource(jsonreader));
       bereitDSM->sources.append(new JSONOnCallSource(jsonreader));
       specialRemunDSM->sources.append(new JSONSpecialRemunSource(jsonreader));
@@ -161,9 +161,16 @@ void setupDatasources(const QStringList& datasourceNames,
 #ifdef WIN32
       logError(QObject::tr("data source 'command' is not available on Windows"));
 #else
+#ifdef DEPRECATED_CMDS
       kontenDSM->sources.append(new CommandReader("zeitkonten --mikrokonten --psp --sonderzeiten --separator='|'", "|", 15));
       bereitDSM->sources.append(new CommandReader("zeitbereitls --separator='|'", "|", 2));
       specialRemunDSM->sources.append(new CommandReader("sonderzeitls --separator='|'", "|", 3));
+#else
+      jsonreader=new JSONReaderCommand("zeit-sctime-offline", NULL);
+      kontenDSM->sources.append(new JSONAccountSource(jsonreader));
+      bereitDSM->sources.append(new JSONOnCallSource(jsonreader));
+      specialRemunDSM->sources.append(new JSONSpecialRemunSource(jsonreader));
+#endif
 #endif
     } else {
       if (!QSqlDatabase::drivers().contains(dsname)) {
