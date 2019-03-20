@@ -74,6 +74,7 @@ public:
   JSONSource(JSONReaderBase *jsonreader);
   virtual ~JSONSource() {};
   virtual bool read(DSResult* const result);
+  virtual QString toString() {return "JSONSource";};
 private: 
   int currentversion;
 protected:
