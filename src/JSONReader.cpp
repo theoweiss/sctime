@@ -177,7 +177,15 @@ bool JSONSpecialRemunSource::convertData(DSResult* const result) {
     QStringList row;
     appendStringToRow(row,specialremun,"Category");
     appendStringToRow(row,specialremun,"Description");
-    row.append(QString().setNum((int)specialremun["IsGlobal"].toDouble()));
+    if (specialremun["IsGlobal"].isString()) {
+      row.append(specialremun["IsGlobal"].toString());
+    } else {
+      if (specialremun["IsGlobal"].toInt()) {
+        row.append("1");
+      } else {
+        row.append("0");
+      }
+    }
     result->append(row);
   }
   return true;
