@@ -22,12 +22,38 @@
 #include <QStringList>
 #include <QTextCharFormat>
 #include "globals.h"
+#include <QProxyStyle>
+#include <iostream>
 
-DateDialog::DateDialog(const QDate& date, QWidget *parent)
+class DateDialogStyle:public QProxyStyle{
+  public:
+  DateDialogStyle(QStyle* style,bool singleclickactivation):QProxyStyle(style) {
+    m_singleClickActivation=singleclickactivation;
+  }
+  int styleHint(StyleHint hint, const QStyleOption *option=NULL, const QWidget *widget=NULL, 
+                QStyleHintReturn *returnData=NULL) const {
+    if (hint==QStyle::SH_ItemView_ActivateItemOnSingleClick) {
+      /*int newhint=QProxyStyle::styleHint(hint, option, widget, returnData);  
+      std::cout<<newhint<<std::endl;*/
+      return m_singleClickActivation ? 1:0;
+    }
+    return QProxyStyle::styleHint(hint, option, widget, returnData);
+  }
+  private:
+  bool m_singleClickActivation;
+};
+
+QStyle* DateDialog::datePickerStyle=NULL;
+
+DateDialog::DateDialog(const QDate& date, QWidget *parent, bool singleclickactivation)
 : QDialog(parent)
 {
   setupUi(this);
   selectedDate=QDate();
+  if (datePickerStyle==NULL) {
+    datePickerStyle=new DateDialogStyle(datePicker->style(),singleclickactivation);
+  }
+  datePicker->setStyle(datePickerStyle);
   connect(datePicker, SIGNAL(clicked(const QDate&)), this, SLOT(setSelectedDate(const QDate&)));
   connect(datePicker, SIGNAL(activated(const QDate&)), this, SLOT(setSelectedDateAndClose(const QDate&)));
   connect(applyButton, SIGNAL(clicked()), this, SLOT(apply()));

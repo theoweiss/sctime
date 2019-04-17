@@ -1414,7 +1414,7 @@ void TimeMainWindow::callDateDialog()
     QApplication::setFont(QFont(custFont,custFontSize));
   }
 
-  DateDialog * dateDialog=new DateDialog(abtList->getDatum(), this);
+  DateDialog * dateDialog=new DateDialog(abtList->getDatum(), this, settings->singleClickActivation());
   connect(dateDialog, SIGNAL(dateChanged(const QDate&)), this, SLOT(changeDate(const QDate&)));
   dateDialog->setAttribute(Qt::WA_DeleteOnClose);
   dateDialog->show();

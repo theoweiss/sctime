@@ -24,7 +24,6 @@
 #include <QDateTime>
 #include <QDialog>
 
-
  /**
   * Dialog to read a date
   */
@@ -33,8 +32,8 @@ class DateDialog : public QDialog, private Ui::DateDialogBase
   Q_OBJECT
 
 public:
-  DateDialog(const QDate& datum, QWidget* parent = 0);
-  ~DateDialog();
+  DateDialog(const QDate& datum, QWidget* parent = 0, bool singleclickactivation=false);
+  virtual ~DateDialog();
   /*$PUBLIC_FUNCTIONS$*/
 
 public slots:
@@ -57,6 +56,7 @@ signals:
 
 private:
   QDate selectedDate;
+  static QStyle* datePickerStyle;
 };
 
 #endif
