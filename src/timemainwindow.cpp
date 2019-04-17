@@ -242,7 +242,7 @@ TimeMainWindow::TimeMainWindow(Lock* lock):QMainWindow(), startTime(QDateTime::c
   connect(logAction, SIGNAL(triggered()), this, SLOT(logDialog()));
 
   editUnterKontoAction = new QAction(QIcon(":/hi22_action_edit" ), tr("&Edit..."), this);
-  editUnterKontoAction->setShortcut(Qt::Key_Return);
+  editUnterKontoAction->setShortcuts({Qt::Key_Return, Qt::Key_Menu});
   editUnterKontoAction->setStatusTip(tr("Edit subaccount"));
   connect(editUnterKontoAction, SIGNAL(triggered()), this, SLOT(editUnterKontoPressed()));
 
