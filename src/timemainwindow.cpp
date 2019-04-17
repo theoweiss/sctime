@@ -1416,18 +1416,21 @@ void TimeMainWindow::callDateDialog()
 
   DateDialog * dateDialog=new DateDialog(abtList->getDatum(), this);
   connect(dateDialog, SIGNAL(dateChanged(const QDate&)), this, SLOT(changeDate(const QDate&)));
+  dateDialog->setAttribute(Qt::WA_DeleteOnClose);
   dateDialog->show();
 }
 
 void TimeMainWindow::infoDialog(TextViewerDialog *&dialog, const QString& title, const QString& name, int x, int y, bool plaintext_links) {
   dialog = new TextViewerDialog(this,title,name, plaintext_links);
   dialog->resize(x, y);
+  dialog->setAttribute(Qt::WA_DeleteOnClose);
   dialog->show();
 }
 
 void TimeMainWindow::callHelpDialog() {
   TextViewerDialog* dialog;
   infoDialog(dialog, tr("sctime: Help"), tr("sctime help"), 600, 450);
+  dialog->setAttribute(Qt::WA_DeleteOnClose);
   dialog->browser()->setSource(QUrl("qrc:/help"));
 }
 
@@ -1435,6 +1438,7 @@ void TimeMainWindow::callHelpDialog() {
 void TimeMainWindow::callAboutBox() {
   TextViewerDialog* dialog;
   infoDialog(dialog, tr("About sctime"), tr("sctime about"), 400, 350);
+  dialog->setAttribute(Qt::WA_DeleteOnClose);
   dialog->browser()->setHtml(tr(
         "<h1><img src=':/scLogo_15Farben' />sctime</h1>"
         "<table><tr><td>Version:</td><td>%1</td></tr>"
@@ -1453,6 +1457,7 @@ void TimeMainWindow::callAboutBox() {
 void TimeMainWindow::logDialog() {
   TextViewerDialog* dialog;
   infoDialog(dialog, tr("sctime: Messages"), tr("sctime message log"), 700, 300);
+  dialog->setAttribute(Qt::WA_DeleteOnClose);
   dialog->browser()->setPlainText(logText);
 }
 
