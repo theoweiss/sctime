@@ -61,19 +61,19 @@ static void fatal(const QString& title, const QString& body) {
 
 static const QString help(QObject::tr(
 "Available Options:\n"
-"--configdir=DIR	location of the directory where your files will be placed\n"
-"			(default: ~/.sctime)\n"
+"--configdir=DIR		location of the directory where your files will be placed\n"
+"			(default: ~/.sctime)\n\n"
 "--datasource=		(repeatable) use these data sources\n"
 "			(default: 'QPSQL'',' 'QODBC'', 'command' and 'file'');\n"
-"			overrides <backends/> in settings.xml\n"
+"			overrides <backends/> in settings.xml\n\n"
 "--zeitkontenfile=FILE	read the accounts list from file FILE\n"
 "			(default: output of 'zeitkonten'). Obsolete.\n\n"
 "--bereitschaftsfile=FILE	read the 'Bereitschaftsarten'' from file FILE\n"
-"				(default: output of 'zeitbereitls'). Obsolete.\n\n"
+"			(default: output of 'zeitbereitls'). Obsolete.\n\n"
 "--specialremunfile=FILE       read the types of special remunerations from file FILE\n"
-"                               (default: output of 'sonderzeitls'. Obsolete.\n\n"
-"--offlinefile=FILE       read all needed data from FILE which must be of json format\n"
-"                      overides --zeitkontenfile --bereitschaftsfile and --specialremunfile\n\n"
+"			(default: output of 'sonderzeitls'. Obsolete.\n\n"
+"--offlinefile=FILE		read all needed data from FILE which must be of json format\n"
+"			overides --zeitkontenfile --bereitschaftsfile and --specialremunfile\n\n"
 "Please see the Help menu for further information (F1)!"));
 
 QString canonicalPath(QString path) {
@@ -121,8 +121,14 @@ int main(int argc, char **argv ) {
 
   // FIXME: use QCommandLineParser for display of help too
   if (argc == 2 && (strcmp(argv[1], "-h") == 0 || strcmp(argv[1],"--help") == 0 || strcmp(argv[1], "/h") == 0||strcmp(argv[1],"/help") == 0)) {
-    QMessageBox::information(NULL, QObject::tr("sctime ") + qApp->applicationVersion(), help);
-    exit(0);
+      QMessageBox mb(
+          QMessageBox::Information,
+          QObject::tr("sctime ") + qApp->applicationVersion(),
+          "<pre>"+help.toHtmlEscaped()+"</pre>",
+          QMessageBox::Ok,
+          NULL);
+      mb.exec();
+      exit(0);
   }
   
   QCommandLineParser parser;
