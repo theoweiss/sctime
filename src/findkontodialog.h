@@ -25,7 +25,6 @@ class QComboBox;
 class QTreeWidget;
 class QVBoxLayout;
 class QTreeWidgetItem;
-class QGridLayout;
 class QHBoxLayout;
 
 class AbteilungsListe;
@@ -60,9 +59,7 @@ class FindKontoDialog: public QDialog
     void setFoundItem(QTreeWidgetItem* item);
     QStringList getNamesFromTreeItems();
 
-    QGridLayout *mainLayout;
-    QVBoxLayout *leftLayout;
-    QVBoxLayout *rightLayout;
+    QVBoxLayout *mainLayout;
     QHBoxLayout *buttonLayout;
 
     QComboBox *kontoChoose;

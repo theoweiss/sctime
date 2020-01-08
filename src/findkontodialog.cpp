@@ -23,7 +23,6 @@
 #include <QTreeWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
-#include <QGridLayout>
 
 #include "abteilungsliste.h"
 #include "kontotreeview.h"
@@ -60,15 +59,8 @@ FindKontoDialog::FindKontoDialog(AbteilungsListe* abtlist, QWidget * parent):QDi
 
 void FindKontoDialog::createLayout()
 {
-  mainLayout = new QGridLayout(this);
-
-  leftLayout=new QVBoxLayout();
-  rightLayout=new QVBoxLayout();
+  mainLayout = new QVBoxLayout(this);
   buttonLayout=new QHBoxLayout();
-
-  mainLayout->addLayout(leftLayout, 0, 0, Qt::AlignLeft | Qt::AlignTop);
-  mainLayout->addLayout(rightLayout, 0, 1, Qt::AlignLeft | Qt::AlignTop);
-  mainLayout->addLayout(buttonLayout, 1, 1, Qt::AlignRight | Qt::AlignBottom);
 }
 
 void FindKontoDialog::createWidgets()
@@ -83,17 +75,13 @@ void FindKontoDialog::createWidgets()
   valueChoose->setEditable(true);
   valueChoose->setAutoCompletion(false);
   valueChoose->setFocus();
+  valueChoose->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
+  valueChoose->setMinimumContentsLength(40);
 
-  leftLayout->addWidget(new QLabel(tr("Please select type of item to search for:"),this));
-  leftLayout->addWidget(typeChoose);
-  leftLayout->addWidget(new QLabel(tr("Please select name of item to search for:"), this));
-  leftLayout->addWidget(valueChoose);
-
-  resultTree = new QTreeWidget(this);
-  resultTree->setHeaderLabel(tr("Search result"));
-  resultTree->setColumnCount(1) ;
-  resultTree->setSelectionMode(QAbstractItemView::SingleSelection);
-  rightLayout->addWidget(resultTree);
+  mainLayout->addWidget(new QLabel(tr("Please select type of item to search for:"),this));
+  mainLayout->addWidget(typeChoose);
+  mainLayout->addWidget(new QLabel(tr("Please select name of item to search for:"), this));
+  mainLayout->addWidget(valueChoose);
 
   okButton=new QPushButton( tr("&OK"), this );
   okButton->setEnabled(false);
@@ -105,6 +93,13 @@ void FindKontoDialog::createWidgets()
   buttonLayout->addWidget(searchButton);
   buttonLayout->addWidget(okButton);
   buttonLayout->addWidget(cancelButton);
+  mainLayout->addLayout(buttonLayout, Qt::AlignRight | Qt::AlignBottom);
+
+  resultTree = new QTreeWidget(this);
+  resultTree->setHeaderLabel(tr("Search result"));
+  resultTree->setColumnCount(1) ;
+  resultTree->setSelectionMode(QAbstractItemView::SingleSelection);
+  mainLayout->addWidget(resultTree);
 }
 
 void FindKontoDialog::createConnects()
