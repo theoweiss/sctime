@@ -117,7 +117,7 @@ rm -rf "$dmgdir" && \
 	rm -f "$dmgname".dmg && \
 	mkdir -p "$dmgdir" && \
 	rsync -aSH --delete "$approot" "$dmgdir" && \
-	hdiutil create "$dmgname".dmg -volname "$dmgname" -srcfolder dmg && \
+	hdiutil create "$dmgname".dmg -volname "$dmgname" -srcfolder dmg -fs "HFS+" && \
 	rm -rf dmg || \
 	exit 1
 
