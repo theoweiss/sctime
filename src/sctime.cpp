@@ -76,7 +76,7 @@ static const QString help(QObject::tr(
 "			overides --zeitkontenfile --bereitschaftsfile and --specialremunfile\n\n"
 "Please see the Help menu for further information (F1)!"));
 
-QString canonicalPath(QString path) {
+QString absolutePath(QString path) {
     if (path == "~" || path.startsWith("~/") || path.startsWith(QString("~") +
 		QDir::separator())) {
 #ifdef WIN32
@@ -94,7 +94,7 @@ QString canonicalPath(QString path) {
 #endif /* WIN32 */
 	    return path.replace(0, 1, homedir);
     }
-    return QFileInfo(path).canonicalFilePath();
+    return QFileInfo(path).absoluteFilePath();
 }
 
 /** main: hier wird ueberprueft, ob die Applikation ueberhaupt starten soll
@@ -161,7 +161,7 @@ int main(int argc, char **argv ) {
 
   // configdirstring can no longer be empty now but still may be relative or
   // reference home dir by ~
-  configdirstring = canonicalPath(configdirstring);
+  configdirstring = absolutePath(configdirstring);
   QDir directory;
   if (!directory.cd(configdirstring)) {
     directory.mkdir(configdirstring);
@@ -170,15 +170,15 @@ int main(int argc, char **argv ) {
         QObject::tr("Cannot access configration directory %1.").arg(configdirstring));
   }
   configDir=directory.path();
-  
+
   if (!zeitkontenfile.isEmpty())
-      zeitkontenfile=canonicalPath(zeitkontenfile);
+      zeitkontenfile=absolutePath(zeitkontenfile);
   if (!bereitschaftsfile.isEmpty())
-      bereitschaftsfile=canonicalPath(bereitschaftsfile);
+      bereitschaftsfile=absolutePath(bereitschaftsfile);
   if (!specialremunfile.isEmpty())
-      specialremunfile=canonicalPath(specialremunfile);
+      specialremunfile=absolutePath(specialremunfile);
   if (!offlinefile.isEmpty())
-      offlinefile=canonicalPath(offlinefile);
+      offlinefile=absolutePath(offlinefile);
 
       
   // Locking: nur eine Instanz von sctime soll laufen

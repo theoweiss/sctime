@@ -26,5 +26,5 @@ extern QDir configDir;
 extern QString lockfilePath;
 void logError(const QString& msg);
 void trace(const QString& msg);
-QString canonicalPath(QString);
+QString absolutePath(QString);
 #endif
