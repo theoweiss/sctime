@@ -170,11 +170,13 @@ public:
     void driftKorrektur();
     void callNightTimeBeginDialog();
     void callNightTimeEndDialog();
+    void callCantSaveDialog();
   protected:
     virtual void moveEvent( QMoveEvent *event);
   private:
     TimeMainWindow() {};
     void checkLock();
+    bool checkConfigDir();
     void updateTaskbarTitle(int zeit);
     void closeEvent(QCloseEvent * event);
     void refreshAfterColorChange(QString&, QString&, QString&);
@@ -225,6 +227,7 @@ public:
     void tageswechsel();
     void zeitKorrektur(int delta);
     bool paused;
+    QDialog* cantSaveDialog;
     int stopTimers(const QString& grund); // rv: Sekunden seit letztem Tick
     void resumeTimers(int secSinceTick, const QString& reason);
 };

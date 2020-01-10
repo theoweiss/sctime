@@ -88,6 +88,7 @@ TimeMainWindow::TimeMainWindow(Lock* lock):QMainWindow(), startTime(QDateTime::c
   pausedAbzur=false;
   inPersoenlicheKontenAllowed=true;
   powerToolBar = NULL;
+  cantSaveDialog = NULL;
   settings=new SCTimeXMLSettings();
   settings->readSettings(abtList);
 
@@ -829,13 +830,34 @@ void TimeMainWindow::save()
   kontoTree->getColumnWidthList(columnwidthlist);
   settings->setColumnWidthList(columnwidthlist);
   settings->setLastRecordedTimestamp(lastMinuteTick);
-  checkLock();
   settings->setMainWindowGeometry(pos(),size());
-  settings->writeSettings(abtListToday);
-  settings->writeShellSkript(abtListToday);
-  if (abtList!=abtListToday) {
-    settings->writeSettings(abtList);
-    settings->writeShellSkript(abtList);
+  if (checkConfigDir()) {
+    checkLock();
+    settings->writeSettings(abtListToday);
+    settings->writeShellSkript(abtListToday);
+    if (abtList!=abtListToday) {
+      settings->writeSettings(abtList);
+      settings->writeShellSkript(abtList);
+    }
+  }
+}
+
+bool TimeMainWindow::checkConfigDir() {
+  bool result = configDir.exists();
+  if (!result) {
+    QTimer::singleShot(0, this, SLOT(callCantSaveDialog()));
+  }
+  return result;
+}
+
+void TimeMainWindow::callCantSaveDialog() {
+  if (cantSaveDialog==NULL) {
+    QMessageBox* msg = new QMessageBox();
+    cantSaveDialog=msg;
+    msg->setText(tr("An error occured when saving data. Please try again."));
+    msg->exec();
+    delete cantSaveDialog;
+    cantSaveDialog = NULL;
   }
 }
 
@@ -974,56 +996,65 @@ void TimeMainWindow::eintragEntfernen()
  * Aendert das Datum: dazu werden zuerst die aktuellen Zeiten und Einstellungen gespeichert,
  * sodann die Daten fuer das angegebene Datum neu eingelesen.
  */
-void TimeMainWindow::changeDate(const QDate& datum)
+void TimeMainWindow::changeDate(const QDate &datum)
 {
-  bool currentDateSel = (datum==QDate::currentDate());
-  kontoTree->flagClosedPersoenlicheItems();
-  std::vector<int> columnwidthlist;
-  kontoTree->getColumnWidthList(columnwidthlist);
-  settings->setColumnWidthList(columnwidthlist);
-  if (abtListToday!=abtList) {
-    settings->writeSettings(abtListToday);
-    settings->writeShellSkript(abtListToday);
-    settings->writeSettings(abtList);
-    settings->writeShellSkript(abtList);
-    //if (currentDateSel) {
-      delete abtList;
-      abtList=NULL;
-    //}
-  } else {
-    checkLock();
-    settings->writeSettings(abtList);
-    settings->writeShellSkript(abtList);
-  }
-  if (currentDateSel) {
-    abtList=abtListToday;
-    if (abtListToday->getDatum()!=datum) {
-      abtListToday->setDatum(datum);
-    }
-  }
-  else {
-    abtList=new AbteilungsListe(datum,abtListToday);
-  }
-  abtList->clearKonten();
-  settings->readSettings(abtList);
-
-  kontoTree->load(abtList);
-  kontoTree->closeFlaggedPersoenlicheItems();
-  kontoTree->showAktivesProjekt();
-  if (currentDateSel) {
-     updateSpecialModesAfterPause();
-  }
-  zeitChanged();
-  emit (currentDateSelected(currentDateSel));
-  trace(tr("Day set to: ") + datum.toString());
-  statusBar->dateWarning(!currentDateSel, datum);
-  //Append Warning if current file is checked in
-  if( !currentDateSel ){
-    if(abtList->checkInState())
+    if (checkConfigDir())
     {
-      statusBar->appendWarning(!currentDateSel, tr(" -- This day has already been checked in!"));
+        checkLock();
+        bool currentDateSel = (datum == QDate::currentDate());
+        kontoTree->flagClosedPersoenlicheItems();
+        std::vector<int> columnwidthlist;
+        kontoTree->getColumnWidthList(columnwidthlist);
+        settings->setColumnWidthList(columnwidthlist);
+        if (abtListToday != abtList)
+        {
+            settings->writeSettings(abtListToday);
+            settings->writeShellSkript(abtListToday);
+            settings->writeSettings(abtList);
+            settings->writeShellSkript(abtList);
+            delete abtList;
+            abtList = NULL;
+        }
+        else
+        {
+            settings->writeSettings(abtList);
+            settings->writeShellSkript(abtList);
+        }
+        if (currentDateSel)
+        {
+            abtList = abtListToday;
+            if (abtListToday->getDatum() != datum)
+            {
+                abtListToday->setDatum(datum);
+            }
+        }
+        else
+        {
+            abtList = new AbteilungsListe(datum, abtListToday);
+        }
+        abtList->clearKonten();
+        settings->readSettings(abtList);
+
+        kontoTree->load(abtList);
+        kontoTree->closeFlaggedPersoenlicheItems();
+        kontoTree->showAktivesProjekt();
+        if (currentDateSel)
+        {
+            updateSpecialModesAfterPause();
+        }
+        zeitChanged();
+        emit(currentDateSelected(currentDateSel));
+        trace(tr("Day set to: ") + datum.toString());
+        statusBar->dateWarning(!currentDateSel, datum);
+        //Append Warning if current file is checked in
+        if (!currentDateSel)
+        {
+            if (abtList->checkInState())
+            {
+                statusBar->appendWarning(!currentDateSel, tr(" -- This day has already been checked in!"));
+            }
+        }
     }
-  }
 }
 
 void TimeMainWindow::refreshKontoListe() {
@@ -1038,18 +1069,21 @@ void TimeMainWindow::commitKontenliste(DSResult data) {
   std::vector<int> columnwidthlist;
   kontoTree->getColumnWidthList(columnwidthlist);
   settings->setColumnWidthList(columnwidthlist);
-  settings->writeSettings(abtList); // die Settings ueberstehen das Reload nicht
-  int diff = abtList->getZeitDifferenz();
-  abtList->reload(data);
-  settings->readSettings(abtList);
-  if (abtList!=abtListToday) {
-    settings->writeSettings(abtListToday); // die Settings ueberstehen das Reload nicht
-    abtListToday->reload(data);
-    settings->readSettings(abtListToday);
+  if (checkConfigDir()) {
+    checkLock();
+    settings->writeSettings(abtList); // settings wont survive the reload
+    int diff = abtList->getZeitDifferenz();
+    abtList->reload(data);
+    settings->readSettings(abtList);
+    if (abtList!=abtListToday) {
+        settings->writeSettings(abtListToday); // settings wont survive the reload
+        abtListToday->reload(data);
+        settings->readSettings(abtListToday);
+    }
+    kontoTree->load(abtList);
+    abtList->setZeitDifferenz(diff);
   }
-  kontoTree->load(abtList);
   kontoTree->closeFlaggedPersoenlicheItems();
-  abtList->setZeitDifferenz(diff);
   statusBar->showMessage(tr("Account list successfully read."), 2000);
   QApplication::restoreOverrideCursor();
   QMetaObject::invokeMethod(this, "aktivesKontoPruefen", Qt::QueuedConnection);
