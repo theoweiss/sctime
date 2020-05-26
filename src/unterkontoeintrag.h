@@ -21,6 +21,7 @@
 #include "specialremuntypemap.h"
 
 #include <QString>
+#include <QSet>
 
 #define UK_PERSOENLICH 1
 #define UK_AKTIV       2

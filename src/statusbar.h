@@ -19,6 +19,7 @@
 #define  STATUSBAR_H
 
 #include <QWidget>
+#include <QSet>
 #include <QString>
 #include <QStatusBar>
 #include <QLabel>
