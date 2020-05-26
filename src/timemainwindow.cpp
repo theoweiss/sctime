@@ -20,6 +20,7 @@
 #include <QTextCodec>
 #include <QClipboard>
 #include <QApplication>
+#include <QDesktopWidget>
 #include <QMenu>
 #include <QMenuBar>
 #include <QFont>
