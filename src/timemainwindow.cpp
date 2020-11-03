@@ -35,6 +35,7 @@
 #include <QTextBrowser>
 #include <QAction>
 #include <QMutex>
+#include <QDesktopWidget>
 
 #include "globals.h"
 #include "time.h"
