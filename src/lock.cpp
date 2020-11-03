@@ -23,7 +23,7 @@
 #include <fcntl.h> // (_)O_RDWR
 
 #ifdef WIN32
-#include <Windows.h>
+#include <windows.h>
 #include <io.h>
 
 #else // !WIN32
