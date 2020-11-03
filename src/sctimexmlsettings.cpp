@@ -929,7 +929,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
 
 QString SCTimeXMLSettings::color2str(const QColor& color)
 {
-  return QString().sprintf("#%.2x%.2x%.2x",color.red(),color.green(),color.blue());
+  return QString("#%1%2%3").arg(color.red(),2,16,QChar('0')).arg(color.green(),2,16,QChar('0')).arg(color.blue(),2,16,QChar('0'));
 }
 
 QColor SCTimeXMLSettings::str2color(const QString& str)

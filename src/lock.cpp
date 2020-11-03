@@ -81,7 +81,7 @@ bool Lock::check() {
 }
 
 #ifdef WIN32
-LockLocal::LockLocal(const QString& name, bool user):path((user ? "Local\\" : "Global\\" ) + name),name(name),user(user) {}
+LockLocal::LockLocal(const QString& name, bool user):user(user),name(name),path((user ? "Local\\" : "Global\\" ) + name) {}
 
 bool LockLocal::_acquire() {
   handle = CreateEventA(NULL, false, true, name.toLocal8Bit());

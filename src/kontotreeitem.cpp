@@ -140,7 +140,7 @@ void KontoTreeItem::setBgColor(const QColor bgColor)
     m_bgColor = bgColor;
     for( int i=0; i<NUM_COLUMNS; i++ )
     {
-      setBackgroundColor(i, bgColor);
+      setBackground(i, QBrush(bgColor));
     }
   }
 }

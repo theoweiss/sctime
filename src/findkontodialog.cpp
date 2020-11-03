@@ -73,7 +73,7 @@ void FindKontoDialog::createWidgets()
 
   valueChoose = new QComboBox(this);
   valueChoose->setEditable(true);
-  valueChoose->setAutoCompletion(false);
+  valueChoose->setCompleter(NULL);
   valueChoose->setFocus();
   valueChoose->setSizeAdjustPolicy(QComboBox::AdjustToMinimumContentsLengthWithIcon);
   valueChoose->setMinimumContentsLength(40);

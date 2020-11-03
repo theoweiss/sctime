@@ -169,7 +169,7 @@ int main(int argc, char **argv ) {
       fatal(QObject::tr("sctime: Configuration problem"),
         QObject::tr("Cannot access configration directory %1.").arg(configdirstring));
   }
-  configDir=directory.path();
+  configDir.setPath(directory.path());
 
   if (!zeitkontenfile.isEmpty())
       zeitkontenfile=absolutePath(zeitkontenfile);
