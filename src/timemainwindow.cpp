@@ -36,6 +36,7 @@
 #include <QAction>
 #include <QMutex>
 #include <QDesktopWidget>
+#include <QLocale>
 
 #include "globals.h"
 #include "time.h"
@@ -797,9 +798,11 @@ void TimeMainWindow::pause() {
         secSinceTick = 60;
     }
     settings->setLastRecordedTimestamp(lastMinuteTick);
-    QMessageBox::warning(this, tr("sctime: Pause"), tr("Accounting has been stopped. Resume work with OK."));
-    paused = false;
     QDateTime now = QDateTime::currentDateTime();
+    QString currtime= QLocale().toString(now.time(), QLocale::ShortFormat);
+    QMessageBox::warning(this, tr("sctime: Pause"), tr("Accounting has been stopped at %1. Resume work with OK.").arg(currtime));
+    paused = false;
+    now = QDateTime::currentDateTime();
     sekunden = drift;
     trace(tr("End of break: ") +now.toString());
     autosavetimer->start();

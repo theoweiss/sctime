@@ -1341,8 +1341,8 @@ Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?
     </message>
     <message>
         <location filename="timemainwindow.cpp" line="788"/>
-        <source>Accounting has been stopped. Resume work with OK.</source>
-        <translation>Die Zeiterfassung wurde angehalten. Ende der Pause mit OK.</translation>
+        <source>Accounting has been stopped at %1. Resume work with OK.</source>
+        <translation>Die Zeiterfassung wurde um %1 Uhr angehalten. Ende der Pause mit OK.</translation>
     </message>
     <message>
         <location filename="timemainwindow.cpp" line="792"/>
