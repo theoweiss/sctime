@@ -143,7 +143,7 @@ int JSONReaderBase::loadDataNewerThan(int version)
   QByteArray byteData;
   try {
      byteData = getByteArray();
-  } catch (JSONReaderException &e) {
+  } catch (JSONReaderException *e) {
     return INVALIDDATA;
   }
   data=QJsonDocument::fromJson(byteData);
