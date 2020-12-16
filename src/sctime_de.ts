@@ -738,8 +738,8 @@ Beachten Sie bittte die Hilfefunktion für weitere Informationen (F1)!</translat
     </message>
     <message>
         <location filename="sctimexmlsettings.cpp" line="893"/>
-        <source>opening file %1 for writing: %2</source>
-        <translation>Datei %1 zum Schreiben öffnen: %2</translation>
+        <source>opening file %1 for writing failed. Please make sure the sctime settings directory is available. Details: %2</source>
+        <translation>Datei %1 konnte nicht zum Schreiben geöffnet werden. Bitte stellen sie sicher dass das sctime Einstellungsverzeichnis verfügbar ist. Details: %2</translation>
     </message>
     <message>
         <location filename="sctimexmlsettings.cpp" line="911"/>

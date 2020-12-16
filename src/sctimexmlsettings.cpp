@@ -890,7 +890,7 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   QString filename(configDir.filePath(global ? "settings.xml" : "zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml"));
   QFile fnew(filename + ".tmp");
   if (!fnew.open(QIODevice::WriteOnly)) {
-      QMessageBox::critical(NULL, QObject::tr("sctime: saving settings"), QObject::tr("opening file %1 for writing: %2").arg(fnew.fileName(), fnew.errorString()));
+      QMessageBox::critical(NULL, QObject::tr("sctime: saving settings"), QObject::tr("opening file %1 for writing failed. Please make sure the sctime settings directory is available. Details: %2").arg(fnew.fileName(), fnew.errorString()));
       return;
   }
   // may contain passwords and private data in general
