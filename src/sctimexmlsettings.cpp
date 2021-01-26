@@ -889,6 +889,13 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
 
   QString filename(configDir.filePath(global ? "settings.xml" : "zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml"));
   QFile fnew(filename + ".tmp");
+  QDateTime filemod = QFileInfo(filename).lastModified();
+  if (!global && m_lastSave.isValid() && filemod.isValid() && filemod>m_lastSave.addSecs(1)) {
+      QMessageBox::StandardButton answer = QMessageBox::question(NULL, QObject::tr("sctime: saving settings"), QObject::tr("%1 has been modified since the last changes done by this sctime instance. Do you wanto to overwrite theses changes?").arg(fnew.fileName()));
+      if (answer!=QMessageBox::Yes) {
+         return;
+      }
+  }
   if (!fnew.open(QIODevice::WriteOnly)) {
       QMessageBox::critical(NULL, QObject::tr("sctime: saving settings"), QObject::tr("opening file %1 for writing failed. Please make sure the sctime settings directory is available. Details: %2").arg(fnew.fileName(), fnew.errorString()));
       return;
@@ -925,6 +932,9 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
                          QObject::tr("%1 cannot be renamed to %2: %3").arg(fnew.fileName(), filename, fnew.errorString()));
 
   #endif
+  if (!global) {
+     m_lastSave = QDateTime::currentDateTime();
+  }
 }
 
 QString SCTimeXMLSettings::color2str(const QColor& color)
