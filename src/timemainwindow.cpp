@@ -866,12 +866,20 @@ void TimeMainWindow::callCantSaveDialog() {
 }
 
 void TimeMainWindow::checkLock() {
-  if (!m_lock->check()) {
+  if (m_lock->check()==LS_CONFLICT) {
     QMessageBox msg;
     msg.setText(tr("The program will quit in a few seconds without saving."));
     msg.setInformativeText(m_lock->errorString());
     qDebug() << tr("The program will now quit without saving.") << m_lock->errorString();
     QTimer::singleShot(10000, this, SLOT(quit()));
+    msg.exec();
+    return;
+  }
+  if (m_lock->check()!=LS_OK) {
+    QMessageBox msg;
+    msg.setText(tr("Unclear state of Lockfile. Please check that there is no other instance of sctime running and that you have access to the sctime config directory. Otherwise loss of data may occur."));
+    msg.setInformativeText(m_lock->errorString());
+    qDebug() << tr("Unkown state of lockfile.") << m_lock->errorString();
     msg.exec();
   }
 }

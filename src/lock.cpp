@@ -71,13 +71,23 @@ bool Lock::release() {
   return (_release() && rv);
 }
 
-bool Lock::check() {
-  if (!_check()) return false;
-  if (next && !next->_check()) {
-    errStr = next->errorString();
-    return false;
+LockState Lock::check() {
+  LockState lockstate=_check();
+  if (lockstate!=LS_OK) {
+    errStr = errorString();
   }
-  return true;
+  if (lockstate==LS_CONFLICT) {
+    return lockstate;
+  }
+  LockState lockstatenext=LS_OK;
+  if (next) {
+    lockstatenext = next->_check();
+  }
+  if (lockstatenext!=LS_OK) {
+    errStr = next->errorString();
+    return lockstatenext;
+  }
+  return lockstate;
 }
 
 #ifdef WIN32
@@ -214,7 +224,7 @@ bool Lockfile::_release() {
   return false;
 }
 
-bool Lockfile::_check() {
+LockState Lockfile::_check() {
   QFile f(path);
   if (f.open(QIODevice::ReadOnly)) {
     QTextStream in(&f);
@@ -227,14 +237,18 @@ bool Lockfile::_check() {
         // our hostname has changed since we last looked at the lock file -
         // update its contents
         hostname = QHostInfo::localHostName();
-        return _update();
+        if (!_update()) {
+          return LS_CONFLICT;
+        }
       }
 
-      return true;
+      return LS_OK;
     }
     errStr = QObject::tr("lock file %1 has been changed by someone else: %2").arg(path, line);
+    return LS_CONFLICT;
   }
-  else
+  else{
     errStr = QObject::tr("lock file %1 has been deleted by someone else.").arg(path);
-  return false;
+  }
+  return LS_UNKNOWN;
 }
