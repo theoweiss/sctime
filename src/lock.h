@@ -19,6 +19,12 @@
 #define LOCK_H
 #include <QString>
 
+enum LockState {
+  LS_OK,
+  LS_CONFLICT,
+  LS_UNKNOWN
+};
+
 
 class Lock {
 public:
@@ -27,7 +33,7 @@ public:
   inline QString errorString() const { return errStr; }
   bool acquire();
   bool release();
-  bool check();
+  LockState check();
 protected:
   Lock();
   QString errStr;
@@ -36,7 +42,7 @@ protected:
 private:
   virtual bool _acquire() = 0;
   virtual bool _release() = 0;
-  virtual bool _check() { return true; }
+  virtual LockState _check() { return LS_OK; }
 };
 
 class LockLocal : public Lock {
@@ -61,7 +67,7 @@ public:
   Lockfile(const QString& path, const bool localExclusionProvided);
   virtual bool _acquire();
   virtual bool _release();
-  virtual bool _check();
+  virtual LockState _check();
   const QString path;
   const bool localExclusionProvided;
 private:
