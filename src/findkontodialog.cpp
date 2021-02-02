@@ -23,6 +23,7 @@
 #include <QTreeWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <QVector>
 
 #include "abteilungsliste.h"
 #include "kontotreeview.h"
@@ -32,6 +33,7 @@
 #define KONTO QObject::tr("Account")
 #define UNTERKONTO QObject::tr("Subaccount")
 #define KOMMENTAR QObject::tr("Comment")
+#define MICROACCOUNT QObject::tr("Microaccount")
 
 /**
  * Baut den Suchdialog auf. In abtlist wird die zu durchsuchende AbteilungsListe angegeben
@@ -51,6 +53,7 @@ FindKontoDialog::FindKontoDialog(AbteilungsListe* abtlist, QWidget * parent):QDi
   typeStringList.append(KONTO);
   typeStringList.append(UNTERKONTO);
   typeStringList.append(KOMMENTAR);
+  typeStringList.append(MICROACCOUNT);
 
   typeChoose->insertItems(0,typeStringList);
 
@@ -267,6 +270,7 @@ void FindKontoDialog::doSearch()
     searchKonto();
     searchUnterKonto();
     searchKommentar();
+    searchMicroAccount();
   } else if( chosenTypeString == KONTO || chosenTypeString == ALLE )
   {
     searchKonto();
@@ -276,7 +280,11 @@ void FindKontoDialog::doSearch()
   } else if( chosenTypeString == KOMMENTAR )
   {
     searchKommentar();
+  } else if( chosenTypeString == MICROACCOUNT )
+  {
+    searchMicroAccount();
   }
+
 
   resultTree->expandAll();
   resultTree->resizeColumnToContents( 0 );
@@ -378,6 +386,58 @@ void FindKontoDialog::searchKommentar()
               }
               kommentaritem= new QTreeWidgetItem( unterkontoitem, 0);
               kommentaritem->setText(0,itEt->second.kommentar);
+              setFoundItem( kommentaritem );
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+void FindKontoDialog::searchMicroAccount()
+{
+  for (AbteilungsListe::iterator posAbt=abtlist->begin(); posAbt!=abtlist->end(); ++posAbt)
+  {
+    KontoListe* kontoliste=&(posAbt->second);
+    for (KontoListe::iterator itKo=kontoliste->begin(); itKo!=kontoliste->end(); ++itKo)
+    {
+      UnterKontoListe* unterkontoliste =&(itKo->second);
+      for(UnterKontoListe::iterator itUko=unterkontoliste->begin(); itUko!=unterkontoliste->end(); ++itUko)
+      {
+        EintragsListe* eintragliste =&(itUko->second);
+        QVector<DefaultComment>* commentList=eintragliste->getDefaultCommentList();
+        for (int i = 0; i < commentList->size(); ++i) {
+          DefaultComment defcomment = commentList->at(i);
+          if (!defcomment.isMicroAccount()) {
+            continue;
+          }
+          QString kommentar = defcomment.getText();
+          if( kommentar != "" )
+          {
+            if( kommentar.contains(chosenValueString, Qt::CaseInsensitive) )
+            {
+              if( posAbt->first != currentAbteilung )
+              {
+                currentAbteilung = posAbt->first;
+                abteilungsitem = new QTreeWidgetItem( allekonten, 0);
+                abteilungsitem->setText(0, posAbt->first );
+              }
+              if( itKo->first != currentKonto  )
+              {
+                currentKonto = itKo->first;
+                kontoitem= new QTreeWidgetItem( abteilungsitem, 0);
+                kontoitem->setText(0, itKo->first);
+              }
+              if( itUko->first != currentUnterKonto )
+              {
+                currentUnterKonto = itUko->first;
+                unterkontoitem = new QTreeWidgetItem( kontoitem, 0);
+                unterkontoitem->setText(0, itUko->first);
+              }
+              kommentaritem= new QTreeWidgetItem( unterkontoitem, 0);
+              kommentaritem->setText(0,"("+kommentar+")");
+              kommentaritem->setTextColor(0, QColor(QRgb(0x404040)));
               setFoundItem( kommentaritem );
             }
           }

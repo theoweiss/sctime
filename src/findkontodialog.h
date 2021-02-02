@@ -56,6 +56,7 @@ class FindKontoDialog: public QDialog
     void searchKonto();
     void searchUnterKonto();
     void searchKommentar();
+    void searchMicroAccount();
     void setFoundItem(QTreeWidgetItem* item);
     QStringList getNamesFromTreeItems();
 

@@ -1324,6 +1324,11 @@ void TimeMainWindow::callFindKontoDialog()
         QTreeWidgetItem *item = kontoTree->sucheKommentarItem(
               items.at(0), items.at(1), items.at(2),
               items.at(3), items.at(4));
+        // in case we didnt find the comment (e.g. because it was just a default comment), at least open the subaccount
+        if (item==NULL) {
+          item = kontoTree->sucheUnterKontoItem(
+              items.at(0), items.at(1), items.at(2), items.at(3) );
+        }
         openItem( item );
       }
     }
