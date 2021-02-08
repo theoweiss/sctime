@@ -859,6 +859,7 @@ void TimeMainWindow::callCantSaveDialog() {
     QMessageBox* msg = new QMessageBox();
     cantSaveDialog=msg;
     msg->setText(tr("An error occured when saving data. Please try again."));
+    qDebug() << tr("An error occured when saving data.");
     msg->exec();
     delete cantSaveDialog;
     cantSaveDialog = NULL;
@@ -1003,6 +1004,14 @@ void TimeMainWindow::eintragEntfernen()
   zeitChanged();
 }
 
+void TimeMainWindow::callSwitchDateErrorDialog()
+{
+    QMessageBox msg;
+    QString msgtext = tr("Could not switch day due to problems with saving. ATTENTION: that also means that the clock might be running on the wrong day. Please fix the problem with saving and switch manually to the current date afterwards.");
+    msg.setText(msgtext);
+    qDebug() << msgtext;
+    msg.exec();
+}
 
 /**
  * Aendert das Datum: dazu werden zuerst die aktuellen Zeiten und Einstellungen gespeichert,
@@ -1020,9 +1029,13 @@ void TimeMainWindow::changeDate(const QDate &datum)
         settings->setColumnWidthList(columnwidthlist);
         if (abtListToday != abtList)
         {
-            settings->writeSettings(abtListToday);
+            if (!(settings->writeSettings(abtListToday) &&
+                 settings->writeSettings(abtList)
+                 )) {
+                   callSwitchDateErrorDialog();
+                   return;
+                 }
             settings->writeShellSkript(abtListToday);
-            settings->writeSettings(abtList);
             settings->writeShellSkript(abtList);
             delete abtList;
             abtList = NULL;
@@ -1066,6 +1079,8 @@ void TimeMainWindow::changeDate(const QDate &datum)
                 statusBar->appendWarning(!currentDateSel, tr(" -- This day has already been checked in!"));
             }
         }
+    } else {
+      callSwitchDateErrorDialog();
     }
 }
 

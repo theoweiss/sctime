@@ -171,6 +171,7 @@ public:
     void callNightTimeBeginDialog();
     void callNightTimeEndDialog();
     void callCantSaveDialog();
+    void callSwitchDateErrorDialog();
   protected:
     virtual void moveEvent( QMoveEvent *event);
   private:

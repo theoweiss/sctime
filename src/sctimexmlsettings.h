@@ -99,7 +99,7 @@ public:
      
     }
 
-    void writeSettings(AbteilungsListe* abtList);
+    bool writeSettings(AbteilungsListe* abtList);
 
     void readSettings();
 
@@ -409,7 +409,7 @@ public:
 
   private:
 
-    void writeSettings(bool global, AbteilungsListe* abtList);
+    bool writeSettings(bool global, AbteilungsListe* abtList);
 
     void readSettings(bool global, AbteilungsListe* abtList);
     
