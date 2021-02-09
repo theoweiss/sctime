@@ -1296,8 +1296,8 @@ Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?
     </message>
     <message>
         <location filename="timemainwindow.cpp" line="1010"/>
-        <source>Could not switch day due to problems with saving. ATTENTION: that also means that the clock might be running on the wrong day.</source>
-        <translation type="unfinished"></translation>
+        <source>Could not switch day due to problems with saving. ATTENTION: that also means that the clock might be running on the wrong day. Please fix the problem with saving and switch manually to the current date afterwards.</source>
+        <translation>Konnte den Tag nicht ändern, da ein Fehler beim speichern auftrat. ACHTUNG: das kann bedeuten, dass die Uhr für den falschen Tag läuft. Bitte beheben Sie das Speicherproblem und wecheln Sie danach manuell auf das heutige Datum.</translation>
     </message>
     <message>
         <location filename="timemainwindow.cpp" line="1462"/>
