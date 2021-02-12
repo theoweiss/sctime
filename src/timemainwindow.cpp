@@ -858,7 +858,10 @@ void TimeMainWindow::callCantSaveDialog() {
   if (cantSaveDialog==NULL) {
     QMessageBox* msg = new QMessageBox();
     cantSaveDialog=msg;
-    msg->setText(tr("An error occured when saving data. Please try again."));
+    msg->setWindowTitle("Error on saving");
+    msg->setText(tr("An error occured when saving data. Please check permissions and connectivity of your target directory. If this error persists and you close sctime, you will loose all changes since the last successful save (an automatic save should occur every 5 minutes)."));
+    msg->setIcon(QMessageBox::Warning);
+    msg->setStandardButtons(QMessageBox::Close);
     qDebug() << tr("An error occured when saving data.");
     msg->exec();
     delete cantSaveDialog;

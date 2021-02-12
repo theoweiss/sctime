@@ -1274,8 +1274,8 @@ Soll die entstandene Differenz auf das aktive Unterkonto gutschrieben werden?
     </message>
     <message>
         <location filename="timemainwindow.cpp" line="861"/>
-        <source>An error occured when saving data. Please try again.</source>
-        <translation>Ein Fehler trat beim Speichern auf. Bitte versuchen Sie es erneut.</translation>
+        <source>An error occured when saving data. Please check permissions and connectivity of your target directory. If this error persists and you close sctime, you will loose all changes since the last successful save (an automatic save should occur every 5 minutes).</source>
+        <translation>Ein Fehler trat beim Speichern auf. Bitte überprüfen sie Berechtigungen und Verbindung zum Zielverzeichnis. Wenn dieser Fehler weiter besteht und Sie sctime beenden, gehen alle Änderungen seit der letzten erfolgreichen Speicherung verloren (ein automatisches Speichern findet alle 5 Minuten statt).</translation>
     </message>
     <message>
         <location filename="timemainwindow.cpp" line="862"/>
