@@ -930,13 +930,14 @@ bool SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
                         QObject::tr("%1 cannot be renamed to %2: %3").arg(fnew.fileName(), filename, strerror(errno)));
       return false;
   }
-#endif
+#else
   fcurrent.remove();
   if (!fnew.rename(filename)) {
     QMessageBox::critical(NULL, QObject::tr("sctime: saving settings"),
                          QObject::tr("%1 cannot be renamed to %2: %3").arg(fnew.fileName(), filename, fnew.errorString()));
     return false;
   }
+  #endif
 
   #endif
   if (!global) {
