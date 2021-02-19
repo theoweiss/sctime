@@ -49,7 +49,7 @@ class TimeMainWindow: public QMainWindow
 {
     Q_OBJECT
 public:
-    TimeMainWindow(Lock* lock);
+    TimeMainWindow(Lock* lock, QString logfile);
     QTreeWidget* getKontoTree();
     virtual ~TimeMainWindow();
     SCTimeXMLSettings* settings;

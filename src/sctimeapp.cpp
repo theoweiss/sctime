@@ -63,14 +63,14 @@ bool SctimeApp::winEventFilter(MSG * msg, long * result) {
 #endif
 
 void SctimeApp::init(Lock* lock, QStringList& dataSourceNames, const QString& zeitkontenfile,
- const QString& bereitschaftsfile, const QString& specialremunfile, const QString& offlinefile)
+ const QString& bereitschaftsfile, const QString& specialremunfile, const QString& offlinefile, const QString& logfile)
 {
   m_lock=lock;
   SCTimeXMLSettings settings;
   settings.readSettings();
   if (dataSourceNames.isEmpty()) dataSourceNames = settings.backends.split(" ");
   setupDatasources(dataSourceNames, settings, zeitkontenfile, bereitschaftsfile, specialremunfile,offlinefile);
-  mainWindow = new TimeMainWindow(m_lock);
+  mainWindow = new TimeMainWindow(m_lock, logfile);
 #ifndef WIN32
   term = new SignalHandler(SIGTERM);
   connect(term, SIGNAL(received()), this, SLOT(closeAllWindows()));

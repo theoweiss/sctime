@@ -37,6 +37,7 @@
 #include <QMutex>
 #include <QDesktopWidget>
 #include <QLocale>
+#include <QTextStream>
 
 #include "globals.h"
 #include "time.h"
@@ -68,6 +69,8 @@ QTreeWidget* TimeMainWindow::getKontoTree() { return kontoTree; }
 
 static QString logTextLastLine(QObject::tr("-- Start --"));
 static QString logText(logTextLastLine + "\n");
+static QFile *logFile;
+static QTextStream *logStream=NULL;
 void trace(const QString &msg) {
   logError(msg);
 }
@@ -75,10 +78,21 @@ void trace(const QString &msg) {
 void logError(const QString &msg) {
   logText.append(msg).append("\n");
   logTextLastLine = msg;
+  if (logStream!=NULL) {
+    (*logStream)<<msg<<endl;
+  }
 }
 
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
-TimeMainWindow::TimeMainWindow(Lock* lock):QMainWindow(), startTime(QDateTime::currentDateTime()) {
+TimeMainWindow::TimeMainWindow(Lock* lock, QString logfile):QMainWindow(), startTime(QDateTime::currentDateTime()) {
+  if (!logfile.isNull() && !logfile.isEmpty()) {
+    logFile = new QFile(logfile);
+    if (logFile->open(QIODevice::ReadWrite)) {
+       logStream=new QTextStream(logFile);
+    } else {
+      logStream = NULL;
+    }
+  }
   m_lock = lock;
   paused = false;
   sekunden = 0;
