@@ -2,7 +2,7 @@ TEMPLATE = app
 CONFIG += warn_on qt uic
 CONFIG += c++11
 # you have to explicitly recompile sctime.cpp whenever you change this value
-VERSION = 1.3.0-alpha
+VERSION = 1.3.0
 DEFINES += APP_VERSION=$$VERSION
 QT += xml gui core network sql widgets
 TARGET = sctime
