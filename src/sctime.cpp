@@ -145,6 +145,8 @@ int main(int argc, char **argv ) {
   parser.addOption(offlinefileopt);
   QCommandLineOption datasourceopt("datasource","", QObject::tr("source"));
   parser.addOption(datasourceopt);
+  QCommandLineOption logfileopt("logfile","",QObject::tr("file"));
+  parser.addOption(logfileopt);
   parser.process(*app);
   
   QString configdirstring=parser.value(configdiropt);
@@ -152,6 +154,7 @@ int main(int argc, char **argv ) {
   QString bereitschaftsfile=parser.value(bereitschaftsfileopt);
   QString specialremunfile=parser.value(specialremunfileopt);
   QString offlinefile=parser.value(offlinefileopt);
+  QString logfile=parser.value(logfileopt);
   QStringList dataSourceNames=parser.values(datasourceopt);
 
   if (configdirstring.isEmpty()) {
@@ -179,6 +182,8 @@ int main(int argc, char **argv ) {
       specialremunfile=absolutePath(specialremunfile);
   if (!offlinefile.isEmpty())
       offlinefile=absolutePath(offlinefile);
+  if (!logfile.isEmpty())
+      logfile=absolutePath(logfile);
 
       
   // Locking: nur eine Instanz von sctime soll laufen
@@ -204,7 +209,7 @@ int main(int argc, char **argv ) {
         QMessageBox::critical(NULL, QObject::tr("Unclean state"), QObject::tr("It looks like the last instance of sctime might have crashed, probably at %1. Please check if the recorded times of that date are correct.").arg(lasttime.toLocalTime().toString()), QMessageBox::Ok);
       }
   }
-  app->init(&local, dataSourceNames, zeitkontenfile, bereitschaftsfile, specialremunfile, offlinefile);
+  app->init(&local, dataSourceNames, zeitkontenfile, bereitschaftsfile, specialremunfile, offlinefile, logfile);
   app->exec();
   
   // warning: dont rely on anything being executed beyond that point
