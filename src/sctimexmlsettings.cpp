@@ -151,11 +151,19 @@ void SCTimeXMLSettings::readSettings()
   readSettings(true, NULL);
 }
 
-int SCTimeXMLSettings::compVersion(const QString& version1, const QString& version2)
+int SCTimeXMLSettings::compVersion(const QString& v1, const QString& v2)
 {
+  QString version1(v1);
+  QString version2(v2);
+  if (version1.startsWith("v")) {
+    version1=version1.remove(0,1);
+  }
+  if (version2.startsWith("v")) {
+    version2=version2.remove(0,1);
+  }
   QStringList v1list=version1.split(".");
   QStringList v2list=version2.split(".");
-  for (int i=0; i<v1list.size(); i++) {
+  for (int i=0; i<v1list.size() ; i++) {
      if (i>=v2list.size())
 	return 1;
      int v1=v1list[i].toInt();
