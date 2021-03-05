@@ -118,16 +118,18 @@ void KontoTreeItem::setGray()
   columns.push_back(COL_TIME);
   columns.push_back(COL_ACCOUNTABLE);
   QBrush brush;
+  qDebug("setgray");
   for(unsigned int i=0; i<columns.size(); i++)
   {
     brush = foreground( columns.at(i) );
     if ((text(columns.at(i)).simplified()=="0:00")||(text(columns.at(i)).simplified().startsWith("+"))) {
-      brush.setColor( Qt::gray );
+      brush.setColor( Qt::blue );
+      qDebug("setblue");
       isGray=true;      
     }
     else
     {
-      brush.setColor(Qt::black);
+      brush.setColor(Qt::red);
       isGray=false;
     }
     setForeground(columns.at(i), brush);
