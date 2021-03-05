@@ -117,22 +117,21 @@ void KontoTreeItem::setGray()
   std::vector<int> columns;
   columns.push_back(COL_TIME);
   columns.push_back(COL_ACCOUNTABLE);
-  QBrush brush;
   qDebug("setgray");
   for(unsigned int i=0; i<columns.size(); i++)
   {
-    brush = foreground( columns.at(i) );
     if ((text(columns.at(i)).simplified()=="0:00")||(text(columns.at(i)).simplified().startsWith("+"))) {
-      brush.setColor( Qt::blue );
+      setForeground(columns.at(i), QBrush(Qt::gray));
+      setBackground(columns.at(i), QBrush(Qt::blue));
       qDebug("setblue");
       isGray=true;      
     }
     else
     {
-      brush.setColor(Qt::red);
+      setForeground(columns.at(i), QBrush(Qt::black));
+      setBackground(columns.at(i), QBrush(Qt::red));
       isGray=false;
     }
-    setForeground(columns.at(i), brush);
   }
 }
 
