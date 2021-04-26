@@ -190,9 +190,8 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
     filename="settings.xml";
   else {
     filename = "zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml";
-    QFileInfo qf(configDir.filePath(abtList->getDatum().toString("yyyy")), filename);
     if (abtList) {
-        if (qf.exists()) {
+        if (QFile::exists(configDir.filePath(abtList->getDatum().toString("yyyy")) +"/" + filename)) {
           filename = abtList->getDatum().toString("yyyy")+ "/" + filename;
           abtList->setCheckInState(true);
         }
@@ -916,7 +915,7 @@ bool SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   const char xmlcharmap[] = "UTF-8";
   QTextStream stream(&fnew);
   stream.setCodec(xmlcharmap);
-  stream<<"<?xml version=\"1.0\" encoding=\""<< xmlcharmap <<"\"?>"<<endl;
+  stream<<"<?xml version=\"1.0\" encoding=\""<< xmlcharmap <<"\"?>\n";
   stream<<doc.toString()<<endl;
   fnew.close();
   QFile fcurrent(filename);
