@@ -26,6 +26,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QDebug>
+#include <QTime>
 #ifndef WIN32
 #include <langinfo.h>
 #include <errno.h>
@@ -938,12 +939,14 @@ bool SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
       return false;
   }
 #else
+  QTime start = QTime::currentTime();
   if (MoveFileExA(fnew.fileName().toLocal8Bit(), filename.toLocal8Bit(),MOVEFILE_REPLACE_EXISTING)==0)
      {
     QMessageBox::critical(NULL, QObject::tr("sctime: saving settings"),
                          QObject::tr("%1 cannot be renamed to %2").arg(fnew.fileName(), filename));
     return false;
   }
+  trace(QObject::tr("Millisecs elapsed for move: %1").arg(start.msecsTo(QTime::currentTime())));
   #endif
 
   #endif
