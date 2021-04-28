@@ -941,7 +941,7 @@ bool SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   if (MoveFileExA(fnew.fileName().toLocal8Bit(), filename.toLocal8Bit(),MOVEFILE_REPLACE_EXISTING)==0)
      {
     QMessageBox::critical(NULL, QObject::tr("sctime: saving settings"),
-                         QObject::tr("%1 cannot be renamed to %2").arg(fnew.fileName(), filename);
+                         QObject::tr("%1 cannot be renamed to %2").arg(fnew.fileName(), filename));
     return false;
   }
   #endif
