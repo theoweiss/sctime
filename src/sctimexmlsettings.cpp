@@ -899,6 +899,7 @@ bool SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
   }
 
   QString filename(configDir.filePath(global ? "settings.xml" : "zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml"));
+  {
   QFile fnew(filename + ".tmp");
   QDateTime filemod = QFileInfo(filename).lastModified();
   if (!global && m_lastSave.isValid() && filemod.isValid() && filemod>m_lastSave.addSecs(1)) {
@@ -930,20 +931,24 @@ bool SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
     else
       backupSettingsXml = false;
   }
+  }
+QByteArray localNew = (filename + ".tmp").toLocal8Bit();
+QByteArray localTarget = filename.toLocal8Bit();
 #ifndef WIN32
+ 
   // unter Windows funktioniert kein "rename", wenn es den Zielnamen schon gibt.
   // Doch unter UNIX kann ich damit Dateien atomar ersetzen.
-  if (rename(fnew.fileName().toLocal8Bit(), filename.toLocal8Bit())!=0) {
+  if (rename(localNew, localTarget)!=0) {
       QMessageBox::information(NULL, QObject::tr("sctime: saving settings"),
-                        QObject::tr("%1 cannot be renamed to %2: %3").arg(fnew.fileName(), filename, strerror(errno)));
+                        QObject::tr("%1 cannot be renamed to %2: %3").arg((filename + ".tmp"), filename, strerror(errno)));
       return false;
   }
 #else
   QTime start = QTime::currentTime();
-  if (MoveFileExA((filename + ".tmp").toLocal8Bit(), filename.toLocal8Bit(),MOVEFILE_REPLACE_EXISTING)==0)
+  if (MoveFileExA(localNew, localTarget,MOVEFILE_REPLACE_EXISTING)==0)
      {
     QMessageBox::critical(NULL, QObject::tr("sctime: saving settings"),
-                         QObject::tr("%1 cannot be renamed to %2").arg(fnew.fileName(), filename));
+                         QObject::tr("%1 cannot be renamed to %2").arg((filename + ".tmp"), filename));
     return false;
   }
   trace(QObject::tr("Millisecs elapsed for move: %1").arg(start.msecsTo(QTime::currentTime())));
