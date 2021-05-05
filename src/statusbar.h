@@ -23,6 +23,7 @@
 #include <QStatusBar>
 #include <QLabel>
 #include <QDateTime>
+#include <QSet>
 #include "timecounter.h"
 
 /** The status bar of the main window */

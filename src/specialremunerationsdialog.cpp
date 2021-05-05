@@ -17,6 +17,7 @@
 
 #include "specialremunerationsdialog.h"
 #include <QDialog>
+#include <QMessageBox>
 #include "specialremuntypemap.h"
 #include "abteilungsliste.h"
 #include "unterkontoliste.h"

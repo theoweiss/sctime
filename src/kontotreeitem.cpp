@@ -117,20 +117,17 @@ void KontoTreeItem::setGray()
   std::vector<int> columns;
   columns.push_back(COL_TIME);
   columns.push_back(COL_ACCOUNTABLE);
-  QBrush brush;
   for(unsigned int i=0; i<columns.size(); i++)
   {
-    brush = foreground( columns.at(i) );
     if ((text(columns.at(i)).simplified()=="0:00")||(text(columns.at(i)).simplified().startsWith("+"))) {
-      brush.setColor( Qt::gray );
+      setForeground(columns.at(i), QBrush(Qt::gray));
       isGray=true;      
     }
     else
     {
-      brush.setColor(Qt::black);
+      setForeground(columns.at(i), QBrush(Qt::black));
       isGray=false;
     }
-    setForeground(columns.at(i), brush);
   }
 }
 
@@ -140,7 +137,7 @@ void KontoTreeItem::setBgColor(const QColor bgColor)
     m_bgColor = bgColor;
     for( int i=0; i<NUM_COLUMNS; i++ )
     {
-      setBackgroundColor(i, bgColor);
+      setBackground(i, QBrush(bgColor));
     }
   }
 }

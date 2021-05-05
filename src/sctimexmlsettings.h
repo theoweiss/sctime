@@ -85,6 +85,8 @@ public:
       m_overtimeOtherModeActive = false;
       m_publicHolidayModeActive = false;
 
+      m_lastSave = QDateTime();
+
 #ifdef ATOS_ETV_2018
       m_overtimeRegulatedSR = "sc_angeordnete_regulierte_mehrarbeit";
       m_overtimeOtherSR = "sc_angeordnete_sonstige_mehrarbeit";
@@ -97,7 +99,7 @@ public:
      
     }
 
-    void writeSettings(AbteilungsListe* abtList);
+    bool writeSettings(AbteilungsListe* abtList);
 
     void readSettings();
 
@@ -407,7 +409,7 @@ public:
 
   private:
 
-    void writeSettings(bool global, AbteilungsListe* abtList);
+    bool writeSettings(bool global, AbteilungsListe* abtList);
 
     void readSettings(bool global, AbteilungsListe* abtList);
     
@@ -456,6 +458,8 @@ public:
     QTime m_nightModeBegin;
     QList<QTime> m_nightModeAdditionalDialogTimes;
     QTime m_nightModeEnd;
+
+    QDateTime m_lastSave;
 
     bool m_nightModeActive;
     bool m_overtimeRegulatedModeActive;

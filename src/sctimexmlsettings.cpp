@@ -151,11 +151,19 @@ void SCTimeXMLSettings::readSettings()
   readSettings(true, NULL);
 }
 
-int SCTimeXMLSettings::compVersion(const QString& version1, const QString& version2)
+int SCTimeXMLSettings::compVersion(const QString& v1, const QString& v2)
 {
+  QString version1(v1);
+  QString version2(v2);
+  if (version1.startsWith("v")) {
+    version1=version1.remove(0,1);
+  }
+  if (version2.startsWith("v")) {
+    version2=version2.remove(0,1);
+  }
   QStringList v1list=version1.split(".");
   QStringList v2list=version2.split(".");
-  for (int i=0; i<v1list.size(); i++) {
+  for (int i=0; i<v1list.size() ; i++) {
      if (i>=v2list.size())
 	return 1;
      int v1=v1list[i].toInt();
@@ -549,12 +557,14 @@ void SCTimeXMLSettings::readSettings(bool global, AbteilungsListe* abtList)
 }
 
 /** Schreibt saemtliche Einstellungen und Eintraege auf Platte */
-void SCTimeXMLSettings::writeSettings(AbteilungsListe* abtList)
+bool SCTimeXMLSettings::writeSettings(AbteilungsListe* abtList)
 {
+  bool success;
   // Globale Einstellungen
-  writeSettings(true, abtList);
+  success = writeSettings(true, abtList);
   // Einstellungen fuer den aktuellen Tag
-  writeSettings(false, abtList);
+  success = writeSettings(false, abtList) && success;
+  return success;
 }
 
 /**
@@ -562,11 +572,12 @@ void SCTimeXMLSettings::writeSettings(AbteilungsListe* abtList)
  * werden globale Einstellungen fuer alle Tage gespeichert, sonst nur
  * fuer das aktuelle Datum.
  */
-void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
+bool SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
 {
   if ((abtList->checkInState())&&(!global)) {
       trace(QObject::tr("zeit-DAY.sh not written because it has already been checked in"));
-      return;
+      // nothing to do, so just return true
+      return true;
   }
   #ifndef NO_XML
   QDomDocument doc("settings");
@@ -889,9 +900,16 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
 
   QString filename(configDir.filePath(global ? "settings.xml" : "zeit-"+abtList->getDatum().toString("yyyy-MM-dd")+".xml"));
   QFile fnew(filename + ".tmp");
+  QDateTime filemod = QFileInfo(filename).lastModified();
+  if (!global && m_lastSave.isValid() && filemod.isValid() && filemod>m_lastSave.addSecs(1)) {
+      QMessageBox::StandardButton answer = QMessageBox::question(NULL, QObject::tr("sctime: saving settings"), QObject::tr("%1 has been modified since the last changes done by this sctime instance. Do you wanto to overwrite theses changes?").arg(fnew.fileName()));
+      if (answer!=QMessageBox::Yes) {
+         return false;
+      }
+  }
   if (!fnew.open(QIODevice::WriteOnly)) {
-      QMessageBox::critical(NULL, QObject::tr("sctime: saving settings"), QObject::tr("opening file %1 for writing: %2").arg(fnew.fileName(), fnew.errorString()));
-      return;
+      QMessageBox::critical(NULL, QObject::tr("sctime: saving settings"), QObject::tr("opening file %1 for writing failed. Please make sure the sctime settings directory is available. Details: %2").arg(fnew.fileName(), fnew.errorString()));
+      return false;
   }
   // may contain passwords and private data in general
   fnew.setPermissions(QFile::ReadOwner | QFile::WriteOwner);
@@ -915,21 +933,30 @@ void SCTimeXMLSettings::writeSettings(bool global, AbteilungsListe* abtList)
 #ifndef WIN32
   // unter Windows funktioniert kein "rename", wenn es den Zielnamen schon gibt.
   // Doch unter UNIX kann ich damit Dateien atomar ersetzen.
-  if (!rename(fnew.fileName().toLocal8Bit(), filename.toLocal8Bit())) return;
-  QMessageBox::information(NULL, QObject::tr("sctime: saving settings"),
+  if (rename(fnew.fileName().toLocal8Bit(), filename.toLocal8Bit())!=0) {
+      QMessageBox::information(NULL, QObject::tr("sctime: saving settings"),
                         QObject::tr("%1 cannot be renamed to %2: %3").arg(fnew.fileName(), filename, strerror(errno)));
-#endif
+      return false;
+  }
+#else
   fcurrent.remove();
-  if (!fnew.rename(filename))
+  if (!fnew.rename(filename)) {
     QMessageBox::critical(NULL, QObject::tr("sctime: saving settings"),
                          QObject::tr("%1 cannot be renamed to %2: %3").arg(fnew.fileName(), filename, fnew.errorString()));
+    return false;
+  }
+  #endif
 
   #endif
+  if (!global) {
+     m_lastSave = QDateTime::currentDateTime();
+  }
+  return true;
 }
 
 QString SCTimeXMLSettings::color2str(const QColor& color)
 {
-  return QString().sprintf("#%.2x%.2x%.2x",color.red(),color.green(),color.blue());
+  return QString("#%1%2%3").arg(color.red(),2,16,QChar('0')).arg(color.green(),2,16,QChar('0')).arg(color.blue(),2,16,QChar('0'));
 }
 
 QColor SCTimeXMLSettings::str2color(const QString& str)

@@ -35,6 +35,9 @@
 #include <QTextBrowser>
 #include <QAction>
 #include <QMutex>
+#include <QDesktopWidget>
+#include <QLocale>
+#include <QTextStream>
 
 #include "globals.h"
 #include "time.h"
@@ -66,6 +69,8 @@ QTreeWidget* TimeMainWindow::getKontoTree() { return kontoTree; }
 
 static QString logTextLastLine(QObject::tr("-- Start --"));
 static QString logText(logTextLastLine + "\n");
+static QFile *logFile;
+static QTextStream *logStream=NULL;
 void trace(const QString &msg) {
   logError(msg);
 }
@@ -73,10 +78,21 @@ void trace(const QString &msg) {
 void logError(const QString &msg) {
   logText.append(msg).append("\n");
   logTextLastLine = msg;
+  if (logStream!=NULL) {
+    (*logStream)<<msg<<endl;
+  }
 }
 
 /** Erzeugt ein neues TimeMainWindow, das seine Daten aus abtlist bezieht. */
-TimeMainWindow::TimeMainWindow(Lock* lock):QMainWindow(), startTime(QDateTime::currentDateTime()) {
+TimeMainWindow::TimeMainWindow(Lock* lock, QString logfile):QMainWindow(), startTime(QDateTime::currentDateTime()) {
+  if (!logfile.isNull() && !logfile.isEmpty()) {
+    logFile = new QFile(logfile);
+    if (logFile->open(QIODevice::ReadWrite)) {
+       logStream=new QTextStream(logFile);
+    } else {
+      logStream = NULL;
+    }
+  }
   m_lock = lock;
   paused = false;
   sekunden = 0;
@@ -796,9 +812,11 @@ void TimeMainWindow::pause() {
         secSinceTick = 60;
     }
     settings->setLastRecordedTimestamp(lastMinuteTick);
-    QMessageBox::warning(this, tr("sctime: Pause"), tr("Accounting has been stopped. Resume work with OK."));
-    paused = false;
     QDateTime now = QDateTime::currentDateTime();
+    QString currtime= QLocale().toString(now.time(), QLocale::ShortFormat);
+    QMessageBox::warning(this, tr("sctime: Pause"), tr("Accounting has been stopped at %1. Resume work with OK.").arg(currtime));
+    paused = false;
+    now = QDateTime::currentDateTime();
     sekunden = drift;
     trace(tr("End of break: ") +now.toString());
     autosavetimer->start();
@@ -854,7 +872,11 @@ void TimeMainWindow::callCantSaveDialog() {
   if (cantSaveDialog==NULL) {
     QMessageBox* msg = new QMessageBox();
     cantSaveDialog=msg;
-    msg->setText(tr("An error occured when saving data. Please try again."));
+    msg->setWindowTitle("Error on saving");
+    msg->setText(tr("An error occured when saving data. Please check permissions and connectivity of your target directory. If this error persists and you close sctime, you will loose all changes since the last successful save (an automatic save should occur every 5 minutes)."));
+    msg->setIcon(QMessageBox::Warning);
+    msg->setStandardButtons(QMessageBox::Close);
+    qDebug() << tr("An error occured when saving data.");
     msg->exec();
     delete cantSaveDialog;
     cantSaveDialog = NULL;
@@ -862,12 +884,20 @@ void TimeMainWindow::callCantSaveDialog() {
 }
 
 void TimeMainWindow::checkLock() {
-  if (!m_lock->check()) {
+  if (m_lock->check()==LS_CONFLICT) {
     QMessageBox msg;
     msg.setText(tr("The program will quit in a few seconds without saving."));
     msg.setInformativeText(m_lock->errorString());
     qDebug() << tr("The program will now quit without saving.") << m_lock->errorString();
     QTimer::singleShot(10000, this, SLOT(quit()));
+    msg.exec();
+    return;
+  }
+  if (m_lock->check()!=LS_OK) {
+    QMessageBox msg;
+    msg.setText(tr("Unclear state of Lockfile. Please check that there is no other instance of sctime running and that you have access to the sctime config directory. Otherwise loss of data may occur."));
+    msg.setInformativeText(m_lock->errorString());
+    qDebug() << tr("Unkown state of lockfile.") << m_lock->errorString();
     msg.exec();
   }
 }
@@ -991,6 +1021,14 @@ void TimeMainWindow::eintragEntfernen()
   zeitChanged();
 }
 
+void TimeMainWindow::callSwitchDateErrorDialog()
+{
+    QMessageBox msg;
+    QString msgtext = tr("Could not switch day due to problems with saving. ATTENTION: that also means that the clock might be running on the wrong day. Please fix the problem with saving and switch manually to the current date afterwards.");
+    msg.setText(msgtext);
+    qDebug() << msgtext;
+    msg.exec();
+}
 
 /**
  * Aendert das Datum: dazu werden zuerst die aktuellen Zeiten und Einstellungen gespeichert,
@@ -1008,9 +1046,13 @@ void TimeMainWindow::changeDate(const QDate &datum)
         settings->setColumnWidthList(columnwidthlist);
         if (abtListToday != abtList)
         {
-            settings->writeSettings(abtListToday);
+            if (!(settings->writeSettings(abtListToday) &&
+                 settings->writeSettings(abtList)
+                 )) {
+                   callSwitchDateErrorDialog();
+                   return;
+                 }
             settings->writeShellSkript(abtListToday);
-            settings->writeSettings(abtList);
             settings->writeShellSkript(abtList);
             delete abtList;
             abtList = NULL;
@@ -1054,6 +1096,8 @@ void TimeMainWindow::changeDate(const QDate &datum)
                 statusBar->appendWarning(!currentDateSel, tr(" -- This day has already been checked in!"));
             }
         }
+    } else {
+      callSwitchDateErrorDialog();
     }
 }
 
@@ -1312,6 +1356,11 @@ void TimeMainWindow::callFindKontoDialog()
         QTreeWidgetItem *item = kontoTree->sucheKommentarItem(
               items.at(0), items.at(1), items.at(2),
               items.at(3), items.at(4));
+        // in case we didnt find the comment (e.g. because it was just a default comment), at least open the subaccount
+        if (item==NULL) {
+          item = kontoTree->sucheUnterKontoItem(
+              items.at(0), items.at(1), items.at(2), items.at(3) );
+        }
         openItem( item );
       }
     }

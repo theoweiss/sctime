@@ -21,6 +21,7 @@
 #define  ABTEILUNGSLISTE_H
 
 #include <QDateTime>
+#include <QSet>
 class QColor;
 
 // nicht als Vorwärtsdeklarationen möglich

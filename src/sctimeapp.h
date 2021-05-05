@@ -40,7 +40,7 @@ public:
 #endif
 
    void init(Lock* lock, QStringList& dataSourceNames, const QString& zeitkontenfile,
-             const QString& bereitschaftsfile, const QString& specialremunfile, const QString& offlinefile);
+             const QString& bereitschaftsfile, const QString& specialremunfile, const QString& offlinefile, const QString& logfile);
 public slots:
    void cleanup(); 
 private:

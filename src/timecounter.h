@@ -42,9 +42,7 @@ class TimeCounter {
 
     QString toString()
     {
-      QString qs;
-
-      return qs.sprintf("%2i:%.2i ",seconds/3600, (seconds%3600)/60);
+      return QString("%1:%2 ").arg(seconds/3600,2).arg((seconds%3600)/60,2,10,QChar('0'));
     }
 
     static TimeCounter fromString(QString str)
