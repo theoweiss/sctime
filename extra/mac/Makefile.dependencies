@@ -8,10 +8,10 @@ CURL_OPTS=-L
 
 PREFIX=$(BUILD_DIR)/deps
 
-SDK=macosx10.12
+SDK=macosx10.15
 SDK_PATH=$(shell xcrun --sdk $(SDK) --show-sdk-path)
 
-QT_MINOR=5.12
+QT_MINOR=5.15
 QT_VER=$(QT_MINOR).0
 QT_BN=qt-everywhere-src-$(QT_VER)
 QT_SOURCE_FILE=$(QT_BN).tar.xz

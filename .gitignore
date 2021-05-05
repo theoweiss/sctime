@@ -8,3 +8,9 @@ Makefile
 src/sctime
 src/sctime.gch/
 src/sctime_*.qm
+extra/mac/postgres
+extra/mac/qt
+extra/mac/src
+extra/mac/deps
+.qmake.cache
+.qmake.stash
