@@ -119,7 +119,7 @@ public:
     void switchPublicHolidayMode(bool enabled);
     void switchNightMode(bool enabled);
 
-    void updateSpecialModesAfterPause();
+    void updateSpecialModes(bool afterPause);
 
 
   signals:        
