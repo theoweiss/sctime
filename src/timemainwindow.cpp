@@ -1937,7 +1937,11 @@ void TimeMainWindow::updateSpecialModes(bool afterPause) {
   }
   if (!settings->nightModeBegin().isNull() && !settings->nightModeEnd().isNull()) {
     if (afterPause) {
-        callNightTimeDialog(timestamp.time()>settings->nightModeBegin()||timestamp.time()<settings->nightModeEnd());
+        if (timestamp.time()>settings->nightModeBegin()||timestamp.time()<settings->nightModeEnd()) {
+           QTimer::singleShot(0, this, SLOT(callNightTimeBeginDialog()));
+        } else {
+           QTimer::singleShot(0, this, SLOT(callNightTimeEndDialog()));
+        }
     }
   }
 }
