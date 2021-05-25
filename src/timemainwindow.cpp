@@ -351,7 +351,7 @@ TimeMainWindow::TimeMainWindow(Lock* lock, QString logfile):QMainWindow(), start
 
   connect(this,SIGNAL(aktivierbarerEintragSelected(bool)), eintragActivateAction, SLOT(setEnabled(bool)));
 
-  updateSpecialModesAfterPause();
+  updateSpecialModes(true);
 
   toolBar->addAction(editUnterKontoAction);
   toolBar->addAction(saveAction);
@@ -825,7 +825,7 @@ void TimeMainWindow::pause() {
     startTime = now.addSecs(-secSinceTick);
     lastMinuteTick = startTime;
     tageswechsel();
-    updateSpecialModesAfterPause();
+    updateSpecialModes(true);
 }
 
 
@@ -1082,7 +1082,7 @@ void TimeMainWindow::changeDate(const QDate &datum)
         kontoTree->showAktivesProjekt();
         if (currentDateSel)
         {
-            updateSpecialModesAfterPause();
+            updateSpecialModes(false);
         }
         zeitChanged();
         emit(currentDateSelected(currentDateSel));
@@ -1917,7 +1917,7 @@ void TimeMainWindow::cantMoveTimeDialog(int delta)
 
 /**
  * checks and updates overtime modes after a pause (they might not be valid anymore)*/
-void TimeMainWindow::updateSpecialModesAfterPause() {
+void TimeMainWindow::updateSpecialModes(bool afterPause) {
   QDateTime timestamp = QDateTime::currentDateTime();
   QDateTime lastts = settings->lastRecordedTimestamp();
   if (lastts.isValid()) {
@@ -1936,7 +1936,13 @@ void TimeMainWindow::updateSpecialModesAfterPause() {
     nightModeAction->setChecked(settings->nightModeActive());
   }
   if (!settings->nightModeBegin().isNull() && !settings->nightModeEnd().isNull()) {
-    callNightTimeDialog(timestamp.time()>settings->nightModeBegin()||timestamp.time()<settings->nightModeEnd());
+    if (afterPause) {
+        if (timestamp.time()>settings->nightModeBegin()||timestamp.time()<settings->nightModeEnd()) {
+           QTimer::singleShot(0, this, SLOT(callNightTimeBeginDialog()));
+        } else {
+           QTimer::singleShot(0, this, SLOT(callNightTimeEndDialog()));
+        }
+    }
   }
 }
 
