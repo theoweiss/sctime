@@ -77,7 +77,8 @@ public:
     void editUnterKontoPressed();
     void editBereitschaftPressed();
     void specialRemunPressed();
-    void changeDate(const QDate& datum);
+    void changeVisibleDate(const QDate& date);
+    void changeTodaysDate(const QDate& date);
     void setAktivesProjekt(QTreeWidgetItem * item);
     void showAdditionalButtons(bool show);
     void eintragAktivieren();
@@ -185,6 +186,7 @@ public:
     bool checkAndChangeSREntry(int& idx, const QString& abt, const QString& ko , const QString& uko, const QSet<QString>& specialRemuns);
     void switchOvertimeMode(bool enabled, QString otmSR);
     void cantMoveTimeDialog(int delta);
+    void changeDate(const QDate& datum, bool changeVisible, bool changeToday);
     KontoTreeView* kontoTree;
     Lock *m_lock;
     QAction* editUnterKontoAction;
@@ -231,5 +233,6 @@ public:
     QDialog* cantSaveDialog;
     int stopTimers(const QString& grund); // rv: Sekunden seit letztem Tick
     void resumeTimers(int secSinceTick, const QString& reason);
+    bool entryBeingEdited; // indicates that currently an entry is being edited
 };
 #endif
